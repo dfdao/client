@@ -14,24 +14,7 @@ export class ContractCaller {
   ): Promise<T> {
     for (let i = 0; i < ContractCaller.MAX_RETRIES; i++) {
       try {
-        const callPromise = this.callQueue.add(() => {
-          this.diagnosticsUpdater?.updateDiagnostics((d) => {
-            d.totalCalls++;
-          });
-          return contractViewFunction(...args);
-        });
-
-        this.diagnosticsUpdater?.updateDiagnostics((d) => {
-          d.callsInQueue = this.callQueue.size();
-        });
-
-        const callResult = await callPromise;
-
-        this.diagnosticsUpdater?.updateDiagnostics((d) => {
-          d.callsInQueue = this.callQueue.size();
-        });
-
-        return callResult;
+        return await contractViewFunction(...args);
       } catch (e) {
         await sleep(1000 * 2 ** i + Math.random() * 100);
       } finally {
