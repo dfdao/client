@@ -158,6 +158,8 @@ export class TxExecutor extends EventEmitter {
         gasFeeGwei
       );
 
+      console.info("submitting tx with nonce: " + this.nonce);
+
       time_called = Date.now();
       const methodName = TxTypeToEthFunctionName[txRequest.type];
       const submitted = await timeoutAfter<providers.TransactionResponse>(
