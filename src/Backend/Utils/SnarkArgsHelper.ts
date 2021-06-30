@@ -101,7 +101,7 @@ class SnarkArgsHelper {
   /**
    * How many snark results to keep in an LRU cache.
    */
-  private static readonly DEFAULT_SNARK_CACHE_SIZE = 20;
+  private static readonly DEFAULT_SNARK_CACHE_SIZE = 100;
   private readonly useMockHash: boolean;
   private readonly snarkProverQueue: SnarkProverQueue;
   private readonly terminal: React.MutableRefObject<TerminalHandle | undefined>;
