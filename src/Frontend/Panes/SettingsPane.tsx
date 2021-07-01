@@ -226,13 +226,19 @@ export function SettingsPane({
             <MultiSelectSetting
               uiManager={uiManager}
               setting={Setting.GasFeeGwei}
-              values={['1', '2', '5', '10', '20']}
+              values={[
+                '1',  '2',  '3',  '4',  '5',
+                '6',  '7',  '8',  '9',  '10',
+                '11', '12', '13', '14', '15',
+                '16', '17', '18', '19', '20',
+                '21', '22', '23', '24', '25'
+              ]}
               labels={[
-                '1 gwei (default)',
-                '2 gwei (faster)',
-                '5 gwei (turbo)',
-                '10 gwei (mega turbo)',
-                '20 gwei (need4speed)',
+                '1',  '2',  '3',  '4',  '5',
+                '6',  '7',  '8',  '9',  '10',
+                '11', '12', '13', '14', '15',
+                '16', '17', '18', '19', '20',
+                '21', '22', '23', '24', '25'
               ]}
             />
           </Row>
