@@ -187,7 +187,7 @@ export const aggregateBulkGetter = async <T>(
         while (res.length === 0) {
           res = await getterFn(start, end);
           loadedSoFar += loadedThisBatch;
-          console.log(`[bulk-fetch] retrieved ${logTag} ${start}-${end}.`);
+          //console.log(`[bulk-fetch] retrieved ${logTag} ${start}-${end}.`);
           onProgress && onProgress(loadedSoFar / total);
         }
 
