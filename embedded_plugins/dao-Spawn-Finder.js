@@ -31,6 +31,7 @@ class Plugin {
         }
 
         ui.centerPlanet(closestPlanet);
+        df.terminal.current.println("https://zkga.me/game1?searchCenter=" + Math.round(closestPlanet.location.coords.x) + "," + Math.round(closestPlanet.location.coords.y));
     }
 
     /**
