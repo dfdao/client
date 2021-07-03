@@ -2,18 +2,9 @@
 // Additional map export (and import?) utilities:
 // * Select start/end coordinates to filter the export by.
 
-import { Chunk } from "../src/_types/global/GlobalTypes";
-
 let viewport = ui.getViewport();
 
 class Plugin {
-    protected beginCoords: null;
-    protected endCoords: null;
-    protected status: HTMLDivElement;
-    private xyWrapper: HTMLDivElement;
-    private beginXY: HTMLDivElement;
-    private endXY: HTMLDivElement;
-
     constructor() {
         this.beginCoords = null;
         this.endCoords = null;
@@ -46,7 +37,7 @@ class Plugin {
         this.xyWrapper.appendChild(clear);
     }
 
-    async processMap(input: string) {
+    async processMap(input) {
         let chunks;
         try {
             chunks = JSON.parse(input);
@@ -103,7 +94,7 @@ class Plugin {
         inputFile.click();
     }
 
-    intersectsXY(chunk: Chunk, begin: { x: any; y: any; }, end: { x: any; y: any; }) {
+    intersectsXY(chunk, begin, end) {
         const chunkLeft = chunk.chunkFootprint.bottomLeft.x;
         const chunkRight = chunkLeft + chunk.chunkFootprint.sideLength;
         const chunkBottom = chunk.chunkFootprint.bottomLeft.y;
@@ -188,21 +179,18 @@ class Plugin {
         let coords = ui.getHoveringOverCoords();
         if (coords) {
             if (this.beginCoords == null) {
-                // @ts-ignore
                 this.beginCoords = coords;
                 return;
             }
 
             if (this.endCoords == null) {
-                // @ts-ignore
                 this.endCoords = coords;
                 return;
             }
         }
     }
 
-    render(container: HTMLDivElement) {
-        // @ts-ignore
+    render(container) {
         container.parentElement.style.minHeight = 'unset';
         container.style.minHeight = 'unset';
 
@@ -277,7 +265,6 @@ class Plugin {
 }
 
 class RemotePlugin extends Plugin {
-    private baseUrl: string;
     constructor() {
         super();
 
@@ -341,7 +328,7 @@ class RemotePlugin extends Plugin {
         }
     }
 
-    render(container: HTMLDivElement) {
+    render(container) {
         super.render(container);
 
         let remoteWrapper = document.createElement('div');
