@@ -336,15 +336,15 @@ class RemotePlugin extends Plugin {
         remoteWrapper.style.justifyContent = 'space-between';
         remoteWrapper.style.marginBottom = '10px';
 
-        let uploadButton = document.createElement('button');
-        uploadButton.innerText = "Export & Share Map";
-        uploadButton.onclick = this.onUploadToServer;
+        let exportAndShareButton = document.createElement('button');
+        exportAndShareButton.innerText = "Export & Share Map";
+        exportAndShareButton.onclick = this.onUploadToServer;
 
-        let downloadButton = document.createElement('button');
-        downloadButton.innerText = "Fetch & Import Map";
-        downloadButton.onclick = this.onDownloadToServer;
+        let fetchAndImportButton = document.createElement('button');
+        fetchAndImportButton.innerText = "Fetch & Import Map";
+        fetchAndImportButton.onclick = this.onDownloadToServer;
 
-        remoteWrapper.appendChild(uploadButton);
+        remoteWrapper.appendChild(exportAndShareButton);
         remoteWrapper.appendChild(downloadButton);
 
         container.appendChild(remoteWrapper);
