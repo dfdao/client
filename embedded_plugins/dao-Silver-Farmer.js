@@ -44,7 +44,7 @@ class Plugin {
 }
 
 let maxDistributeEnergyPercent = 75;
-let maxMoves = 5;
+let maxMoves = 50;
 let minSilverThreshold = 500;
 let maxSilverAccumulationThresholdPercent = 1;
 
@@ -55,8 +55,8 @@ function getArrivalsForPlanet(planetId) {
     return df.getAllVoyages().filter(arrival => arrival.toPlanet === planetId).filter(p => p.arrivalTime > Date.now() / 1000);
 }
 
-function hasTooMuchInbound(planet) {
-    return getArrivalsForPlanet(planet.locationId).length > 5
+function hasTooMuchInbound(planet, threshold) {
+    return getArrivalsForPlanet(planet.locationId).length > threshold;
 }
 
 function getDeparturesForPlanet(planetId) {
@@ -112,7 +112,15 @@ function silverFromAsteroidsToRips() {
                 if (moves == maxMoves) { return } // if we've made the max moves for this run
             } else {
                 // no rip found nearby, find nearest asteroid at higher levels to accumulate silver on it.
-                df.terminal.current.println("Need to accumulate for asteroid with level " + asteroid.planetLevel + " and silver " + asteroid.silver);
+                let higherLevelAsteroid = findEligibleAsteroid(asteroid);
+                if (higherLevelAsteroid) {
+                    logAndMoveAllSilver(asteroid, higherLevelAsteroid);
+                    moves++;
+
+                    if (moves == maxMoves) { return } // if we've made the max moves for this run
+                } else {
+                    df.terminal.current.println("Level " + asteroid.planetLevel + " asteroid with silver " + asteroid.silver + " doesn't have a silver collector nearby");
+                }
             }
         }
     }
@@ -122,7 +130,9 @@ function logAndMoveAllSilver(sourcePlanet, targetPlanet) {
     let silverToBeSent = Math.floor(Math.min(sourcePlanet.silver, targetPlanet.silverCap) * 0.995);
     let energyNeeded = Math.ceil(df.getEnergyNeededForMove(sourcePlanet.locationId, targetPlanet.locationId, 1) * 1.005);
 
-    df.terminal.current.println("Sending " + silverToBeSent + " silver to rip with level " + targetPlanet.planetLevel + " by using energy " + energyNeeded);
+    df.terminal.current.println("Sending " + silverToBeSent +
+        " silver from level " + sourcePlanet.planetLevel +
+        "to level " + targetPlanet.planetLevel + " by using energy " + energyNeeded);
     df.move(sourcePlanet.locationId, targetPlanet.locationId, energyNeeded, silverToBeSent);
 }
 
@@ -136,7 +146,7 @@ function findEligibleRip(planet) {
         .filter(p => (
             p.planetType == 3 && // rips
             ui.isOwnedByMe(p) && // owned
-            !hasTooMuchInbound(p) &&
+            !hasTooMuchInbound(p, 5) &&
             p.planetLevel > 2 &&
             Math.abs(p.planetLevel - planet.planetLevel) <= 1 && // rip & asteroid < 1 level diff
             p.silverCap > minSilverThreshold // min silver cap
@@ -161,6 +171,37 @@ function findEligibleRip(planet) {
     });
 
     return inRangeEligibleRips[0];
+}
+
+function findEligibleAsteroid(planet) {
+    let eligibleAsteroids = df.getMyPlanets()
+        .filter(p => (
+            p.planetType == 1 && // asteroids
+            ui.isOwnedByMe(p) && // owned
+            !hasTooMuchInbound(p,1) &&
+            p.planetLevel > planet.planetLevel &&
+            p.silverCap > minSilverThreshold // min silver cap
+        ));
+
+    let inRangeEligibleAsteroids = getPlanetsInRange(planet, eligibleAsteroids, maxDistributeEnergyPercent);
+
+    inRangeEligibleAsteroids.sort((r1, r2) => {
+        if (r1.planetLevel > r2.planetLevel) {
+            return -1;
+        } else if (r1.planetLevel == r2.planetLevel) {
+            let r1Dist = df.getDist(planet.locationId, r1.locationId);
+            let r2Dist = df.getDist(planet.locationId, r2.locationId);
+            if (r1Dist < r2Dist) {
+                return -1;
+            } else {
+                return 1;
+            }
+        } else {
+            return 1;
+        }
+    });
+
+    return inRangeEligibleAsteroids[0];
 }
 
 
