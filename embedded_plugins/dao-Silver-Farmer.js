@@ -155,7 +155,7 @@ function findEligibleRip(planet) {
             ui.isOwnedByMe(p) && // owned
             !hasTooMuchInbound(p, 5) &&
             p.planetLevel > 2 &&
-            //Math.abs(p.planetLevel - planet.planetLevel) <= 2 && // rip & asteroid <= 2 level diff
+            Math.abs(p.planetLevel - planet.planetLevel) <= 2 && // rip & asteroid <= 2 level diff
             p.silverCap > minSilverThreshold // min silver cap
         ));
 
