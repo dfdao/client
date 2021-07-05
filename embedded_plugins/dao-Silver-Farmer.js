@@ -1,8 +1,8 @@
 class Plugin {
     constructor() {
         this.timers = [];
-        this.silverFromAsteroidsToRipsDuration = 1 * 60 * 1000; //milliseconds
-        this.withdrawSilverTimerDuration = 1 * 60 * 1000; //milliseconds
+        this.silverFromAsteroidsToRipsDuration = 5 * 60 * 1000; //milliseconds
+        this.withdrawSilverTimerDuration = 5 * 60 * 1000; //milliseconds
 
         this.timers.push(
             setInterval(
@@ -87,7 +87,7 @@ function withdrawSilverForScore() {
 function silverFromAsteroidsToRips() {
     let allEligibleAsteroids = df.getMyPlanets()
         .filter(p => (
-            (isAsteroid(p) || isPlanet(p)) &&
+            (isAsteroid(p)) &&
             !hasOutboundUnconfirmedMoves(p) &&
             (p.silver == p.silverCap || p.silver >= p.silverCap * maxSilverAccumulationThresholdPercent) &&
             p.silverCap > minSilverThreshold
@@ -109,7 +109,10 @@ function silverFromAsteroidsToRips() {
                 logAndMoveAllSilver(asteroid, rip);
                 moves++;
 
-                if (moves == maxMoves) { return } // if we've made the max moves for this run
+                if (moves == maxMoves) {
+                    df.terminal.current.println("Silver collection completed with max moves");
+                    return;
+                } // if we've made the max moves for this run
             } else {
                 // no rip found nearby, find nearest asteroid at higher levels to accumulate silver on it.
                 let higherLevelAsteroid = findEligibleAsteroid(asteroid);
@@ -117,13 +120,17 @@ function silverFromAsteroidsToRips() {
                     logAndMoveAllSilver(asteroid, higherLevelAsteroid);
                     moves++;
 
-                    if (moves == maxMoves) { return } // if we've made the max moves for this run
+                    if (moves == maxMoves) {
+                        df.terminal.current.println("Silver collection completed with max moves");
+                        return;
+                    } // if we've made the max moves for this run
                 } else {
                     df.terminal.current.println("Level " + asteroid.planetLevel + " asteroid with silver " + asteroid.silver + " doesn't have a silver collector nearby");
                 }
             }
         }
     }
+    df.terminal.current.println("Silver collection completed");
 }
 
 function logAndMoveAllSilver(sourcePlanet, targetPlanet) {
@@ -148,7 +155,7 @@ function findEligibleRip(planet) {
             ui.isOwnedByMe(p) && // owned
             !hasTooMuchInbound(p, 5) &&
             p.planetLevel > 2 &&
-            Math.abs(p.planetLevel - planet.planetLevel) <= 1 && // rip & asteroid < 1 level diff
+            //Math.abs(p.planetLevel - planet.planetLevel) <= 2 && // rip & asteroid <= 2 level diff
             p.silverCap > minSilverThreshold // min silver cap
         ));
 
