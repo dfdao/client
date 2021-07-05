@@ -127,7 +127,7 @@ function silverFromAsteroidsToRips() {
 }
 
 function logAndMoveAllSilver(sourcePlanet, targetPlanet) {
-    let silverToBeSent = Math.floor(Math.min(sourcePlanet.silver, targetPlanet.silverCap) * 0.995);
+    let silverToBeSent = Math.floor(Math.min(sourcePlanet.silver, targetPlanet.silverCap));
     let energyNeeded = Math.ceil(df.getEnergyNeededForMove(sourcePlanet.locationId, targetPlanet.locationId, 1) * 1.005);
 
     df.terminal.current.println("Sending " + silverToBeSent +
