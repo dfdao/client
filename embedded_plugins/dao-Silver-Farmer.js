@@ -2,7 +2,7 @@ class Plugin {
     constructor() {
         this.timers = [];
         this.silverFromAsteroidsToRipsDuration = 5 * 60 * 1000; //milliseconds
-        this.withdrawSilverTimerDuration = 5 * 60 * 1000; //milliseconds
+        this.withdrawSilverTimerDuration = 1 * 60 * 1000; //milliseconds
 
         this.timers.push(
             setInterval(
