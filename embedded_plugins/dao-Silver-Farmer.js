@@ -137,9 +137,7 @@ function logAndMoveAllSilver(sourcePlanet, targetPlanet) {
     let silverToBeSent = Math.floor(Math.min(sourcePlanet.silver, targetPlanet.silverCap));
     let energyNeeded = Math.ceil(df.getEnergyNeededForMove(sourcePlanet.locationId, targetPlanet.locationId, 1) * 1.005);
 
-    df.terminal.current.println("Sending " + silverToBeSent +
-        " silver from level " + sourcePlanet.planetLevel +
-        "to level " + targetPlanet.planetLevel + " by using energy " + energyNeeded);
+    df.terminal.current.println(`L${sourcePlanet.planetLevel} > L${targetPlanet.planetLevel}: ${silverToBeSent}s, ${energyNeeded}e`;
     df.move(sourcePlanet.locationId, targetPlanet.locationId, energyNeeded, silverToBeSent);
 }
 
