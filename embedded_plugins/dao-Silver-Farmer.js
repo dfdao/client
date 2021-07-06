@@ -89,8 +89,9 @@ function silverFromAsteroidsToRips() {
     let allEligibleAsteroids = df.getMyPlanets()
         .filter(p => (
             p.planetLevel > 2 && p.planetLevel < 8 &&
-            (isAsteroid(p)) &&
+            (isAsteroid(p) || isPlanet(p)) &&
             !hasOutboundUnconfirmedMoves(p) &&
+            p.location !== undefined && //needed because map imports and empire transfers
             (p.silver == p.silverCap || p.silver >= maxSilverAccumulationThreshold)
         ))
         .sort((p1, p2) => p2.planetLevel - p1.planetLevel)
@@ -154,6 +155,7 @@ function findEligibleRip(planet) {
             !hasTooMuchInbound(p, 5) &&
             p.planetLevel > 2 &&
             Math.abs(p.planetLevel - planet.planetLevel) <= 2 && // rip & asteroid <= 2 level diff
+            p.location !== undefined && //needed because map imports and empire transfers
             p.silverCap > minSilverThreshold // min silver cap
         ));
 
@@ -185,6 +187,7 @@ function findEligibleAsteroid(planet) {
             ui.isOwnedByMe(p) && // owned
             !hasTooMuchInbound(p,1) &&
             p.planetLevel > planet.planetLevel &&
+            p.location !== undefined && //needed because map imports and empire transfers
             p.silverCap > minSilverThreshold // min silver cap
         ));
 
