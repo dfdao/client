@@ -238,7 +238,7 @@ class Viewport {
   }
 
   private getStorageKey(): string {
-    const acc = this.gameUIManager.getAccount();
+    const acc = this.gameUIManager.getImpersonator();
     const addr = this.gameUIManager.getContractAddress();
     return `${acc}-${addr}-viewport`;
   }

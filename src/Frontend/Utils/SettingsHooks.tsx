@@ -175,7 +175,7 @@ export function useSetting(
   uiManager: GameUIManager | undefined,
   setting: Setting
 ): [string, (newValue: string | undefined) => void] {
-  const account = uiManager?.getAccount();
+  const account = uiManager?.getImpersonator();
   const [settingValue, setSettingValue] = useState(() => getSetting(account, setting));
 
   useEmitterSubscribe(settingChanged$, (changedSetting: Setting) => {

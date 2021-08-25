@@ -183,7 +183,7 @@ export function PlanetDexPane({ hook }: { hook: ModalHook }) {
   // update planet list on open / close
   useEffect(() => {
     if (!uiManager) return;
-    const myAddr = uiManager.getAccount();
+    const myAddr = uiManager.getImpersonator();
     if (!myAddr) return;
     const ownedPlanets = uiManager.getAllOwnedPlanets().filter((planet) => planet.owner === myAddr);
     setPlanets(ownedPlanets);
@@ -196,7 +196,7 @@ export function PlanetDexPane({ hook }: { hook: ModalHook }) {
 
     const refreshPlanets = () => {
       if (!uiManager) return;
-      const myAddr = uiManager.getAccount();
+      const myAddr = uiManager.getImpersonator();
       if (!myAddr) return;
       const ownedPlanets = uiManager
         .getAllOwnedPlanets()

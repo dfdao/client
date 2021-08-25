@@ -29,7 +29,7 @@ export const { useDefinedContext: useTopLevelDiv, provider: TopLevelDivProvider 
  * @param uiManager instance of GameUIManager
  */
 export function useAccount(uiManager: GameUIManager): EthAddress | undefined {
-  const account = useMemo(() => uiManager.getAccount(), [uiManager]);
+  const account = useMemo(() => uiManager.getImpersonator(), [uiManager]);
 
   return account;
 }

@@ -53,7 +53,7 @@ export function PluginLibraryPane({
 }) {
   const pluginManager = gameUIManager.getPluginManager();
   const plugins = useEmitterValue(pluginManager.plugins$, pluginManager.getLibrary());
-  const account = gameUIManager.getAccount();
+  const account = gameUIManager.getImpersonator();
   const [editorIsOpen, setEditorIsOpen] = useState(false);
   const [warningIsOpen, setWarningIsOpen] = useState(false);
   const [clicksUntilHasPlugins, setClicksUntilHasPlugins] = useState(8);

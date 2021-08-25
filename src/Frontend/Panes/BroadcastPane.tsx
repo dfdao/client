@@ -80,7 +80,7 @@ export function BroadcastPane({
 
   useEffect(() => {
     if (!uiManager) return;
-    setAccount(uiManager.getAccount());
+    setAccount(uiManager.getImpersonator());
   }, [uiManager]);
 
   let revealBtn = undefined;

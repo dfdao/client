@@ -102,7 +102,7 @@ export function LeaderboardPane({ hook }: { hook: ModalHook }) {
   const [account, setAccount] = useState<EthAddress | undefined>(undefined);
   useEffect(() => {
     if (!uiManager) return;
-    setAccount(uiManager.getAccount());
+    setAccount(uiManager.getImpersonator());
   }, [uiManager]);
 
   return (

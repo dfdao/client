@@ -70,9 +70,9 @@ export function GameWindowLayout({
     Setting.TerminalVisible
   );
 
-  const account = uiManager.getAccount();
+  const account = uiManager.getImpersonator();
   useEffect(() => {
-    if (uiManager.getAccount()) {
+    if (uiManager.getImpersonator()) {
       setTerminalVisible(uiManager.getBooleanSetting(Setting.TerminalVisible));
     }
   }, [account, uiManager, setTerminalVisible]);

@@ -360,7 +360,7 @@ export function SettingsPane({
         <Section>
           <SectionHeader>Reset Tutorial</SectionHeader>
           <Spacer height={8} />
-          <Btn wide onClick={() => TutorialManager.getInstance().reset(uiManager.getAccount())}>
+          <Btn wide onClick={() => TutorialManager.getInstance().reset(uiManager.getImpersonator())}>
             Reset Tutorial
           </Btn>
         </Section>

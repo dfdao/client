@@ -26,7 +26,7 @@ export function AccountLabel({
           <Sub>
             {' '}
             <TextPreview
-              text={ethAddress || uiManager.getAccount() || '<no account>'}
+              text={ethAddress || uiManager.getImpersonator() || '<no account>'}
               unFocusedWidth={'50px'}
               focusedWidth={'50px'}
             />
@@ -38,7 +38,7 @@ export function AccountLabel({
 
   return (
     <TextPreview
-      text={ethAddress || uiManager.getAccount() || '<no account>'}
+      text={ethAddress || uiManager.getImpersonator() || '<no account>'}
       unFocusedWidth={'150px'}
       focusedWidth={'150px'}
     />

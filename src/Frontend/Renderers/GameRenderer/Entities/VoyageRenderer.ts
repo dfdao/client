@@ -48,7 +48,7 @@ export default class VoyageRenderer {
       return;
     } else if (!fromLoc && fromPlanet && toLoc && toPlanet) {
       // can draw a ring around dest, but don't know source location
-      const myMove = voyage.player === gameUIManager.getAccount();
+      const myMove = voyage.player === gameUIManager.getImpersonator();
       const now = nowMs / 1000;
       const timeLeft = voyage.arrivalTime - now;
       const radius = (timeLeft * fromPlanet.speed) / 100;
@@ -66,7 +66,7 @@ export default class VoyageRenderer {
     } else if (fromLoc && fromPlanet && toLoc && toPlanet) {
       // know source and destination locations
 
-      const myMove = voyage.player === gameUIManager.getAccount();
+      const myMove = voyage.player === gameUIManager.getImpersonator();
       const now = nowMs / 1000;
       let proportion = (now - voyage.departureTime) / (voyage.arrivalTime - voyage.departureTime);
       proportion = Math.max(proportion, 0.01);
@@ -151,7 +151,7 @@ export default class VoyageRenderer {
     for (const voyage of voyages) {
       const nowS = now / 1000;
       if (nowS < voyage.arrivalTime) {
-        const isMyVoyage = voyage.player === gameUIManager.getAccount();
+        const isMyVoyage = voyage.player === gameUIManager.getImpersonator();
         const sender = gameUIManager.getPlayer(voyage.player);
         this.drawVoyagePath(voyage.fromPlanet, voyage.toPlanet, true, isMyVoyage);
         this.drawFleet(voyage, sender);
