@@ -12,7 +12,7 @@ import {
   verifySignature,
   weiToEth,
 } from '@darkforest_eth/network';
-import { locationIdFromBigInt, locationIdToDecStr } from '@darkforest_eth/serde';
+import { locationIdFromBigInt, locationIdToDecStr, address } from '@darkforest_eth/serde';
 import {
   Artifact,
   ArtifactId,
@@ -166,6 +166,11 @@ class GameManager extends EventEmitter {
    * contract and view it without be able to make any moves.
    */
   private readonly account: EthAddress | undefined;
+
+  /**
+   * The ethereum address of the player who is being impersonated.
+   */
+  private readonly impersonator: EthAddress | undefined;
 
   /**
    * Map from ethereum addresses to player objects. This isn't stored in {@link GameObjects},
@@ -349,6 +354,7 @@ class GameManager extends EventEmitter {
   private constructor(
     terminal: React.MutableRefObject<TerminalHandle | undefined>,
     account: EthAddress | undefined,
+    impersonator: EthAddress | undefined,
     players: Map<string, Player>,
     touchedPlanets: Map<LocationId, Planet>,
     allTouchedPlanetIds: Set<LocationId>,
@@ -388,6 +394,7 @@ class GameManager extends EventEmitter {
 
     this.terminal = terminal;
     this.account = account;
+    this.impersonator = impersonator;
     this.players = players;
     this.worldRadius = worldRadius;
     this.gptCreditPriceEther = gptCreditPriceEther;
@@ -613,9 +620,13 @@ class GameManager extends EventEmitter {
     const useMockHash = initialState.contractConstants.DISABLE_ZK_CHECKS;
     const snarkHelper = SnarkArgsHelper.create(hashConfig, terminal, useMockHash);
 
+    const impersonator = address(await contractsAPI.coreContract.impersonator());
+    terminal.current?.println(`impersonator is ${impersonator}`)
+
     const gameManager = new GameManager(
       terminal,
       account,
+      impersonator,
       initialState.players,
       initialState.touchedAndLocatedPlanets,
       new Set(Array.from(initialState.allTouchedPlanetIds)),
@@ -635,7 +646,7 @@ class GameManager extends EventEmitter {
       initialState.gptCreditPriceEther,
       initialState.myGPTCredits
     );
-
+      
     gameManager.setPlayerTwitters(initialState.twitters);
 
     pollSetting(gameManager.getAccount(), Setting.AutoApproveNonPurchaseTransactions);
@@ -994,6 +1005,13 @@ class GameManager extends EventEmitter {
    */
   public getAccount(): EthAddress | undefined {
     return this.account;
+  }
+
+  /**
+ * Gets the address of the impersonator.
+ */
+    public getImpersonator(): EthAddress | undefined {
+    return this.impersonator;
   }
 
   /**
