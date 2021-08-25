@@ -2574,6 +2574,7 @@ class GameManager extends EventEmitter {
 
     const oldPlanet = this.entityStore.getPlanetWithLocation(oldLocation);
 
+    // I need a way to get the impersonator here.
     if ((!bypassChecks && !this.account) || !oldPlanet || oldPlanet.owner !== this.account) {
       throw new Error('attempted to move from a planet not owned by player');
     }
