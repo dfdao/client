@@ -468,7 +468,7 @@ class GameUIManager extends EventEmitter {
         this.selectedCoords = mouseUpOverCoords;
         this.terminal.current?.println(`Selected: ${mouseUpOverPlanet.locationId}`);
         this.terminal.current?.println(``);
-      } else if (mouseDownPlanet && mouseDownPlanet.owner === this.gameManager.getAccount()) {
+      } else if (mouseDownPlanet && mouseDownPlanet.owner === this.gameManager.getImpersonator()) {
         // move initiated if enough forces
         const from = mouseDownPlanet;
         const to = mouseUpOverPlanet;
