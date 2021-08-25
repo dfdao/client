@@ -608,6 +608,10 @@ class GameUIManager extends EventEmitter {
     return this.gameManager.getAccount();
   }
 
+  public getImpersonator(): EthAddress | undefined {
+    return this.gameManager.getImpersonator();
+  }
+
   public getTwitter(address: EthAddress | undefined): string | undefined {
     return this.gameManager.getTwitter(address);
   }
