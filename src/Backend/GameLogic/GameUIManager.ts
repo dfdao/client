@@ -219,13 +219,13 @@ class GameUIManager extends EventEmitter {
   }
 
   public getStringSetting(setting: Setting): string | undefined {
-    const address = this.getAccount();
+    const address = this.getImpersonator();
 
     return address && getSetting(address, setting);
   }
 
   public getBooleanSetting(setting: Setting): boolean {
-    const address = this.getAccount();
+    const address = this.getImpersonator();
 
     if (!address) {
       return false;
@@ -360,7 +360,7 @@ class GameUIManager extends EventEmitter {
   }
 
   public withdrawSilver(locationId: LocationId, amount: number) {
-    const dontShowWarningStorageKey = `${this.getAccount()?.toLowerCase()}-withdrawnWarningAcked`;
+    const dontShowWarningStorageKey = `${this.getImpersonator()?.toLowerCase()}-withdrawnWarningAcked`;
 
     if (localStorage.getItem(dontShowWarningStorageKey) !== 'true') {
       localStorage.setItem(dontShowWarningStorageKey, 'true');
@@ -468,7 +468,7 @@ class GameUIManager extends EventEmitter {
         this.selectedCoords = mouseUpOverCoords;
         this.terminal.current?.println(`Selected: ${mouseUpOverPlanet.locationId}`);
         this.terminal.current?.println(``);
-      } else if (mouseDownPlanet && mouseDownPlanet.owner === this.gameManager.getImpersonator()) {
+      } else if (mouseDownPlanet && mouseDownPlanet.owner === this.getImpersonator()) {
         // move initiated if enough forces
         const from = mouseDownPlanet;
         const to = mouseUpOverPlanet;
@@ -578,7 +578,7 @@ class GameUIManager extends EventEmitter {
   }
 
   public isOwnedByMe(planet: Planet): boolean {
-    return planet.owner === this.gameManager.getAccount();
+    return planet.owner === this.gameManager.getImpersonator();
   }
 
   public addNewChunk(chunk: Chunk) {
@@ -629,7 +629,7 @@ class GameUIManager extends EventEmitter {
   }
 
   private getBiomeKey(biome: Biome) {
-    return `${this.getAccount()}-${this.gameManager.getContractAddress()}-biome-${biome}`;
+    return `${this.getImpersonator()}-${this.gameManager.getContractAddress()}-biome-${biome}`;
   }
 
   public getDiscoverBiomeName(biome: Biome): string {
@@ -745,7 +745,7 @@ class GameUIManager extends EventEmitter {
 
   public onDiscoveredChunk(chunk: Chunk): void {
     const res = this.gameManager.getCurrentlyExploringChunk();
-    const account = this.getAccount();
+    const account = this.getImpersonator();
 
     if (res) {
       const { bottomLeft, sideLength } = res;
@@ -920,7 +920,7 @@ class GameUIManager extends EventEmitter {
     if (!planet) {
       return undefined;
     }
-    return planet.owner === this.gameManager.getAccount() ? planet : undefined;
+    return planet.owner === this.gameManager.getImpersonator() ? planet : undefined;
   }
 
   public getMyArtifacts(): Artifact[] {
@@ -1014,7 +1014,7 @@ class GameUIManager extends EventEmitter {
   }
 
   public getIsHighPerfMode(): boolean {
-    const account = this.getAccount();
+    const account = this.getImpersonator();
 
     if (account === undefined) {
       return false;
