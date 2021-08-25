@@ -2578,6 +2578,9 @@ class GameManager extends EventEmitter {
     // if ((!bypassChecks && !this.account) || !oldPlanet || oldPlanet.owner !== this.account) {
     //   throw new Error('attempted to move from a planet not owned by player');
     // }
+    if ((!bypassChecks && !this.account) || !oldPlanet) {
+      throw new Error('attempted to move from a planet not owned by player');
+    }
     const actionId = getRandomActionId();
     const txIntent: UnconfirmedMove = {
       actionId,
