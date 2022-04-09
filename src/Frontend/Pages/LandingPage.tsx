@@ -7,7 +7,7 @@ import { Btn } from '../Components/Btn';
 import { EmSpacer, Link, Spacer, Title } from '../Components/CoreUI';
 import { EmailCTA, EmailCTAMode } from '../Components/Email';
 import { Modal } from '../Components/Modal';
-import { HideSmall, Sub, Text, White } from '../Components/Text';
+import { HideSmall, Red, Sub, Text, White } from '../Components/Text';
 import dfstyles from '../Styles/dfstyles';
 import { LandingPageRoundArt } from '../Views/LandingPageRoundArt';
 import { LeadboardDisplay } from '../Views/Leaderboard';
@@ -19,11 +19,11 @@ export const enum LandingPageZIndex {
 }
 
 const links = {
-  twitter: 'http://twitter.com/darkforest_eth',
+  twitter: 'http://twitter.com/d_fdao',
   email: 'mailto:contact@zkga.me',
-  blog: 'https://blog.zkga.me/',
-  discord: 'https://discord.gg/2u2TN6v8r6',
-  github: 'https://github.com/darkforest-eth',
+  blog: 'https://medium.com/dfdao',
+  discord: 'https://discord.gg/5NJ72xmE',
+  github: 'https://github.com/dfdao',
 };
 
 const defaultAddress = address(CONTRACT_ADDRESS);
@@ -45,7 +45,8 @@ export default function LandingPage() {
   return (
     <>
       <PrettyOverlayGradient />
-      <Hiring />
+      {/* <Hiring /> */}
+      <WhatsNew/>
 
       <Page>
         <Spacer height={150} />
@@ -57,19 +58,18 @@ export default function LandingPage() {
             <p>
               <White>Dark Forest</White> <Text>zkSNARK space warfare</Text>
               <br />
-              <Text>Round 5: </Text>
-              <White>The Junk Wars</White>
+              <Red>Battle Arena</Red>
             </p>
 
             <Spacer height={16} />
 
             <ButtonWrapper>
               <Btn size='large' onClick={() => history.push(`/lobby/${defaultAddress}`)}>
-                Create Lobby
+                Create Arena
               </Btn>
-              <Btn size='large' onClick={() => history.push(`/play/${defaultAddress}`)}>
-                Enter Round 5
-              </Btn>
+              {/* <Btn size='large' onClick={() => history.push(`/play/${defaultAddress}`)}>
+                Join Lobby
+              </Btn> */}
             </ButtonWrapper>
           </Header>
 
@@ -229,7 +229,7 @@ export default function LandingPage() {
 
         <Spacer height={128} />
 
-        <LeadboardDisplay />
+        {/* <LeadboardDisplay /> */}
 
         <Spacer height={256} />
       </Page>
@@ -249,8 +249,7 @@ const VariousLinksContainer = styled.div`
 const PrettyOverlayGradient = styled.div`
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(to left top, rgba(73, 10, 219, 0.2), rgba(1, 255, 1, 0.2)) fixed;
-  background-position: 50%, 50%;
+  background-image: linear-gradient(to right bottom, #511111, #5b0023, #5d003c, #510659, #262077);  background-position: 50%, 50%;
   display: inline-block;
   position: fixed;
   top: 0;
@@ -349,23 +348,26 @@ function Hiring() {
     <Modal contain={['top', 'left', 'right']} initialX={50} initialY={50}>
       <Title slot='title'>Dark Forest is Hiring!</Title>
       <div style={{ maxWidth: '300px', textAlign: 'justify' }}>
-        We are looking for experienced full stack and solidity developers to join our team! If you
-        like what you see,{' '}
-        <Link to='https://docs.google.com/forms/d/e/1FAIpQLSdaWvjxX4TrDDLidPXtgk6UW3rC082rpvi3AIPkCPxAahg_rg/viewform?usp=sf_link'>
-          consider applying
-        </Link>
-        . If you know someone who you think would be a great fit for our team,{' '}
-        <Link to='https://docs.google.com/forms/d/e/1FAIpQLScku_bQDbkPqpHrwBzOBfQ4SV6Nw6Tgxi6zWQL8Bb0olyBE3w/viewform?usp=sf_link'>
-          please refer them here
-        </Link>
-        .
-        <br />
-        <br />
-        Learn more about the role{' '}
-        <Link to='https://ivanchub.notion.site/Dark-Forest-is-Hiring-ad1f0cbe816640fb9b4c663dacaaca04'>
-          here
-        </Link>
-        .
+        <ul>
+          <li><i>Spawn Planets</i>, which players automatically spawn on</li>
+          <li><i>Target Planets</i>, which players must invade and capture to win</li>
+          <li>A <i>move cap</i></li>
+          <li>More control over game constants like planet regen and move speed</li>
+        </ul>
+      </div>
+    </Modal>
+  );
+}
+
+function WhatsNew() {
+  return (
+    <Modal contain={['top', 'left', 'right']} initialX={50} initialY={50}>
+      <Title slot='title'>What's new:</Title>
+      <div style={{ maxWidth: '300px', textAlign: 'justify' }}>
+        <ul>
+          <li> (V0.1) <i>Spawn Planets</i>, which players automatically spawn on</li>
+          <li> (V0.1) <i>Target Planets</i>, which players must invade and capture to win</li>
+        </ul>
       </div>
     </Modal>
   );
