@@ -109,7 +109,7 @@ export class PlanetCreator {
       };
 
       const tx = await this.contract.submitTransaction(txIntent, {
-        gasLimit: '16777215',
+        gasLimit: '15000000',
       });
 
       await tx.confirmedPromise;
