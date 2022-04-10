@@ -216,7 +216,7 @@ function ConfigurationNavigation({
       {buttons}
       <Spacer height={20} />
       {!created && (
-        <Btn size='stretch' onClick={onCreate}>
+        <Btn size='stretch' onClick={onCreate} disabled = {createDisabled}>
           {creating ? <LoadingSpinner initialText={statusMessage} /> : 'Create Lobby'}
         </Btn>
       )}

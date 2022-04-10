@@ -327,6 +327,15 @@ class GameManager extends EventEmitter {
    */
   private worldRadius: number;
 
+    /**
+   * Admin can change the move cap. Emits an event for ui to render.
+   *
+   * @todo move this into a new `GameConfiguration` class.
+   */
+     private moveCap: number;
+
+     public moveCap$: Monomitter<void>;
+
   /**
    * Emits whenever we load the network health summary from the webserver, which is derived from
    * diagnostics that the client sends up to the webserver as well.
@@ -388,7 +397,8 @@ class GameManager extends EventEmitter {
     ethConnection: EthConnection,
     paused: boolean,
     gameover: boolean,
-    winners: string[]
+    winners: string[],
+    moveCap: number
   ) {
     super();
 
@@ -417,6 +427,8 @@ class GameManager extends EventEmitter {
     this.gameover = gameover;
     this.winners = winners;
     this.gameover$ = monomitter(true);
+    this.moveCap = moveCap;
+    this.moveCap$ = monomitter(true);
 
     if (contractConstants.CAPTURE_ZONES_ENABLED) {
       this.captureZoneGenerator = new CaptureZoneGenerator(
@@ -691,7 +703,8 @@ class GameManager extends EventEmitter {
       connection,
       initialState.paused,
       initialState.gameover,
-      initialState.winners
+      initialState.winners,
+      initialState.moveCap
     );
 
     gameManager.setPlayerTwitters(initialState.twitters);
@@ -872,6 +885,10 @@ class GameManager extends EventEmitter {
       .on(ContractsAPIEvent.RadiusUpdated, async () => {
         const newRadius = await gameManager.contractsAPI.getWorldRadius();
         gameManager.setRadius(newRadius);
+      })
+      .on(ContractsAPIEvent.MoveCapChanged, async (moveCap : number) => {
+        gameManager.moveCap = moveCap;
+        gameManager.moveCap$.publish();
       })
       .on(ContractsAPIEvent.Gameover, async () => {
         gameManager.setGameover(true);
@@ -1270,6 +1287,15 @@ class GameManager extends EventEmitter {
 
   public getDefaultSpaceJunkForPlanetLevel(level: number) {
     return this.contractConstants.PLANET_LEVEL_JUNK[level];
+  }
+
+  public getPlayerMoves(addr: EthAddress): number | undefined {
+    const player = this.players.get(addr);
+    return player?.moves;
+  }
+
+  public getMoveCapEnabled(): boolean {
+    return this.contractConstants.MOVE_CAP_ENABLED;
   }
 
   private initMiningManager(homeCoords: WorldCoords, cores?: number): void {
@@ -2099,15 +2125,12 @@ class GameManager extends EventEmitter {
         const potentialHomeIds = spawnPlanets.filter(planetId => {
           const planet = this.getGameObjects().getPlanetWithId(planetId);
           if(!planet) {
-            console.log("not a planet")
             return false;
           }
-          console.log(`planet has owner: ${planet.owner}`);
           if(planet.owner !== ZERO_ADDRESS) {
             return false;
           }
           if(!isLocatable(planet)) {
-            console.log("planet not locatable");
             return false;
           }
           return true;
@@ -2920,6 +2943,8 @@ class GameManager extends EventEmitter {
         throw new Error('game has ended');
       }
 
+      
+
       const arrivalsToOriginPlanet = this.entityStore.getArrivalIdsForLocation(from);
       const hasIncomingVoyage = arrivalsToOriginPlanet && arrivalsToOriginPlanet.length > 0;
       if (abandoning && hasIncomingVoyage) {
@@ -2959,6 +2984,11 @@ class GameManager extends EventEmitter {
         !isSpaceShip(this.getArtifactWithId(artifactMoved)?.artifactType)
       ) {
         throw new Error('attempted to move from a planet not owned by player');
+      }
+      
+      const moves = this.getPlayer(this.account)?.moves;
+      if(this.getMoveCapEnabled() && (moves == undefined  || this.getMoveCap() <= moves)) {
+        throw new Error('player hit move limit');
       }
 
       const getArgs = async (): Promise<unknown[]> => {
@@ -3706,6 +3736,10 @@ class GameManager extends EventEmitter {
 
   public getWinners(): string[] {
     return this.winners;
+  }
+
+  public getMoveCap(): number {
+    return this.moveCap;
   }
 }
 

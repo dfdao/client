@@ -220,7 +220,8 @@ export class ContractsAPI extends EventEmitter {
           contract.filters.PauseStateChanged(null).topics,
           contract.filters.LobbyCreated(null, null).topics,
           contract.filters.TargetPlanetInvaded(null, null).topics,
-          contract.filters.Gameover(null).topics
+          contract.filters.Gameover(null).topics,
+          contract.filters.MoveCapChanged(null).topics,
         ].map((topicsOrUndefined) => (topicsOrUndefined || [])[0]),
       ] as Array<string | Array<string>>,
     };
@@ -371,7 +372,13 @@ export class ContractsAPI extends EventEmitter {
       [ContractEvent.Gameover]: (location: EthersBN) => {
         this.emit(ContractsAPIEvent.PlanetUpdate, locationIdFromEthersBN(location));
         this.emit(ContractsAPIEvent.Gameover);
-      }
+      },
+      [ContractEvent.MoveCapChanged]: (moveCap: EthersBN) => {
+        this.emit(ContractsAPIEvent.MoveCapChanged, moveCap.toNumber());
+      },
+      [ContractEvent.PlayerMoveCountChanged]: (_playerAddress: string) => {
+        this.emit(ContractsAPIEvent.PlayerUpdate, address(_playerAddress));
+      },
     };
 
     this.ethConnection.subscribeToContractEvents(contract, eventHandlers, filter);
@@ -396,6 +403,8 @@ export class ContractsAPI extends EventEmitter {
     contract.removeAllListeners(ContractEvent.PlanetCaptured);
     contract.removeAllListeners(ContractEvent.TargetPlanetInvaded);
     contract.removeAllListeners(ContractEvent.Gameover);
+    contract.removeAllListeners(ContractEvent.MoveCapChanged);
+    contract.removeAllListeners(ContractEvent.PlayerMoveCountChanged);
   }
 
   public getContractAddress(): EthAddress {
@@ -449,17 +458,14 @@ export class ContractsAPI extends EventEmitter {
       CAPTURE_ZONES_PER_5000_WORLD_RADIUS,
     } = await this.makeCall(this.contract.getGameConstants);
 
-    const {
-      MANUAL_SPAWN,
-      TARGET_PLANET_HOLD_BLOCKS_REQUIRED,
-      TARGET_PLANETS
-    } = await this.makeCall(this.contract.getArenaConstants);
-
+    const { MANUAL_SPAWN, TARGET_PLANET_HOLD_BLOCKS_REQUIRED, TARGET_PLANETS, MOVE_CAP_ENABLED } =
+      await this.makeCall(this.contract.getArenaConstants);
 
     const TOKEN_MINT_END_SECONDS = (
       await this.makeCall(this.contract.TOKEN_MINT_END_TIMESTAMP)
     ).toNumber();
 
+    const moveCap = (await this.makeCall(this.contract.getMoveCap)).toNumber();
     const adminAddress = address(await this.makeCall(this.contract.adminAddress));
 
     const upgrades = decodeUpgradeBranches(await this.makeCall(this.contract.getUpgrades));
@@ -580,6 +586,9 @@ export class ContractsAPI extends EventEmitter {
       MANUAL_SPAWN: MANUAL_SPAWN,
       TARGET_PLANETS: TARGET_PLANETS,
       TARGET_PLANET_HOLD_BLOCKS_REQUIRED: TARGET_PLANET_HOLD_BLOCKS_REQUIRED.toNumber(),
+
+      MOVE_CAP_ENABLED: MOVE_CAP_ENABLED,
+      MOVE_CAP: moveCap,
     };
 
     return constants;
@@ -590,32 +599,48 @@ export class ContractsAPI extends EventEmitter {
   ): Promise<Map<string, Player>> {
     const nPlayers: number = (await this.makeCall<EthersBN>(this.contract.getNPlayers)).toNumber();
 
-    const players = await aggregateBulkGetter<Player>(
+    const rawPlayers = await aggregateBulkGetter(
       nPlayers,
       200,
-      async (start, end) =>
-        (await this.makeCall(this.contract.bulkGetPlayers, [start, end])).map(decodePlayer),
+      async (start, end) => await this.makeCall(this.contract.bulkGetPlayers, [start, end]),
+      onProgress
+    );
+
+    const arenaPlayers = await aggregateBulkGetter(
+      nPlayers,
+      200,
+      async (start, end) => await this.makeCall(this.contract.bulkGetArenaPlayers, [start, end]),
       onProgress
     );
 
     const playerMap: Map<EthAddress, Player> = new Map();
-    for (const player of players) {
-      playerMap.set(player.address, player);
+
+    for (let i = 0; i < nPlayers; i++) {
+      if (!!rawPlayers) {
+        const player = decodePlayer(rawPlayers[i], arenaPlayers[i]);
+        playerMap.set(player.address, player);
+      }
     }
     return playerMap;
   }
 
   public async getPlayerById(playerId: EthAddress): Promise<Player | undefined> {
     const rawPlayer = await this.makeCall(this.contract.players, [playerId]);
-    if (!rawPlayer.isInitialized) return undefined;
-    const player = decodePlayer(rawPlayer);
+    const arenaPlayer = await this.makeCall(this.contract.arenaPlayers, [playerId]);
 
+    if (!rawPlayer.isInitialized) return undefined;
+    const player = decodePlayer(rawPlayer, arenaPlayer);
     return player;
   }
 
   public async getWorldRadius(): Promise<number> {
     const radius = (await this.makeCall<EthersBN>(this.contract.worldRadius)).toNumber();
     return radius;
+  }
+
+  public async getMoveCap(): Promise<number> {
+    const moveCap = (await this.makeCall<EthersBN>(this.contract.getMoveCap)).toNumber();
+    return moveCap;
   }
 
   // timestamp since epoch (in seconds)
@@ -679,13 +704,18 @@ export class ContractsAPI extends EventEmitter {
     startingAt: number,
     onProgress?: (fractionCompleted: number) => void
   ): Promise<LocationId[]> {
-    const nPlanets: number = (await this.makeCall<EthersBN>(this.contract.getNTargetPlanets)).toNumber();
+    const nPlanets: number = (
+      await this.makeCall<EthersBN>(this.contract.getNTargetPlanets)
+    ).toNumber();
 
     const planetIds = await aggregateBulkGetter<EthersBN>(
       nPlanets - startingAt,
       1000,
       async (start, end) =>
-        await this.makeCall(this.contract.bulkGetTargetPlanetIds, [start + startingAt, end + startingAt]),
+        await this.makeCall(this.contract.bulkGetTargetPlanetIds, [
+          start + startingAt,
+          end + startingAt,
+        ]),
       onProgress
     );
     return planetIds.map(locationIdFromEthersBN);
@@ -695,13 +725,18 @@ export class ContractsAPI extends EventEmitter {
     startingAt: number,
     onProgress?: (fractionCompleted: number) => void
   ): Promise<LocationId[]> {
-    const nPlanets: number = (await this.makeCall<EthersBN>(this.contract.getNSpawnPlanets)).toNumber();
+    const nPlanets: number = (
+      await this.makeCall<EthersBN>(this.contract.getNSpawnPlanets)
+    ).toNumber();
 
     const planetIds = await aggregateBulkGetter<EthersBN>(
       nPlanets - startingAt,
       1000,
       async (start, end) =>
-        await this.makeCall(this.contract.bulkGetSpawnPlanetIds, [start + startingAt, end + startingAt]),
+        await this.makeCall(this.contract.bulkGetSpawnPlanetIds, [
+          start + startingAt,
+          end + startingAt,
+        ]),
       onProgress
     );
     return planetIds.map(locationIdFromEthersBN);

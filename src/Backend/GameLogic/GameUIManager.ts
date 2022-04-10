@@ -1304,6 +1304,10 @@ class GameUIManager extends EventEmitter {
     return this.contractConstants.SPACE_JUNK_ENABLED;
   }
 
+  public getMoveCapEnabled(): boolean {
+    return this.contractConstants.MOVE_CAP_ENABLED;
+  }
+
   public get captureZonesEnabled(): boolean {
     return this.contractConstants.CAPTURE_ZONES_ENABLED;
   }

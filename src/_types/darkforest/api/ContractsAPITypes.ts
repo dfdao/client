@@ -60,7 +60,9 @@ export const enum ContractEvent {
   PauseStateChanged = 'PauseStateChanged',
   LobbyCreated = 'LobbyCreated',
   TargetPlanetInvaded = 'TargetPlanetInvaded',
-  Gameover = 'Gameover'
+  Gameover = 'Gameover',
+  MoveCapChanged = 'MoveCapChanged',
+  PlayerMoveCountChanged = 'PlayerMoveCapChanged',
 }
 
 export const enum ContractsAPIEvent {
@@ -108,7 +110,8 @@ export const enum ContractsAPIEvent {
   PlanetTransferred = 'PlanetTransferred',
   LobbyCreated = 'LobbyCreated',
   TargetPlanetInvaded = 'TargetPlanetInvaded',
-  Gameover = "Gameover"
+  Gameover = 'Gameover',
+  MoveCapChanged = 'MoveCapChanged'
 }
 
 // planet locationID(BigInt), branch number
@@ -314,6 +317,9 @@ export interface ContractConstants {
   MANUAL_SPAWN: boolean;
   TARGET_PLANETS: boolean;
   TARGET_PLANET_HOLD_BLOCKS_REQUIRED: number;
+
+  MOVE_CAP_ENABLED: boolean;
+  MOVE_CAP: number;
 }
 
 export type ClientMockchainData =

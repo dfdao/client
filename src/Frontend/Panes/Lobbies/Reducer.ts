@@ -115,10 +115,10 @@ export type LobbyConfigAction =
     }
   | { type: 'WHITELIST_ENABLED'; value: boolean | undefined }
   | {
-    type: 'ADMIN_PLANETS';
-    value: AdminPlanet | undefined;
-    index: number;
-  }
+      type: 'ADMIN_PLANETS';
+      value: AdminPlanet | undefined;
+      index: number;
+    }
   | { type: 'MANUAL_SPAWN'; value: Initializers['MANUAL_SPAWN'] | undefined }
   | {
       type: 'TARGET_PLANETS';
@@ -127,6 +127,14 @@ export type LobbyConfigAction =
   | {
       type: 'TARGET_PLANET_HOLD_BLOCKS_REQUIRED';
       value: Initializers['TARGET_PLANET_HOLD_BLOCKS_REQUIRED'] | undefined;
+    }
+  | {
+      type: 'MOVE_CAP_ENABLED';
+      value: Initializers['MOVE_CAP_ENABLED'] | undefined;
+    }
+  | {
+      type: 'MOVE_CAP';
+      value: Initializers['MOVE_CAP'] | undefined;
     };
 
 // TODO(#2328): WHITELIST_ENABLED should just be on Initializers
@@ -342,6 +350,14 @@ export function lobbyConfigReducer(state: LobbyConfigState, action: LobbyAction)
     }
     case 'ADMIN_PLANETS': {
       update = ofAdminPlanets(action, state);
+      break;
+    }
+    case 'MOVE_CAP_ENABLED': {
+      update = ofBoolean(action, state);
+      break;
+    }
+    case 'MOVE_CAP': {
+      update = ofPositiveInteger(action, state);
       break;
     }
     case 'RESET': {
@@ -842,6 +858,28 @@ export function lobbyConfigInit(startingConfig: LobbyInitializers) {
         break;
       }
       case 'TARGET_PLANET_HOLD_BLOCKS_REQUIRED': {
+        const defaultValue = startingConfig[key];
+        state[key] = {
+          currentValue: defaultValue,
+          displayValue: defaultValue,
+          defaultValue,
+          warning: undefined,
+        };
+        break;
+      }
+      case 'MOVE_CAP': {
+        // Default this to false if we don't have it
+        const defaultValue = startingConfig[key];
+        state[key] = {
+          currentValue: defaultValue,
+          displayValue: defaultValue,
+          defaultValue,
+          warning: undefined,
+        };
+        break;
+      }
+      case 'MOVE_CAP_ENABLED': {
+        // Default this to false if we don't have it
         const defaultValue = startingConfig[key];
         state[key] = {
           currentValue: defaultValue,

@@ -42,6 +42,7 @@ export interface InitialGameState {
   paused: boolean;
   gameover: boolean;
   winners: string[];
+  moveCap: number;
 }
 
 export class InitialGameStateDownloader {
@@ -176,6 +177,7 @@ export class InitialGameStateDownloader {
     const paused = contractsAPI.getIsPaused();
     const gameover = contractsAPI.getGameover();
     const winners = contractsAPI.getWinners();
+    const moveCap = contractsAPI.getMoveCap();
 
     const initialState: InitialGameState = {
       contractConstants: await contractConstants,
@@ -196,7 +198,8 @@ export class InitialGameStateDownloader {
       twitters,
       paused: await paused,
       gameover : await gameover,
-      winners : await winners
+      winners : await winners,
+      moveCap: await moveCap
     };
 
     return initialState;

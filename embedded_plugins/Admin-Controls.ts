@@ -190,6 +190,26 @@ async function addAddressToWhitelist(address: EthAddress) {
   return tx;
 }
 
+async function changeMoveCap(newMoveCap: number) {
+  const tx = await df.submitTransaction({
+    args: Promise.resolve([newMoveCap]),
+    contract: df.getContract(),
+    methodName: 'setMoveCap' as ContractMethodName,
+  });
+
+  return tx;
+}
+
+async function setPlayerMoveCount(address: EthAddress, moveCount: number) {
+  const tx = await df.submitTransaction({
+    args: Promise.resolve([address, moveCount]),
+    contract: df.getContract(),
+    methodName: 'setPlayerMove' as ContractMethodName,
+  });
+
+  return tx;
+}
+
 function PlanetLink({ planetId }: { planetId?: LocationId }) {
   if (planetId) {
     return html`<a
@@ -285,6 +305,9 @@ function App() {
   const [shipAccount, setShipAccount] = useState(null);
   const [planetAccount, setPlanetAccount] = useState(null);
   const [artifactAccount, setArtifactAccount] = useState(null);
+  const [moveCap, setMoveCap] = useState(null);
+  const [moveAccount, setMoveAccount] = useState(null);
+  const [moveCount, setMoveCount] = useState(null);
 
   useEffect(() => {
     const account = df.getAccount();
@@ -292,6 +315,7 @@ function App() {
     setShipAccount(account);
     setPlanetAccount(account);
     setArtifactAccount(account);
+    setMoveAccount(account);
   }, []);
 
   useEffect(() => {
@@ -406,6 +430,37 @@ function App() {
           Give Artifact
         </df-button>
       </div>
+      ${df.getMoveCapEnabled() ? 
+      html`<${Heading} title="Change Move Limit" />
+      <div style=${rowStyle}>
+        <df-text-input
+          style=${{ flex: '1' }}
+          value=${moveCap}
+          onInput=${(e: InputEvent) => setMoveCap((e.target as HTMLInputElement).value)}
+          placeholder="New Move Limit"
+        ></df-text-input>
+        <df-button onClick=${() => changeMoveCap(moveCap)}> Change Move Limit </df-button>
+      </div>
+      <${Heading} title="Change Player Move Count" />
+      <div style=${rowStyle}>
+      <df-text-input
+      style=${{ flex: '1' }}
+      value=${moveCount}
+      onInput=${(e: InputEvent) => setMoveCount((e.target as HTMLInputElement).value)}
+      placeholder="New Move Count"
+    ></df-text-input>
+        <span> to </span>
+        <df-text-input
+        style=${{ flex: '1' }}
+        value=${moveAccount}
+        onInput=${(e: InputEvent) => setMoveAccount((e.target as HTMLInputElement).value)}
+        placeholder="Address"
+      ></df-text-input>
+        <df-button onClick=${() => setPlayerMoveCount(moveAccount, moveCount)}>
+          Update Moves
+        </df-button>
+      </div>` : null
+      }
     </div>
   `;
 }

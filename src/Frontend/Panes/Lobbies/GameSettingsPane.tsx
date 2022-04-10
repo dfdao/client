@@ -67,6 +67,34 @@ export function GameSettingsPane({ config, onUpdate }: LobbiesPaneProps) {
       <Row>
         <Warning>{config.SILVER_SCORE_VALUE.warning}</Warning>
       </Row>
+      <Row>
+        <Checkbox
+          label='Move cap enabled?'
+          checked={config.MOVE_CAP_ENABLED.displayValue}
+          onChange={(e: Event & React.ChangeEvent<DarkForestCheckbox>) =>
+            onUpdate({ type: 'MOVE_CAP_ENABLED', value: e.target.checked })
+          }
+        />
+      </Row>
+      <Row>
+        <Warning>{config.MOVE_CAP_ENABLED.warning}</Warning>
+      </Row>
+      {config.MOVE_CAP_ENABLED.displayValue && (
+        <>
+          <Row>
+            <span>Set move cap</span>
+            <NumberInput
+              value={config.MOVE_CAP.displayValue}
+              onChange={(e: Event & React.ChangeEvent<DarkForestNumberInput>) => {
+                onUpdate({ type: 'MOVE_CAP', value: e.target.value });
+              }}
+            />
+          </Row>
+          <Row>
+            <Warning>{config.MOVE_CAP.warning}</Warning>
+          </Row>
+        </>
+      )}
     </>
   );
 }
