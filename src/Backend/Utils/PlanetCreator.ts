@@ -113,7 +113,10 @@ export class PlanetCreator {
       });
 
       await tx.confirmedPromise;
-    } catch (e) {}
+    } catch (e) {
+      alert(`Error: ${e}`);
+      console.log(e)
+    }
   }
 
   async revealPlanet(
@@ -152,11 +155,16 @@ export class PlanetCreator {
     };
 
     // Always await the submitTransaction so we can catch rejections
+    try{
     const tx = await this.contract.submitTransaction(txIntent);
     console.log(`reveal tx submitted`);
 
     await tx.confirmedPromise;
     console.log(`reveal tx accepted`);
+    } catch(e){
+      alert(`Error: ${e}`);
+      console.log(e);
+    }
   }
 
   private async makeRevealProof(
