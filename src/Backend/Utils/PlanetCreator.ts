@@ -109,7 +109,6 @@ export class PlanetCreator {
       };
 
       const tx = await this.contract.submitTransaction(txIntent, {
-        // The createLobby function costs somewhere around 12mil gas
         gasLimit: '16777215',
       });
 
