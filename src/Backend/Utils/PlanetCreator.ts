@@ -87,36 +87,31 @@ export class PlanetCreator {
 
   async createPlanet(planet: AdminPlanet, initializers: LobbyInitializers) {
     const planetData = this.generatePlanetData(planet, initializers);
-    try {
-      const locNum = planetData.location as BigNumberish;
+    const locNum = planetData.location as BigNumberish;
 
-      const args = Promise.resolve([
-        {
-          location: locNum,
-          perlin: planetData.perlinValue,
-          level: planet.level,
-          planetType: planet.planetType,
-          requireValidLocationId: planet.requireValidLocationId,
-          isTargetPlanet: planet.isTargetPlanet,
-          isSpawnPlanet: planet.isSpawnPlanet,
-        },
-      ]);
+    const args = Promise.resolve([
+      {
+        location: locNum,
+        perlin: planetData.perlinValue,
+        level: planet.level,
+        planetType: planet.planetType,
+        requireValidLocationId: planet.requireValidLocationId,
+        isTargetPlanet: planet.isTargetPlanet,
+        isSpawnPlanet: planet.isSpawnPlanet,
+      },
+    ]);
 
-      const txIntent: UnconfirmedCreateArenaPlanet = {
-        methodName: ContractMethodName.CREATE_ARENA_PLANET,
-        contract: this.contract.contract,
-        args: args,
-      };
+    const txIntent: UnconfirmedCreateArenaPlanet = {
+      methodName: ContractMethodName.CREATE_ARENA_PLANET,
+      contract: this.contract.contract,
+      args: args,
+    };
 
-      const tx = await this.contract.submitTransaction(txIntent, {
-        gasLimit: '15000000',
-      });
+    const tx = await this.contract.submitTransaction(txIntent, {
+      gasLimit: '15000000',
+    });
 
-      await tx.confirmedPromise;
-    } catch (e) {
-      alert(`Error: ${e}`);
-      console.log(e)
-    }
+    await tx.confirmedPromise;
   }
 
   async revealPlanet(
@@ -155,16 +150,11 @@ export class PlanetCreator {
     };
 
     // Always await the submitTransaction so we can catch rejections
-    try{
     const tx = await this.contract.submitTransaction(txIntent);
     console.log(`reveal tx submitted`);
 
     await tx.confirmedPromise;
     console.log(`reveal tx accepted`);
-    } catch(e){
-      alert(`Error: ${e}`);
-      console.log(e);
-    }
   }
 
   private async makeRevealProof(
