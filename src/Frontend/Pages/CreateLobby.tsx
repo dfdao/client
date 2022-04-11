@@ -162,8 +162,6 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
     }
 
     const initializers = { ...startingConfig, ...config };
-
-    console.log(initializers);
     const InitABI = await fetch(initContractAbiUrl).then((r) => r.json());
     const artifactBaseURI = '';
     const initInterface = Contract.getInterface(InitABI);
