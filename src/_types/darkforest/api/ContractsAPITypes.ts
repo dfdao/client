@@ -314,6 +314,16 @@ export interface ContractConstants {
   MANUAL_SPAWN: boolean;
   TARGET_PLANETS: boolean;
   TARGET_PLANET_HOLD_BLOCKS_REQUIRED: number;
+  MULTIPLIERS : [
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+  ]
 }
 
 export type ClientMockchainData =

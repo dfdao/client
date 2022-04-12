@@ -127,6 +127,11 @@ export type LobbyConfigAction =
   | {
       type: 'TARGET_PLANET_HOLD_BLOCKS_REQUIRED';
       value: Initializers['TARGET_PLANET_HOLD_BLOCKS_REQUIRED'] | undefined;
+    }
+    | {
+      type: 'MULTIPLIERS';
+      index: number;
+      value: number | undefined;
     };
 
 // TODO(#2328): WHITELIST_ENABLED should just be on Initializers
@@ -350,6 +355,10 @@ export function lobbyConfigReducer(state: LobbyConfigState, action: LobbyAction)
         ...state,
         ...action.value,
       };
+    }
+    case 'MULTIPLIERS': {
+      update = ofMultipliers(action, state);
+      break;
     }
     default: {
       // https://www.typescriptlang.org/docs/handbook/2/narrowing.html#exhaustiveness-checking
@@ -842,6 +851,17 @@ export function lobbyConfigInit(startingConfig: LobbyInitializers) {
         break;
       }
       case 'TARGET_PLANET_HOLD_BLOCKS_REQUIRED': {
+        const defaultValue = startingConfig[key];
+        state[key] = {
+          currentValue: defaultValue,
+          displayValue: defaultValue,
+          defaultValue,
+          warning: undefined,
+        };
+        break;
+      }
+      case 'MULTIPLIERS': {
+        // Default this to false if we don't have it
         const defaultValue = startingConfig[key];
         state[key] = {
           currentValue: defaultValue,
@@ -1939,6 +1959,66 @@ export function ofAdminPlanets(
 
   currentValue[index] = value;
   displayValue[index] = value;
+
+  return {
+    ...state[type],
+    currentValue,
+    displayValue,
+    warning: undefined,
+  };
+}
+
+export function ofMultipliers(
+  { type, index, value }: Extract<LobbyConfigAction, { type: 'MULTIPLIERS' }>,
+  state: LobbyConfigState
+) {
+  const prevCurrentValue = state[type].currentValue;
+  const prevDisplayValue = state[type].displayValue;
+
+  if (!prevDisplayValue) {
+    return {
+      ...state[type],
+      warning: `Failed to update ${type}`,
+    };
+  }
+
+  if (value === undefined) {
+    return {
+      ...state[type],
+      warning: undefined,
+    };
+  }
+
+  const currentValue = [...prevCurrentValue];
+  const displayValue = [...prevDisplayValue];
+
+  displayValue[index] = value;
+
+  if (typeof value !== 'number') {
+    return {
+      ...state[type],
+      displayValue,
+      warning: `Value must be a number`,
+    };
+  }
+
+  if (value <= 0) {
+    return {
+      ...state[type],
+      displayValue,
+      warning: `Value must be greater than 0`,
+    };
+  }
+
+  if (value > SAFE_UPPER_BOUNDS) {
+    return {
+      ...state[type],
+      displayValue,
+      warning: `Value is too large`,
+    };
+  }
+
+  currentValue[index] = value;
 
   return {
     ...state[type],
