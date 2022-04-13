@@ -453,7 +453,8 @@ export class ContractsAPI extends EventEmitter {
       MANUAL_SPAWN,
       TARGET_PLANET_HOLD_BLOCKS_REQUIRED,
       TARGET_PLANETS,
-      MODIFIERS
+      MODIFIERS,
+      SPACESHIPS
     } = await this.makeCall(this.contract.getArenaConstants);
 
 
@@ -590,6 +591,13 @@ export class ContractsAPI extends EventEmitter {
         MODIFIERS[5].toNumber(),
         MODIFIERS[6].toNumber(),
         MODIFIERS[7].toNumber()
+      ],
+      SPACESHIPS: [
+        SPACESHIPS[0],
+        SPACESHIPS[1],
+        SPACESHIPS[2],
+        SPACESHIPS[3],
+        SPACESHIPS[4]
       ]
     };
 

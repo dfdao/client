@@ -146,7 +146,8 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
             TARGET_PLANET_HOLD_BLOCKS_REQUIRED: config.TARGET_PLANET_HOLD_BLOCKS_REQUIRED,
             MANUAL_SPAWN: config.MANUAL_SPAWN,
             ADMIN_PLANETS: [],
-            MODIFIERS: config.MODIFIERS
+            MODIFIERS: config.MODIFIERS,
+            SPACESHIPS: config.SPACESHIPS
           });
         })
         .catch((e) => {
