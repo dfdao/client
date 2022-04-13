@@ -129,7 +129,7 @@ export type LobbyConfigAction =
       value: Initializers['TARGET_PLANET_HOLD_BLOCKS_REQUIRED'] | undefined;
     }
     | {
-      type: 'MULTIPLIERS';
+      type: 'MODIFIERS';
       index: number;
       value: number | undefined;
     };
@@ -356,8 +356,8 @@ export function lobbyConfigReducer(state: LobbyConfigState, action: LobbyAction)
         ...action.value,
       };
     }
-    case 'MULTIPLIERS': {
-      update = ofMultipliers(action, state);
+    case 'MODIFIERS': {
+      update = ofModifiers(action, state);
       break;
     }
     default: {
@@ -860,7 +860,7 @@ export function lobbyConfigInit(startingConfig: LobbyInitializers) {
         };
         break;
       }
-      case 'MULTIPLIERS': {
+      case 'MODIFIERS': {
         // Default this to false if we don't have it
         const defaultValue = startingConfig[key];
         state[key] = {
@@ -1968,8 +1968,8 @@ export function ofAdminPlanets(
   };
 }
 
-export function ofMultipliers(
-  { type, index, value }: Extract<LobbyConfigAction, { type: 'MULTIPLIERS' }>,
+export function ofModifiers(
+  { type, index, value }: Extract<LobbyConfigAction, { type: 'MODIFIERS' }>,
   state: LobbyConfigState
 ) {
   const prevCurrentValue = state[type].currentValue;

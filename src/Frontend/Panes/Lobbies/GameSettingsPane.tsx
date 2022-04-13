@@ -33,7 +33,7 @@ function Modifiers({
           format='integer'
           value={value}
           onChange={(e: Event & React.ChangeEvent<DarkForestNumberInput>) => {
-            onUpdate({ type: 'MULTIPLIERS', index, value: e.target.value });
+            onUpdate({ type: 'MODIFIERS', index, value: e.target.value });
           }}
         />
       </div>
@@ -42,7 +42,7 @@ function Modifiers({
 
 export function GameSettingsPane({ config, onUpdate }: LobbiesPaneProps) {
 
-  let modifiers =  _.chunk(config.MULTIPLIERS.displayValue, rowChunkSize).map(
+  let modifiers =  _.chunk(config.MODIFIERS.displayValue, rowChunkSize).map(
     (items, rowIdx) => {
       return (
         <Row key={`threshold-row-${rowIdx}`} style={rowStyle}>
@@ -88,7 +88,7 @@ export function GameSettingsPane({ config, onUpdate }: LobbiesPaneProps) {
       
       {modifiers}
       <Row>
-        <Warning>{config.MULTIPLIERS.warning}</Warning>
+        <Warning>{config.MODIFIERS.warning}</Warning>
       </Row>
       <Row>
         <Checkbox
