@@ -1,52 +1,46 @@
 import { EthAddress } from '@darkforest_eth/types';
-import _ from 'lodash';
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
+import { PlanetCreator } from '../../../Backend/Utils/PlanetCreator';
 import { Modal } from '../../Components/Modal';
-import { ConfigDownload, ConfigUpload, Warning } from './LobbiesUtils';
+import { ConfigDownload, ConfigUpload } from './LobbiesUtils';
 import { MinimapConfig } from './MinimapUtils';
 import {
   InvalidConfigError,
+  LobbyAction,
   LobbyConfigAction,
-  lobbyConfigInit,
-  lobbyConfigReducer,
-  LobbyConfigState,
+  lobbyConfigInit, LobbyConfigState,
   LobbyInitializers,
-  toInitializers,
+  toInitializers
 } from './Reducer';
-import { PlanetCreator } from '../../../Backend/Utils/PlanetCreator';
 import { ConfigurationNavigation } from './WorldSettingsNavPane';
 type Status = 'creating' | 'created' | 'errored' | undefined;
 
 export function ConfigurationPane({
   modalIndex,
   lobbyAddress,
-  startingConfig,
+  config,
+  updateConfig,
   onMapChange,
   onCreate,
   planetCreator,
+  onUpdate
 }: {
   modalIndex: number;
   lobbyAddress: EthAddress | undefined;
-  startingConfig: LobbyInitializers;
+  config: LobbyConfigState;
+  updateConfig: React.Dispatch<LobbyAction>;
   onMapChange: (props: MinimapConfig) => void;
   onCreate: (config: LobbyInitializers) => Promise<void>;
   planetCreator: PlanetCreator | undefined;
+  onUpdate : (action: LobbyConfigAction) => void;
 }) {
   const { path: root } = useRouteMatch();
   const [error, setError] = useState<string | undefined>();
   const [status, setStatus] = useState<Status>(undefined);
   const [statusMessage, setStatusMessage] = useState<string>('');
   // Separated IO Errors from Download/Upload so they show on any pane of the modal
-  const [ioErr, setIoErr] = useState<string | undefined>();
 
-  const [config, updateConfig] = useReducer(lobbyConfigReducer, startingConfig, lobbyConfigInit);
-
-  function onUpdate(action: LobbyConfigAction) {
-    setError(undefined);
-    setIoErr(undefined);
-    updateConfig(action);
-  }
 
   // Minimap only changes on a subset of properties, so we only trigger when one of them changes value (and still debounce it)
   useEffect(() => {
@@ -147,9 +141,8 @@ export function ConfigurationPane({
         </Route>
       </Switch>
       {/* Button this in the title slot but at the end moves it to the end of the title bar */}
-      <ConfigDownload onError={setIoErr} address={lobbyAddress} config={config} />
-      <ConfigUpload onError={setIoErr} onUpload={configUploadSuccess} />
-      <Warning>{ioErr}</Warning>
+      <ConfigDownload onError={setError} address={lobbyAddress} config={config} />
+      <ConfigUpload onError={setError} onUpload={configUploadSuccess} />
     </Modal>
   );
 }
