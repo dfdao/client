@@ -94,6 +94,14 @@ export function Minimap({
     return () => worker.removeEventListener('message', onMessage);
   }, [worker, setRefreshing]);
 
+  const randomize = () => {
+    console.log("randomizing!!!")
+    const seed = Math.floor(Math.random() * 10000)
+    onUpdate({ type: 'PLANETHASH_KEY', value: seed });
+    onUpdate({ type: 'SPACETYPE_KEY', value: seed + 1});
+    onUpdate({ type: 'BIOMEBASE_KEY', value: seed + 2});    
+  }
+
   return (
     <Modal width='416px' initialX={650} initialY={200} index={modalIndex}>
       <div slot='title'>World Minimap</div>
@@ -106,7 +114,7 @@ export function Minimap({
       <div style={{ textAlign: 'center', height: '24px' }}>
         {refreshing ? <LoadingSpinner initialText='Refreshing...' /> : null}
       </div>
-      <Btn>
+      <Btn size='stretch' onClick={randomize} disabled = {refreshing}>
         Randomize Map
       </Btn>
     </Modal>
