@@ -24,7 +24,7 @@ export function ConfigurationPane({
   onMapChange,
   onCreate,
   planetCreator,
-  onUpdate
+  onUpdate,
 }: {
   modalIndex: number;
   lobbyAddress: EthAddress | undefined;
@@ -33,9 +33,8 @@ export function ConfigurationPane({
   onMapChange: (props: MinimapConfig) => void;
   onCreate: (config: LobbyInitializers) => Promise<void>;
   planetCreator: PlanetCreator | undefined;
-  onUpdate : (action: LobbyConfigAction) => void;
+  onUpdate: (action: LobbyConfigAction) => void;
 }) {
-  const { path: root } = useRouteMatch();
   const [error, setError] = useState<string | undefined>();
   const [status, setStatus] = useState<Status>(undefined);
   const [statusMessage, setStatusMessage] = useState<string>('');
@@ -69,6 +68,9 @@ export function ConfigurationPane({
   ]);
 
   async function validateAndCreateLobby() {
+    confirm(
+      `Are you sure you want to create this lobby? You will not be able to modify settings. You can still create planets and add players to the whitelist.`
+    );
     try {
       setStatus('creating');
       setStatusMessage('Creating...');
@@ -126,9 +128,7 @@ export function ConfigurationPane({
 
   return (
     <Modal width='500px' initialX={100} initialY={100} index={modalIndex}>
-      <Switch>
-        <Route path={`${root}`}>
-          <ConfigurationNavigation
+          <WorldSettingsNavPane
             error={error}
             lobbyAddress={lobbyAddress}
             status={status}
@@ -138,8 +138,6 @@ export function ConfigurationPane({
             config={config}
             onUpdate={onUpdate}
           />
-        </Route>
-      </Switch>
       {/* Button this in the title slot but at the end moves it to the end of the title bar */}
       <ConfigDownload onError={setError} address={lobbyAddress} config={config} />
       <ConfigUpload onError={setError} onUpload={configUploadSuccess} />

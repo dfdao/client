@@ -1,29 +1,30 @@
+import { EthAddress } from '@darkforest_eth/types';
+import _ from 'lodash';
 import React from 'react';
-import { ButtonRow, LinkButton, LobbiesPaneProps, NavigationTitle, Warning } from './LobbiesUtils';
-
+import { Route, Switch, useRouteMatch } from 'react-router-dom';
+import { Btn } from '../../Components/Btn';
+import { Spacer, Title } from '../../Components/CoreUI';
+import { MythicLabelText } from '../../Components/Labels/MythicLabel';
+import { LoadingSpinner } from '../../Components/LoadingSpinner';
+import { Row } from '../../Components/Row';
+import { TextPreview } from '../../Components/TextPreview';
 //pane imports
 import { AdminPermissionsPane } from './AdminPermissionsPane';
 import { ArtifactSettingsPane } from './ArtifactSettingsPane';
 import { CaptureZonesPane } from './CaptureZonesPane';
+import { ExtrasNavPane } from './ExtrasNavPane';
 import { GameSettingsPane } from './GameSettingsPane';
+import { ButtonRow, LinkButton, LobbiesPaneProps, NavigationTitle, Warning } from './LobbiesUtils';
+import { PlanetPane } from './PlanetPane';
+import { PlayerSpawnPane } from './PlayerSpawnPane';
+import { LobbyConfigAction, LobbyConfigState } from './Reducer';
 import { SnarkPane } from './SnarkPane';
 import { SpaceJunkPane } from './SpaceJunkPane';
 import { SpaceTypeBiomePane } from './SpaceTypeBiomePane';
-import { WorldSizePane } from './WorldSizePane';
 import { TargetPlanetPane } from './TargetPlanetPane';
-import { PlanetPane } from './PlanetPane';
-import { PlayerSpawnPane } from './PlayerSpawnPane';
-import { CreatePlanetPane } from './CreatePlanetPane';
-import { EthAddress } from '@darkforest_eth/types';
-import { LobbyConfigAction, LobbyConfigState } from './Reducer';
-import { Btn } from '../../Components/Btn';
-import { Row } from '../../Components/Row';
-import { MythicLabelText } from '../../Components/Labels/MythicLabel';
-import { TextPreview } from '../../Components/TextPreview';
-import { Spacer, Title } from '../../Components/CoreUI';
-import { LoadingSpinner } from '../../Components/LoadingSpinner';
-import _ from 'lodash';
-import { Route, Switch, useRouteMatch } from 'react-router-dom';
+import { WorldSizePane } from './WorldSizePane';
+
+const jcFlexEnd = { justifyContent: 'flex-end' } as CSSStyleDeclaration & React.CSSProperties;
 
 interface PaneConfig {
   title: string;
@@ -94,22 +95,16 @@ const panes: ReadonlyArray<PaneConfig> = [
     Pane: (props: LobbiesPaneProps) => <SnarkPane {...props} />,
   },
   {
-    title: 'Target planets',
+    title: 'Target & spawn planets',
     shortcut: `-`,
     path: '/arena',
     Pane: (props: LobbiesPaneProps) => <TargetPlanetPane {...props} />,
-  },
-  {
-    title: 'Admin planets',
-    shortcut: `+`,
-    path: '/create',
-    Pane: (props: LobbiesPaneProps) => <CreatePlanetPane {...props} />,
   },
 ] as const;
 
 type Status = 'creating' | 'created' | 'errored' | undefined;
 
-export function ConfigurationNavigation({
+export function WorldSettingsNavPane({
   error,
   lobbyAddress,
   status,
@@ -130,17 +125,21 @@ export function ConfigurationNavigation({
 }) {
   const { path: root } = useRouteMatch();
 
+  const createDisabled = status === 'creating' || status === 'created';
+  const creating = status === 'creating' || (status === 'created' && !lobbyAddress);
+  const created = status === 'created' && lobbyAddress;
+
   const buttons = _.chunk(panes, 2).map(([fst, snd], idx) => {
     return (
       // Index key is fine here because the array is stable
       <ButtonRow key={idx}>
         {fst && (
-          <LinkButton to={fst.path} shortcut={fst.shortcut}>
+          <LinkButton disabled={!!createDisabled} to={fst.path} shortcut={fst.shortcut}>
             {fst.title}
           </LinkButton>
         )}
         {snd && (
-          <LinkButton to={snd.path} shortcut={snd.shortcut}>
+          <LinkButton disabled={!!createDisabled} to={snd.path} shortcut={snd.shortcut}>
             {snd.title}
           </LinkButton>
         )}
@@ -154,20 +153,8 @@ export function ConfigurationNavigation({
   if (status === 'created' && lobbyAddress) {
     lobbyContent = (
       <>
-        {config.ADMIN_PLANETS.currentValue.length > 0 && (
-          <>
-            <Btn size='stretch' onClick={createPlanets}>
-              Create Planets
-            </Btn>
-            <Row />
-          </>
-        )}
-        <Btn size='stretch' onClick={() => window.open(url)}>
-          Launch Lobby
-        </Btn>
         <Row>
-          {/* Stealing MythicLabelText because it accepts variable text input */}
-          <MythicLabelText style={{ margin: 'auto' }} text='Your lobby is ready!' />
+          <MythicLabelText style={{ margin: 'auto' }} text='Your universe has been created!' />
         </Row>
         <Row>
           <span style={{ margin: 'auto' }}>
@@ -190,7 +177,7 @@ export function ConfigurationNavigation({
   const routes = panes.map(({ title, path, Pane }, idx) => {
     return (
       // Index key is fine here because the array is stable
-      
+
       <Route key={idx} path={`${root}${path}`}>
         <NavigationTitle>{title}</NavigationTitle>
         <Pane config={config} onUpdate={onUpdate} />
@@ -198,9 +185,7 @@ export function ConfigurationNavigation({
     );
   });
 
-
   const content = () => {
-      console.log(root)
     return (
       <>
         <Title slot='title'>Customize Lobby</Title>
@@ -213,22 +198,28 @@ export function ConfigurationNavigation({
         </div>
         {buttons}
         <Spacer height={20} />
-        {!created && (
-          <Btn size='stretch' onClick={onCreate}>
-            {creating ? <LoadingSpinner initialText={statusMessage} /> : 'Create Lobby'}
-          </Btn>
-        )}
+        <div>
+        <Btn size='stretch' disabled={createDisabled} onClick={onCreate}>
+          {created ? (
+            'Universe created'
+          ) : creating ? (
+            <LoadingSpinner initialText={statusMessage} />
+          ) : (
+            'Create Lobby'
+          )}
+        </Btn>
+        <Row style={jcFlexEnd}>
+          <LinkButton to={`/extras`}>Planets & Whitelist →</LinkButton>
+        </Row>
         <Row>
           <Warning>{error}</Warning>
         </Row>
         {lobbyContent}
+        </div>
       </>
     );
   };
 
-  const createDisabled = status === 'creating' || status === 'created';
-  const creating = status === 'creating' || (status === 'created' && !lobbyAddress);
-  const created = status === 'created' && lobbyAddress;
   return (
     <>
       <Switch>
@@ -236,6 +227,18 @@ export function ConfigurationNavigation({
           {content}
         </Route>
         {routes}
+        <Route path={`${root}/extras`}>
+          <ExtrasNavPane
+            error={error}
+            lobbyAddress={lobbyAddress}
+            status={status}
+            statusMessage={statusMessage}
+            onCreate={onCreate}
+            createPlanets={createPlanets}
+            config={config}
+            onUpdate={onUpdate}
+          />
+        </Route>
       </Switch>
     </>
   );
