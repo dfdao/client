@@ -13,7 +13,8 @@ import {
   LobbyInitializers,
   toInitializers
 } from './Reducer';
-import { ConfigurationNavigation } from './WorldSettingsNavPane';
+import { WorldSettingsNavPane } from './WorldSettingsNavPane';
+
 type Status = 'creating' | 'created' | 'errored' | undefined;
 
 export function ConfigurationPane({

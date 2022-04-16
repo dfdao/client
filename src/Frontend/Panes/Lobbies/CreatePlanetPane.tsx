@@ -137,7 +137,6 @@ export function CreatePlanetPane({ config: config, onUpdate: onUpdate }: Lobbies
   }
   return (
     <>
-      <Row>
         <span>Create Custom Planets</span>
         <Btn
           onClick={() => {
@@ -151,7 +150,6 @@ export function CreatePlanetPane({ config: config, onUpdate: onUpdate }: Lobbies
         >
           Add Planet
         </Btn>
-      </Row>
       {adminPlanetElems}
       <Row>
         <Warning>{config.ADMIN_PLANETS.warning}</Warning>

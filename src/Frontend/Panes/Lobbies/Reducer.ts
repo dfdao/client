@@ -1,5 +1,5 @@
 import { Initializers } from '@darkforest_eth/settings';
-import { AdminPlanet } from '@darkforest_eth/types';
+import { AdminPlanet, EthAddress } from '@darkforest_eth/types';
 
 export const SAFE_UPPER_BOUNDS = Number.MAX_SAFE_INTEGER - 1;
 
@@ -115,10 +115,10 @@ export type LobbyConfigAction =
     }
   | { type: 'WHITELIST_ENABLED'; value: boolean | undefined }
   | {
-    type: 'ADMIN_PLANETS';
-    value: AdminPlanet | undefined;
-    index: number;
-  }
+      type: 'ADMIN_PLANETS';
+      value: AdminPlanet | undefined;
+      index: number;
+    }
   | { type: 'MANUAL_SPAWN'; value: Initializers['MANUAL_SPAWN'] | undefined }
   | {
       type: 'TARGET_PLANETS';
@@ -127,11 +127,17 @@ export type LobbyConfigAction =
   | {
       type: 'TARGET_PLANET_HOLD_BLOCKS_REQUIRED';
       value: Initializers['TARGET_PLANET_HOLD_BLOCKS_REQUIRED'] | undefined;
-    };
-
+    }
+  | {
+      type: 'WHITELIST';
+      value: EthAddress | undefined;
+      index: number;
+    }
 // TODO(#2328): WHITELIST_ENABLED should just be on Initializers
-export type LobbyInitializers = Initializers & { WHITELIST_ENABLED: boolean | undefined } & {
+export type LobbyInitializers = Initializers & {
+  WHITELIST_ENABLED: boolean | undefined;
   ADMIN_PLANETS: AdminPlanet[];
+  WHITELIST: EthAddress[];
 };
 
 export type LobbyConfigState = {
@@ -342,6 +348,10 @@ export function lobbyConfigReducer(state: LobbyConfigState, action: LobbyAction)
     }
     case 'ADMIN_PLANETS': {
       update = ofAdminPlanets(action, state);
+      break;
+    }
+    case 'WHITELIST': {
+      update = ofWhitelist(action, state);
       break;
     }
     case 'RESET': {
@@ -842,6 +852,16 @@ export function lobbyConfigInit(startingConfig: LobbyInitializers) {
         break;
       }
       case 'TARGET_PLANET_HOLD_BLOCKS_REQUIRED': {
+        const defaultValue = startingConfig[key];
+        state[key] = {
+          currentValue: defaultValue,
+          displayValue: defaultValue,
+          defaultValue,
+          warning: undefined,
+        };
+        break;
+      }
+      case 'WHITELIST': {
         const defaultValue = startingConfig[key];
         state[key] = {
           currentValue: defaultValue,
@@ -1947,3 +1967,9 @@ export function ofAdminPlanets(
     warning: undefined,
   };
 }
+
+export function ofWhitelist(
+  { type, index, value }: Extract<LobbyConfigAction, { type: 'WHITELIST' }>,
+  state: LobbyConfigState ){ 
+    
+  }
