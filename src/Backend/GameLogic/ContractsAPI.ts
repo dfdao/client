@@ -6,7 +6,7 @@ import {
   EthConnection,
   ethToWei,
   TxCollection,
-  TxExecutor,
+  TxExecutor
 } from '@darkforest_eth/network';
 import {
   address,
@@ -21,7 +21,7 @@ import {
   decodeRevealedCoords,
   decodeUpgradeBranches,
   locationIdFromEthersBN,
-  locationIdToDecStr,
+  locationIdToDecStr
 } from '@darkforest_eth/serde';
 import {
   Artifact,
@@ -40,7 +40,7 @@ import {
   Transaction,
   TransactionId,
   TxIntent,
-  VoyageId,
+  VoyageId
 } from '@darkforest_eth/types';
 import { BigNumber as EthersBN, ContractFunction, Event, providers } from 'ethers';
 import { EventEmitter } from 'events';
@@ -52,7 +52,7 @@ import {
   ContractConstants,
   ContractEvent,
   ContractsAPIEvent,
-  PlanetTypeWeightsBySpaceType,
+  PlanetTypeWeightsBySpaceType
 } from '../../_types/darkforest/api/ContractsAPITypes';
 import { loadDiamondContract } from '../Network/Blockchain';
 import { eventLogger, EventType } from '../Network/EventLogger';
@@ -453,7 +453,8 @@ export class ContractsAPI extends EventEmitter {
       MANUAL_SPAWN,
       TARGET_PLANET_HOLD_BLOCKS_REQUIRED,
       TARGET_PLANETS,
-      MODIFIERS
+      MODIFIERS,
+      SPACESHIPS
     } = await this.makeCall(this.contract.getArenaConstants);
 
 
@@ -590,6 +591,13 @@ export class ContractsAPI extends EventEmitter {
         MODIFIERS[5].toNumber(),
         MODIFIERS[6].toNumber(),
         MODIFIERS[7].toNumber()
+      ],
+      SPACESHIPS: [
+        SPACESHIPS[0],
+        SPACESHIPS[1],
+        SPACESHIPS[2],
+        SPACESHIPS[3],
+        SPACESHIPS[4]
       ]
     };
 

@@ -41,6 +41,7 @@ import { SpaceTypeBiomePane } from './SpaceTypeBiomePane';
 import { WorldSizePane } from './WorldSizePane';
 import { TargetPlanetPane } from './TargetPlanetPane';
 import { PlanetCreator } from '../../../Backend/Utils/PlanetCreator';
+import { SpaceshipsPane } from './SpaceshipsPane';
 
 interface PaneConfig {
   title: string;
@@ -122,6 +123,11 @@ const panes: ReadonlyArray<PaneConfig> = [
     path: '/settings/create',
     Pane: (props: LobbiesPaneProps) => <CreatePlanetPane {...props} />,
   },
+  {
+    title: 'Spaceships',
+    shortcut: '/',
+    path: '/settings/spaceships',
+    Pane: (props: LobbiesPaneProps) => <SpaceshipsPane {...props} />,  }
 ] as const;
 
 type Status = 'creating' | 'created' | 'errored' | undefined;
