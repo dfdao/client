@@ -1,6 +1,6 @@
 import { INIT_ADDRESS } from '@darkforest_eth/contracts';
 // This is loaded as URL paths by a webpack loader
-import initContractAbiUrl from '@darkforest_eth/contracts/abis/DFArenaUpgradeInitialize.json';
+import initContractAbiUrl from '@darkforest_eth/contracts/abis/DFArenaInitialize.json';
 import { EthConnection } from '@darkforest_eth/network';
 import { address } from '@darkforest_eth/serde';
 import {
