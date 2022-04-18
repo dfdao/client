@@ -115,10 +115,10 @@ export type LobbyConfigAction =
     }
   | { type: 'WHITELIST_ENABLED'; value: boolean | undefined }
   | {
-    type: 'ADMIN_PLANETS';
-    value: AdminPlanet | undefined;
-    index: number;
-  }
+      type: 'ADMIN_PLANETS';
+      value: AdminPlanet | undefined;
+      index: number;
+    }
   | { type: 'MANUAL_SPAWN'; value: Initializers['MANUAL_SPAWN'] | undefined }
   | {
       type: 'TARGET_PLANETS';
@@ -140,8 +140,10 @@ export type LobbyConfigAction =
     };
 
 // TODO(#2328): WHITELIST_ENABLED should just be on Initializers
-export type LobbyInitializers = Initializers & { WHITELIST_ENABLED: boolean | undefined } & {
+export type LobbyInitializers = Initializers & {
+  WHITELIST_ENABLED: boolean | undefined;
   ADMIN_PLANETS: AdminPlanet[];
+  // WHITELIST: EthAddress[];
 };
 
 export type LobbyConfigState = {
