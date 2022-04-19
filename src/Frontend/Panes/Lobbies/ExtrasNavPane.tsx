@@ -64,7 +64,7 @@ export function ExtrasNavPane({
   const { path: root } = useRouteMatch();
 
   const handleEnter = () => {
-    () => window.open(url);
+    window.open(url);
   };
 
   const buttons = _.chunk(panes, 2).map(([fst, snd], idx) => {
@@ -149,7 +149,6 @@ export function ExtrasNavPane({
         <Row>
           <Btn onClick={toGameSettings}>← World Settings</Btn>
         </Row>
-
         {lobbyContent}
       </>
     );

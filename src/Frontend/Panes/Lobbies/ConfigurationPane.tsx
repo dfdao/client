@@ -113,7 +113,7 @@ const panes: ReadonlyArray<PaneConfig> = [
     Pane: (props: LobbiesPaneProps) => <SnarkPane {...props} />,
   },
   {
-    title: 'Target & spawn planets',
+    title: 'Target planets',
     shortcut: `-`,
     path: '/arena',
     Pane: (props: LobbiesPaneProps) => <TargetPlanetPane {...props} />,
@@ -181,9 +181,10 @@ export function ConfigurationPane({
   ]);
 
   async function validateAndCreateLobby() {
-    confirm(
-      `Are you sure you want to create this lobby? You will not be able to modify settings. You can still create planets and add players to the whitelist.`
+    const confirmAlert = confirm(
+      `Are you sure? After lobby creation, you cannot modify world settings, but you can create planets and add players to the whitelist.`
     );
+    if (!confirmAlert) return;
     try {
       setStatus('creating');
       setStatusMessage('Creating...');
@@ -268,7 +269,8 @@ export function ConfigurationPane({
       <>
         <Title slot='title'>Customize Lobby</Title>
         <div>
-          Welcome Cadet! You can launch a copy of Dark Forest from this UI. We call this a Lobby.
+          Welcome Cadet! Here, you can configure and launch a custom Dark Forest universe. We call
+          this a Lobby.
           <Spacer height={12} />
           All settings will be defaulted to the same configuration of the main contract you are
           copying. However, you can change any of those settings through the buttons below!
