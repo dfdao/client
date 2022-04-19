@@ -48,7 +48,7 @@ export function LobbyConfigPage({
         onUpdate = {onUpdate}
       />
       {/* Minimap uses modalIndex=1 so it is always underneath the configuration pane */}
-      <Minimap modalIndex={1} minimapConfig={minimapConfig} onUpdate = {onUpdate}/>
+      <Minimap modalIndex={1} minimapConfig={minimapConfig} onUpdate = {onUpdate} created = {!!lobbyAdminTools}/>
     </>
   );
 
