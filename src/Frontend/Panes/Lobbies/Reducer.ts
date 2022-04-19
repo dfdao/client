@@ -128,15 +128,20 @@ export type LobbyConfigAction =
       type: 'TARGET_PLANET_HOLD_BLOCKS_REQUIRED';
       value: Initializers['TARGET_PLANET_HOLD_BLOCKS_REQUIRED'] | undefined;
     }
-    | {
+  | {
       type: 'MODIFIERS';
       index: number;
       value: number | undefined;
     }
-    | {
+  | {
       type: 'SPACESHIPS';
       index: number;
       value: boolean | undefined;
+    }
+  | {
+      type: 'WHITELIST';
+      index: number;
+      value: EthAddress | undefined;
     };
 
 // TODO(#2328): WHITELIST_ENABLED should just be on Initializers
@@ -373,6 +378,10 @@ export function lobbyConfigReducer(state: LobbyConfigState, action: LobbyAction)
     }
     case 'SPACESHIPS': {
       update = ofSpaceships(action, state);
+      break;
+    }
+    case 'WHITELIST': {
+      update = ofWhitelist(action, state);
       break;
     }
     default: {
@@ -884,17 +893,28 @@ export function lobbyConfigInit(startingConfig: LobbyInitializers) {
           defaultValue,
           warning: undefined,
         };
-        break
+        break;
       }
-        case 'SPACESHIPS': {
-          // Default this to false if we don't have it
-          const defaultValue = startingConfig[key];
-          state[key] = {
-            currentValue: defaultValue,
-            displayValue: defaultValue,
-            defaultValue,
-            warning: undefined,
-          };
+      case 'SPACESHIPS': {
+        // Default this to false if we don't have it
+        const defaultValue = startingConfig[key];
+        state[key] = {
+          currentValue: defaultValue,
+          displayValue: defaultValue,
+          defaultValue,
+          warning: undefined,
+        };
+        break;
+      }
+      case 'WHITELIST': {
+        // Default this to false if we don't have it
+        const defaultValue = startingConfig[key] || [];
+        state[key] = {
+          currentValue: defaultValue,
+          displayValue: defaultValue,
+          defaultValue,
+          warning: undefined,
+        };
         break;
       }
       default: {
@@ -2055,7 +2075,7 @@ export function ofModifiers(
 }
 
 export function ofSpaceships(
-  { type, index, value }: Extract<LobbyConfigAction, { type: "SPACESHIPS" }>,
+  { type, index, value }: Extract<LobbyConfigAction, { type: 'SPACESHIPS' }>,
   state: LobbyConfigState
 ) {
   const prevCurrentValue = state[type].currentValue;
@@ -2081,14 +2101,87 @@ export function ofSpaceships(
   displayValue[index] = value;
   currentValue[index] = value;
 
-  if(index == 4 && value == false) {
+  if (index == 4 && value == false) {
     return {
+      ...state[type],
+      currentValue,
+      displayValue,
+      warning: `Without the Gear you won't be able to prospect artifacts!`,
+    };
+  }
+
+  return {
     ...state[type],
     currentValue,
     displayValue,
-    warning: `Without the Gear you won't be able to prospect artifacts!`,
+    warning: undefined,
   };
+}
+
+export function ofWhitelist(
+  { type, index, value }: Extract<LobbyConfigAction, { type: 'WHITELIST' }>,
+  state: LobbyConfigState
+) {
+  const prevCurrentValue = state[type].currentValue;
+  const prevDisplayValue = state[type].displayValue;
+
+  if (!prevDisplayValue) {
+    return {
+      ...state[type],
+      warning: `Failed to update ${type}`,
+    };
   }
+
+  if (!prevCurrentValue) {
+    return {
+      ...state[type],
+      warning: `Failed to update ${type}`,
+    };
+  }
+
+  if (
+    value === undefined 
+  ) {
+    return {
+      ...state[type],
+      warning: 'Address cannot be undefined',
+    };
+  }
+
+  if (
+    value.slice(0 , 2) !== "0x" ||
+    value.length !== 42 
+  ) {
+    return {
+      ...state[type],
+      warning: 'Improperly formatted address',
+    };
+  }
+
+  const currentValue = [...prevCurrentValue];
+  const displayValue = [...prevDisplayValue];
+
+  if (currentValue[index]) {
+    console.log(`deleting ${currentValue[index]}`)
+    currentValue.splice(index, 1);
+    displayValue.splice(index, 1);
+
+    return {
+      ...state[type],
+      currentValue,
+      displayValue,
+      warning: undefined,
+    };
+  }
+
+  if(currentValue.find(v => value == v)) {
+    return {
+      ...state[type],
+      warning: 'Address already staged',
+    };
+  }
+  currentValue[index] = value;
+  displayValue[index] = value;
 
   return {
     ...state[type],

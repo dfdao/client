@@ -1,4 +1,3 @@
-import { EthAddress } from '@darkforest_eth/types';
 import _ from 'lodash';
 import React from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
