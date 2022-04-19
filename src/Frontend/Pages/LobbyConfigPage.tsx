@@ -1,7 +1,6 @@
-import { EthAddress } from '@darkforest_eth/types';
 import _ from 'lodash';
-import React, { useEffect, useMemo, useReducer, useState } from 'react';
-import { PlanetCreator } from '../../Backend/Utils/PlanetCreator';
+import React, { useMemo, useReducer, useState } from 'react';
+import { LobbyAdminTools } from '../../Backend/Utils/LobbyAdminTools';
 import { ConfigurationPane } from '../Panes/Lobbies/ConfigurationPane';
 import { Minimap } from '../Panes/Lobbies/MinimapPane';
 import { MinimapConfig } from '../Panes/Lobbies/MinimapUtils';
@@ -18,13 +17,11 @@ type Status = 'creating' | 'created' | 'errored' | undefined;
 export function LobbyConfigPage({
   startingConfig,
   onCreate,
-  lobbyAddress,
-  planetCreator
+  lobbyAdminTools
 }: {
   startingConfig: LobbyInitializers;
   onCreate: (config: LobbyInitializers) => Promise<void>;
-  lobbyAddress: EthAddress | undefined;
-  planetCreator: PlanetCreator | undefined;
+  lobbyAdminTools: LobbyAdminTools | undefined;
 }) {
   const [config, updateConfig] = useReducer(lobbyConfigReducer, startingConfig, lobbyConfigInit);
   const [minimapConfig, setMinimapConfig] = useState<MinimapConfig | undefined>();
@@ -40,21 +37,15 @@ export function LobbyConfigPage({
     updateConfig(action);
   }
   
-  useEffect(() => {
-      if(lobbyAddress) {
-
-      }
-  })
   let content = (
     <>
       <ConfigurationPane
         modalIndex={2}
-        lobbyAddress={lobbyAddress}
         config={config}
         updateConfig={updateConfig}
         onMapChange={onMapChange}
         onCreate={onCreate}
-        planetCreator={planetCreator}
+        lobbyAdminTools={lobbyAdminTools}
         onUpdate = {onUpdate}
       />
       {/* Minimap uses modalIndex=1 so it is always underneath the configuration pane */}

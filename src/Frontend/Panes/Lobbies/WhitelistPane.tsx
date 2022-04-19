@@ -1,16 +1,15 @@
-import React, { useState } from 'react';
+import { EthAddress } from '@darkforest_eth/types';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { LobbyAdminTools } from '../../../Backend/Utils/LobbyAdminTools';
 import { Btn } from '../../Components/Btn';
-import {
-    Checkbox,
-    DarkForestCheckbox,
-    DarkForestTextInput,
-    TextInput
-} from '../../Components/Input';
+import { DarkForestTextInput, TextInput } from '../../Components/Input';
+import { LoadingSpinner } from '../../Components/LoadingSpinner';
 import { Row } from '../../Components/Row';
-import { Sub } from '../../Components/Text';
+import { Red, Sub } from '../../Components/Text';
 import { Table } from '../../Views/Table';
 import { LobbiesPaneProps, Warning } from './LobbiesUtils';
+import { InvalidConfigError } from './Reducer';
 
 const TableContainer = styled.div`
   overflow-y: scroll;
@@ -19,46 +18,90 @@ const TableContainer = styled.div`
 
 const jcFlexEnd = { display: 'flex', justifyContent: 'flex-end' } as CSSStyleDeclaration &
   React.CSSProperties;
-  const jcSpaceEvenly = { display: 'flex', justifyContent: 'space-evenly' } as CSSStyleDeclaration &
+const jcSpaceEvenly = { display: 'flex', justifyContent: 'space-evenly' } as CSSStyleDeclaration &
   React.CSSProperties;
 
+type Status = 'creating' | 'created' | 'errored' | undefined;
 
-const defaultAddress = '0x0000000000000000000000000000000000000000';
-export function WhitelistPane({ config: config, onUpdate: onUpdate }: LobbiesPaneProps) {
-  const [address, setAddress] = useState<string>(defaultAddress);
-  const [stagedAddresses, setStagedAddresses] = useState<string[]>([]);
-  const [createdAddresses, setCreatedAddresses] = useState<string[]>([]);
+const defaultAddress = '0x0000000000000000000000000000000000000000' as EthAddress;
+export function WhitelistPane({
+  config: config,
+  onUpdate: onUpdate,
+  lobbyAdminTools,
+}: LobbiesPaneProps & {
+  lobbyAdminTools: LobbyAdminTools | undefined;
+}) {
+  const [address, setAddress] = useState<EthAddress>(defaultAddress);
+  const [error, setError] = useState<string | undefined>();
+  const [status, setStatus] = useState<Status>();
+  const [whitelistedAddresses, setWhitelistedAddresses] = useState<EthAddress[] | undefined>();
+
+  useEffect(() => {
+    setWhitelistedAddresses(lobbyAdminTools?.getWhitelistedAddresses());
+  }, [lobbyAdminTools]);
 
   const stageHeaders = ['Staged Addresses', ''];
   const alignments: Array<'r' | 'c' | 'l'> = ['l', 'c'];
   const stageColumns = [
-    (address: string) => <Sub>{address}</Sub>,
-    (address: string, i: number) => (
+    (address: EthAddress) => <Sub>{address}</Sub>,
+    (address: EthAddress, i: number) => (
       <div style={jcSpaceEvenly}>
-        <Btn
-          onClick={() => {
-            () => setStagedAddresses(stagedAddresses.splice(i, 1));
-          }}
-        >
+        <Btn disabled={!lobbyAdminTools} onClick={async () => await whitelistAddress(i)}>
           ✓
         </Btn>{' '}
-        <Btn
-          onClick={() => {
-            () => setStagedAddresses(stagedAddresses.splice(i, 1));
-          }}
-        >
-          X
-        </Btn>
+        <Btn onClick={() => onUpdate({ type: 'WHITELIST', value: address, index: i })}>X</Btn>
       </div>
     ),
   ];
 
+  async function whitelistAll() {
+    setError(undefined);
+    if (!config.WHITELIST.displayValue) return;
+
+    for (let i = config.WHITELIST.displayValue.length - 1; i >= 0; i--) {
+      await whitelistAddress(i);
+    }
+  }
+  async function whitelistAddress(index: number) {
+    setError(undefined)
+    try {
+      setStatus('creating');
+      if (!lobbyAdminTools) {
+        setError("You haven't created a lobby.");
+        return;
+      }
+
+      if (!config.WHITELIST.displayValue) {
+        setError('no planets staged');
+        return;
+      }
+      const elem = config.WHITELIST.displayValue[index];
+      if (!elem) {
+        setError('Address not found.');
+        return;
+      }
+
+      await lobbyAdminTools.whitelistPlayer(elem);
+      onUpdate({ type: 'WHITELIST', value: address, index: index });
+
+      setStatus('created');
+    } catch (err) {
+      setStatus('errored');
+      console.error(err);
+      if (err instanceof InvalidConfigError) {
+        setError(`Invalid ${err.key} value ${err.value ?? ''} - ${err.message}`);
+      } else {
+        setError(err?.message || 'Something went wrong. Check your dev console.');
+      }
+    }
+  }
+
   function StagedAddresses({ config }: LobbiesPaneProps) {
-    return stagedAddresses && stagedAddresses.length > 0 ? (
+    return config.WHITELIST.displayValue?.length ? (
       <TableContainer>
         <Table
           paginated={true}
-          rows={stagedAddresses || []}
+          rows={config.WHITELIST.displayValue || []}
           headers={stageHeaders}
           columns={stageColumns}
           alignments={alignments}
@@ -70,13 +113,13 @@ export function WhitelistPane({ config: config, onUpdate: onUpdate }: LobbiesPan
   }
 
   const whitelistedHeaders = ['Whitelisted Addresses'];
-  const whitelistedColumns = [(address: string) => <Sub>{address}</Sub>];
-  function WhitelistedAddresses({ config }: LobbiesPaneProps) {
-    return stagedAddresses && stagedAddresses.length > 0 ? (
+  const whitelistedColumns = [(address: EthAddress) => <Sub>{address}</Sub>];
+  function WhitelistedAddresses({ addresses }: { addresses: EthAddress[] | undefined }) {
+    return addresses?.length ? (
       <TableContainer>
         <Table
           paginated={true}
-          rows={stagedAddresses || []}
+          rows={addresses || []}
           headers={whitelistedHeaders}
           columns={whitelistedColumns}
           alignments={alignments}
@@ -87,59 +130,78 @@ export function WhitelistPane({ config: config, onUpdate: onUpdate }: LobbiesPan
     );
   }
 
+  function addAddress() {
+    setError(undefined);
+    if (whitelistedAddresses?.find((v) => address == v)) {
+      setError('address already whitelisted');
+    } else {
+      onUpdate({
+        type: 'WHITELIST',
+        value: address,
+        index: config.WHITELIST.displayValue?.length || 0,
+      });
+    }
+    setAddress(defaultAddress);
+  }
+
   function updateAddress() {
     return (
       <TextInput
         style={{ width: '100%' } as CSSStyleDeclaration & React.CSSProperties}
         value={address}
         onChange={(e: Event & React.ChangeEvent<DarkForestTextInput>) => {
-          setAddress(e.target.value);
+          setAddress(e.target.value as EthAddress);
         }}
       />
     );
   }
 
   let whitelistElems;
-  if (stagedAddresses) {
+  if (config.WHITELIST.displayValue) {
     whitelistElems = <Row>{updateAddress()}</Row>;
   }
 
   return (
     <>
-      <Row>
-        <Checkbox
-          label='Is whitelist enabled?'
-          checked={config.WHITELIST_ENABLED.displayValue}
-          onChange={(e: Event & React.ChangeEvent<DarkForestCheckbox>) =>
-            onUpdate({ type: 'WHITELIST_ENABLED', value: e.target.checked })
-          }
-        />
-      </Row>
-      {config.WHITELIST_ENABLED.displayValue && (
+      {config.WHITELIST_ENABLED.displayValue ? (
         <>
+          {!lobbyAdminTools && (
+            <Row>
+              <Sub>
+                <Red>Warning:</Red> Cannot whitelist players until lobby is created
+              </Sub>
+            </Row>
+          )}
           <span>Enter a 0x-prefixed address to stage</span>
 
           {whitelistElems}
-          <Btn
-            onClick={() => {
-              setStagedAddresses([...stagedAddresses, address]);
-              setAddress(defaultAddress);
-            }}
-          >
-            Stage Address
-          </Btn>
+          <Btn onClick={addAddress}>Stage Address</Btn>
           <Row>
-            <Warning>{config.ADMIN_PLANETS.warning}</Warning>
+            <Warning>{config.WHITELIST.warning}</Warning>
+          </Row>
+          <Row>
+            <Warning>{error}</Warning>
           </Row>
           <br />
           <Row>
             <StagedAddresses config={config} onUpdate={onUpdate} />
           </Row>
-          {stagedAddresses.length > 0 && <Btn style={jcFlexEnd}>Add all</Btn>}
+          {config.WHITELIST.displayValue && config.WHITELIST.displayValue.length > 0 && (
+            <Btn
+              style={jcFlexEnd}
+              disabled={status == 'creating' || !lobbyAdminTools}
+              onClick={whitelistAll}
+            >
+              {' '}
+              {status == 'creating' ? <LoadingSpinner initialText='Adding...' /> : ` Add all `}
+            </Btn>
+          )}
           <Row>
-            <WhitelistedAddresses config={config} onUpdate={onUpdate} />
+            <WhitelistedAddresses addresses={whitelistedAddresses} />
           </Row>
         </>
+      ) : (
+        <Sub>Enable whitelist (in admin permissions) to continue</Sub>
       )}
     </>
   );

@@ -2,13 +2,14 @@ import { EthAddress } from '@darkforest_eth/types';
 import _ from 'lodash';
 import React from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
+import { LobbyAdminTools } from '../../../Backend/Utils/LobbyAdminTools';
 import { Btn } from '../../Components/Btn';
 import { Spacer, Title } from '../../Components/CoreUI';
 import { MythicLabelText } from '../../Components/Labels/MythicLabel';
 import { Row } from '../../Components/Row';
 import { TextPreview } from '../../Components/TextPreview';
 import { CreatePlanetPane } from './CreatePlanetPane';
-import { ButtonRow, LinkButton, LobbiesPaneProps, NavigationTitle, Warning } from './LobbiesUtils';
+import { ButtonRow, LinkButton, LobbiesPaneProps, NavigationTitle } from './LobbiesUtils';
 import { LobbyConfigAction, LobbyConfigState } from './Reducer';
 import { WhitelistPane } from './WhitelistPane';
 
@@ -16,7 +17,7 @@ interface PaneConfig {
   title: string;
   shortcut: string;
   path: string;
-  Pane: (props: LobbiesPaneProps) => JSX.Element;
+  Pane: (props: LobbiesPaneProps, lobbyAdminTools: LobbyAdminTools) => JSX.Element;
 }
 
 const panes: ReadonlyArray<PaneConfig> = [
@@ -24,34 +25,38 @@ const panes: ReadonlyArray<PaneConfig> = [
     title: 'Create planets',
     shortcut: `+`,
     path: '/create',
-    Pane: (props: LobbiesPaneProps) => <CreatePlanetPane {...props} />,
+    Pane: (props: LobbiesPaneProps, lobbyAdminTools: LobbyAdminTools) => (
+      <CreatePlanetPane
+        config={props.config}
+        onUpdate={props.onUpdate}
+        lobbyAdminTools={lobbyAdminTools}
+      />
+    ),
   },
   {
     title: 'Whitelist players',
     shortcut: `+`,
     path: '/whitelist',
-    Pane: (props: LobbiesPaneProps) => <WhitelistPane {...props} />,
+    Pane: (props: LobbiesPaneProps, lobbyAdminTools: LobbyAdminTools) => (
+      <WhitelistPane
+        config={props.config}
+        onUpdate={props.onUpdate}
+        lobbyAdminTools={lobbyAdminTools}
+      />
+    ),
   },
 ] as const;
 
 type Status = 'creating' | 'created' | 'errored' | undefined;
 
 export function ExtrasNavPane({
-  error,
-  lobbyAddress,
+  lobbyAdminTools,
   status,
-  statusMessage,
-  onCreate,
-  createPlanets,
   config,
   onUpdate,
 }: {
-  error: string | undefined;
-  lobbyAddress: EthAddress | undefined;
+  lobbyAdminTools: LobbyAdminTools | undefined;
   status: Status;
-  statusMessage: string;
-  onCreate: () => Promise<void>;
-  createPlanets: () => Promise<void>;
   config: LobbyConfigState;
   onUpdate: (lobbyConfigAction: LobbyConfigAction) => void;
 }) {
@@ -60,8 +65,8 @@ export function ExtrasNavPane({
   const { path: root } = useRouteMatch();
 
   const handleEnter = () => {
-    () => window.open(url)
-  }
+    () => window.open(url);
+  };
 
   const buttons = _.chunk(panes, 2).map(([fst, snd], idx) => {
     return (
@@ -81,28 +86,19 @@ export function ExtrasNavPane({
     );
   });
 
-  const url = `${window.location.origin}/play/${lobbyAddress}`;
+  const url = `${window.location.origin}/play/${lobbyAdminTools?.address}`;
 
   const toGameSettings = () => {
     history.goBack();
-  }
+  };
   let lobbyContent: JSX.Element | undefined;
-  if (status === 'created' && lobbyAddress) {
+  if (status === 'created' && lobbyAdminTools?.address) {
     lobbyContent = (
       <>
-        {config.ADMIN_PLANETS.currentValue.length > 0 && (
-          <>
-            <Btn size='stretch' onClick={createPlanets}>
-              Create Planets
-            </Btn>
-            <Row />
-          </>
-        )}
-      
         <Btn size='stretch' onClick={handleEnter}>
           Enter Universe
         </Btn>
-        
+
         <Row>
           {/* Stealing MythicLabelText because it accepts variable text input */}
           <MythicLabelText style={{ margin: 'auto' }} text='Your universe has been created!' />
@@ -125,16 +121,17 @@ export function ExtrasNavPane({
     );
   }
 
-  const routes = panes.map(({ title, path, Pane }, idx) => {
-    return (
-      // Index key is fine here because the array is stable
+  // const routes = (lobbyAdminTools: LobbyAdminTools) =>
+  //   panes.map(({ title, path, Pane }, idx) => {
+  //     return (
+  //       // Index key is fine here because the array is stable
 
-      <Route key={idx} path={`${root}${path}`}>
-        <NavigationTitle>{title}</NavigationTitle>
-        <Pane config={config} onUpdate={onUpdate} />
-      </Route>
-    );
-  });
+  //       <Route key={idx} path={`${root}${path}`}>
+  //         <NavigationTitle>{title}</NavigationTitle>
+  //         <Pane config={config} onUpdate={onUpdate} lobbyAdminTools={lobbyAdminTools} />
+  //       </Route>
+  //     );
+  //   });
 
   const content = () => {
     console.log(root);
@@ -144,18 +141,16 @@ export function ExtrasNavPane({
         <div>
           Now add planets and players to your universe!
           <Spacer height={12} />
-          Remember, if you want to play with manual spawning, you must create at least one 
-          spawn planet to enter the world.
+          Remember, if you want to play with manual spawning, you must create at least one spawn
+          planet to enter the world.
           <Spacer height={12} />
         </div>
         {buttons}
         <Spacer height={50} />
         <Row>
-          <Btn onClick = {toGameSettings}>← World Settings</Btn>
+          <Btn onClick={toGameSettings}>← World Settings</Btn>
         </Row>
-        <Row>
-          <Warning>{error}</Warning>
-        </Row>
+
         {lobbyContent}
       </>
     );
@@ -167,7 +162,15 @@ export function ExtrasNavPane({
         <Route path={root} exact={true}>
           {content}
         </Route>
-        {routes}
+        <Route path={`${root}/create`}>
+          <NavigationTitle>Create planets</NavigationTitle>
+
+          <CreatePlanetPane config={config} onUpdate={onUpdate} lobbyAdminTools={lobbyAdminTools} />
+        </Route>
+        <Route path={`${root}/whitelist`}>
+          <NavigationTitle>Whitelist addresses</NavigationTitle>
+          <WhitelistPane config={config} onUpdate={onUpdate} lobbyAdminTools={lobbyAdminTools} />
+        </Route>
       </Switch>
     </>
   );

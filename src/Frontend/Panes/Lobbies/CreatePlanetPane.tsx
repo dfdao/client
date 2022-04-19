@@ -1,19 +1,19 @@
+import { AdminPlanet } from '@darkforest_eth/types';
+import _ from 'lodash';
 import React, { useState } from 'react';
+import styled from 'styled-components';
+import { LobbyAdminTools } from '../../../Backend/Utils/LobbyAdminTools';
+import { Btn } from '../../Components/Btn';
 import {
   Checkbox,
   DarkForestCheckbox,
   DarkForestNumberInput,
-  NumberInput,
+  NumberInput
 } from '../../Components/Input';
 import { Row } from '../../Components/Row';
 import { Green, Red, Sub, Subber } from '../../Components/Text';
-import { Btn } from '../../Components/Btn';
 import { Table } from '../../Views/Table';
-
 import { LobbiesPaneProps, Warning } from './LobbiesUtils';
-import styled from 'styled-components';
-import { AdminPlanet } from '@darkforest_eth/types';
-import _ from 'lodash';
 
 const rowChunkSize = 4;
 const rowStyle = { gap: '8px' } as CSSStyleDeclaration & React.CSSProperties;
@@ -40,7 +40,11 @@ const defaultPlanet: AdminPlanet = {
   isSpawnPlanet: false,
 };
 
-export function CreatePlanetPane({ config: config, onUpdate: onUpdate }: LobbiesPaneProps) {
+export function CreatePlanetPane({
+  config: config,
+  onUpdate: onUpdate,
+  lobbyAdminTools,
+}: LobbiesPaneProps & { lobbyAdminTools: LobbyAdminTools | undefined }) {
   const [planet, setPlanet] = useState<AdminPlanet>(defaultPlanet);
 
   const headers = ['Coords', 'Level', 'Type', 'Require Valid', 'Reveal', 'Target', 'Spawn', ''];
@@ -86,14 +90,12 @@ export function CreatePlanetPane({ config: config, onUpdate: onUpdate }: Lobbies
           <span>Tips about planet creation</span>
         </Row>
         <Subber>
-          <Row>
-            Planet types: 0-Planet, 1-Asteroid, 2-Foundry, 3-Spacetime Rip, 4-Phasar
-          </Row>
+          <Row>Planet types: 0-Planet, 1-Asteroid, 2-Foundry, 3-Spacetime Rip, 4-Phasar</Row>
         </Subber>
         <Row>
           <Subber>
-            If you want to play with spawn planets activated, you must create at least one revealed Spawn
-            Planet
+            If you want to play with spawn planets activated, you must create at least one revealed
+            Spawn Planet
           </Subber>
         </Row>
       </>
@@ -137,19 +139,19 @@ export function CreatePlanetPane({ config: config, onUpdate: onUpdate }: Lobbies
   }
   return (
     <>
-        <span>Create Custom Planets</span>
-        <Btn
-          onClick={() => {
-            onUpdate({
-              type: 'ADMIN_PLANETS',
-              value: planet,
-              index: config.ADMIN_PLANETS.displayValue?.length || 0,
-            });
-            setPlanet(defaultPlanet);
-          }}
-        >
-          Add Planet
-        </Btn>
+      <span>Create Custom Planets</span>
+      <Btn
+        onClick={() => {
+          onUpdate({
+            type: 'ADMIN_PLANETS',
+            value: planet,
+            index: config.ADMIN_PLANETS.displayValue?.length || 0,
+          });
+          setPlanet(defaultPlanet);
+        }}
+      >
+        Add Planet
+      </Btn>
       {adminPlanetElems}
       <Row>
         <Warning>{config.ADMIN_PLANETS.warning}</Warning>

@@ -13,10 +13,9 @@ import { Contract } from 'ethers';
 import React, { useCallback, useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { ContractsAPI, makeContractsAPI } from '../../Backend/GameLogic/ContractsAPI';
-import { PlanetCreator } from '../../Backend/Utils/PlanetCreator';
+import { LobbyAdminTools } from '../../Backend/Utils/LobbyAdminTools';
 import { ContractsAPIEvent } from '../../_types/darkforest/api/ContractsAPITypes';
 import { InitRenderState, Wrapper } from '../Components/GameLandingPageComponents';
-import { MinimapConfig } from '../Panes/Lobbies/MinimapUtils';
 import { LobbyInitializers } from '../Panes/Lobbies/Reducer';
 import { listenForKeyboardEvents, unlinkKeyboardEvents } from '../Utils/KeyEmitters';
 import { CadetWormhole } from '../Views/CadetWormhole';
@@ -34,9 +33,7 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
   const [ownerAddress, setOwnerAddress] = useState<EthAddress | undefined>();
   const [contract, setContract] = useState<ContractsAPI | undefined>();
   const [startingConfig, setStartingConfig] = useState<LobbyInitializers | undefined>();
-  const [lobbyAddress, setLobbyAddress] = useState<EthAddress | undefined>();
-  const [minimapConfig, setMinimapConfig] = useState<MinimapConfig | undefined>();
-  const [planetCreator, setPlanetCreator] = useState<PlanetCreator>();
+  const [lobbyAdminTools, setLobbyAdminTools] = useState<LobbyAdminTools>();
 
   let contractAddress: EthAddress | undefined;
   try {
@@ -127,12 +124,11 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
 
     contract.once(ContractsAPIEvent.LobbyCreated, async (owner: EthAddress, lobby: EthAddress) => {
       if (owner === ownerAddress) {
-        setLobbyAddress(lobby);
         if (!connection) {
           throw 'error: no connection';
         }
-        const planetCreator = await PlanetCreator.create(lobby, connection);
-        setPlanetCreator(planetCreator);
+        const lobbyAdminTools = await LobbyAdminTools.create(lobby, connection);
+        setLobbyAdminTools(lobbyAdminTools);
       }
     });
 
@@ -162,9 +158,8 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
   const content = startingConfig ? (
     <LobbyConfigPage
       startingConfig={startingConfig}
-      onCreate={createLobby}
-      lobbyAddress={lobbyAddress}
-      planetCreator={planetCreator}
+      onCreate = {createLobby}
+      lobbyAdminTools={lobbyAdminTools}
     />
   ) : (
     <LobbyLandingPage onReady={onReady} />
