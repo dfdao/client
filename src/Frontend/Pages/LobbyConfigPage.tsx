@@ -26,7 +26,6 @@ export function LobbyConfigPage({
   const [config, updateConfig] = useReducer(lobbyConfigReducer, startingConfig, lobbyConfigInit);
   const [minimapConfig, setMinimapConfig] = useState<MinimapConfig | undefined>();
   const [error, setError] = useState<string | undefined>();
-  const [status, setStatus] = useState<Status>(undefined);
 
   const onMapChange = useMemo(() => {
     return _.debounce((config: MinimapConfig) => setMinimapConfig(config), 500);

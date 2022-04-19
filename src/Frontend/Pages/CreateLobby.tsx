@@ -91,6 +91,7 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
               config.ARTIFACT_POINT_VALUES[ArtifactRarity.Legendary],
               config.ARTIFACT_POINT_VALUES[ArtifactRarity.Mythic],
             ],
+            WHITELIST: []
           });
         })
         .catch((e) => {
