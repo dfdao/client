@@ -45,6 +45,7 @@ export class LobbyAdminTools {
     this.contract = contract;
     this.connection = connection;
     this.whitelistedAddresses = [];
+    this.createdPlanets = [];
   }
 
   static async create(
@@ -117,6 +118,8 @@ export class LobbyAdminTools {
     });
 
     await tx.confirmedPromise;
+    this.createdPlanets.push(planet);
+
   }
 
   async revealPlanet(planet: AdminPlanet, initializers: LobbyInitializers) {
@@ -228,11 +231,11 @@ export class LobbyAdminTools {
     this.whitelistedAddresses.push(address);
   }
 
-  getCreatedPlanets() {
+  get planets() {
     return this.createdPlanets;
   }
 
-  getWhitelistedAddresses() {
+  get allAddresses() {
     return this.whitelistedAddresses;
   }
 

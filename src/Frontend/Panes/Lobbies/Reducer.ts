@@ -1967,7 +1967,7 @@ export function ofAdminPlanets(
     return {
       ...state[type],
       displayValue,
-      warning: `Cannot create spawn planets`,
+      warning: `Cannot create spawn planets. Go to Player Spawn pane to update.`,
     };
   }
 
@@ -1975,7 +1975,7 @@ export function ofAdminPlanets(
     return {
       ...state[type],
       displayValue,
-      warning: `Cannot create target planets`,
+      warning: `Cannot create target planets. Go to Target Planets pane to update.`,
     };
   }
 

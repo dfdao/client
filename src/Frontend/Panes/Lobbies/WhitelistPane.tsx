@@ -37,7 +37,7 @@ export function WhitelistPane({
   const [whitelistedAddresses, setWhitelistedAddresses] = useState<EthAddress[] | undefined>();
 
   useEffect(() => {
-    setWhitelistedAddresses(lobbyAdminTools?.getWhitelistedAddresses());
+    setWhitelistedAddresses(lobbyAdminTools?.allAddresses);
   }, [lobbyAdminTools]);
 
   const stageHeaders = ['Staged Addresses', ''];
@@ -62,6 +62,7 @@ export function WhitelistPane({
       await whitelistAddress(i);
     }
   }
+
   async function whitelistAddress(index: number) {
     setError(undefined)
     try {
@@ -72,7 +73,7 @@ export function WhitelistPane({
       }
 
       if (!config.WHITELIST.displayValue) {
-        setError('no planets staged');
+        setError('no addresses whitelisted');
         return;
       }
       const elem = config.WHITELIST.displayValue[index];
@@ -130,17 +131,23 @@ export function WhitelistPane({
     );
   }
 
-  function addAddress() {
+  function stageAddress() {
     setError(undefined);
     if (whitelistedAddresses?.find((v) => address == v)) {
       setError('address already whitelisted');
-    } else {
+      return;
+    }
+    if (config.WHITELIST.displayValue?.find((v) => address == v)) {
+      setError('address already staged');
+      return;
+    }
+
       onUpdate({
         type: 'WHITELIST',
         value: address,
         index: config.WHITELIST.displayValue?.length || 0,
       });
-    }
+    
     setAddress(defaultAddress);
   }
 
@@ -175,7 +182,7 @@ export function WhitelistPane({
           <span>Enter a 0x-prefixed address to stage</span>
 
           {whitelistElems}
-          <Btn onClick={addAddress}>Stage Address</Btn>
+          <Btn onClick={stageAddress}>Stage Address</Btn>
           <Row>
             <Warning>{config.WHITELIST.warning}</Warning>
           </Row>
