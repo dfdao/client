@@ -165,7 +165,8 @@ export function ConfigurationPane({
       perlinThreshold1: config.PERLIN_THRESHOLD_1.currentValue,
       perlinThreshold2: config.PERLIN_THRESHOLD_2.currentValue,
       perlinThreshold3: config.PERLIN_THRESHOLD_3.currentValue,
-      planets: config.ADMIN_PLANETS.currentValue || [],
+      stagedPlanets: config.ADMIN_PLANETS.currentValue || [],
+      createdPlanets: lobbyAdminTools?.planets || [],
     });
   }, [
     onMapChange,
@@ -178,6 +179,7 @@ export function ConfigurationPane({
     config.PERLIN_THRESHOLD_2.currentValue,
     config.PERLIN_THRESHOLD_3.currentValue,
     config.ADMIN_PLANETS.currentValue,
+    lobbyAdminTools
   ]);
 
   async function validateAndCreateLobby() {
