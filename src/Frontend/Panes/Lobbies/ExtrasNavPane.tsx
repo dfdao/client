@@ -64,6 +64,25 @@ export function ExtrasNavPane({
   const { path: root } = useRouteMatch();
 
   const handleEnter = () => {
+    const warnings = [];
+    if(config.ADMIN_PLANETS.displayValue && config.ADMIN_PLANETS.displayValue.length > 0) {
+      warnings.push('Some planets are still staged for creation');
+    }
+    if(config.WHITELIST.displayValue && config.WHITELIST.displayValue.length > 0) {
+      warnings.push('Some addresses are still staged for whitelist');
+
+    }
+    if(config.MANUAL_SPAWN.displayValue && !lobbyAdminTools?.planets.find(p => p.isSpawnPlanet)) {
+      warnings.push('Manual spawn is active but no spawn planets have been created');
+
+    }
+    if(config.TARGET_PLANETS.displayValue && !lobbyAdminTools?.planets.find(p => p.isTargetPlanet)) {
+      warnings.push('Target planets are active but no target planets have been created');
+    }
+    if(warnings.length >0) {
+      const confirmed = confirm(`WARNING: \n${warnings.reduce((prev, curr, idx) => prev.concat(`${idx + 1}: ${curr}\n`), '')} Do you want to continue?`);
+      if(!confirmed) return;
+    }
     window.open(url);
   };
 
