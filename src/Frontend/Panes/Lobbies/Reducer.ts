@@ -132,6 +132,11 @@ export type LobbyConfigAction =
       type: 'MODIFIERS';
       index: number;
       value: number | undefined;
+    }
+    | {
+      type: 'SPACESHIPS';
+      index: number;
+      value: boolean | undefined;
     };
 
 // TODO(#2328): WHITELIST_ENABLED should just be on Initializers
@@ -358,6 +363,10 @@ export function lobbyConfigReducer(state: LobbyConfigState, action: LobbyAction)
     }
     case 'MODIFIERS': {
       update = ofModifiers(action, state);
+      break;
+    }
+    case 'SPACESHIPS': {
+      update = ofSpaceships(action, state);
       break;
     }
     default: {
@@ -869,6 +878,17 @@ export function lobbyConfigInit(startingConfig: LobbyInitializers) {
           defaultValue,
           warning: undefined,
         };
+        break
+      }
+        case 'SPACESHIPS': {
+          // Default this to false if we don't have it
+          const defaultValue = startingConfig[key];
+          state[key] = {
+            currentValue: defaultValue,
+            displayValue: defaultValue,
+            defaultValue,
+            warning: undefined,
+          };
         break;
       }
       default: {
@@ -2019,6 +2039,50 @@ export function ofModifiers(
   }
 
   currentValue[index] = value;
+
+  return {
+    ...state[type],
+    currentValue,
+    displayValue,
+    warning: undefined,
+  };
+}
+
+export function ofSpaceships(
+  { type, index, value }: Extract<LobbyConfigAction, { type: "SPACESHIPS" }>,
+  state: LobbyConfigState
+) {
+  const prevCurrentValue = state[type].currentValue;
+  const prevDisplayValue = state[type].displayValue;
+
+  if (!prevDisplayValue) {
+    return {
+      ...state[type],
+      warning: `Failed to update ${type}`,
+    };
+  }
+
+  if (value === undefined) {
+    return {
+      ...state[type],
+      warning: undefined,
+    };
+  }
+
+  const currentValue = [...prevCurrentValue];
+  const displayValue = [...prevDisplayValue];
+
+  displayValue[index] = value;
+  currentValue[index] = value;
+
+  if(index == 4 && value == false) {
+    return {
+    ...state[type],
+    currentValue,
+    displayValue,
+    warning: `Without the Gear you won't be able to prospect artifacts!`,
+  };
+  }
 
   return {
     ...state[type],

@@ -323,6 +323,13 @@ export interface ContractConstants {
     number,
     number,
     number,
+  ];
+  SPACESHIPS : [
+    boolean,
+    boolean,
+    boolean,
+    boolean,
+    boolean
   ]
 }
 

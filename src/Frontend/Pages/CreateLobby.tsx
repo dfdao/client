@@ -7,13 +7,14 @@ import {
   ArtifactRarity,
   ContractMethodName,
   EthAddress,
-  UnconfirmedCreateLobby,
+  UnconfirmedCreateLobby
 } from '@darkforest_eth/types';
 import { Contract } from 'ethers';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { ContractsAPI, makeContractsAPI } from '../../Backend/GameLogic/ContractsAPI';
+import { PlanetCreator } from '../../Backend/Utils/PlanetCreator';
 import { ContractsAPIEvent } from '../../_types/darkforest/api/ContractsAPITypes';
 import { InitRenderState, Wrapper } from '../Components/GameLandingPageComponents';
 import { ConfigurationPane } from '../Panes/Lobbies/ConfigurationPane';
@@ -23,7 +24,6 @@ import { LobbyInitializers } from '../Panes/Lobbies/Reducer';
 import { listenForKeyboardEvents, unlinkKeyboardEvents } from '../Utils/KeyEmitters';
 import { CadetWormhole } from '../Views/CadetWormhole';
 import { LobbyLandingPage } from './LobbyLandingPage';
-import { PlanetCreator } from '../../Backend/Utils/PlanetCreator';
 
 type ErrorState =
   | { type: 'invalidAddress' }
@@ -146,7 +146,8 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
             TARGET_PLANET_HOLD_BLOCKS_REQUIRED: config.TARGET_PLANET_HOLD_BLOCKS_REQUIRED,
             MANUAL_SPAWN: config.MANUAL_SPAWN,
             ADMIN_PLANETS: [],
-            MODIFIERS: config.MODIFIERS
+            MODIFIERS: config.MODIFIERS,
+            SPACESHIPS: config.SPACESHIPS
           });
         })
         .catch((e) => {
