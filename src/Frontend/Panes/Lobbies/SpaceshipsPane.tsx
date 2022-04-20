@@ -3,7 +3,7 @@ import _ from 'lodash';
 import React from 'react';
 import {
   Checkbox,
-  DarkForestCheckbox,
+  DarkForestCheckbox
 } from '../../Components/Input';
 import { SpaceshipDescription, SpaceshipLabel } from '../../Components/Labels/SpaceshipLabel';
 import { Row } from '../../Components/Row';
@@ -36,7 +36,7 @@ export function SpaceshipsPane({ config, onUpdate }: LobbiesPaneProps) {
   const spaceships = _.chunk(config.SPACESHIPS.displayValue, 5).map(
     (items, rowIdx) => {
       return (
-      <Row style={pointsRowStyle}>
+      <Row key={`score-row-${rowIdx}`} style={pointsRowStyle}>
       {(config.SPACESHIPS.displayValue ?? []).map((displayValue, idx) => (
         <Spaceships
           key={`spaceship-${idx}`}
