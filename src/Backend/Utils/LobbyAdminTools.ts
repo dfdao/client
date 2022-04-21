@@ -33,12 +33,18 @@ export type CreatePlanetData = {
   biomeBase: number;
 };
 
+export type CreatedPlanet = {
+  planet : AdminPlanet;
+  createTx : string | undefined;
+  revealTx : string | undefined;
+}
+
 export class LobbyAdminTools {
   private readonly lobbyAddress: EthAddress;
   private readonly contract: ContractsAPI;
   private readonly connection: EthConnection;
   private whitelistedAddresses: EthAddress[];
-  private createdPlanets: AdminPlanet[];
+  private createdPlanets: CreatedPlanet[];
 
   private constructor(lobbyAddress: EthAddress, contract: ContractsAPI, connection: EthConnection) {
     this.lobbyAddress = lobbyAddress;
@@ -118,7 +124,7 @@ export class LobbyAdminTools {
     });
 
     await tx.confirmedPromise;
-    this.createdPlanets.push(planet);
+    this.createdPlanets.push({planet: planet, createTx : tx?.hash, revealTx : undefined});
 
   }
 
@@ -160,6 +166,9 @@ export class LobbyAdminTools {
 
     await tx.confirmedPromise;
     console.log(`reveal tx accepted`);
+    const createdPlanet = this.createdPlanets.find(p => p.planet.x == planet.x && p.planet.y == planet.y);
+    if(!createdPlanet) throw("created planet not found");
+    createdPlanet.revealTx = tx?.hash;
   }
 
   private async makeRevealProof(
