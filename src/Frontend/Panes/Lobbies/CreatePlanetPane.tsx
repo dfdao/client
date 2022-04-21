@@ -112,14 +112,6 @@ export function CreatePlanetPane({
     );
   }
 
-  const createdPlanetHeaders = [
-    'Coords',
-    'Level',
-    'Type',
-    'Reveal',
-    'Target',
-    'Spawn',
-  ];
   const createdPlanetColumns = [
     (planet: AdminPlanet) => (
       <Sub>
@@ -131,6 +123,7 @@ export function CreatePlanetPane({
     (planet: AdminPlanet) => formatBool(planet.revealLocation),
     (planet: AdminPlanet) => formatBool(planet.isTargetPlanet),
     (planet: AdminPlanet) => formatBool(planet.isSpawnPlanet),
+    (planet : AdminPlanet) => <Sub>{planet.level}</Sub>
   ];
 
   function CreatedPlanets({ planets }: { planets: AdminPlanet[] | undefined }) {
@@ -139,7 +132,7 @@ export function CreatePlanetPane({
         <Table
           paginated={true}
           rows={planets || []}
-          headers={createdPlanetHeaders}
+          headers={headers}
           columns={createdPlanetColumns}
           alignments={alignments}
         />

@@ -65,21 +65,32 @@ export function ExtrasNavPane({
 
   const handleEnter = () => {
     const warnings = [];
-    if(config.ADMIN_PLANETS.displayValue && config.ADMIN_PLANETS.displayValue.length > 0) {
+    if (config.ADMIN_PLANETS.displayValue && config.ADMIN_PLANETS.displayValue.length > 0) {
       warnings.push('Some planets are still staged for creation');
     }
+    if (config.WHITELIST.displayValue && config.WHITELIST.displayValue.length > 0) {
       warnings.push('Some addresses are still staged for allowlist');
     }
-    if(config.MANUAL_SPAWN.displayValue && !lobbyAdminTools?.planets.find(p => p.isSpawnPlanet)) {
+    if (
+      config.MANUAL_SPAWN.displayValue &&
+      !lobbyAdminTools?.planets.find((p) => p.isSpawnPlanet)
+    ) {
       warnings.push('Manual spawn is active but no spawn planets have been created');
-
     }
-    if(config.TARGET_PLANETS.displayValue && !lobbyAdminTools?.planets.find(p => p.isTargetPlanet)) {
+    if (
+      config.TARGET_PLANETS.displayValue &&
+      !lobbyAdminTools?.planets.find((p) => p.isTargetPlanet)
+    ) {
       warnings.push('Target planets are active but no target planets have been created');
     }
-    if(warnings.length >0) {
-      const confirmed = confirm(`WARNING: \n${warnings.reduce((prev, curr, idx) => prev.concat(`${idx + 1}: ${curr}\n`), '')} Do you want to continue?`);
-      if(!confirmed) return;
+    if (warnings.length > 0) {
+      const confirmed = confirm(
+        `WARNING: \n${warnings.reduce(
+          (prev, curr, idx) => prev.concat(`${idx + 1}: ${curr}\n`),
+          ''
+        )} Do you want to continue?`
+      );
+      if (!confirmed) return;
     }
     window.open(url);
   };
@@ -158,7 +169,7 @@ export function ExtrasNavPane({
           Now add planets and players to your universe!
           <Spacer height={12} />
           Remember, if you want to play with manual spawning, you must create at least one spawn
-          planet to enter the world.
+          planet.
           <Spacer height={12} />
         </div>
         {buttons}
