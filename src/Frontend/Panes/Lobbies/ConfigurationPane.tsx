@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import { LobbyAdminTools } from '../../../Backend/Utils/LobbyAdminTools';
 import { Btn } from '../../Components/Btn';
-import { Spacer, Title } from '../../Components/CoreUI';
+import { Link, Spacer, Title } from '../../Components/CoreUI';
 import { MythicLabelText } from '../../Components/Labels/MythicLabel';
 import { LoadingSpinner } from '../../Components/LoadingSpinner';
 import { Modal } from '../../Components/Modal';
@@ -136,6 +136,7 @@ export function ConfigurationPane({
   onCreate,
   lobbyAdminTools,
   onUpdate,
+  lobbyTx,
 }: {
   modalIndex: number;
   config: LobbyConfigState;
@@ -144,6 +145,7 @@ export function ConfigurationPane({
   onCreate: (config: LobbyInitializers) => Promise<void>;
   lobbyAdminTools: LobbyAdminTools | undefined;
   onUpdate: (action: LobbyConfigAction) => void;
+  lobbyTx: string | undefined;
 }) {
   const [error, setError] = useState<string | undefined>();
   const [status, setStatus] = useState<Status>(undefined);
@@ -230,12 +232,24 @@ export function ConfigurationPane({
 
   const url = `${window.location.origin}/play/${lobbyAdminTools?.address}`;
 
+  const blockscoutURL = `https://blockscout.com/poa/xdai/tx/${lobbyTx}`;
+
   let lobbyContent: JSX.Element | undefined;
   if (status === 'created' && lobbyAdminTools?.address) {
     lobbyContent = (
       <>
-        <Row>
-          <MythicLabelText style={{ margin: 'auto' }} text='Your universe has been created!' />
+        <Row style = {{justifyContent: 'center'} as CSSStyleDeclaration & React.CSSProperties}>
+          <div>
+            <MythicLabelText
+              style={{ margin: 'auto' }}
+              text='Your universe has been created! '
+            ></MythicLabelText>
+            {lobbyTx && (
+              <Link to={blockscoutURL} style={{ margin: 'auto' }}>
+                <u>view tx</u>
+              </Link>
+            )}
+          </div>
         </Row>
         <Row>
           <span style={{ margin: 'auto' }}>
@@ -274,8 +288,8 @@ export function ConfigurationPane({
           Welcome Cadet! Here, you can configure and launch a custom Dark Forest universe. We call
           this a Lobby.
           <Spacer height={12} />
-          First, customize the configuration of your world. Once you have created a lobby, add custom
-          planets and allowlisted players on the next pane.
+          First, customize the configuration of your world. Once you have created a lobby, add
+          custom planets and allowlisted players on the next pane.
           <Spacer height={12} />
         </div>
         {buttons}
