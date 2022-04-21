@@ -34,7 +34,7 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
   const [contract, setContract] = useState<ContractsAPI | undefined>();
   const [startingConfig, setStartingConfig] = useState<LobbyInitializers | undefined>();
   const [lobbyAdminTools, setLobbyAdminTools] = useState<LobbyAdminTools>();
-
+  const [lobbyTx, setLobbyTx] = useState<string | undefined>()
   let contractAddress: EthAddress | undefined;
   try {
     contractAddress = address(match.params.contract);
@@ -138,6 +138,7 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
       gasLimit: '16777215',
     });
     await tx.confirmedPromise;
+    setLobbyTx(tx?.hash)
   }
 
   if (errorState) {
@@ -161,6 +162,7 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
       startingConfig={startingConfig}
       onCreate = {createLobby}
       lobbyAdminTools={lobbyAdminTools}
+      lobbyTx = {lobbyTx}
     />
   ) : (
     <LobbyLandingPage onReady={onReady} />
