@@ -31,6 +31,16 @@ const TableContainer = styled.div`
   width: 100%;
 `;
 
+const displayProperties = [
+  'x',
+  'y',
+  'Planet Level',
+  'Planet Type',
+  'Valid Location Id?', // not used, always set to false
+  'Reveal Planet?',
+  'Target Planet?',
+  'Spawn Planet?'
+]
 type Status = 'creating' | 'created' | 'errored' | undefined;
 
 function formatBool(bool: boolean) {
@@ -62,8 +72,8 @@ export function CreatePlanetPane({
     setCreatedPlanets(lobbyAdminTools?.planets);
   }, [lobbyAdminTools]);
 
-  const headers = ['Coords', 'Level', 'Type', 'Valid Loc', 'Reveal', 'Target', 'Spawn', ''];
-  const alignments: Array<'r' | 'c' | 'l'> = ['c', 'c', 'c', 'l', 'l', 'l', 'l', 'l'];
+  const headers = ['Coords', 'Level', 'Type', 'Reveal', 'Target', 'Spawn', ''];
+  const alignments: Array<'r' | 'c' | 'l'> = ['c', 'c', 'c', 'c', 'c', 'c', 'r'];
   const columns = [
     (planet: AdminPlanet) => (
       <Sub>
@@ -72,7 +82,6 @@ export function CreatePlanetPane({
     ),
     (planet: AdminPlanet) => <Sub>{planet.level}</Sub>,
     (planet: AdminPlanet) => <Sub>{planet.planetType}</Sub>,
-    (planet: AdminPlanet) => formatBool(planet.requireValidLocationId),
     (planet: AdminPlanet) => formatBool(planet.revealLocation),
     (planet: AdminPlanet) => formatBool(planet.isTargetPlanet),
     (planet: AdminPlanet) => formatBool(planet.isSpawnPlanet),
@@ -107,7 +116,6 @@ export function CreatePlanetPane({
     'Coords',
     'Level',
     'Type',
-    'Valid Loc',
     'Reveal',
     'Target',
     'Spawn',
@@ -120,7 +128,6 @@ export function CreatePlanetPane({
     ),
     (planet: AdminPlanet) => <Sub>{planet.level}</Sub>,
     (planet: AdminPlanet) => <Sub>{planet.planetType}</Sub>,
-    (planet: AdminPlanet) => formatBool(planet.requireValidLocationId),
     (planet: AdminPlanet) => formatBool(planet.revealLocation),
     (planet: AdminPlanet) => formatBool(planet.isTargetPlanet),
     (planet: AdminPlanet) => formatBool(planet.isSpawnPlanet),
@@ -164,9 +171,10 @@ export function CreatePlanetPane({
 
   function planetInput(value: string, index: number) {
     // The level 0 value can never change
+    if(value == 'requireValidLocationId') return;
     return (
       <div style={itemStyle} key={index}>
-        <span>{value}</span>
+        <span>{displayProperties[index]}</span>
         {value == 'x' || value == 'y' || value == 'level' || value == 'planetType' ? (
           <NumberInput
             format='integer'
