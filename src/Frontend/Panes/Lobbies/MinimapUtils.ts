@@ -1,4 +1,5 @@
 import { AdminPlanet, SpaceType } from '@darkforest_eth/types';
+import { CreatedPlanet } from '../../../Backend/Utils/LobbyAdminTools';
 
 export type MinimapConfig = {
   worldRadius: number;
@@ -11,7 +12,7 @@ export type MinimapConfig = {
   perlinThreshold2: number;
   perlinThreshold3: number;
   stagedPlanets: AdminPlanet[];
-  createdPlanets: AdminPlanet[];
+  createdPlanets: CreatedPlanet[];
 };
 
 export type PlanetType = 'staged' | 'created' | undefined

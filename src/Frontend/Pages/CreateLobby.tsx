@@ -82,7 +82,7 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
             START_PAUSED: true,
             CLAIM_PLANET_COOLDOWN: 0,
             ADMIN_PLANETS: [],
-            TOKEN_MINT_END_TIMESTAMP: Date.now() + 21600000, // six hours from now
+            TOKEN_MINT_END_TIMESTAMP: Date.now() + (1000 * 60 * 60 * 24 * 365), // one year from now
             ARTIFACT_POINT_VALUES: [
               config.ARTIFACT_POINT_VALUES[ArtifactRarity.Unknown],
               config.ARTIFACT_POINT_VALUES[ArtifactRarity.Common],

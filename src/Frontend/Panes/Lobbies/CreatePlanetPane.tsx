@@ -2,8 +2,9 @@ import { AdminPlanet } from '@darkforest_eth/types';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { LobbyAdminTools } from '../../../Backend/Utils/LobbyAdminTools';
+import { CreatedPlanet, LobbyAdminTools } from '../../../Backend/Utils/LobbyAdminTools';
 import { Btn } from '../../Components/Btn';
+import { Link } from '../../Components/CoreUI';
 import {
   Checkbox,
   DarkForestCheckbox,
@@ -39,8 +40,8 @@ const displayProperties = [
   'Valid Location Id?', // not used, always set to false
   'Reveal Planet?',
   'Target Planet?',
-  'Spawn Planet?'
-]
+  'Spawn Planet?',
+];
 type Status = 'creating' | 'created' | 'errored' | undefined;
 
 function formatBool(bool: boolean) {
@@ -64,7 +65,7 @@ export function CreatePlanetPane({
   lobbyAdminTools,
 }: LobbiesPaneProps & { lobbyAdminTools: LobbyAdminTools | undefined }) {
   const [planet, setPlanet] = useState<AdminPlanet>(defaultPlanet);
-  const [createdPlanets, setCreatedPlanets] = useState<AdminPlanet[] | undefined>();
+  const [createdPlanets, setCreatedPlanets] = useState<CreatedPlanet[] | undefined>();
   const [error, setError] = useState<string | undefined>();
   const [status, setStatus] = useState<Status>();
 
@@ -73,7 +74,7 @@ export function CreatePlanetPane({
   }, [lobbyAdminTools]);
 
   const headers = ['Coords', 'Level', 'Type', 'Reveal', 'Target', 'Spawn', ''];
-  const alignments: Array<'r' | 'c' | 'l'> = ['c', 'c', 'c', 'c', 'c', 'c', 'r'];
+  const alignments: Array<'r' | 'c' | 'l'> = ['c', 'c', 'c', 'c', 'c', 'c', 'c', 'c'];
   const columns = [
     (planet: AdminPlanet) => (
       <Sub>
@@ -112,27 +113,53 @@ export function CreatePlanetPane({
     );
   }
 
-  const createdPlanetColumns = [
-    (planet: AdminPlanet) => (
-      <Sub>
-        ({planet.x}, {planet.y})
-      </Sub>
-    ),
-    (planet: AdminPlanet) => <Sub>{planet.level}</Sub>,
-    (planet: AdminPlanet) => <Sub>{planet.planetType}</Sub>,
-    (planet: AdminPlanet) => formatBool(planet.revealLocation),
-    (planet: AdminPlanet) => formatBool(planet.isTargetPlanet),
-    (planet: AdminPlanet) => formatBool(planet.isSpawnPlanet),
-    (planet : AdminPlanet) => <Sub>{planet.level}</Sub>
+  const blockscoutURL = `https://blockscout.com/poa/xdai/tx/`;
+
+  const createdPlanetHeaders = [
+    'Coords',
+    'Level',
+    'Type',
+    'Reveal',
+    'Target',
+    'Spawn',
+    'Create Tx',
+    'Reveal Tx',
   ];
 
-  function CreatedPlanets({ planets }: { planets: AdminPlanet[] | undefined }) {
+  const createdPlanetColumns = [
+    (planet: CreatedPlanet) => (
+      <Sub>
+        ({planet.planet.x}, {planet.planet.y})
+      </Sub>
+    ),
+    (planet: CreatedPlanet) => <Sub>{planet.planet.level}</Sub>,
+    (planet: CreatedPlanet) => <Sub>{planet.planet.planetType}</Sub>,
+    (planet: CreatedPlanet) => formatBool(planet.planet.revealLocation),
+    (planet: CreatedPlanet) => formatBool(planet.planet.isTargetPlanet),
+    (planet: CreatedPlanet) => formatBool(planet.planet.isSpawnPlanet),
+    (planet: CreatedPlanet) =>
+      planet.createTx && (
+        <Link to={`${blockscoutURL}${planet.createTx}`} style={{ margin: 'auto' }}>
+          <u>({planet.createTx.slice(2, 6)})</u>
+        </Link>
+      ),
+    (planet: CreatedPlanet) =>
+      planet.revealTx ? (
+        <Link to={`${blockscoutURL}${planet.revealTx}`} style={{ margin: 'auto' }}>
+          <u>({planet.revealTx.slice(2, 6)})</u>
+        </Link>
+      ) : (
+        <span>N/A</span>
+      ),
+  ];
+
+  function CreatedPlanets({ planets }: { planets: CreatedPlanet[] | undefined }) {
     return planets?.length ? (
       <TableContainer>
         <Table
           paginated={true}
           rows={planets || []}
-          headers={headers}
+          headers={createdPlanetHeaders}
           columns={createdPlanetColumns}
           alignments={alignments}
         />
@@ -144,7 +171,8 @@ export function CreatePlanetPane({
 
   function stagePlanet() {
     setError(undefined);
-    if (createdPlanets?.find((p) => planet.x == p.x && planet.y == p.y)) {
+    // console.log(JSON.stringify(planet));
+    if (createdPlanets?.find((p) => planet.x == p.planet.x && planet.y == p.planet.y)) {
       setError('planet with identical coords created');
       return;
     }
@@ -158,13 +186,13 @@ export function CreatePlanetPane({
       value: planet,
       index: config.ADMIN_PLANETS.displayValue?.length || 0,
     });
-
+    console.log(JSON.stringify(config.ADMIN_PLANETS.displayValue));
     setPlanet(defaultPlanet);
   }
 
   function planetInput(value: string, index: number) {
     // The level 0 value can never change
-    if(value == 'requireValidLocationId') return;
+    if (value == 'requireValidLocationId') return;
     return (
       <div style={itemStyle} key={index}>
         <span>{displayProperties[index]}</span>
@@ -215,7 +243,7 @@ export function CreatePlanetPane({
         return;
       }
       await lobbyAdminTools.createPlanet(elem, initializers);
-      if (planet.revealLocation) {
+      if (elem.revealLocation) {
         await lobbyAdminTools.revealPlanet(elem, initializers);
       }
 

@@ -73,13 +73,13 @@ export function ExtrasNavPane({
     }
     if (
       config.MANUAL_SPAWN.displayValue &&
-      !lobbyAdminTools?.planets.find((p) => p.isSpawnPlanet)
+      !lobbyAdminTools?.planets.find((p) => p.planet.isSpawnPlanet)
     ) {
       warnings.push('Manual spawn is active but no spawn planets have been created');
     }
     if (
       config.TARGET_PLANETS.displayValue &&
-      !lobbyAdminTools?.planets.find((p) => p.isTargetPlanet)
+      !lobbyAdminTools?.planets.find((p) => p.planet.isTargetPlanet)
     ) {
       warnings.push('Target planets are active but no target planets have been created');
     }
