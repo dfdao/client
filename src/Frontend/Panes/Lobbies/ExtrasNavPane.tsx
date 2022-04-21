@@ -33,9 +33,9 @@ const panes: ReadonlyArray<PaneConfig> = [
     ),
   },
   {
-    title: 'Whitelist players',
+    title: 'Allowlist players',
     shortcut: `+`,
-    path: '/whitelist',
+    path: '/allowlist',
     Pane: (props: LobbiesPaneProps, lobbyAdminTools: LobbyAdminTools) => (
       <WhitelistPane
         config={props.config}
@@ -68,9 +68,7 @@ export function ExtrasNavPane({
     if(config.ADMIN_PLANETS.displayValue && config.ADMIN_PLANETS.displayValue.length > 0) {
       warnings.push('Some planets are still staged for creation');
     }
-    if(config.WHITELIST.displayValue && config.WHITELIST.displayValue.length > 0) {
-      warnings.push('Some addresses are still staged for whitelist');
-
+      warnings.push('Some addresses are still staged for allowlist');
     }
     if(config.MANUAL_SPAWN.displayValue && !lobbyAdminTools?.planets.find(p => p.isSpawnPlanet)) {
       warnings.push('Manual spawn is active but no spawn planets have been created');
@@ -184,8 +182,8 @@ export function ExtrasNavPane({
 
           <CreatePlanetPane config={config} onUpdate={onUpdate} lobbyAdminTools={lobbyAdminTools} />
         </Route>
-        <Route path={`${root}/whitelist`}>
-          <NavigationTitle>Whitelist addresses</NavigationTitle>
+        <Route path={`${root}/allowlist`}>
+          <NavigationTitle>Allowlist addresses</NavigationTitle>
           <WhitelistPane config={config} onUpdate={onUpdate} lobbyAdminTools={lobbyAdminTools} />
         </Route>
       </Switch>

@@ -73,7 +73,7 @@ export function WhitelistPane({
       }
 
       if (!config.WHITELIST.displayValue) {
-        setError('no addresses whitelisted');
+        setError('no addresses allowlisted');
         return;
       }
       const elem = config.WHITELIST.displayValue[index];
@@ -113,7 +113,7 @@ export function WhitelistPane({
     );
   }
 
-  const whitelistedHeaders = ['Whitelisted Addresses'];
+  const whitelistedHeaders = ['Allowlisted Addresses'];
   const whitelistedColumns = [(address: EthAddress) => <Sub>{address}</Sub>];
   function WhitelistedAddresses({ addresses }: { addresses: EthAddress[] | undefined }) {
     return addresses?.length ? (
@@ -127,14 +127,14 @@ export function WhitelistPane({
         />
       </TableContainer>
     ) : (
-      <Sub>No addresses whitelisted</Sub>
+      <Sub>No addresses allowlisted</Sub>
     );
   }
 
   function stageAddress() {
     setError(undefined);
     if (whitelistedAddresses?.find((v) => address == v)) {
-      setError('address already whitelisted');
+      setError('address already allowlisted');
       return;
     }
     if (config.WHITELIST.displayValue?.find((v) => address == v)) {
@@ -175,7 +175,7 @@ export function WhitelistPane({
           {!lobbyAdminTools && (
             <Row>
               <Sub>
-                <Red>Warning:</Red> Cannot whitelist players until lobby is created
+                <Red>Warning:</Red> Cannot allowlist players until lobby is created
               </Sub>
             </Row>
           )}
@@ -208,7 +208,7 @@ export function WhitelistPane({
           </Row>
         </>
       ) : (
-        <Sub>Enable whitelist (in admin permissions) to continue</Sub>
+        <Sub>Enable allowlist (in admin permissions) to continue</Sub>
       )}
     </>
   );
