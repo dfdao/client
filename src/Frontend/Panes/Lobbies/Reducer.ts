@@ -1847,18 +1847,18 @@ export function ofPlanetLevelThresholds(
   const currentValue = [...prevCurrentValue];
   const displayValue = [...prevDisplayValue];
 
-  if (index === 0) {
-    // Level 0 boundary always has to be this number
-    displayValue[index] = 16777216;
-    currentValue[index] = 16777216;
+  // if (index === 0) {
+  //   // Level 0 boundary always has to be this number
+  //   displayValue[index] = 16777216;
+  //   currentValue[index] = 16777216;
 
-    return {
-      ...state[type],
-      displayValue,
-      currentValue,
-      warning: undefined,
-    };
-  }
+  //   return {
+  //     ...state[type],
+  //     displayValue,
+  //     currentValue,
+  //     warning: undefined,
+  //   };
+  // }
 
   displayValue[index] = value;
 
@@ -1979,7 +1979,7 @@ export function ofAdminPlanets(
     };
   }
 
-  if (Math.abs(value.x) >= worldRadius || Math.abs(value.y) > worldRadius) {
+  if (Math.abs(value.x) ** 2 + Math.abs(value.y) ** 2 > worldRadius ** 2) {
     return {
       ...state[type],
       displayValue,

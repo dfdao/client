@@ -42,7 +42,7 @@ function generate(config: MinimapConfig): DrawMessage {
     let s = Math.round((step)/2);
     if(!!config.stagedPlanets.find(planet => x - s <= planet.x && planet.x < x + s && y - s <= planet.y && planet.y < y + s))
       return 'staged' as PlanetType;
-      if(!!config.createdPlanets.find(planet => x - s <= planet.x && planet.x < x + s && y - s <= planet.y && planet.y < y + s))
+      if(!!config.createdPlanets.find(planet => x - s <= planet.planet.x && planet.planet.x < x + s && y - s <= planet.planet.y && planet.planet.y < y + s))
       return 'created' as PlanetType;
   }
 

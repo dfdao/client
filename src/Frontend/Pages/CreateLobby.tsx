@@ -34,7 +34,7 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
   const [contract, setContract] = useState<ContractsAPI | undefined>();
   const [startingConfig, setStartingConfig] = useState<LobbyInitializers | undefined>();
   const [lobbyAdminTools, setLobbyAdminTools] = useState<LobbyAdminTools>();
-
+  const [lobbyTx, setLobbyTx] = useState<string | undefined>()
   let contractAddress: EthAddress | undefined;
   try {
     contractAddress = address(match.params.contract);
@@ -82,7 +82,7 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
             START_PAUSED: true,
             CLAIM_PLANET_COOLDOWN: 0,
             ADMIN_PLANETS: [],
-            TOKEN_MINT_END_TIMESTAMP: Date.now() + 21600000, // six hours from now
+            TOKEN_MINT_END_TIMESTAMP: Date.now() + (1000 * 60 * 60 * 24 * 365), // one year from now
             ARTIFACT_POINT_VALUES: [
               config.ARTIFACT_POINT_VALUES[ArtifactRarity.Unknown],
               config.ARTIFACT_POINT_VALUES[ArtifactRarity.Common],
@@ -138,6 +138,7 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
       gasLimit: '16777215',
     });
     await tx.confirmedPromise;
+    setLobbyTx(tx?.hash)
   }
 
   if (errorState) {
@@ -161,6 +162,7 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
       startingConfig={startingConfig}
       onCreate = {createLobby}
       lobbyAdminTools={lobbyAdminTools}
+      lobbyTx = {lobbyTx}
     />
   ) : (
     <LobbyLandingPage onReady={onReady} />
