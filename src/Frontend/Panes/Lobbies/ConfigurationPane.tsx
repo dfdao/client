@@ -274,8 +274,8 @@ export function ConfigurationPane({
           Welcome Cadet! Here, you can configure and launch a custom Dark Forest universe. We call
           this a Lobby.
           <Spacer height={12} />
-          All settings will be defaulted to the same configuration of the main contract you are
-          copying. However, you can change any of those settings through the buttons below!
+          First, customize the configuration of your world. Once you have created a lobby, add custom
+          planets and allowlisted players on the next pane.
           <Spacer height={12} />
         </div>
         {buttons}
@@ -287,7 +287,7 @@ export function ConfigurationPane({
             </Btn>
           )}
           <Row style={jcFlexEnd}>
-            <LinkButton to={`/extras`}>Planets & Whitelist →</LinkButton>
+            <LinkButton to={`/extras`}>Planets & Allowlist →</LinkButton>
           </Row>
           <Row>
             <Warning>{error}</Warning>
