@@ -71,7 +71,7 @@ const panes: ReadonlyArray<PaneConfig> = [
     Pane: (props: LobbiesPaneProps) => <SpaceTypeBiomePane {...props} />,
   },
   {
-    title: 'Planets',
+    title: 'Planet rarity',
     shortcut: `4`,
     path: '/planet',
     Pane: (props: LobbiesPaneProps) => <PlanetPane {...props} />,
@@ -301,7 +301,7 @@ export function ConfigurationPane({
             </Btn>
           )}
           <Row style={jcFlexEnd}>
-            <LinkButton to={`/extras`}>Planets & Allowlist →</LinkButton>
+            <LinkButton to={`/extras`}>Add players/planets →</LinkButton>
           </Row>
           <Row>
             <Warning>{error}</Warning>

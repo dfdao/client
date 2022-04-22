@@ -33,7 +33,7 @@ const panes: ReadonlyArray<PaneConfig> = [
     ),
   },
   {
-    title: 'Allowlist players',
+    title: 'Add players',
     shortcut: `+`,
     path: '/allowlist',
     Pane: (props: LobbiesPaneProps, lobbyAdminTools: LobbyAdminTools) => (
@@ -73,13 +73,13 @@ export function ExtrasNavPane({
     }
     if (
       config.MANUAL_SPAWN.displayValue &&
-      !lobbyAdminTools?.planets.find((p) => p.planet.isSpawnPlanet)
+      !lobbyAdminTools?.planets.find((p) => p.isSpawnPlanet)
     ) {
       warnings.push('Manual spawn is active but no spawn planets have been created');
     }
     if (
       config.TARGET_PLANETS.displayValue &&
-      !lobbyAdminTools?.planets.find((p) => p.planet.isTargetPlanet)
+      !lobbyAdminTools?.planets.find((p) => p.isTargetPlanet)
     ) {
       warnings.push('Target planets are active but no target planets have been created');
     }
@@ -194,7 +194,7 @@ export function ExtrasNavPane({
           <CreatePlanetPane config={config} onUpdate={onUpdate} lobbyAdminTools={lobbyAdminTools} />
         </Route>
         <Route path={`${root}/allowlist`}>
-          <NavigationTitle>Allowlist addresses</NavigationTitle>
+          <NavigationTitle>Add players</NavigationTitle>
           <WhitelistPane config={config} onUpdate={onUpdate} lobbyAdminTools={lobbyAdminTools} />
         </Route>
       </Switch>
