@@ -36,7 +36,7 @@ export function SpaceshipsPane({ config, onUpdate }: LobbiesPaneProps) {
   const spaceships = _.chunk(config.SPACESHIPS.displayValue, 5).map(
     (items, rowIdx) => {
       return (
-      <Row style={pointsRowStyle}>
+      <Row key={`score-row-${rowIdx}`} style={pointsRowStyle}>
       {(config.SPACESHIPS.displayValue ?? []).map((displayValue, idx) => (
         <Spaceships
           key={`spaceship-${idx}`}

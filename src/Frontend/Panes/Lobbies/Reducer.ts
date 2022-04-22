@@ -1,5 +1,5 @@
 import { Initializers } from '@darkforest_eth/settings';
-import { AdminPlanet } from '@darkforest_eth/types';
+import { AdminPlanet, EthAddress } from '@darkforest_eth/types';
 
 export const SAFE_UPPER_BOUNDS = Number.MAX_SAFE_INTEGER - 1;
 
@@ -115,10 +115,10 @@ export type LobbyConfigAction =
     }
   | { type: 'WHITELIST_ENABLED'; value: boolean | undefined }
   | {
-    type: 'ADMIN_PLANETS';
-    value: AdminPlanet | undefined;
-    index: number;
-  }
+      type: 'ADMIN_PLANETS';
+      value: AdminPlanet | undefined;
+      index: number;
+    }
   | { type: 'MANUAL_SPAWN'; value: Initializers['MANUAL_SPAWN'] | undefined }
   | {
       type: 'TARGET_PLANETS';
@@ -128,20 +128,27 @@ export type LobbyConfigAction =
       type: 'TARGET_PLANET_HOLD_BLOCKS_REQUIRED';
       value: Initializers['TARGET_PLANET_HOLD_BLOCKS_REQUIRED'] | undefined;
     }
-    | {
+  | {
       type: 'MODIFIERS';
       index: number;
       value: number | undefined;
     }
-    | {
+  | {
       type: 'SPACESHIPS';
       index: number;
       value: boolean | undefined;
+    }
+  | {
+      type: 'WHITELIST';
+      index: number;
+      value: EthAddress | undefined;
     };
 
 // TODO(#2328): WHITELIST_ENABLED should just be on Initializers
-export type LobbyInitializers = Initializers & { WHITELIST_ENABLED: boolean | undefined } & {
+export type LobbyInitializers = Initializers & {
+  WHITELIST_ENABLED: boolean | undefined;
   ADMIN_PLANETS: AdminPlanet[];
+  WHITELIST: EthAddress[];
 };
 
 export type LobbyConfigState = {
@@ -354,6 +361,10 @@ export function lobbyConfigReducer(state: LobbyConfigState, action: LobbyAction)
       update = ofAdminPlanets(action, state);
       break;
     }
+    case 'WHITELIST': {
+      update = ofWhitelist(action, state);
+      break;
+    }
     case 'RESET': {
       // Hard reset all values that were available in the JSON
       return {
@@ -367,6 +378,10 @@ export function lobbyConfigReducer(state: LobbyConfigState, action: LobbyAction)
     }
     case 'SPACESHIPS': {
       update = ofSpaceships(action, state);
+      break;
+    }
+    case 'WHITELIST': {
+      update = ofWhitelist(action, state);
       break;
     }
     default: {
@@ -878,17 +893,28 @@ export function lobbyConfigInit(startingConfig: LobbyInitializers) {
           defaultValue,
           warning: undefined,
         };
-        break
+        break;
       }
-        case 'SPACESHIPS': {
-          // Default this to false if we don't have it
-          const defaultValue = startingConfig[key];
-          state[key] = {
-            currentValue: defaultValue,
-            displayValue: defaultValue,
-            defaultValue,
-            warning: undefined,
-          };
+      case 'SPACESHIPS': {
+        // Default this to false if we don't have it
+        const defaultValue = startingConfig[key];
+        state[key] = {
+          currentValue: defaultValue,
+          displayValue: defaultValue,
+          defaultValue,
+          warning: undefined,
+        };
+        break;
+      }
+      case 'WHITELIST': {
+        // Default this to false if we don't have it
+        const defaultValue = startingConfig[key] || [];
+        state[key] = {
+          currentValue: defaultValue,
+          displayValue: defaultValue,
+          defaultValue,
+          warning: undefined,
+        };
         break;
       }
       default: {
@@ -1821,18 +1847,18 @@ export function ofPlanetLevelThresholds(
   const currentValue = [...prevCurrentValue];
   const displayValue = [...prevDisplayValue];
 
-  if (index === 0) {
-    // Level 0 boundary always has to be this number
-    displayValue[index] = 16777216;
-    currentValue[index] = 16777216;
+  // if (index === 0) {
+  //   // Level 0 boundary always has to be this number
+  //   displayValue[index] = 16777216;
+  //   currentValue[index] = 16777216;
 
-    return {
-      ...state[type],
-      displayValue,
-      currentValue,
-      warning: undefined,
-    };
-  }
+  //   return {
+  //     ...state[type],
+  //     displayValue,
+  //     currentValue,
+  //     warning: undefined,
+  //   };
+  // }
 
   displayValue[index] = value;
 
@@ -1941,7 +1967,7 @@ export function ofAdminPlanets(
     return {
       ...state[type],
       displayValue,
-      warning: `Cannot create spawn planets`,
+      warning: `Cannot create spawn planets. Go to Player Spawn pane to update.`,
     };
   }
 
@@ -1949,11 +1975,11 @@ export function ofAdminPlanets(
     return {
       ...state[type],
       displayValue,
-      warning: `Cannot create target planets`,
+      warning: `Cannot create target planets. Go to Target Planets pane to update.`,
     };
   }
 
-  if (Math.abs(value.x) >= worldRadius || Math.abs(value.y) > worldRadius) {
+  if (Math.abs(value.x) ** 2 + Math.abs(value.y) ** 2 > worldRadius ** 2) {
     return {
       ...state[type],
       displayValue,
@@ -2049,7 +2075,7 @@ export function ofModifiers(
 }
 
 export function ofSpaceships(
-  { type, index, value }: Extract<LobbyConfigAction, { type: "SPACESHIPS" }>,
+  { type, index, value }: Extract<LobbyConfigAction, { type: 'SPACESHIPS' }>,
   state: LobbyConfigState
 ) {
   const prevCurrentValue = state[type].currentValue;
@@ -2075,14 +2101,87 @@ export function ofSpaceships(
   displayValue[index] = value;
   currentValue[index] = value;
 
-  if(index == 4 && value == false) {
+  if (index == 4 && value == false) {
     return {
+      ...state[type],
+      currentValue,
+      displayValue,
+      warning: `Without the Gear you won't be able to prospect artifacts!`,
+    };
+  }
+
+  return {
     ...state[type],
     currentValue,
     displayValue,
-    warning: `Without the Gear you won't be able to prospect artifacts!`,
+    warning: undefined,
   };
+}
+
+export function ofWhitelist(
+  { type, index, value }: Extract<LobbyConfigAction, { type: 'WHITELIST' }>,
+  state: LobbyConfigState
+) {
+  const prevCurrentValue = state[type].currentValue;
+  const prevDisplayValue = state[type].displayValue;
+
+  if (!prevDisplayValue) {
+    return {
+      ...state[type],
+      warning: `Failed to update ${type}`,
+    };
   }
+
+  if (!prevCurrentValue) {
+    return {
+      ...state[type],
+      warning: `Failed to update ${type}`,
+    };
+  }
+
+  if (
+    value === undefined 
+  ) {
+    return {
+      ...state[type],
+      warning: 'Address cannot be undefined',
+    };
+  }
+
+  if (
+    value.slice(0 , 2) !== "0x" ||
+    value.length !== 42 
+  ) {
+    return {
+      ...state[type],
+      warning: 'Improperly formatted address',
+    };
+  }
+
+  const currentValue = [...prevCurrentValue];
+  const displayValue = [...prevDisplayValue];
+
+  if (currentValue[index]) {
+    console.log(`deleting ${currentValue[index]}`)
+    currentValue.splice(index, 1);
+    displayValue.splice(index, 1);
+
+    return {
+      ...state[type],
+      currentValue,
+      displayValue,
+      warning: undefined,
+    };
+  }
+
+  if(currentValue.find(v => value == v)) {
+    return {
+      ...state[type],
+      warning: 'Address already staged',
+    };
+  }
+  currentValue[index] = value;
+  displayValue[index] = value;
 
   return {
     ...state[type],
