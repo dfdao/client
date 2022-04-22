@@ -1,3 +1,4 @@
+import { BLOCK_EXPLORER_URL } from '@darkforest_eth/constants';
 import { AdminPlanet } from '@darkforest_eth/types';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
@@ -139,13 +140,13 @@ export function CreatePlanetPane({
     (planet: CreatedPlanet) => formatBool(planet.planet.isSpawnPlanet),
     (planet: CreatedPlanet) =>
       planet.createTx && (
-        <Link to={`${blockscoutURL}${planet.createTx}`} style={{ margin: 'auto' }}>
+        <Link to={`${BLOCK_EXPLORER_URL}${planet.createTx}`} style={{ margin: 'auto' }}>
           <u>({planet.createTx.slice(2, 6)})</u>
         </Link>
       ),
     (planet: CreatedPlanet) =>
       planet.revealTx ? (
-        <Link to={`${blockscoutURL}${planet.revealTx}`} style={{ margin: 'auto' }}>
+        <Link to={`${BLOCK_EXPLORER_URL}${planet.revealTx}`} style={{ margin: 'auto' }}>
           <u>({planet.revealTx.slice(2, 6)})</u>
         </Link>
       ) : (
