@@ -128,23 +128,23 @@ export function CreatePlanetPane({
   const createdPlanetColumns = [
     (planet: CreatedPlanet) => (
       <Sub>
-        ({planet.planet.x}, {planet.planet.y})
+        ({planet.x}, {planet.y})
       </Sub>
     ),
-    (planet: CreatedPlanet) => <Sub>{planet.planet.level}</Sub>,
-    (planet: CreatedPlanet) => <Sub>{planet.planet.planetType}</Sub>,
-    (planet: CreatedPlanet) => formatBool(planet.planet.revealLocation),
-    (planet: CreatedPlanet) => formatBool(planet.planet.isTargetPlanet),
-    (planet: CreatedPlanet) => formatBool(planet.planet.isSpawnPlanet),
+    (planet: CreatedPlanet) => <Sub>{planet.level}</Sub>,
+    (planet: CreatedPlanet) => <Sub>{planet.planetType}</Sub>,
+    (planet: CreatedPlanet) => formatBool(planet.revealLocation),
+    (planet: CreatedPlanet) => formatBool(planet.isTargetPlanet),
+    (planet: CreatedPlanet) => formatBool(planet.isSpawnPlanet),
     (planet: CreatedPlanet) =>
       planet.createTx && (
-        <Link to={`${BLOCK_EXPLORER_URL}${planet.createTx}`} style={{ margin: 'auto' }}>
+        <Link to={`${BLOCK_EXPLORER_URL}/${planet.createTx}`} style={{ margin: 'auto' }}>
           <u>({planet.createTx.slice(2, 6)})</u>
         </Link>
       ),
     (planet: CreatedPlanet) =>
       planet.revealTx ? (
-        <Link to={`${BLOCK_EXPLORER_URL}${planet.revealTx}`} style={{ margin: 'auto' }}>
+        <Link to={`${BLOCK_EXPLORER_URL}/${planet.revealTx}`} style={{ margin: 'auto' }}>
           <u>({planet.revealTx.slice(2, 6)})</u>
         </Link>
       ) : (
@@ -171,7 +171,7 @@ export function CreatePlanetPane({
   function stagePlanet() {
     setError(undefined);
     // console.log(JSON.stringify(planet));
-    if (createdPlanets?.find((p) => planet.x == p.planet.x && planet.y == p.planet.y)) {
+    if (createdPlanets?.find((p) => planet.x == p.x && planet.y == p.y)) {
       setError('planet with identical coords created');
       return;
     }

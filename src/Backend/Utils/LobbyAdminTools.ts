@@ -34,8 +34,14 @@ export type CreatePlanetData = {
 };
 
 export type CreatedPlanet = {
-  planet : AdminPlanet;
-  createTx : string | undefined;
+  x: number;
+  y: number;
+  level: number;
+  planetType: number;
+  requireValidLocationId: boolean;
+  revealLocation: boolean;
+  isTargetPlanet: boolean;
+  isSpawnPlanet: boolean;  createTx : string | undefined;
   revealTx : string | undefined;
 }
 
@@ -124,7 +130,7 @@ export class LobbyAdminTools {
     });
 
     await tx.confirmedPromise;
-    this.createdPlanets.push({planet: planet, createTx : tx?.hash, revealTx : undefined});
+    this.createdPlanets.push({...planet, createTx : tx?.hash, revealTx : undefined});
 
   }
 
@@ -166,7 +172,7 @@ export class LobbyAdminTools {
 
     await tx.confirmedPromise;
     console.log(`reveal tx accepted`);
-    const createdPlanet = this.createdPlanets.find(p => p.planet.x == planet.x && p.planet.y == planet.y);
+    const createdPlanet = this.createdPlanets.find(p => p.x == planet.x && p.y == planet.y);
     if(!createdPlanet) throw("created planet not found");
     createdPlanet.revealTx = tx?.hash;
   }
