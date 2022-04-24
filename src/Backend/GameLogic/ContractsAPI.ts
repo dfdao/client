@@ -160,7 +160,6 @@ export class ContractsAPI extends EventEmitter {
       throw new Error('xDAI balance too low!');
     }
 
-    console.log('chainId', (await this.ethConnection.getProvider().getNetwork()).chainId);
 
     // TODO: ugly hard code of Optimism right now, make better.
     const defaultGas =
