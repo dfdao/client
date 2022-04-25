@@ -6,6 +6,7 @@ export type MinimapConfig = {
   // perlin
   key: number;
   scale: number;
+  dot: number;
   mirrorX: boolean;
   mirrorY: boolean;
   perlinThreshold1: number;
@@ -18,5 +19,6 @@ export type MinimapConfig = {
 export type PlanetType = 'staged' | 'created' | undefined
 export type DrawMessage = {
   radius: number;
+  dot : number;
   data: { x: number; y: number; type: SpaceType; planet: PlanetType}[];
 };

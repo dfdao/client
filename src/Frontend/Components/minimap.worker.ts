@@ -1,6 +1,6 @@
-import { perlin } from '@darkforest_eth/hashing';
-import { SpaceType, WorldCoords } from '@darkforest_eth/types';
-import { DrawMessage, MinimapConfig, PlanetType } from './MinimapUtils';
+import { perlin } from "@darkforest_eth/hashing";
+import { SpaceType, WorldCoords } from "@darkforest_eth/types";
+import { DrawMessage, MinimapConfig, PlanetType } from "../Panes/Lobbies/MinimapUtils";
 
 const ctx = self as unknown as Worker;
 
@@ -24,7 +24,7 @@ function spaceTypeFromPerlin(perlin: number, config: MinimapConfig): SpaceType {
 // https://github.com/darkforest-eth/plugins/blob/358a386356b9145005f17045d9f4ce22661d99a1/content/utilities/mini-map/plugin.js
 function generate(config: MinimapConfig): DrawMessage {
   const data = [];
-  const step = config.worldRadius / 25;
+  const step = config.worldRadius * config.dot / 100;
 
   const radius = config.worldRadius;
 
@@ -45,25 +45,34 @@ function generate(config: MinimapConfig): DrawMessage {
       if(!!config.createdPlanets.find(planet => x - s <= planet.x && planet.x < x + s && y - s <= planet.y && planet.y < y + s))
       return 'created' as PlanetType;
   }
+  const start = Date.now();
+  spaceTypeFromPerlin(spaceTypePerlin({ x: 0, y: 0 }, config), config);
+  const end = Date.now();
+  console.log(`type took ${end - start} ms`)
 
+  const start2 = Date.now();
+  checkStagedPlanet(0,0)
+  const end2 = Date.now();
+  console.log(`planet took ${end2 - start2} ms`)
   // generate x coordinates
   for (let i = radius * -1; i < radius; i += step) {
     // generate y coordinates
     for (let j = radius * -1; j < radius; j += step) {
       // filter points within map circle
-      if (checkBounds(0, 0, i, j, radius)) {
-        // store coordinate and space type
-        data.push({
-          x: i,
-          y: j,
-          type: spaceTypeFromPerlin(spaceTypePerlin({ x: i, y: j }, config), config),
-          planet: checkStagedPlanet(i, j)
-        });
+      if (!checkBounds(0, 0, i, j, radius)) {
+        continue;
       }
+        // store coordinate and space type
+      data.push({
+        x: i,
+        y: j,
+        type: spaceTypeFromPerlin(spaceTypePerlin({ x: i, y: j }, config), config),
+        planet: checkStagedPlanet(i, j)
+      });
     }
   }
 
-  return { radius, data };
+  return { radius, data, dot: config.dot };
 }
 
 ctx.addEventListener('message', (e: MessageEvent) => {
