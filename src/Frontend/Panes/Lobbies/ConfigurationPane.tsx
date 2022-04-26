@@ -1,19 +1,17 @@
-import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import styled from 'styled-components';
 import { LobbyAdminTools } from '../../../Backend/Utils/LobbyAdminTools';
 import { Btn } from '../../Components/Btn';
-import { Link, Spacer, Title } from '../../Components/CoreUI';
+import { Link } from '../../Components/CoreUI';
 import { MythicLabelText } from '../../Components/Labels/MythicLabel';
 import { LoadingSpinner } from '../../Components/LoadingSpinner';
-import { Minimap } from '../../Components/Minimap';
 import { Modal } from '../../Components/Modal';
 import { Row } from '../../Components/Row';
-import { Smaller, Sub } from '../../Components/Text';
 import { TextPreview } from '../../Components/TextPreview';
-import { stockConfig } from '../../Utils/StockConfigs';
-import { ConfigDownload, ConfigUpload, LinkButton, Warning } from './LobbiesUtils';
+import { ExtrasNavPane } from './ExtrasNavPane';
+import { ConfigDownload, ConfigUpload } from './LobbiesUtils';
+import { MapSelectPane } from './MapSelectPane';
 import { MinimapConfig } from './MinimapUtils';
 import {
   InvalidConfigError,
@@ -77,7 +75,6 @@ export function ConfigurationPane({
   lobbyTx: string | undefined;
 }) {
   const [error, setError] = useState<string | undefined>();
-  const [active, setActive] = useState<number | undefined>();
   const [status, setStatus] = useState<Status>(undefined);
   const createDisabled = status === 'creating' || status === 'created';
   const creating = status === 'creating' || (status === 'created' && !lobbyAdminTools?.address);
@@ -87,11 +84,6 @@ export function ConfigurationPane({
 
   function configUploadSuccess(initializers: LobbyInitializers) {
     updateConfig({ type: 'RESET', value: lobbyConfigInit(initializers) });
-  }
-
-  function pickMap(initializers: LobbyInitializers, active: number) {
-    updateConfig({ type: 'RESET', value: lobbyConfigInit(initializers) });
-    setActive(active);
   }
 
   async function validateAndCreateLobby() {
@@ -144,98 +136,6 @@ export function ConfigurationPane({
     lobbyAdminTools,
   ]);
 
-  function generateMinimapConfig(config: LobbyInitializers): MinimapConfig {
-    return {
-      worldRadius: config.WORLD_RADIUS_MIN,
-      key: config.SPACETYPE_KEY,
-      scale: config.PERLIN_LENGTH_SCALE,
-      mirrorX: config.PERLIN_MIRROR_X,
-      mirrorY: config.PERLIN_MIRROR_Y,
-      perlinThreshold1: config.PERLIN_THRESHOLD_1,
-      perlinThreshold2: config.PERLIN_THRESHOLD_2,
-      perlinThreshold3: config.PERLIN_THRESHOLD_3,
-      stagedPlanets: config.ADMIN_PLANETS || [],
-      createdPlanets: lobbyAdminTools?.planets || [],
-      dot: 10,
-    } as MinimapConfig;
-  }
-
-  interface map {
-    title: string;
-    initializers: LobbyInitializers;
-    description: string;
-  }
-
-  const maps: map[] = [
-    {
-      title: '(2P) Battle for the Center',
-      initializers: stockConfig.twoPlayerBattle,
-      description: 'Win the planet in the center!',
-    },
-    {
-      title: '(4P) Battle for the Center',
-      initializers: stockConfig.fourPlayerBattle,
-      description: 'Win the planet in the center!',
-    },
-    {
-      title: 'Race Across the Map',
-      initializers: stockConfig.sprint,
-      description: 'Win the planet across the map!',
-    },
-    {
-      title: 'Custom',
-      initializers: startingConfig,
-      description: 'Design your own game',
-    },
-  ];
-
-  const Maps = _.chunk(maps, 2).map((items, idx) => (
-    <ButtonRow key={`map-row-${idx}`}>
-      {items.map((item, j) => (
-        <Btn
-          key={`map-item-${j}`}
-          className='button'
-          size={'stretch'}
-          onClick={() => pickMap(item.initializers, idx + j)}
-        >
-          <div style={{ flexDirection: 'column' }}>
-            <Minimap
-              style={{ height: mapSize, width: mapSize }}
-              minimapConfig={generateMinimapConfig(item.initializers)}
-            />
-            <div>{item.title}</div>
-            <Smaller>{item.description}</Smaller>
-            <br />
-            <Smaller>
-              <Sub>size: {item.initializers.WORLD_RADIUS_MIN}</Sub>
-            </Smaller>
-          </div>
-        </Btn>
-      ))}
-    </ButtonRow>
-  ));
-
-  const content = () => {
-    return (
-      <>
-        <Title slot='title'>Customize Lobby</Title>
-        <div>
-          First, customize the configuration of your world. Once you have created a lobby, add
-          custom planets and allowlisted players on the next pane.
-        </div>
-        <Spacer height={20} />
-
-        {Maps}
-        <Row style={jcFlexEnd}>
-          <LinkButton to={`/settings`}>Customize World →</LinkButton>
-        </Row>
-        <Row>
-          <Warning>{error}</Warning>
-        </Row>
-      </>
-    );
-  };
-
   const blockscoutURL = `https://blockscout.com/poa/xdai/optimism/tx/${lobbyTx}`;
   const url = `${window.location.origin}/play/${lobbyAdminTools?.address}`;
 
@@ -277,18 +177,28 @@ export function ConfigurationPane({
     <Modal width='500px' initialX={100} initialY={100} index={modalIndex}>
       <Switch>
         <Route path={root} exact={true}>
-          {content}
+          <MapSelectPane
+            startingConfig={startingConfig}
+            updateConfig={updateConfig}
+            lobbyAdminTools={lobbyAdminTools}
+          />
         </Route>
-        <Route path={`${root}/settings`}>
+        <Route exact path={`${root}/settings`}>
           <WorldSettingsPane
             config={config}
-            onMapChange={onMapChange}
-            lobbyAdminTools={lobbyAdminTools}
             onUpdate={onUpdate}
-            createDisabled = {createDisabled}
+            createDisabled={createDisabled}
+          />
+        </Route>
+        <Route path={`${root}/settings/extras`}>
+          <ExtrasNavPane
+            lobbyAdminTools={lobbyAdminTools}
+            config={config}
+            onUpdate={onUpdate}
           />
         </Route>
       </Switch>
+      {error && <Row>{error}</Row>}
       {lobbyContent}
 
       {/* Button this in the title slot but at the end moves it to the end of the title bar */}
