@@ -18,12 +18,14 @@ export function LobbyConfigPage({
   startingConfig,
   onCreate,
   lobbyAdminTools,
-  lobbyTx
+  lobbyTx,
+  ownerAddress
 }: {
   startingConfig: LobbyInitializers;
   onCreate: (config: LobbyInitializers) => Promise<void>;
   lobbyAdminTools: LobbyAdminTools | undefined;
   lobbyTx: string | undefined;
+  ownerAddress : string | undefined;
 }) {
   const [config, updateConfig] = useReducer(lobbyConfigReducer, startingConfig, lobbyConfigInit);
   const [minimapConfig, setMinimapConfig] = useState<MinimapConfig | undefined>();
@@ -37,7 +39,6 @@ export function LobbyConfigPage({
   }
 
   
-  
   let content = (
     <>
       <ConfigurationPane
@@ -50,6 +51,7 @@ export function LobbyConfigPage({
         lobbyAdminTools={lobbyAdminTools}
         onUpdate = {onUpdate}
         lobbyTx = {lobbyTx}
+        ownerAddress = {ownerAddress}
       />
       {/* Minimap uses modalIndex=1 so it is always underneath the configuration pane */}
       <MinimapPane modalIndex={1} minimapConfig={minimapConfig} onUpdate = {onUpdate} created = {!!lobbyAdminTools}/>

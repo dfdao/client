@@ -44,7 +44,6 @@ const panes: ReadonlyArray<PaneConfig> = [
   },
 ] as const;
 
-
 export function ExtrasNavPane({
   lobbyAdminTools,
   config,
@@ -131,6 +130,11 @@ export function ExtrasNavPane({
         <Row>
           <Btn onClick={toGameSettings}>← World Settings</Btn>
         </Row>
+        {lobbyAdminTools?.address && (
+          <Btn size='stretch' onClick={handleEnter}>
+            Enter Universe
+          </Btn>
+        )}
       </>
     );
   };

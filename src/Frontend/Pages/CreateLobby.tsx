@@ -163,6 +163,7 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
       onCreate = {createLobby}
       lobbyAdminTools={lobbyAdminTools}
       lobbyTx = {lobbyTx}
+      ownerAddress = {ownerAddress}
     />
   ) : (
     <LobbyLandingPage onReady={onReady} />

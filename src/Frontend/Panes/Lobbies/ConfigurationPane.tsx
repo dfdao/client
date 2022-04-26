@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
-import styled from 'styled-components';
 import { LobbyAdminTools } from '../../../Backend/Utils/LobbyAdminTools';
 import { Btn } from '../../Components/Btn';
 import { Link } from '../../Components/CoreUI';
@@ -8,7 +7,6 @@ import { MythicLabelText } from '../../Components/Labels/MythicLabel';
 import { LoadingSpinner } from '../../Components/LoadingSpinner';
 import { Modal } from '../../Components/Modal';
 import { Row } from '../../Components/Row';
-import { TextPreview } from '../../Components/TextPreview';
 import { ExtrasNavPane } from './ExtrasNavPane';
 import { ConfigDownload, ConfigUpload } from './LobbiesUtils';
 import { MapSelectPane } from './MapSelectPane';
@@ -24,35 +22,9 @@ import {
 } from './Reducer';
 import { WorldSettingsPane } from './WorldSettingsPane';
 
-const jcFlexEnd = { justifyContent: 'flex-end' } as CSSStyleDeclaration & React.CSSProperties;
-
-const ButtonRow = styled(Row)`
-  gap: 8px;
-
-  .button {
-    flex: 1 1 50%;
-    flex-direction: column;
-    text-align: center;
-    align-items: center;
-  }
-`;
-
-const buttonStyle = {
-  flexDirection: 'column',
-  textAlign: 'center',
-  alignItems: 'center',
-  flex: '1 1 50%',
-} as CSSStyleDeclaration & React.CSSProperties;
-
-const activeStyle = {
-  borderWidth: 'medium',
-} as CSSStyleDeclaration & React.CSSProperties;
-
-const noStyle = {} as CSSStyleDeclaration & React.CSSProperties;
-
 type Status = 'creating' | 'created' | 'errored' | undefined;
 
-const mapSize = '125px';
+const jcCenter = { justifyContent: 'center' } as CSSStyleDeclaration & React.CSSProperties;
 export function ConfigurationPane({
   modalIndex,
   startingConfig,
@@ -63,6 +35,7 @@ export function ConfigurationPane({
   lobbyAdminTools,
   onUpdate,
   lobbyTx,
+  ownerAddress
 }: {
   modalIndex: number;
   config: LobbyConfigState;
@@ -73,9 +46,12 @@ export function ConfigurationPane({
   lobbyAdminTools: LobbyAdminTools | undefined;
   onUpdate: (action: LobbyConfigAction) => void;
   lobbyTx: string | undefined;
+  ownerAddress : string | undefined
 }) {
   const [error, setError] = useState<string | undefined>();
   const [status, setStatus] = useState<Status>(undefined);
+  const [copied, setCopied] = useState<boolean>(false);
+
   const createDisabled = status === 'creating' || status === 'created';
   const creating = status === 'creating' || (status === 'created' && !lobbyAdminTools?.address);
   const created = status === 'created' && lobbyAdminTools?.address;
@@ -139,13 +115,29 @@ export function ConfigurationPane({
   const blockscoutURL = `https://blockscout.com/poa/xdai/optimism/tx/${lobbyTx}`;
   const url = `${window.location.origin}/play/${lobbyAdminTools?.address}`;
 
+  const copy = () => {
+    if (!navigator.clipboard) {
+      setError('Link copy failed.');
+      return;
+    }
+    const text = `👋 ${ownerAddress?.slice(0, 6)} has challenged you to a Dark Forest Arena battle! 🔫😤\n\nClick the link to play:\n⚔️${url} ⚔️`;
+    navigator.clipboard.writeText(text).then(
+      function () {
+        console.log('Async: Copying to clipboard was successful!');
+      },
+      function (err) {
+        console.error('Async: Could not copy text: ', err);
+      }
+    );
+    setCopied(true);
+  };
   const lobbyContent: JSX.Element | undefined = !created ? (
     <Btn size='stretch' disabled={createDisabled} onClick={validateAndCreateLobby}>
-      {creating ? <LoadingSpinner initialText={'Creating...'} /> : 'Create Lobby'}
+      {creating ? <LoadingSpinner initialText={'Creating...'} /> : 'Create World'}
     </Btn>
   ) : (
     <>
-      <Row style={{ justifyContent: 'center' } as CSSStyleDeclaration & React.CSSProperties}>
+      <Row style={jcCenter}>
         <div>
           <MythicLabelText
             style={{ margin: 'auto' }}
@@ -158,17 +150,13 @@ export function ConfigurationPane({
           )}
         </div>
       </Row>
-      <Row>
-        <span style={{ margin: 'auto' }}>You can also share the direct url with your friends:</span>
-      </Row>
-      {/* Didn't like the TextPreview jumping, so I'm setting the height */}
-      <Row style={{ height: '30px' } as CSSStyleDeclaration & React.CSSProperties}>
-        <TextPreview
-          style={{ margin: 'auto' }}
-          text={url}
-          unFocusedWidth='50%'
-          focusedWidth='100%'
-        />
+      <Row style={jcCenter}>
+        <div>
+          <span style={{ margin: 'auto' }}>Share the link directly:</span>
+          <Btn size='small' onClick={copy}>
+            {!copied ? 'copy link' : 'copied!'}
+          </Btn>
+        </div>
       </Row>
     </>
   );
@@ -184,21 +172,13 @@ export function ConfigurationPane({
           />
         </Route>
         <Route exact path={`${root}/settings`}>
-          <WorldSettingsPane
-            config={config}
-            onUpdate={onUpdate}
-            createDisabled={createDisabled}
-          />
+          <WorldSettingsPane config={config} onUpdate={onUpdate} createDisabled={createDisabled} />
         </Route>
         <Route path={`${root}/settings/extras`}>
-          <ExtrasNavPane
-            lobbyAdminTools={lobbyAdminTools}
-            config={config}
-            onUpdate={onUpdate}
-          />
+          <ExtrasNavPane lobbyAdminTools={lobbyAdminTools} config={config} onUpdate={onUpdate} />
         </Route>
       </Switch>
-      {error && <Row>{error}</Row>}
+      <Row>{error}</Row>
       {lobbyContent}
 
       {/* Button this in the title slot but at the end moves it to the end of the title bar */}
