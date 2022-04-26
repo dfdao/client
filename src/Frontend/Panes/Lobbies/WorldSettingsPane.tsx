@@ -1,13 +1,10 @@
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
-import { Route, Switch, useRouteMatch } from 'react-router-dom';
+import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { LobbyAdminTools } from '../../../Backend/Utils/LobbyAdminTools';
 import { Btn } from '../../Components/Btn';
-import { Link, Spacer, Title } from '../../Components/CoreUI';
-import { MythicLabelText } from '../../Components/Labels/MythicLabel';
-import { LoadingSpinner } from '../../Components/LoadingSpinner';
+import { Spacer, Title } from '../../Components/CoreUI';
 import { Row } from '../../Components/Row';
-import { TextPreview } from '../../Components/TextPreview';
 import { AdminPermissionsPane } from './AdminPermissionsPane';
 import { ArtifactSettingsPane } from './ArtifactSettingsPane';
 import { CaptureZonesPane } from './CaptureZonesPane';
@@ -23,11 +20,7 @@ import { MinimapConfig } from './MinimapUtils';
 import { PlanetPane } from './PlanetPane';
 import { PlayerSpawnPane } from './PlayerSpawnPane';
 import {
-  InvalidConfigError,
-  LobbyAction,
-  LobbyConfigAction, LobbyConfigState,
-  LobbyInitializers,
-  toInitializers
+  LobbyConfigAction, LobbyConfigState
 } from './Reducer';
 import { SnarkPane } from './SnarkPane';
 import { SpaceJunkPane } from './SpaceJunkPane';
@@ -36,7 +29,7 @@ import { SpaceTypeBiomePane } from './SpaceTypeBiomePane';
 import { TargetPlanetPane } from './TargetPlanetPane';
 import { WorldSizePane } from './WorldSizePane';
 
-const jcFlexEnd = { justifyContent: 'flex-end' } as CSSStyleDeclaration & React.CSSProperties;
+const jcSpaceBetween = { justifyContent: 'space-between' } as CSSStyleDeclaration & React.CSSProperties;
 
 interface PaneConfig {
   title: string;
@@ -124,28 +117,22 @@ type Status = 'creating' | 'created' | 'errored' | undefined;
 
 export function WorldSettingsPane({
   config,
-  updateConfig,
   onMapChange,
-  onCreate,
   lobbyAdminTools,
   onUpdate,
-  lobbyTx,
+  createDisabled
 }: {
   config: LobbyConfigState;
-  updateConfig: React.Dispatch<LobbyAction>;
   onMapChange: (props: MinimapConfig) => void;
-  onCreate: (config: LobbyInitializers) => Promise<void>;
   lobbyAdminTools: LobbyAdminTools | undefined;
   onUpdate: (action: LobbyConfigAction) => void;
-  lobbyTx: string | undefined;
+  createDisabled: boolean
 }) {
   const [error, setError] = useState<string | undefined>();
-  const [status, setStatus] = useState<Status>(undefined);
-  const createDisabled = status === 'creating' || status === 'created';
-  const creating = status === 'creating' || (status === 'created' && !lobbyAdminTools?.address);
-  const created = status === 'created' && lobbyAdminTools?.address;
+
   // Separated IO Errors from Download/Upload so they show on any pane of the modal
   const { path: root } = useRouteMatch();
+  const history = useHistory();
 
   // Minimap only changes on a subset of properties, so we only trigger when one of them changes value (and still debounce it)
   useEffect(() => {
@@ -176,29 +163,6 @@ export function WorldSettingsPane({
     lobbyAdminTools,
   ]);
 
-  async function validateAndCreateLobby() {
-    const confirmAlert = confirm(
-      `Are you sure? After lobby creation, you cannot modify world settings, but you can create planets and add players to the whitelist.`
-    );
-    if (!confirmAlert) return;
-    try {
-      setStatus('creating');
-
-      const initializers = toInitializers(config);
-      await onCreate(initializers);
-      setStatus('created');
-    } catch (err) {
-      setStatus('errored');
-      console.error(err);
-      if (err instanceof InvalidConfigError) {
-        setError(`Invalid ${err.key} value ${err.value ?? ''} - ${err.message}`);
-      } else {
-        setError(err?.message || 'Something went wrong. Check your dev console.');
-      }
-    }
-  }
-
-
   const buttons = _.chunk(panes, 2).map(([fst, snd], idx) => {
     return (
       // Index key is fine here because the array is stable
@@ -216,45 +180,6 @@ export function WorldSettingsPane({
       </ButtonRow>
     );
   });
-
-  const url = `${window.location.origin}/play/${lobbyAdminTools?.address}`;
-
-  const blockscoutURL = `https://blockscout.com/poa/xdai/tx/${lobbyTx}`;
-
-  let lobbyContent: JSX.Element | undefined;
-  if (status === 'created' && lobbyAdminTools?.address) {
-    lobbyContent = (
-      <>
-        <Row style={{ justifyContent: 'center' } as CSSStyleDeclaration & React.CSSProperties}>
-          <div>
-            <MythicLabelText
-              style={{ margin: 'auto' }}
-              text='Your universe has been created! '
-            ></MythicLabelText>
-            {lobbyTx && (
-              <Link to={blockscoutURL} style={{ margin: 'auto' }}>
-                <u>view tx</u>
-              </Link>
-            )}
-          </div>
-        </Row>
-        <Row>
-          <span style={{ margin: 'auto' }}>
-            You can also share the direct url with your friends:
-          </span>
-        </Row>
-        {/* Didn't like the TextPreview jumping, so I'm setting the height */}
-        <Row style={{ height: '30px' } as CSSStyleDeclaration & React.CSSProperties}>
-          <TextPreview
-            style={{ margin: 'auto' }}
-            text={url}
-            unFocusedWidth='50%'
-            focusedWidth='100%'
-          />
-        </Row>
-      </>
-    );
-  }
 
   const routes = panes.map(({ title, path, Pane }, idx) => {
     return (
@@ -282,18 +207,13 @@ export function WorldSettingsPane({
         {buttons}
         <Spacer height={20} />
         <div>
-          {!created && (
-            <Btn size='stretch' disabled={createDisabled} onClick={validateAndCreateLobby}>
-              {creating ? <LoadingSpinner initialText={'Creating...'} /> : 'Create Lobby'}
-            </Btn>
-          )}
-          <Row style={jcFlexEnd}>
+          <Row style={jcSpaceBetween}>
+          <Btn onClick={ () => history.goBack()}>← Choose a map</Btn>
             <LinkButton to={`/extras`}>Add players/planets →</LinkButton>
           </Row>
           <Row>
             <Warning>{error}</Warning>
           </Row>
-          {lobbyContent}
         </div>
       </>
     );
@@ -308,7 +228,6 @@ export function WorldSettingsPane({
       <Route path={`${root}/extras`}>
         <ExtrasNavPane
           lobbyAdminTools={lobbyAdminTools}
-          status={status}
           config={config}
           onUpdate={onUpdate}
         />

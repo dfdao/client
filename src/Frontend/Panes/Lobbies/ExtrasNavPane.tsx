@@ -4,9 +4,7 @@ import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { LobbyAdminTools } from '../../../Backend/Utils/LobbyAdminTools';
 import { Btn } from '../../Components/Btn';
 import { Spacer, Title } from '../../Components/CoreUI';
-import { MythicLabelText } from '../../Components/Labels/MythicLabel';
 import { Row } from '../../Components/Row';
-import { TextPreview } from '../../Components/TextPreview';
 import { CreatePlanetPane } from './CreatePlanetPane';
 import { ButtonRow, LinkButton, LobbiesPaneProps, NavigationTitle } from './LobbiesUtils';
 import { LobbyConfigAction, LobbyConfigState } from './Reducer';
@@ -46,16 +44,13 @@ const panes: ReadonlyArray<PaneConfig> = [
   },
 ] as const;
 
-type Status = 'creating' | 'created' | 'errored' | undefined;
 
 export function ExtrasNavPane({
   lobbyAdminTools,
-  status,
   config,
   onUpdate,
 }: {
   lobbyAdminTools: LobbyAdminTools | undefined;
-  status: Status;
   config: LobbyConfigState;
   onUpdate: (lobbyConfigAction: LobbyConfigAction) => void;
 }) {
@@ -118,47 +113,6 @@ export function ExtrasNavPane({
   const toGameSettings = () => {
     history.goBack();
   };
-  let lobbyContent: JSX.Element | undefined;
-  if (status === 'created' && lobbyAdminTools?.address) {
-    lobbyContent = (
-      <>
-        <Btn size='stretch' onClick={handleEnter}>
-          Enter Universe
-        </Btn>
-
-        <Row>
-          {/* Stealing MythicLabelText because it accepts variable text input */}
-          <MythicLabelText style={{ margin: 'auto' }} text='Your universe has been created!' />
-        </Row>
-        <Row>
-          <span style={{ margin: 'auto' }}>
-            You can also share the direct url with your friends:
-          </span>
-        </Row>
-        {/* Didn't like the TextPreview jumping, so I'm setting the height */}
-        <Row style={{ height: '30px' } as CSSStyleDeclaration & React.CSSProperties}>
-          <TextPreview
-            style={{ margin: 'auto' }}
-            text={url}
-            unFocusedWidth='50%'
-            focusedWidth='100%'
-          />
-        </Row>
-      </>
-    );
-  }
-
-  // const routes = (lobbyAdminTools: LobbyAdminTools) =>
-  //   panes.map(({ title, path, Pane }, idx) => {
-  //     return (
-  //       // Index key is fine here because the array is stable
-
-  //       <Route key={idx} path={`${root}${path}`}>
-  //         <NavigationTitle>{title}</NavigationTitle>
-  //         <Pane config={config} onUpdate={onUpdate} lobbyAdminTools={lobbyAdminTools} />
-  //       </Route>
-  //     );
-  //   });
 
   const content = () => {
     console.log(root);
@@ -177,7 +131,6 @@ export function ExtrasNavPane({
         <Row>
           <Btn onClick={toGameSettings}>← World Settings</Btn>
         </Row>
-        {lobbyContent}
       </>
     );
   };

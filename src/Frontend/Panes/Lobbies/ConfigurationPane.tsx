@@ -4,20 +4,25 @@ import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import styled from 'styled-components';
 import { LobbyAdminTools } from '../../../Backend/Utils/LobbyAdminTools';
 import { Btn } from '../../Components/Btn';
-import { Spacer, Title } from '../../Components/CoreUI';
+import { Link, Spacer, Title } from '../../Components/CoreUI';
+import { MythicLabelText } from '../../Components/Labels/MythicLabel';
+import { LoadingSpinner } from '../../Components/LoadingSpinner';
 import { Minimap } from '../../Components/Minimap';
 import { Modal } from '../../Components/Modal';
 import { Row } from '../../Components/Row';
 import { Smaller, Sub } from '../../Components/Text';
+import { TextPreview } from '../../Components/TextPreview';
 import { stockConfig } from '../../Utils/StockConfigs';
 import { ConfigDownload, ConfigUpload, LinkButton, Warning } from './LobbiesUtils';
 import { MinimapConfig } from './MinimapUtils';
 import {
+  InvalidConfigError,
   LobbyAction,
   LobbyConfigAction,
   lobbyConfigInit,
   LobbyConfigState,
-  LobbyInitializers
+  LobbyInitializers,
+  toInitializers
 } from './Reducer';
 import { WorldSettingsPane } from './WorldSettingsPane';
 
@@ -47,6 +52,8 @@ const activeStyle = {
 
 const noStyle = {} as CSSStyleDeclaration & React.CSSProperties;
 
+type Status = 'creating' | 'created' | 'errored' | undefined;
+
 const mapSize = '125px';
 export function ConfigurationPane({
   modalIndex,
@@ -61,7 +68,7 @@ export function ConfigurationPane({
 }: {
   modalIndex: number;
   config: LobbyConfigState;
-  startingConfig: LobbyInitializers
+  startingConfig: LobbyInitializers;
   updateConfig: React.Dispatch<LobbyAction>;
   onMapChange: (props: MinimapConfig) => void;
   onCreate: (config: LobbyInitializers) => Promise<void>;
@@ -71,6 +78,10 @@ export function ConfigurationPane({
 }) {
   const [error, setError] = useState<string | undefined>();
   const [active, setActive] = useState<number | undefined>();
+  const [status, setStatus] = useState<Status>(undefined);
+  const createDisabled = status === 'creating' || status === 'created';
+  const creating = status === 'creating' || (status === 'created' && !lobbyAdminTools?.address);
+  const created = status === 'created' && lobbyAdminTools?.address;
   // Separated IO Errors from Download/Upload so they show on any pane of the modal
   const { path: root } = useRouteMatch();
 
@@ -80,7 +91,29 @@ export function ConfigurationPane({
 
   function pickMap(initializers: LobbyInitializers, active: number) {
     updateConfig({ type: 'RESET', value: lobbyConfigInit(initializers) });
-    setActive(active)
+    setActive(active);
+  }
+
+  async function validateAndCreateLobby() {
+    const confirmAlert = confirm(
+      `Are you sure? After lobby creation, you cannot modify world settings, but you can create planets and add players to the whitelist.`
+    );
+    if (!confirmAlert) return;
+    try {
+      setStatus('creating');
+
+      const initializers = toInitializers(config);
+      await onCreate(initializers);
+      setStatus('created');
+    } catch (err) {
+      setStatus('errored');
+      console.error(err);
+      if (err instanceof InvalidConfigError) {
+        setError(`Invalid ${err.key} value ${err.value ?? ''} - ${err.message}`);
+      } else {
+        setError(err?.message || 'Something went wrong. Check your dev console.');
+      }
+    }
   }
 
   useEffect(() => {
@@ -159,7 +192,12 @@ export function ConfigurationPane({
   const Maps = _.chunk(maps, 2).map((items, idx) => (
     <ButtonRow key={`map-row-${idx}`}>
       {items.map((item, j) => (
-        <Btn key={`map-item-${j}`} className='button' size={'stretch'} onClick={() => pickMap(item.initializers, idx + j)}>
+        <Btn
+          key={`map-item-${j}`}
+          className='button'
+          size={'stretch'}
+          onClick={() => pickMap(item.initializers, idx + j)}
+        >
           <div style={{ flexDirection: 'column' }}>
             <Minimap
               style={{ height: mapSize, width: mapSize }}
@@ -198,6 +236,43 @@ export function ConfigurationPane({
     );
   };
 
+  const blockscoutURL = `https://blockscout.com/poa/xdai/optimism/tx/${lobbyTx}`;
+  const url = `${window.location.origin}/play/${lobbyAdminTools?.address}`;
+
+  const lobbyContent: JSX.Element | undefined = !created ? (
+    <Btn size='stretch' disabled={createDisabled} onClick={validateAndCreateLobby}>
+      {creating ? <LoadingSpinner initialText={'Creating...'} /> : 'Create Lobby'}
+    </Btn>
+  ) : (
+    <>
+      <Row style={{ justifyContent: 'center' } as CSSStyleDeclaration & React.CSSProperties}>
+        <div>
+          <MythicLabelText
+            style={{ margin: 'auto' }}
+            text='Your universe has been created! '
+          ></MythicLabelText>
+          {lobbyTx && (
+            <Link to={blockscoutURL} style={{ margin: 'auto' }}>
+              <u>view tx</u>
+            </Link>
+          )}
+        </div>
+      </Row>
+      <Row>
+        <span style={{ margin: 'auto' }}>You can also share the direct url with your friends:</span>
+      </Row>
+      {/* Didn't like the TextPreview jumping, so I'm setting the height */}
+      <Row style={{ height: '30px' } as CSSStyleDeclaration & React.CSSProperties}>
+        <TextPreview
+          style={{ margin: 'auto' }}
+          text={url}
+          unFocusedWidth='50%'
+          focusedWidth='100%'
+        />
+      </Row>
+    </>
+  );
+
   return (
     <Modal width='500px' initialX={100} initialY={100} index={modalIndex}>
       <Switch>
@@ -207,15 +282,14 @@ export function ConfigurationPane({
         <Route path={`${root}/settings`}>
           <WorldSettingsPane
             config={config}
-            updateConfig={updateConfig}
             onMapChange={onMapChange}
-            onCreate={onCreate}
             lobbyAdminTools={lobbyAdminTools}
             onUpdate={onUpdate}
-            lobbyTx={lobbyTx}
+            createDisabled = {createDisabled}
           />
         </Route>
       </Switch>
+      {lobbyContent}
 
       {/* Button this in the title slot but at the end moves it to the end of the title bar */}
       <ConfigDownload onError={setError} address={lobbyAdminTools?.address} config={config} />
