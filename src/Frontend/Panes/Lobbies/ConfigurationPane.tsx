@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Route, Switch, useRouteMatch } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Route, Switch } from 'react-router-dom';
 import { LobbyAdminTools } from '../../../Backend/Utils/LobbyAdminTools';
 import { Btn } from '../../Components/Btn';
 import { Link } from '../../Components/CoreUI';
@@ -10,11 +10,9 @@ import { Row } from '../../Components/Row';
 import { ExtrasNavPane } from './ExtrasNavPane';
 import { ConfigDownload, ConfigUpload } from './LobbiesUtils';
 import { MapSelectPane } from './MapSelectPane';
-import { MinimapConfig } from './MinimapUtils';
 import {
   InvalidConfigError,
   LobbyAction,
-  LobbyConfigAction,
   lobbyConfigInit,
   LobbyConfigState,
   LobbyInitializers,
@@ -30,23 +28,21 @@ export function ConfigurationPane({
   startingConfig,
   config,
   updateConfig,
-  onMapChange,
   onCreate,
   lobbyAdminTools,
-  onUpdate,
   lobbyTx,
-  ownerAddress
+  ownerAddress,
+  root,
 }: {
   modalIndex: number;
   config: LobbyConfigState;
   startingConfig: LobbyInitializers;
   updateConfig: React.Dispatch<LobbyAction>;
-  onMapChange: (props: MinimapConfig) => void;
   onCreate: (config: LobbyInitializers) => Promise<void>;
   lobbyAdminTools: LobbyAdminTools | undefined;
-  onUpdate: (action: LobbyConfigAction) => void;
   lobbyTx: string | undefined;
-  ownerAddress : string | undefined
+  ownerAddress: string | undefined;
+  root: string;
 }) {
   const [error, setError] = useState<string | undefined>();
   const [status, setStatus] = useState<Status>(undefined);
@@ -56,7 +52,6 @@ export function ConfigurationPane({
   const creating = status === 'creating' || (status === 'created' && !lobbyAdminTools?.address);
   const created = status === 'created' && lobbyAdminTools?.address;
   // Separated IO Errors from Download/Upload so they show on any pane of the modal
-  const { path: root } = useRouteMatch();
 
   function configUploadSuccess(initializers: LobbyInitializers) {
     updateConfig({ type: 'RESET', value: lobbyConfigInit(initializers) });
@@ -84,34 +79,6 @@ export function ConfigurationPane({
     }
   }
 
-  useEffect(() => {
-    onMapChange({
-      worldRadius: config.WORLD_RADIUS_MIN.currentValue,
-      key: config.SPACETYPE_KEY.currentValue,
-      scale: config.PERLIN_LENGTH_SCALE.currentValue,
-      mirrorX: config.PERLIN_MIRROR_X.currentValue,
-      mirrorY: config.PERLIN_MIRROR_Y.currentValue,
-      perlinThreshold1: config.PERLIN_THRESHOLD_1.currentValue,
-      perlinThreshold2: config.PERLIN_THRESHOLD_2.currentValue,
-      perlinThreshold3: config.PERLIN_THRESHOLD_3.currentValue,
-      stagedPlanets: config.ADMIN_PLANETS.currentValue || [],
-      createdPlanets: lobbyAdminTools?.planets || [],
-      dot: 4,
-    });
-  }, [
-    onMapChange,
-    config.WORLD_RADIUS_MIN.currentValue,
-    config.SPACETYPE_KEY.currentValue,
-    config.PERLIN_LENGTH_SCALE.currentValue,
-    config.PERLIN_MIRROR_X.currentValue,
-    config.PERLIN_MIRROR_Y.currentValue,
-    config.PERLIN_THRESHOLD_1.currentValue,
-    config.PERLIN_THRESHOLD_2.currentValue,
-    config.PERLIN_THRESHOLD_3.currentValue,
-    config.ADMIN_PLANETS.currentValue,
-    lobbyAdminTools,
-  ]);
-
   const blockscoutURL = `https://blockscout.com/poa/xdai/optimism/tx/${lobbyTx}`;
   const url = `${window.location.origin}/play/${lobbyAdminTools?.address}`;
 
@@ -120,7 +87,10 @@ export function ConfigurationPane({
       setError('Link copy failed.');
       return;
     }
-    const text = `👋 ${ownerAddress?.slice(0, 6)} has challenged you to a Dark Forest Arena battle! 🔫😤\n\nClick the link to play:\n⚔️${url} ⚔️`;
+    const text = `👋 ${ownerAddress?.slice(
+      0,
+      6
+    )} has challenged you to a Dark Forest Arena battle! ☄️😤\n\nClick the link to play:\n⚔️ ${url} ⚔️`;
     navigator.clipboard.writeText(text).then(
       function () {
         console.log('Async: Copying to clipboard was successful!');
@@ -152,7 +122,7 @@ export function ConfigurationPane({
       </Row>
       <Row style={jcCenter}>
         <div>
-          <span style={{ margin: 'auto' }}>Share the link directly:</span>
+          <span style={{ margin: 'auto' }}>Share with your friends:</span>
           <Btn size='small' onClick={copy}>
             {!copied ? 'copy link' : 'copied!'}
           </Btn>
@@ -169,13 +139,23 @@ export function ConfigurationPane({
             startingConfig={startingConfig}
             updateConfig={updateConfig}
             lobbyAdminTools={lobbyAdminTools}
+            createDisabled={createDisabled}
           />
         </Route>
-        <Route exact path={`${root}/settings`}>
-          <WorldSettingsPane config={config} onUpdate={onUpdate} createDisabled={createDisabled} />
+        <Route path={`${root}/settings`}>
+          <WorldSettingsPane
+            config={config}
+            onUpdate={updateConfig}
+            createDisabled={createDisabled}
+            root={root}
+          />
         </Route>
-        <Route path={`${root}/settings/extras`}>
-          <ExtrasNavPane lobbyAdminTools={lobbyAdminTools} config={config} onUpdate={onUpdate} />
+        <Route path={`${root}/extras`}>
+          <ExtrasNavPane
+            lobbyAdminTools={lobbyAdminTools}
+            config={config}
+            onUpdate={updateConfig}
+          />
         </Route>
       </Switch>
       <Row>{error}</Row>

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import React, { useState } from 'react';
-import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
+import { Link, Route, Switch, useHistory } from 'react-router-dom';
 import { Btn } from '../../Components/Btn';
 import { Spacer, Title } from '../../Components/CoreUI';
 import { Row } from '../../Components/Row';
@@ -110,15 +110,15 @@ export function WorldSettingsPane({
   config,
   onUpdate,
   createDisabled,
+  root
 }: {
   config: LobbyConfigState;
   onUpdate: (action: LobbyConfigAction) => void;
   createDisabled: boolean;
+  root : string
 }) {
   const [error, setError] = useState<string | undefined>();
 
-  // Separated IO Errors from Download/Upload so they show on any pane of the modal
-  const { path: root } = useRouteMatch();
   const history = useHistory();
 
   const buttons = _.chunk(panes, 2).map(([fst, snd], idx) => {
@@ -167,7 +167,7 @@ export function WorldSettingsPane({
         <div>
           <Row style={jcSpaceBetween}>
             <Btn onClick={() => history.goBack()}>← Choose a map</Btn>
-            <LinkButton to={`/extras`}>Add players/planets →</LinkButton>
+            <Link to={`${root}/extras`}><Btn>Add players/planets →</Btn></Link>
           </Row>
           <Row>
             <Warning>{error}</Warning>
@@ -179,7 +179,7 @@ export function WorldSettingsPane({
 
   return (
     <Switch>
-      <Route path={`${root}`} exact={true}>
+      <Route path={`${root}/settings`} exact>
         {content}
       </Route>
       {routes}

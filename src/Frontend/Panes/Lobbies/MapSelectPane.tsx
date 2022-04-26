@@ -32,10 +32,12 @@ export function MapSelectPane({
   startingConfig,
   updateConfig,
   lobbyAdminTools,
+  createDisabled
 }: {
   startingConfig: LobbyInitializers;
   updateConfig: React.Dispatch<LobbyAction>;
   lobbyAdminTools: LobbyAdminTools | undefined;
+  createDisabled : boolean
 }) {
   function pickMap(initializers: LobbyInitializers, active: number) {
     updateConfig({ type: 'RESET', value: lobbyConfigInit(initializers) });
@@ -90,6 +92,7 @@ export function MapSelectPane({
     <ButtonRow key={`map-row-${idx}`}>
       {items.map((item, j) => (
         <Btn
+          disabled = {createDisabled}
           key={`map-item-${j}`}
           className='button'
           size={'stretch'}
