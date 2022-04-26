@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import React, { useState } from 'react';
-import { Link, Route, Switch, useHistory } from 'react-router-dom';
+import { Route, Switch, useHistory } from 'react-router-dom';
 import { Btn } from '../../Components/Btn';
 import { Spacer, Title } from '../../Components/CoreUI';
 import { Row } from '../../Components/Row';
@@ -110,12 +110,14 @@ export function WorldSettingsPane({
   config,
   onUpdate,
   createDisabled,
-  root
+  lobbyContent,
+  root,
 }: {
   config: LobbyConfigState;
   onUpdate: (action: LobbyConfigAction) => void;
   createDisabled: boolean;
-  root : string
+  lobbyContent: JSX.Element;
+  root: string;
 }) {
   const [error, setError] = useState<string | undefined>();
 
@@ -153,26 +155,25 @@ export function WorldSettingsPane({
   const content = () => {
     return (
       <>
-        <Title slot='title'>Customize Lobby</Title>
+        <Title slot='title'>World Settings</Title>
         <div>
-          Welcome Cadet! Here, you can configure and launch a custom Dark Forest universe. We call
-          this a Lobby.
           <Spacer height={12} />
-          First, customize the configuration of your world. Once you have created a lobby, add
-          custom planets and allowlisted players on the next pane.
+          Here you can customize the configuration of your world. Once you have created your world,
+          add custom planets and players on the next pane.
           <Spacer height={12} />
         </div>
         {buttons}
         <Spacer height={20} />
         <div>
           <Row style={jcSpaceBetween}>
-            <Btn onClick={() => history.goBack()}>← Choose a map</Btn>
-            <Link to={`${root}/extras`}><Btn>Add players/planets →</Btn></Link>
+            <Btn onClick={() => history.push(`${root}`)}>← Choose a map</Btn>
+            <Btn onClick={() => history.push(`${root}/extras`)}>Add planets & players →</Btn>
           </Row>
           <Row>
             <Warning>{error}</Warning>
           </Row>
         </div>
+        {lobbyContent}
       </>
     );
   };

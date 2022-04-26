@@ -58,10 +58,6 @@ export function ConfigurationPane({
   }
 
   async function validateAndCreateLobby() {
-    const confirmAlert = confirm(
-      `Are you sure? After lobby creation, you cannot modify world settings, but you can create planets and add players to the whitelist.`
-    );
-    if (!confirmAlert) return;
     try {
       setStatus('creating');
 
@@ -140,6 +136,8 @@ export function ConfigurationPane({
             updateConfig={updateConfig}
             lobbyAdminTools={lobbyAdminTools}
             createDisabled={createDisabled}
+            lobbyContent = {lobbyContent}
+            root = {root}
           />
         </Route>
         <Route path={`${root}/settings`}>
@@ -147,6 +145,7 @@ export function ConfigurationPane({
             config={config}
             onUpdate={updateConfig}
             createDisabled={createDisabled}
+            lobbyContent = {lobbyContent}
             root={root}
           />
         </Route>
@@ -155,11 +154,12 @@ export function ConfigurationPane({
             lobbyAdminTools={lobbyAdminTools}
             config={config}
             onUpdate={updateConfig}
+            lobbyContent = {lobbyContent}
+            root={root}
           />
         </Route>
       </Switch>
       <Row>{error}</Row>
-      {lobbyContent}
 
       {/* Button this in the title slot but at the end moves it to the end of the title bar */}
       <ConfigDownload onError={setError} address={lobbyAdminTools?.address} config={config} />

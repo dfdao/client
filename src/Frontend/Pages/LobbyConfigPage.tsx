@@ -5,6 +5,7 @@ import { ContractMethodName, EthAddress, UnconfirmedCreateLobby } from '@darkfor
 import { Contract } from 'ethers';
 import _ from 'lodash';
 import React, { useEffect, useMemo, useReducer, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { ContractsAPI } from '../../Backend/GameLogic/ContractsAPI';
 import { LobbyAdminTools } from '../../Backend/Utils/LobbyAdminTools';
 import { ContractsAPIEvent } from '../../_types/darkforest/api/ContractsAPITypes';
@@ -37,7 +38,7 @@ export function LobbyConfigPage({
   const [lobbyAdminTools, setLobbyAdminTools] = useState<LobbyAdminTools>();
   const [lobbyTx, setLobbyTx] = useState<string | undefined>();
 
-
+  const history = useHistory();
   async function createLobby(config: LobbyInitializers) {
     const initializers = { ...startingConfig, ...config };
     const InitABI = await fetch(initContractAbiUrl).then((r) => r.json());
@@ -62,6 +63,7 @@ export function LobbyConfigPage({
         }
         const lobbyAdminTools = await LobbyAdminTools.create(lobby, connection);
         setLobbyAdminTools(lobbyAdminTools);
+        history.push(`${root}/extras`)
       }
     });
 

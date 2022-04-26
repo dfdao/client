@@ -21,8 +21,6 @@ import { InvalidConfigError, toInitializers } from './Reducer';
 
 const jcFlexEnd = { display: 'flex', justifyContent: 'flex-end' } as CSSStyleDeclaration &
   React.CSSProperties;
-const jcSpaceEvenly = { display: 'flex', justifyContent: 'space-evenly' } as CSSStyleDeclaration &
-  React.CSSProperties;
 const rowChunkSize = 4;
 const rowStyle = { gap: '8px' } as CSSStyleDeclaration & React.CSSProperties;
 // Handling the non-input lvl 0 by calculating the items in the row
@@ -88,7 +86,7 @@ export function CreatePlanetPane({
     (planet: AdminPlanet) => formatBool(planet.isTargetPlanet),
     (planet: AdminPlanet) => formatBool(planet.isSpawnPlanet),
     (planet: AdminPlanet, i: number) => (
-      <div style={jcSpaceEvenly}>
+      <div style={{...jcFlexEnd, ...rowStyle}}>
         <Btn disabled={!lobbyAdminTools} onClick={async () => await createAndRevealPlanet(i)}>
           ✓
         </Btn>
@@ -107,6 +105,7 @@ export function CreatePlanetPane({
           headers={headers}
           columns={columns}
           alignments={alignments}
+          itemsPerPage = {5}
         />
       </TableContainer>
     ) : (
@@ -161,6 +160,7 @@ export function CreatePlanetPane({
           headers={createdPlanetHeaders}
           columns={createdPlanetColumns}
           alignments={alignments}
+          itemsPerPage = {5}
         />
       </TableContainer>
     ) : (
@@ -302,7 +302,7 @@ export function CreatePlanetPane({
           </Row>
           {config.ADMIN_PLANETS.displayValue && config.ADMIN_PLANETS.displayValue.length > 0 && (
             <Btn
-              style={jcFlexEnd}
+              size='stretch'
               disabled={status == 'creating' || !lobbyAdminTools}
               onClick={createAll}
             >

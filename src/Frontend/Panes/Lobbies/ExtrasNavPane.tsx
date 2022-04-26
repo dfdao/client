@@ -1,12 +1,12 @@
-import _ from 'lodash';
 import React from 'react';
-import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { LobbyAdminTools } from '../../../Backend/Utils/LobbyAdminTools';
 import { Btn } from '../../Components/Btn';
 import { Spacer, Title } from '../../Components/CoreUI';
 import { Row } from '../../Components/Row';
+import { TabbedView } from '../../Views/TabbedView';
 import { CreatePlanetPane } from './CreatePlanetPane';
-import { ButtonRow, LinkButton, LobbiesPaneProps, NavigationTitle } from './LobbiesUtils';
+import { LobbiesPaneProps } from './LobbiesUtils';
 import { LobbyConfigAction, LobbyConfigState } from './Reducer';
 import { WhitelistPane } from './WhitelistPane';
 
@@ -17,45 +17,27 @@ interface PaneConfig {
   Pane: (props: LobbiesPaneProps, lobbyAdminTools: LobbyAdminTools) => JSX.Element;
 }
 
-const panes: ReadonlyArray<PaneConfig> = [
-  {
-    title: 'Create planets',
-    shortcut: `+`,
-    path: '/create',
-    Pane: (props: LobbiesPaneProps, lobbyAdminTools: LobbyAdminTools) => (
-      <CreatePlanetPane
-        config={props.config}
-        onUpdate={props.onUpdate}
-        lobbyAdminTools={lobbyAdminTools}
-      />
-    ),
-  },
-  {
-    title: 'Add players',
-    shortcut: `+`,
-    path: '/allowlist',
-    Pane: (props: LobbiesPaneProps, lobbyAdminTools: LobbyAdminTools) => (
-      <WhitelistPane
-        config={props.config}
-        onUpdate={props.onUpdate}
-        lobbyAdminTools={lobbyAdminTools}
-      />
-    ),
-  },
-] as const;
+const tabStyle = {
+  // border : `1px solid ${color('#777').darken(.4).hex()}`,
+  background: '#181818',
+  borderRadius : '3px',
+  padding: '8px',
+}
 
 export function ExtrasNavPane({
   lobbyAdminTools,
   config,
   onUpdate,
+  lobbyContent,
+  root,
 }: {
   lobbyAdminTools: LobbyAdminTools | undefined;
   config: LobbyConfigState;
   onUpdate: (lobbyConfigAction: LobbyConfigAction) => void;
+  lobbyContent: JSX.Element;
+  root: string;
 }) {
   const history = useHistory();
-
-  const { path: root } = useRouteMatch();
 
   const handleEnter = () => {
     const warnings = [];
@@ -89,72 +71,38 @@ export function ExtrasNavPane({
     window.open(url);
   };
 
-  const buttons = _.chunk(panes, 2).map(([fst, snd], idx) => {
-    return (
-      // Index key is fine here because the array is stable
-      <ButtonRow key={idx}>
-        {fst && (
-          <LinkButton to={fst.path} shortcut={fst.shortcut}>
-            {fst.title}
-          </LinkButton>
-        )}
-        {snd && (
-          <LinkButton to={snd.path} shortcut={snd.shortcut}>
-            {snd.title}
-          </LinkButton>
-        )}
-      </ButtonRow>
-    );
-  });
-
   const url = `${window.location.origin}/play/${lobbyAdminTools?.address}`;
 
-  const toGameSettings = () => {
-    history.goBack();
-  };
-
-  const content = () => {
-    console.log(root);
-    return (
-      <>
-        <Title slot='title'>Customize Lobby</Title>
-        <div>
+  const views = [
+    <CreatePlanetPane config={config} onUpdate={onUpdate} lobbyAdminTools={lobbyAdminTools} />,
+    <WhitelistPane config={config} onUpdate={onUpdate} lobbyAdminTools={lobbyAdminTools} />,
+  ];
+  return (
+    <>
+      <Title slot='title'>Add Planets/Players</Title>
+      <div>
           Now add planets and players to your universe!
           <Spacer height={12} />
           Remember, if you want to play with manual spawning, you must create at least one spawn
           planet.
           <Spacer height={12} />
         </div>
-        {buttons}
-        <Spacer height={50} />
-        <Row>
-          <Btn onClick={toGameSettings}>← World Settings</Btn>
-        </Row>
-        {lobbyAdminTools?.address && (
-          <Btn size='stretch' onClick={handleEnter}>
-            Enter Universe
-          </Btn>
-        )}
-      </>
-    );
-  };
+      <TabbedView
+        style = {tabStyle}
+        tabTitles={['Create Planets', 'Add Players']}
+        tabContents={(idx: number) => views[idx]}
+      />
+      <Spacer height={20} />
 
-  return (
-    <>
-      <Switch>
-        <Route path={root} exact={true}>
-          {content}
-        </Route>
-        <Route path={`${root}/create`}>
-          <NavigationTitle>Create planets</NavigationTitle>
-
-          <CreatePlanetPane config={config} onUpdate={onUpdate} lobbyAdminTools={lobbyAdminTools} />
-        </Route>
-        <Route path={`${root}/allowlist`}>
-          <NavigationTitle>Add players</NavigationTitle>
-          <WhitelistPane config={config} onUpdate={onUpdate} lobbyAdminTools={lobbyAdminTools} />
-        </Route>
-      </Switch>
+      {lobbyAdminTools?.address && (
+        <Btn size='stretch' onClick={handleEnter}>
+          Enter Universe
+        </Btn>
+      )}
+      <Row>
+        <Btn onClick={() => history.push(`${root}/settings`)}>← World Settings</Btn>
+      </Row>
+      {lobbyContent}
     </>
   );
 }

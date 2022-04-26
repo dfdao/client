@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { LobbyAdminTools } from '../../../Backend/Utils/LobbyAdminTools';
 import { Btn } from '../../Components/Btn';
@@ -8,7 +9,6 @@ import { Minimap } from '../../Components/Minimap';
 import { Row } from '../../Components/Row';
 import { Smaller, Sub } from '../../Components/Text';
 import { stockConfig } from '../../Utils/StockConfigs';
-import { LinkButton } from './LobbiesUtils';
 import { MinimapConfig } from './MinimapUtils';
 import {
   LobbyAction, lobbyConfigInit, LobbyInitializers
@@ -32,13 +32,20 @@ export function MapSelectPane({
   startingConfig,
   updateConfig,
   lobbyAdminTools,
-  createDisabled
+  createDisabled,
+  lobbyContent,
+  root
 }: {
   startingConfig: LobbyInitializers;
   updateConfig: React.Dispatch<LobbyAction>;
   lobbyAdminTools: LobbyAdminTools | undefined;
-  createDisabled : boolean
+  createDisabled : boolean;
+  lobbyContent: JSX.Element;
+  root : string
 }) {
+
+  const history = useHistory();
+
   function pickMap(initializers: LobbyInitializers, active: number) {
     updateConfig({ type: 'RESET', value: lobbyConfigInit(initializers) });
   }
@@ -117,17 +124,22 @@ export function MapSelectPane({
 
   const content = (
       <>
-        <Title slot='title'>Customize Lobby</Title>
+        <Title slot='title'>Select Map</Title>
         <div>
-          First, customize the configuration of your world. Once you have created a lobby, add
-          custom planets and allowlisted players on the next pane.
+          Welcome to Dark Forest Arena! First, choose your map. Then, either customize or create your world!
+        </div>
+        <div>
+          Once your world is created, you will create your custom planets and enter the universe!
         </div>
         <Spacer height={20} />
 
         {Maps}
+        <Spacer height={20} />
+
         <Row style={jcFlexEnd}>
-          <LinkButton to={`/settings`}>Customize World →</LinkButton>
+          <Btn onClick = {() => history.push(`${root}/settings`)}>Customize World →</Btn>
         </Row>
+        {lobbyContent}
       </>
     );
 
