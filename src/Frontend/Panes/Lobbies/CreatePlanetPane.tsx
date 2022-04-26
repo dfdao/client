@@ -31,6 +31,12 @@ const TableContainer = styled.div`
   width: 100%;
 `;
 
+const StageContainer = styled.div`
+  background: #191919;
+  border-radius: 3px;
+  padding: 8px;
+`;
+
 const displayProperties = [
   'x',
   'y',
@@ -86,7 +92,7 @@ export function CreatePlanetPane({
     (planet: AdminPlanet) => formatBool(planet.isTargetPlanet),
     (planet: AdminPlanet) => formatBool(planet.isSpawnPlanet),
     (planet: AdminPlanet, i: number) => (
-      <div style={{...jcFlexEnd, ...rowStyle}}>
+      <div style={{ ...jcFlexEnd, ...rowStyle }}>
         <Btn disabled={!lobbyAdminTools} onClick={async () => await createAndRevealPlanet(i)}>
           ✓
         </Btn>
@@ -98,18 +104,25 @@ export function CreatePlanetPane({
   function StagedPlanets({ config }: LobbiesPaneProps) {
     const adminPlanets = config.ADMIN_PLANETS.currentValue;
     return adminPlanets && adminPlanets.length > 0 ? (
-      <TableContainer>
-        <Table
-          paginated={true}
-          rows={adminPlanets || []}
-          headers={headers}
-          columns={columns}
-          alignments={alignments}
-          itemsPerPage = {5}
-        />
-      </TableContainer>
+      <>
+        <Row>Staged Planets</Row>
+        <Row>
+          <TableContainer>
+            <Table
+              paginated={true}
+              rows={adminPlanets || []}
+              headers={headers}
+              columns={columns}
+              alignments={alignments}
+              itemsPerPage={5}
+            />
+          </TableContainer>
+        </Row>
+      </>
     ) : (
-      <Sub>No planets staged</Sub>
+      <Row>
+        <Sub>No planets staged</Sub>
+      </Row>
     );
   }
 
@@ -153,18 +166,25 @@ export function CreatePlanetPane({
 
   function CreatedPlanets({ planets }: { planets: CreatedPlanet[] | undefined }) {
     return planets?.length ? (
-      <TableContainer>
-        <Table
-          paginated={true}
-          rows={planets || []}
-          headers={createdPlanetHeaders}
-          columns={createdPlanetColumns}
-          alignments={alignments}
-          itemsPerPage = {5}
-        />
-      </TableContainer>
+      <>
+        <Row>Created Planets</Row>
+        <Row>
+          <TableContainer>
+            <Table
+              paginated={true}
+              rows={planets || []}
+              headers={createdPlanetHeaders}
+              columns={createdPlanetColumns}
+              alignments={alignments}
+              itemsPerPage={5}
+            />
+          </TableContainer>
+        </Row>
+      </>
     ) : (
-      <Sub>No planets created</Sub>
+      <Row>
+        <Sub>No planets created</Sub>
+      </Row>
     );
   }
 
@@ -280,13 +300,13 @@ export function CreatePlanetPane({
               </Sub>
             </Row>
           )}
-          <Row>
+          <StageContainer>
             <span>Stage Custom Planets</span>
             <Btn style={jcFlexEnd} onClick={stagePlanet}>
               Stage Planet
             </Btn>
-          </Row>
-          {adminPlanetElems}
+            {adminPlanetElems}
+          </StageContainer>
           <Row>
             <Warning>{config.ADMIN_PLANETS.warning}</Warning>
           </Row>
@@ -294,28 +314,17 @@ export function CreatePlanetPane({
             <Warning>{error}</Warning>
           </Row>
           <br />
-          <Row>
-            <span>Staged Planets</span>
-          </Row>
-          <Row>
-            <StagedPlanets config={config} onUpdate={onUpdate} />
-          </Row>
+          <StagedPlanets config={config} onUpdate={onUpdate} />
           {config.ADMIN_PLANETS.displayValue && config.ADMIN_PLANETS.displayValue.length > 0 && (
             <Btn
               size='stretch'
               disabled={status == 'creating' || !lobbyAdminTools}
               onClick={createAll}
             >
-              {' '}
-              {status == 'creating' ? <LoadingSpinner initialText='Adding...' /> : ` Add all `}
+              {status == 'creating' ? <LoadingSpinner initialText='Adding...' /> : `Add All`}
             </Btn>
           )}
-          <Row>
-            <span>Created Planets</span>
-          </Row>
-          <Row>
-            <CreatedPlanets planets={createdPlanets} />
-          </Row>
+          <CreatedPlanets planets={createdPlanets} />
         </>
       ) : (
         <Sub>Enable admin planets (in admin permissions) to continue</Sub>

@@ -4,25 +4,9 @@ import { LobbyAdminTools } from '../../../Backend/Utils/LobbyAdminTools';
 import { Btn } from '../../Components/Btn';
 import { Spacer, Title } from '../../Components/CoreUI';
 import { Row } from '../../Components/Row';
-import { TabbedView } from '../../Views/TabbedView';
 import { CreatePlanetPane } from './CreatePlanetPane';
-import { LobbiesPaneProps } from './LobbiesUtils';
 import { LobbyConfigAction, LobbyConfigState } from './Reducer';
 import { WhitelistPane } from './WhitelistPane';
-
-interface PaneConfig {
-  title: string;
-  shortcut: string;
-  path: string;
-  Pane: (props: LobbiesPaneProps, lobbyAdminTools: LobbyAdminTools) => JSX.Element;
-}
-
-const tabStyle = {
-  // border : `1px solid ${color('#777').darken(.4).hex()}`,
-  background: '#181818',
-  borderRadius : '3px',
-  padding: '8px',
-}
 
 export function ExtrasNavPane({
   lobbyAdminTools,
@@ -79,29 +63,25 @@ export function ExtrasNavPane({
   ];
   return (
     <>
-      <Title slot='title'>Add Planets/Players</Title>
+      <Title slot='title'>Add Planets</Title>
       <div>
-          Now add planets and players to your universe!
-          <Spacer height={12} />
-          Remember, if you want to play with manual spawning, you must create at least one spawn
-          planet.
-          <Spacer height={12} />
-        </div>
-      <TabbedView
-        style = {tabStyle}
-        tabTitles={['Create Planets', 'Add Players']}
-        tabContents={(idx: number) => views[idx]}
-      />
+        Now add planets to your universe!
+        <Spacer height={12} />
+        Remember, if you want to play with manual spawning, you must create at least one spawn
+        planet.
+        <Spacer height={12} />
+      </div>
+      <CreatePlanetPane config={config} onUpdate={onUpdate} lobbyAdminTools={lobbyAdminTools} />
       <Spacer height={20} />
-
-      {lobbyAdminTools?.address && (
+      {lobbyAdminTools?.address ? (
         <Btn size='stretch' onClick={handleEnter}>
           Enter Universe
         </Btn>
+      ) : (
+        <Row>
+          <Btn onClick={() => history.push(`${root}/settings`)}>← World Settings</Btn>
+        </Row>
       )}
-      <Row>
-        <Btn onClick={() => history.push(`${root}/settings`)}>← World Settings</Btn>
-      </Row>
       {lobbyContent}
     </>
   );

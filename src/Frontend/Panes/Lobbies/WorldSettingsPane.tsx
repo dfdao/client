@@ -159,7 +159,7 @@ export function WorldSettingsPane({
         <div>
           <Spacer height={12} />
           Here you can customize the configuration of your world. Once you have created your world,
-          add custom planets and players on the next pane.
+          add custom planets on the next pane.
           <Spacer height={12} />
         </div>
         {buttons}
@@ -167,7 +167,7 @@ export function WorldSettingsPane({
         <div>
           <Row style={jcSpaceBetween}>
             <Btn onClick={() => history.push(`${root}`)}>← Choose a map</Btn>
-            <Btn onClick={() => history.push(`${root}/extras`)}>Add planets & players →</Btn>
+            <Btn onClick={() => history.push(`${root}/extras`)}>Add planets →</Btn>
           </Row>
           <Row>
             <Warning>{error}</Warning>

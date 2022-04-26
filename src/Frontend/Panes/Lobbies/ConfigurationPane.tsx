@@ -105,15 +105,11 @@ export function ConfigurationPane({
     <>
       <Row style={jcCenter}>
         <div>
+          <Link to={blockscoutURL} style = {{textDecoration: 'none'}}>
           <MythicLabelText
-            style={{ margin: 'auto' }}
-            text='Your universe has been created! '
+            text='Your universe has been created!'
           ></MythicLabelText>
-          {lobbyTx && (
-            <Link to={blockscoutURL} style={{ margin: 'auto' }}>
-              <u>view tx</u>
-            </Link>
-          )}
+          </Link>
         </div>
       </Row>
       <Row style={jcCenter}>
@@ -162,8 +158,8 @@ export function ConfigurationPane({
       <Row>{error}</Row>
 
       {/* Button this in the title slot but at the end moves it to the end of the title bar */}
-      <ConfigDownload onError={setError} address={lobbyAdminTools?.address} config={config} />
-      <ConfigUpload onError={setError} onUpload={configUploadSuccess} />
+      <ConfigDownload disabled = {createDisabled} onError={setError} address={lobbyAdminTools?.address} config={config} />
+      <ConfigUpload disabled = {createDisabled} onError={setError} onUpload={configUploadSuccess} />
     </Modal>
   );
 }
