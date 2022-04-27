@@ -1,16 +1,6 @@
-import { MAX_PLANET_LEVEL, MIN_PLANET_LEVEL } from '@darkforest_eth/constants';
 import { mimcHash, perlin } from '@darkforest_eth/hashing';
-import { getBytesFromHex } from '@darkforest_eth/hexgen';
 import { locationIdFromBigInt } from '@darkforest_eth/serde';
-import {
-  Chunk,
-  LocationId,
-  PerlinConfig,
-  PlanetLevel,
-  Rectangle,
-  SpaceType,
-  WorldLocation,
-} from '@darkforest_eth/types';
+import { Chunk, PerlinConfig, Rectangle, WorldLocation } from '@darkforest_eth/types';
 import * as bigInt from 'big-integer';
 import { BigInteger } from 'big-integer';
 import { LOCATION_ID_UB } from '../../Frontend/Utils/constants';
@@ -21,7 +11,6 @@ import { planetLevelBelowLevel0Threshold } from './PlanetUtils';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const ctx: Worker = self as any;
 /* eslint-enable @typescript-eslint/no-explicit-any */
-
 
 const exploreChunk = (
   chunkFootprint: Rectangle,
@@ -76,7 +65,6 @@ const exploreChunk = (
         if (count % totalWorkers === workerIndex) {
           const hash: BigInteger = planetHashFn(x, y);
           if (hash.lesser(LOCATION_ID_UB.divide(planetRarityBI))) {
-
             // if planet bytes 4-6 are too high for planet threshold, don't render on client.
             if (!planetLevelBelowLevel0Threshold(locationIdFromBigInt(hash), planetLevelThresholds))
               continue;
