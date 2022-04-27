@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Route, Switch } from 'react-router-dom';
+import { getAllTwitters } from '../../../Backend/Network/UtilityServerAPI';
 import { LobbyAdminTools } from '../../../Backend/Utils/LobbyAdminTools';
 import { Btn } from '../../Components/Btn';
 import { Link } from '../../Components/CoreUI';
@@ -41,16 +42,25 @@ export function ConfigurationPane({
   onCreate: (config: LobbyInitializers) => Promise<void>;
   lobbyAdminTools: LobbyAdminTools | undefined;
   lobbyTx: string | undefined;
-  ownerAddress: string | undefined;
+  ownerAddress: string;
   root: string;
 }) {
   const [error, setError] = useState<string | undefined>();
   const [status, setStatus] = useState<Status>(undefined);
   const [copied, setCopied] = useState<boolean>(false);
-
+  const [myTwitter, setMyTwitter] = useState<string | undefined>();
   const createDisabled = status === 'creating' || status === 'created';
   const creating = status === 'creating' || (status === 'created' && !lobbyAdminTools?.address);
   const created = status === 'created' && lobbyAdminTools?.address;
+
+  useEffect(() => {
+    async function fetchTwitters() {
+      const allTwitters = await getAllTwitters();
+      setMyTwitter(allTwitters[ownerAddress])
+    }
+    fetchTwitters();
+  },[]);
+
   // Separated IO Errors from Download/Upload so they show on any pane of the modal
 
   function configUploadSuccess(initializers: LobbyInitializers) {
@@ -83,10 +93,9 @@ export function ConfigurationPane({
       setError('Link copy failed.');
       return;
     }
-    const text = `👋 ${ownerAddress?.slice(
-      0,
-      6
-    )} has challenged you to a Dark Forest Arena battle! ☄️😤\n\nClick the link to play:\n⚔️ ${url} ⚔️`;
+    const text = `👋 ${
+      myTwitter || ownerAddress?.slice(0, 6)
+    } has challenged you to a Dark Forest Arena battle! ☄️😤\n\nClick the link to play:\n⚔️ ${url} ⚔️`;
     navigator.clipboard.writeText(text).then(
       function () {
         console.log('Async: Copying to clipboard was successful!');
