@@ -5,6 +5,7 @@ import { utils, Wallet } from 'ethers';
 import React, { useEffect, useRef, useState } from 'react';
 import { addAccount, getAccounts } from '../../Backend/Network/AccountManager';
 import { getEthConnection } from '../../Backend/Network/Blockchain';
+import { requestDevFaucet } from '../../Backend/Network/UtilityServerAPI';
 import { InitRenderState, TerminalWrapper } from '../Components/GameLandingPageComponents';
 import { MythicLabelText } from '../Components/Labels/MythicLabel';
 import { TextPreview } from '../Components/TextPreview';
@@ -63,8 +64,8 @@ class LobbyPageTerminal {
       return;
     }
 
-    this.terminal.println(`Log in to create a lobby. We recommend using an account`);
-    this.terminal.println(`which owns at least 0.25 xDAI.`);
+    this.terminal.println(`Log in to create a lobby. If your account is empty, we will`);
+    this.terminal.println(`drip some Optimistic xDaia courtesy of Gnosis Chain`);
     this.terminal.newline();
 
     if (accounts.length > 0) {
@@ -100,7 +101,7 @@ class LobbyPageTerminal {
       this.terminal.print(`(${i + 1}): `, TerminalTextStyle.Sub);
       this.terminal.print(`${accounts[i].address} `);
 
-      if (this.balancesEth[i] < 0.25) {
+      if (this.balancesEth[i] < 0.001) {
         this.terminal.println(this.balancesEth[i].toFixed(2) + ' xDAI', TerminalTextStyle.Red);
       } else {
         this.terminal.println(this.balancesEth[i].toFixed(2) + ' xDAI', TerminalTextStyle.Green);
@@ -113,9 +114,14 @@ class LobbyPageTerminal {
     if (isNaN(selection) || selection > accounts.length) {
       this.terminal.println('Unrecognized input. Please try again.', TerminalTextStyle.Red);
       await this.displayAccounts();
-    } else if (this.balancesEth[selection - 1] < 0.25) {
-      this.terminal.println('Not enough xDAI. Select another account.', TerminalTextStyle.Red);
-      await this.displayAccounts();
+    } else if (this.balancesEth[selection - 1] < 0.001) {
+      this.terminal.println('Sending you some xDai to get started!', TerminalTextStyle.Green);
+
+      const res = await requestDevFaucet(accounts[selection - 1].address);
+      if(!res) { 
+        this.terminal.println('Something went wrong. Try an account with xDai', TerminalTextStyle.Red);
+        await this.displayAccounts();
+      }
     } else {
       const account = accounts[selection - 1];
       try {

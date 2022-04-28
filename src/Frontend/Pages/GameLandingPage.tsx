@@ -487,11 +487,20 @@ export function GameLandingPage({ match }: RouteComponentProps<{ contract: strin
           terminal.current?.println('');
           terminal.current?.println(`Welcome, player ${playerAddress}.`);
           // TODO: Provide own env variable for this feature
-          if (!isProd) {
-            // in development, automatically get some ether from faucet
-            const balance = weiToEth(await ethConnection?.loadBalance(playerAddress));
-            if (balance === 0) {
-              await requestDevFaucet(playerAddress);
+          const balance = weiToEth(await ethConnection?.loadBalance(playerAddress));
+          console.log('balance')
+          if (balance < 0.001) {
+            terminal.current?.println('Sending you some Optimistic xDai to get started!', TerminalTextStyle.Green);
+
+            const res = await requestDevFaucet(playerAddress);
+            console.log(`res: ${res}`)
+            if (!res) {
+              terminal.current?.println(
+                'Something went wrong. Try an account with Optimistic xDai',
+                TerminalTextStyle.Red
+              );
+              setStep(TerminalPromptStep.TERMINATED);
+              return;
             }
           }
           setStep(TerminalPromptStep.FETCHING_ETH_DATA);
