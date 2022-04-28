@@ -1,5 +1,6 @@
 import { Initializers } from '@darkforest_eth/settings';
-import { AdminPlanet, EthAddress } from '@darkforest_eth/types';
+import { EthAddress } from '@darkforest_eth/types';
+import { LobbyPlanet } from './LobbiesUtils';
 
 export const SAFE_UPPER_BOUNDS = Number.MAX_SAFE_INTEGER - 1;
 
@@ -116,7 +117,7 @@ export type LobbyConfigAction =
   | { type: 'WHITELIST_ENABLED'; value: boolean | undefined }
   | {
       type: 'ADMIN_PLANETS';
-      value: AdminPlanet | undefined;
+      value: LobbyPlanet | undefined;
       index: number;
     }
   | { type: 'MANUAL_SPAWN'; value: Initializers['MANUAL_SPAWN'] | undefined }
@@ -358,7 +359,7 @@ export function lobbyConfigReducer(state: LobbyConfigState, action: LobbyAction)
       break;
     }
     case 'ADMIN_PLANETS': {
-      update = ofAdminPlanets(action, state);
+      update = ofLobbyPlanets(action, state);
       break;
     }
     case 'WHITELIST': {
@@ -1904,8 +1905,7 @@ export function ofPlanetLevelThresholds(
   };
 }
 
-export function ofAdminPlanets(
-  { type, index, value }: Extract<LobbyConfigAction, { type: 'ADMIN_PLANETS' }>,
+export function ofLobbyPlanets(
   state: LobbyConfigState
 ) {
   const prevCurrentValue = state[type].currentValue;

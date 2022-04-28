@@ -161,7 +161,6 @@ export function ExtrasNavPane({
   //   });
 
   const content = () => {
-    console.log(root);
     return (
       <>
         <Title slot='title'>Customize Lobby</Title>
