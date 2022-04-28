@@ -183,7 +183,9 @@ export function CreatePlanetPane({
       </>
     ) : (
       <Row>
-        <Sub>No planets created</Sub>
+        <Sub>
+          {lobbyAdminTools ? 'No Planets created ' : 'Cannot create planets until world is created'}
+        </Sub>
       </Row>
     );
   }
@@ -293,13 +295,6 @@ export function CreatePlanetPane({
     <>
       {config.ADMIN_CAN_ADD_PLANETS.displayValue ? (
         <>
-          {!lobbyAdminTools && (
-            <Row>
-              <Sub>
-                <Red>Warning:</Red> Cannot create planets until lobby is created
-              </Sub>
-            </Row>
-          )}
           <StageContainer>
             <span>Stage Custom Planets</span>
             <Btn style={jcFlexEnd} onClick={stagePlanet}>
@@ -309,11 +304,8 @@ export function CreatePlanetPane({
           </StageContainer>
           <Row>
             <Warning>{config.ADMIN_PLANETS.warning}</Warning>
-          </Row>
-          <Row>
             <Warning>{error}</Warning>
           </Row>
-          <br />
           <StagedPlanets config={config} onUpdate={onUpdate} />
           {config.ADMIN_PLANETS.displayValue && config.ADMIN_PLANETS.displayValue.length > 0 && (
             <Btn

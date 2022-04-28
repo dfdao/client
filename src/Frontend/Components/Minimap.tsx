@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef } from 'react';
-import { DrawMessage, MinimapConfig } from '../Panes/Lobbies/MinimapUtils';
+import { DrawMessage, MinimapColors, MinimapConfig } from '../Panes/Lobbies/MinimapUtils';
 
 function getWorker() {
   return new Worker(new URL('../../Backend/Utils/minimap.worker.ts', import.meta.url));
@@ -31,19 +31,14 @@ function drawOnCanvas(canvas: HTMLCanvasElement | null, msg: DrawMessage) {
   const dot = msg.dot * 1.2;
 
   for (let i = 0; i < data.length; i++) {
-    if (data[i].planet == 'staged') {
-      ctx.fillStyle = '#FF0000'; // staged planet
-    } else if (data[i].planet == 'created') {
-      ctx.fillStyle = '#00FFFF'; // created planet
-    } else if (data[i].type === 0) {
-      ctx.fillStyle = '#186469'; // inner nebula
-    } else if (data[i].type === 1) {
-      ctx.fillStyle = '#0606C7'; // outer nebula
-    } else if (data[i].type === 2) {
-      ctx.fillStyle = '#000000'; // deep space
-    } else if (data[i].type === 3) {
-      ctx.fillStyle = '#038700'; // dead space
-    }
+    if (data[i].planet == 'target') ctx.fillStyle = MinimapColors.targetPlanet;
+    else if (data[i].planet == 'staged') ctx.fillStyle = MinimapColors.stagedPlanet;
+    else if (data[i].planet == 'spawn') ctx.fillStyle = MinimapColors.spawnPlanet;
+    else if (data[i].planet == 'created') ctx.fillStyle = MinimapColors.createdPlanet;
+    else if (data[i].type === 0) ctx.fillStyle = MinimapColors.innerNebula;
+    else if (data[i].type === 1) ctx.fillStyle = MinimapColors.outerNebula;
+    else if (data[i].type === 2) ctx.fillStyle = MinimapColors.deepSpace;
+    else ctx.fillStyle = MinimapColors.deadSpace;
     ctx.fillRect(normalize(data[i].x) + 10, normalize(data[i].y * -1) + 10, dot, dot);
   }
 

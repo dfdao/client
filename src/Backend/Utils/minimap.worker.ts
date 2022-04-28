@@ -38,13 +38,20 @@ function generate(config: MinimapConfig): DrawMessage {
     return false;
   };
 
-  const checkStagedPlanet = (x: number, y: number) => {
-    let s = Math.round((step)/2);
-    if(!!config.stagedPlanets.find(planet => x - s <= planet.x && planet.x < x + s && y - s <= planet.y && planet.y < y + s))
-      return 'staged' as PlanetType;
-      if(!!config.createdPlanets.find(planet => x - s <= planet.x && planet.x < x + s && y - s <= planet.y && planet.y < y + s))
-      return 'created' as PlanetType;
-  }
+  const checkStagedPlanet = (x: number, y: number) : PlanetType => {
+    let s = Math.round(step / 2);
+    const stagedPlanet = config.stagedPlanets.find(
+      (planet) => x - s <= planet.x && planet.x < x + s && y - s <= planet.y && planet.y < y + s
+    );
+    const createdPlanet = config.createdPlanets.find(
+      (planet) => x - s <= planet.x && planet.x < x + s && y - s <= planet.y && planet.y < y + s
+    );
+    if (createdPlanet) return 'created' as PlanetType;
+    if (stagedPlanet?.isSpawnPlanet) return 'spawn' as PlanetType;
+    if (stagedPlanet?.isTargetPlanet) return 'target' as PlanetType;
+    if (stagedPlanet) return 'staged' as PlanetType;
+    return undefined;
+  };
   // generate x coordinates
   for (let i = radius * -1; i < radius; i += step) {
     // generate y coordinates
