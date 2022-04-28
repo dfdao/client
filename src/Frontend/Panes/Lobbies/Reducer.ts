@@ -119,6 +119,7 @@ export type LobbyConfigAction =
       type: 'ADMIN_PLANETS';
       value: LobbyPlanet | undefined;
       index: number;
+      number? : number;
     }
   | { type: 'MANUAL_SPAWN'; value: Initializers['MANUAL_SPAWN'] | undefined }
   | {
@@ -148,7 +149,7 @@ export type LobbyConfigAction =
 // TODO(#2328): WHITELIST_ENABLED should just be on Initializers
 export type LobbyInitializers = Initializers & {
   WHITELIST_ENABLED: boolean | undefined;
-  ADMIN_PLANETS: AdminPlanet[];
+  ADMIN_PLANETS: LobbyPlanet[];
   WHITELIST: EthAddress[];
 };
 
@@ -1906,6 +1907,7 @@ export function ofPlanetLevelThresholds(
 }
 
 export function ofLobbyPlanets(
+  { type, index, value, number = 1 }: Extract<LobbyConfigAction, { type: 'ADMIN_PLANETS' }>,
   state: LobbyConfigState
 ) {
   const prevCurrentValue = state[type].currentValue;
@@ -1925,6 +1927,21 @@ export function ofLobbyPlanets(
     };
   }
 
+  const currentValue = [...prevCurrentValue];
+  const displayValue = [...prevDisplayValue];
+
+  if (currentValue[index]) {
+    currentValue.splice(index, number);
+    displayValue.splice(index, number);
+
+    return {
+      ...state[type],
+      currentValue,
+      displayValue,
+      warning: undefined,
+    };
+  }
+
   if (value === undefined) {
     return {
       ...state[type],
@@ -1941,21 +1958,6 @@ export function ofLobbyPlanets(
     return {
       ...state[type],
       warning: 'coords, level and planetType must be numbers',
-    };
-  }
-
-  const currentValue = [...prevCurrentValue];
-  const displayValue = [...prevDisplayValue];
-
-  if (currentValue[index]) {
-    currentValue.splice(index, 1);
-    displayValue.splice(index, 1);
-
-    return {
-      ...state[type],
-      currentValue,
-      displayValue,
-      warning: undefined,
     };
   }
 

@@ -5,7 +5,7 @@ import {
   fakeProof,
   RevealSnarkContractCallArgs,
   RevealSnarkInput,
-  SnarkJSProofAndSignals,
+  SnarkJSProofAndSignals
 } from '@darkforest_eth/snarks';
 import revealCircuitPath from '@darkforest_eth/snarks/reveal.wasm';
 import revealZkeyPath from '@darkforest_eth/snarks/reveal.zkey';
@@ -16,7 +16,7 @@ import {
   UnconfirmedCreateArenaPlanet,
   UnconfirmedReveal,
   WorldCoords,
-  WorldLocation,
+  WorldLocation
 } from '@darkforest_eth/types';
 import { BigNumberish } from 'ethers';
 import { LobbyPlanet } from '../../Frontend/Panes/Lobbies/LobbiesUtils';
@@ -225,7 +225,7 @@ export class LobbyAdminTools {
   async bulkCreateAndReveal(planets: LobbyPlanet[], initializers: LobbyInitializers) {
     console.log(`testing bulk create and reveal`);
     // make create Planet args
-    const createPlanetArgsList = planets.map((p) => {
+    const createData = planets.map((p) => {
       const planetData = this.generatePlanetData(p, initializers);
       return {
         location: planetData.location,
@@ -238,32 +238,43 @@ export class LobbyAdminTools {
       };
     });
 
-    const revealData = await Promise.all(planets.map(async p => {
-      const revealArgs = await this.makeRevealProof(
-        p.x,
-        p.y,
-        initializers.PLANETHASH_KEY,
-        initializers.SPACETYPE_KEY,
-        initializers.PERLIN_LENGTH_SCALE,
-        initializers.PERLIN_MIRROR_X,
-        initializers.PERLIN_MIRROR_Y,
-        initializers.DISABLE_ZK_CHECKS,
-        initializers.PLANET_RARITY
-      );
+    const revealData = await Promise.all(
+      planets.map(async (p) => {
+        const revealArgs = await this.makeRevealProof(
+          p.x,
+          p.y,
+          initializers.PLANETHASH_KEY,
+          initializers.SPACETYPE_KEY,
+          initializers.PERLIN_LENGTH_SCALE,
+          initializers.PERLIN_MIRROR_X,
+          initializers.PERLIN_MIRROR_Y,
+          initializers.DISABLE_ZK_CHECKS,
+          initializers.PLANET_RARITY
+        );
 
-      return {
-        _a: revealArgs[0],
-        _b: revealArgs[1],
-        _c: revealArgs[2],
-        _input: revealArgs[3],
-      };
-    }));
-    
-    const tx = await this.contract.contract.bulkCreateAndReveal(createPlanetArgsList, revealData);
-    const rct = await tx.wait();
-    console.log(`created and revealed ${planets.length} with ${rct.gasUsed} gas used`)
+        return {
+          _a: revealArgs[0],
+          _b: revealArgs[1],
+          _c: revealArgs[2],
+          _input: revealArgs[3],
+        };
+      })
+    );
 
-    console.log('num spawn planets', await this.contract.contract.getNSpawnPlanets());
+    const args = Promise.resolve([createData, revealData]);
+    const txIntent = {
+      methodName: 'bulkCreateAndReveal' as ContractMethodName,
+      contract: this.contract.contract,
+      args: args,
+    };
+
+    const tx = await this.contract.submitTransaction(txIntent, {
+      gasLimit: '15000000',
+    });
+
+    await tx.confirmedPromise;
+
+    planets.map((p) => this.createdPlanets.push({ ...p, createTx: tx?.hash, revealTx: tx?.hash }));
   }
 
   async whitelistPlayer(address: EthAddress) {

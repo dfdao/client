@@ -10,6 +10,15 @@ import { Row } from '../../Components/Row';
 import { Red } from '../../Components/Text';
 import { LobbyConfigAction, LobbyConfigState, toInitializers } from './Reducer';
 
+export declare type LobbyPlanet = {
+    x: number;
+    y: number;
+    level: number;
+    planetType: number;
+    isTargetPlanet: boolean;
+    isSpawnPlanet: boolean;
+}
+
 export interface LobbiesPaneProps {
   config: LobbyConfigState;
   onUpdate: (change: LobbyConfigAction) => void;

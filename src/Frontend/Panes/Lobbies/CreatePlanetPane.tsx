@@ -27,19 +27,14 @@ const rowStyle = { gap: '8px' } as CSSStyleDeclaration & React.CSSProperties;
 // Handling the non-input lvl 0 by calculating the items in the row
 const itemStyle = { flex: `1 1 ${Math.floor(100 / rowChunkSize)}%` };
 
+const CHUNK_SIZE = 5;
+
 const TableContainer = styled.div`
   overflow-y: scroll;
   width: 100%;
 `;
 
-const displayProperties = [
-  'x',
-  'y',
-  'Level',
-  'Type',
-  'Target?',
-  'Spawn?',
-];
+const displayProperties = ['x', 'y', 'Level', 'Type', 'Target?', 'Spawn?'];
 type Status = 'creating' | 'created' | 'errored' | undefined;
 
 function formatBool(bool: boolean) {
@@ -203,37 +198,39 @@ export function CreatePlanetPane({
     );
   }
 
-  async function createAll() {
-    setError(undefined);
-    if (!config.ADMIN_PLANETS.displayValue) return;
-
-    const testBulk = true;
-    if(testBulk) {
-      await bulkCreateAndRevealPlanets();
-    }
-    else {
-      for (let i = config.ADMIN_PLANETS.displayValue.length - 1; i >= 0; i--) {
-        await createAndRevealPlanet(i);
-      }
-    }
-  }
 
   async function bulkCreateAndRevealPlanets() {
-    try {
-      if (!config.ADMIN_PLANETS.displayValue) return;
 
-      var adminPlanets: AdminPlanet[] = [];
-  
-      config.ADMIN_PLANETS.displayValue.map(p => {
-        if(p) adminPlanets.push(p);
-      })
-  
-      await lobbyAdminTools?.bulkCreateAndReveal(adminPlanets, toInitializers(config));
-    } catch (error) {
-      console.log('bulk create and reveal errored', error);
-      
+    if (!lobbyAdminTools) {
+      setError("You haven't created a lobby.");
+      return;
     }
+    if (!config.ADMIN_PLANETS.currentValue) {
+      setError('no planets staged');
+      return;
+    }
+    let planets = config.ADMIN_PLANETS.currentValue;
 
+    setStatus('creating');
+
+    let i = 0;
+    while(i < planets.length) {
+      try {
+        const chunk = planets.slice(i, i + CHUNK_SIZE);
+        await lobbyAdminTools.bulkCreateAndReveal(chunk, toInitializers(config));
+        onUpdate({ type: 'ADMIN_PLANETS', value: planet, index: i , number: CHUNK_SIZE });
+        planets.splice(i, CHUNK_SIZE);
+
+      } catch (err) {
+        i += CHUNK_SIZE;
+        if (err instanceof InvalidConfigError) {
+          setError(`Invalid ${err.key} value ${err.value ?? ''} - ${err.message}`);
+        } else {
+          setError(err?.message || 'Something went wrong. Check your dev console.');
+        }
+      }
+    }
+    setStatus('created');
   }
 
   async function createAndRevealPlanet(index: number) {
@@ -314,7 +311,7 @@ export function CreatePlanetPane({
             <Btn
               style={jcFlexEnd}
               disabled={status == 'creating' || !lobbyAdminTools}
-              onClick={createAll}
+              onClick={bulkCreateAndRevealPlanets}
             >
               {' '}
               {status == 'creating' ? <LoadingSpinner initialText='Adding...' /> : ` Add all `}
