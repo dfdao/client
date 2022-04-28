@@ -74,9 +74,9 @@ export function MapSelectPane({
 
   const maps: map[] = [
     {
-      title: '(2P) Battle for the Center',
-      initializers: stockConfig.twoPlayerBattle,
-      description: 'Win the planet in the center!',
+      title: '(1P) Solo Mission',
+      initializers: stockConfig.onePlayerRace,
+      description: 'Race across the map!',
     },
     {
       title: '(4P) Battle for the Center',
@@ -84,7 +84,7 @@ export function MapSelectPane({
       description: 'Win the planet in the center!',
     },
     {
-      title: 'Race Across the Map',
+      title: '(2P) Race Across the Map',
       initializers: stockConfig.sprint,
       description: 'Win the planet across the map!',
     },
@@ -114,7 +114,7 @@ export function MapSelectPane({
             <Smaller>{item.description}</Smaller>
             <br />
             <Smaller>
-              <Sub>size: {item.initializers.WORLD_RADIUS_MIN}</Sub>
+              <Sub>radius: {item.initializers.WORLD_RADIUS_MIN}</Sub>
             </Smaller>
           </div>
         </Btn>

@@ -65,10 +65,10 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
           setStartingConfig({
             ...config,
             WHITELIST_ENABLED: false,
-            START_PAUSED: true,
+            START_PAUSED: false,
             CLAIM_PLANET_COOLDOWN: 0,
             ADMIN_PLANETS: [],
-            TOKEN_MINT_END_TIMESTAMP: Date.now() + (1000 * 60 * 60 * 24 * 365), // one year from now
+            TOKEN_MINT_END_TIMESTAMP: new Date(2100).getTime(), // one day someone will need to update this
             ARTIFACT_POINT_VALUES: [
               config.ARTIFACT_POINT_VALUES[ArtifactRarity.Unknown],
               config.ARTIFACT_POINT_VALUES[ArtifactRarity.Common],

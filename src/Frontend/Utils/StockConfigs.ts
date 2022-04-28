@@ -1,29 +1,29 @@
-import { LobbyInitializers } from "../Panes/Lobbies/Reducer";
+import { LobbyInitializers } from '../Panes/Lobbies/Reducer';
 
-const twoPlayerBattle : LobbyInitializers = {
+const onePlayerRace: LobbyInitializers = {
   ADMIN_CAN_ADD_PLANETS: true,
-  WORLD_RADIUS_LOCKED: true,
-  WORLD_RADIUS_MIN: 5000,
+  WORLD_RADIUS_LOCKED: false,
+  WORLD_RADIUS_MIN: 3000,
   DISABLE_ZK_CHECKS: true,
-  PLANETHASH_KEY: 5068,
-  SPACETYPE_KEY: 5069,
-  BIOMEBASE_KEY: 5070,
-  PERLIN_LENGTH_SCALE: 2048,
-  PERLIN_MIRROR_X: true,
-  PERLIN_MIRROR_Y: true,
+  PLANETHASH_KEY: 2694,
+  SPACETYPE_KEY: 2695,
+  BIOMEBASE_KEY: 2696,
+  PERLIN_LENGTH_SCALE: 512,
+  PERLIN_MIRROR_X: false,
+  PERLIN_MIRROR_Y: false,
   CLAIM_PLANET_COOLDOWN: 0,
-  MAX_NATURAL_PLANET_LEVEL: 9,
+  MAX_NATURAL_PLANET_LEVEL: 4,
   TIME_FACTOR_HUNDREDTHS: 1500,
-  PERLIN_THRESHOLD_1: 14,
-  PERLIN_THRESHOLD_2: 15,
-  PERLIN_THRESHOLD_3: 19,
+  PERLIN_THRESHOLD_1: 11,
+  PERLIN_THRESHOLD_2: 14,
+  PERLIN_THRESHOLD_3: 18,
   INIT_PERLIN_MIN: 0,
   INIT_PERLIN_MAX: 32,
   BIOME_THRESHOLD_1: 14,
   BIOME_THRESHOLD_2: 17,
   SILVER_SCORE_VALUE: 10,
-  PLANET_LEVEL_THRESHOLDS: [400002, 400001, 400000, 262128, 65520, 16368, 4080, 1008, 240, 48],
-  PLANET_RARITY: 9000,
+  PLANET_LEVEL_THRESHOLDS: [400002, 400001, 4000, 262128, 65520, 16368, 4080, 1008, 240, 48],
+  PLANET_RARITY: 12000,
   PLANET_TRANSFER_ENABLED: true,
   PLANET_TYPE_WEIGHTS: [
     [
@@ -76,12 +76,12 @@ const twoPlayerBattle : LobbyInitializers = {
     ],
   ],
   ARTIFACT_POINT_VALUES: [0, 100000, 200000, 500000, 20000000, 50000000],
-  SPACE_JUNK_ENABLED: true,
+  SPACE_JUNK_ENABLED: false,
   SPACE_JUNK_LIMIT: 1000,
   PLANET_LEVEL_JUNK: [20, 25, 30, 35, 40, 45, 50, 55, 60, 65],
   ABANDON_SPEED_CHANGE_PERCENT: 150,
   ABANDON_RANGE_CHANGE_PERCENT: 150,
-  PHOTOID_ACTIVATION_DELAY: 30,
+  PHOTOID_ACTIVATION_DELAY: 10800,
   SPAWN_RIM_AREA: 0,
   LOCATION_REVEAL_COOLDOWN: 10800,
   CAPTURE_ZONES_ENABLED: false,
@@ -95,16 +95,16 @@ const twoPlayerBattle : LobbyInitializers = {
   CAPTURE_ZONES_PER_5000_WORLD_RADIUS: 3,
   MANUAL_SPAWN: true,
   TARGET_PLANETS: true,
-  TARGET_PLANET_HOLD_BLOCKS_REQUIRED: 16,
+  TARGET_PLANET_HOLD_BLOCKS_REQUIRED: 0,
   MODIFIERS: [100, 100, 100, 100, 100, 100, 100, 100],
-  SPACESHIPS: [false, false, false, true, false],
+  SPACESHIPS: [true, true, true, true, true],
   WHITELIST_ENABLED: false,
-  START_PAUSED: true,
+  START_PAUSED: false,
   ADMIN_PLANETS: [
     {
-      x: -4000,
-      y: 0,
-      level: 3,
+      x: -2000,
+      y: -2000,
+      level: 2,
       planetType: 0,
       requireValidLocationId: false,
       revealLocation: true,
@@ -112,47 +112,37 @@ const twoPlayerBattle : LobbyInitializers = {
       isSpawnPlanet: true,
     },
     {
-      x: 4000,
-      y: 0,
-      level: 3,
-      planetType: 0,
-      requireValidLocationId: false,
-      revealLocation: true,
-      isTargetPlanet: false,
-      isSpawnPlanet: true,
-    },
-    {
-      x: 0,
-      y: 0,
+      x: 2000,
+      y: 2000,
       level: 4,
-      planetType: 4,
+      planetType: 0,
       requireValidLocationId: false,
       revealLocation: true,
       isTargetPlanet: true,
       isSpawnPlanet: false,
     },
   ],
-  TOKEN_MINT_END_TIMESTAMP: 1682174749561,
+  TOKEN_MINT_END_TIMESTAMP: 1682435240778,
   WHITELIST: [],
 };
 
-const fourPlayerBattle : LobbyInitializers = {
+const fourPlayerBattle: LobbyInitializers = {
   ADMIN_CAN_ADD_PLANETS: true,
   WORLD_RADIUS_LOCKED: true,
   WORLD_RADIUS_MIN: 7000,
   DISABLE_ZK_CHECKS: true,
-  PLANETHASH_KEY: 5068,
-  SPACETYPE_KEY: 5069,
-  BIOMEBASE_KEY: 5070,
+  PLANETHASH_KEY: 2401,
+  SPACETYPE_KEY: 2402,
+  BIOMEBASE_KEY: 2403,
   PERLIN_LENGTH_SCALE: 2048,
   PERLIN_MIRROR_X: true,
   PERLIN_MIRROR_Y: true,
   CLAIM_PLANET_COOLDOWN: 0,
   MAX_NATURAL_PLANET_LEVEL: 9,
   TIME_FACTOR_HUNDREDTHS: 1500,
-  PERLIN_THRESHOLD_1: 14,
-  PERLIN_THRESHOLD_2: 15,
-  PERLIN_THRESHOLD_3: 19,
+  PERLIN_THRESHOLD_1: 13,
+  PERLIN_THRESHOLD_2: 14,
+  PERLIN_THRESHOLD_3: 17,
   INIT_PERLIN_MIN: 0,
   INIT_PERLIN_MAX: 32,
   BIOME_THRESHOLD_1: 14,
@@ -235,10 +225,10 @@ const fourPlayerBattle : LobbyInitializers = {
   MODIFIERS: [100, 100, 100, 100, 100, 100, 100, 100],
   SPACESHIPS: [false, false, false, true, false],
   WHITELIST_ENABLED: false,
-  START_PAUSED: true,
+  START_PAUSED: false,
   ADMIN_PLANETS: [
     {
-      x: -4000,
+      x: -5500,
       y: 0,
       level: 3,
       planetType: 0,
@@ -248,7 +238,7 @@ const fourPlayerBattle : LobbyInitializers = {
       isSpawnPlanet: true,
     },
     {
-      x: 4000,
+      x: 5500,
       y: 0,
       level: 3,
       planetType: 0,
@@ -259,7 +249,7 @@ const fourPlayerBattle : LobbyInitializers = {
     },
     {
       x: 0,
-      y: 4000,
+      y: 5500,
       level: 3,
       planetType: 0,
       requireValidLocationId: false,
@@ -269,7 +259,7 @@ const fourPlayerBattle : LobbyInitializers = {
     },
     {
       x: 0,
-      y: -4000,
+      y: -5500,
       level: 3,
       planetType: 0,
       requireValidLocationId: false,
@@ -292,7 +282,7 @@ const fourPlayerBattle : LobbyInitializers = {
   WHITELIST: [],
 };
 
-const sprint : LobbyInitializers = {
+const sprint: LobbyInitializers = {
   ADMIN_CAN_ADD_PLANETS: true,
   WORLD_RADIUS_LOCKED: false,
   WORLD_RADIUS_MIN: 7000,
@@ -391,7 +381,7 @@ const sprint : LobbyInitializers = {
   MODIFIERS: [100, 100, 100, 100, 100, 100, 100, 100],
   SPACESHIPS: [true, true, true, true, true],
   WHITELIST_ENABLED: false,
-  START_PAUSED: true,
+  START_PAUSED: false,
   ADMIN_PLANETS: [
     {
       x: -2000,
@@ -428,8 +418,8 @@ const sprint : LobbyInitializers = {
   WHITELIST: [],
 };
 
-export const stockConfig= {
-    twoPlayerBattle: twoPlayerBattle,
-    fourPlayerBattle: fourPlayerBattle,
-    sprint: sprint
-}
+export const stockConfig = {
+  onePlayerRace: onePlayerRace,
+  fourPlayerBattle: fourPlayerBattle,
+  sprint: sprint,
+};
