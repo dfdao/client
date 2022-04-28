@@ -45,15 +45,6 @@ function generate(config: MinimapConfig): DrawMessage {
       if(!!config.createdPlanets.find(planet => x - s <= planet.x && planet.x < x + s && y - s <= planet.y && planet.y < y + s))
       return 'created' as PlanetType;
   }
-  const start = Date.now();
-  spaceTypeFromPerlin(spaceTypePerlin({ x: 0, y: 0 }, config), config);
-  const end = Date.now();
-  console.log(`type took ${end - start} ms`)
-
-  const start2 = Date.now();
-  checkStagedPlanet(0,0)
-  const end2 = Date.now();
-  console.log(`planet took ${end2 - start2} ms`)
   // generate x coordinates
   for (let i = radius * -1; i < radius; i += step) {
     // generate y coordinates
