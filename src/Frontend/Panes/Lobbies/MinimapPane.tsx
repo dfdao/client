@@ -19,8 +19,8 @@ export interface keyItem {
   color: string;
 }
 const keyItems: keyItem[] = [
-  { name: 'Inner Nebula', color: MinimapColors.innerNebula },
-  { name: 'Outer Nebula', color: MinimapColors.outerNebula },
+  { name: 'Nebula', color: MinimapColors.innerNebula },
+  { name: 'Space', color: MinimapColors.outerNebula },
   { name: 'Deep Space', color: MinimapColors.deepSpace },
   { name: 'Dead Space', color: MinimapColors.deadSpace },
   { name: 'Staged Planet', color: MinimapColors.stagedPlanet },

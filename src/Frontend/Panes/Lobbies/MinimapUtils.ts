@@ -1,6 +1,7 @@
-import { AdminPlanet, SpaceType } from '@darkforest_eth/types';
+import { SpaceType } from '@darkforest_eth/types';
 import { hsl } from 'color';
 import { CreatedPlanet } from '../../../Backend/Utils/LobbyAdminTools';
+import { LobbyPlanet } from './LobbiesUtils';
 
 export type MinimapConfig = {
   worldRadius: number;
@@ -13,7 +14,7 @@ export type MinimapConfig = {
   perlinThreshold1: number;
   perlinThreshold2: number;
   perlinThreshold3: number;
-  stagedPlanets: AdminPlanet[];
+  stagedPlanets: LobbyPlanet[];
   createdPlanets: CreatedPlanet[];
 };
 
@@ -29,8 +30,8 @@ export const MinimapColors = {
     spawnPlanet : `${hsl(51, 100, 55)}`,
     targetPlanet: `${hsl(0, 100, 55)}`,
     createdPlanet:`${hsl(123, 100, 55)}`,
-    innerNebula : `${hsl(184, 63, 15)}`,
-    outerNebula : `${hsl(240, 94, 20)}`,
-    deepSpace : `${hsl(245, 60, 4)}`, // deep space
-    deadSpace : `${hsl(119, 60, 15)}`, // dead space
+    innerNebula : `${hsl(221, 100, 35)}`,
+    outerNebula : `${hsl(240, 100, 25)}`,
+    deepSpace : `${hsl(245, 100, 4)}`, // deep space
+    deadSpace : `${hsl(119, 100, 10)}`, // dead space
 }

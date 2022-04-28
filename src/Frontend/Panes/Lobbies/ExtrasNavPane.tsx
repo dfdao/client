@@ -24,33 +24,29 @@ export function ExtrasNavPane({
   const history = useHistory();
 
   const handleEnter = () => {
-    const warnings = [];
     if (config.ADMIN_PLANETS.displayValue && config.ADMIN_PLANETS.displayValue.length > 0) {
-      warnings.push('Some planets are still staged for creation');
+      const confirmed = confirm('Warning: Some planets are still staged for creation.\nDo you want to continue?');
+      if(!confirmed) return;
     }
     if (config.WHITELIST.displayValue && config.WHITELIST.displayValue.length > 0) {
-      warnings.push('Some addresses are still staged for allowlist');
+      const confirmed = confirm('Warning: Some addresses are still staged for allowlist\nDo you want to continue?');
+      if(!confirmed) return;
+
     }
     if (
       config.MANUAL_SPAWN.displayValue &&
       !lobbyAdminTools?.planets.find((p) => p.isSpawnPlanet)
     ) {
-      warnings.push('Manual spawn is active but no spawn planets have been created');
+      const confirmed = confirm('Warning: Manual spawn is active but no spawn planets have been created. Nobody will be able to spawn into the game!\nDo you want to continue?');
+      if(!confirmed) return;
+
     }
     if (
       config.TARGET_PLANETS.displayValue &&
       !lobbyAdminTools?.planets.find((p) => p.isTargetPlanet)
     ) {
-      warnings.push('Target planets are active but no target planets have been created');
-    }
-    if (warnings.length > 0) {
-      const confirmed = confirm(
-        `WARNING: \n${warnings.reduce(
-          (prev, curr, idx) => prev.concat(`${idx + 1}: ${curr}\n`),
-          ''
-        )} Do you want to continue?`
-      );
-      if (!confirmed) return;
+      const confirmed = confirm('Warning: Target planets are active but no target planets have been created.\nDo you want to continue?');
+      if(!confirmed) return;
     }
     window.open(url);
   };
@@ -61,6 +57,7 @@ export function ExtrasNavPane({
     <CreatePlanetPane config={config} onUpdate={onUpdate} lobbyAdminTools={lobbyAdminTools} />,
     <WhitelistPane config={config} onUpdate={onUpdate} lobbyAdminTools={lobbyAdminTools} />,
   ];
+
   return (
     <>
       <Title slot='title'>Add Planets</Title>

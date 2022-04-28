@@ -76,7 +76,7 @@ export function MapSelectPane({
     {
       title: '(1P) Solo Mission',
       initializers: stockConfig.onePlayerRace,
-      description: 'Race across the map!',
+      description: 'Race across the universe!',
     },
     {
       title: '(4P) Battle for the Center',
@@ -84,9 +84,9 @@ export function MapSelectPane({
       description: 'Win the planet in the center!',
     },
     {
-      title: '(2P) Race Across the Map',
+      title: '(2P) Race',
       initializers: stockConfig.sprint,
-      description: 'Win the planet across the map!',
+      description: 'Sprint for the target!',
     },
     {
       title: 'Custom',

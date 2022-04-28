@@ -62,6 +62,7 @@ import {
   PlanetLevel,
   PlanetMessageType,
   PlanetType,
+  PlanetTypeNames,
   Player,
   QueuedArrival,
   Radii,
@@ -534,7 +535,7 @@ class GameManager extends EventEmitter {
     this.refreshScoreboard();
     this.refreshNetworkHealth();
 
-    if (!spectator) this.getSpaceships();
+    // if (!spectator) this.getSpaceships();
 
     this.safeMode = false;
   }
