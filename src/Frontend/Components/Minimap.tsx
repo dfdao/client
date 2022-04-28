@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import { DrawMessage, MinimapConfig } from '../Panes/Lobbies/MinimapUtils';
 
 function getWorker() {
-  return new Worker(new URL('./minimap.worker.ts', import.meta.url));
+  return new Worker(new URL('../../Backend/Utils/minimap.worker.ts', import.meta.url));
 }
 
 function drawOnCanvas(canvas: HTMLCanvasElement | null, msg: DrawMessage) {
