@@ -37,6 +37,7 @@ function Key() {
           <Row key={`key-item${rowIdx}`} style={rowStyle}>
             {items.map((item) => (
               <span
+                key={item.name}
                 style={{
                   flex: `1 1 ${Math.floor(100 / rowChunkSize)}%`,
                   borderRadius: '3px',
