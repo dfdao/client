@@ -893,14 +893,7 @@ class GameManager extends EventEmitter {
       .on(ContractsAPIEvent.Gameover, async () => {
         gameManager.setGameover(true);
         gameManager.gameover$.publish(true);
-      })
-      .on(
-        ContractsAPIEvent.TargetPlanetInvaded,
-        async (player: EthAddress, planetId: LocationId) => {
-          const planet = gameManager.getPlanetWithId(planetId);
-          if (planet) NotificationManager.getInstance().targetPlanetInvaded(planet);
-        }
-      );
+      });
 
     const unconfirmedTxs = await persistentChunkStore.getUnconfirmedSubmittedEthTxs();
     const confirmationQueue = new ThrottledConcurrentQueue({
@@ -2055,6 +2048,10 @@ class GameManager extends EventEmitter {
         throw new Error('game is over');
       }
 
+      if (this.paused) {
+        throw new Error('game is paused');
+      }
+
       if (!planet) {
         throw new Error('planet is not loaded');
       }
@@ -2075,13 +2072,9 @@ class GameManager extends EventEmitter {
         throw new Error('you can only capture target planets');
       }
 
-      if (
-        !planet.invadeStartBlock ||
-        this.ethConnection.getCurrentBlockNumber() <
-          planet.invadeStartBlock + this.contractConstants.TARGET_PLANET_HOLD_BLOCKS_REQUIRED
-      ) {
+      if (planet.energy < this.contractConstants.CLAIM_VICTORY_ENERGY_PERCENT) {
         throw new Error(
-          `you need to hold a planet for ${this.contractConstants.TARGET_PLANET_HOLD_BLOCKS_REQUIRED} blocks before capturing`
+          `planet energy must be ${this.contractConstants.CLAIM_VICTORY_ENERGY_PERCENT} before claiming victory`
         );
       }
 
