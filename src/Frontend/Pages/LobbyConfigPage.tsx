@@ -8,7 +8,6 @@ import React, { useEffect, useMemo, useReducer, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { ContractsAPI } from '../../Backend/GameLogic/ContractsAPI';
 import { LobbyAdminTools } from '../../Backend/Utils/LobbyAdminTools';
-import { ContractsAPIEvent } from '../../_types/darkforest/api/ContractsAPITypes';
 import { ConfigurationPane } from '../Panes/Lobbies/ConfigurationPane';
 import { MinimapPane } from '../Panes/Lobbies/MinimapPane';
 import { MinimapConfig } from '../Panes/Lobbies/MinimapUtils';
@@ -16,9 +15,9 @@ import {
   LobbyConfigAction,
   lobbyConfigInit,
   lobbyConfigReducer,
-  LobbyInitializers
+  LobbyInitializers,
 } from '../Panes/Lobbies/Reducer';
-
+import { getLobbyCreatedEvent } from '../Utils/helpers';
 
 export function LobbyConfigPage({
   contract,
@@ -30,7 +29,7 @@ export function LobbyConfigPage({
   contract: ContractsAPI;
   connection: EthConnection;
   ownerAddress: EthAddress;
-  startingConfig : LobbyInitializers
+  startingConfig: LobbyInitializers;
   root: string;
 }) {
   const [config, updateConfig] = useReducer(lobbyConfigReducer, startingConfig, lobbyConfigInit);
@@ -56,23 +55,23 @@ export function LobbyConfigPage({
       args: Promise.resolve([initAddress, initFunctionCall]),
     };
 
-    contract.once(ContractsAPIEvent.LobbyCreated, async (owner: EthAddress, lobby: EthAddress) => {
-      if (owner === ownerAddress) {
-        if (!connection) {
-          throw 'error: no connection';
-        }
-        const lobbyAdminTools = await LobbyAdminTools.create(lobby, connection);
-        setLobbyAdminTools(lobbyAdminTools);
-        history.push(`${root}/extras`)
-      }
-    });
-
     const tx = await contract.submitTransaction(txIntent, {
       // The createLobby function costs somewhere around 12mil gas
       gasLimit: '15000000',
     });
-    await tx.confirmedPromise;
+
+    const lobbyReceipt = await tx.confirmedPromise;
+    const { owner, lobby } = getLobbyCreatedEvent(lobbyReceipt, contract.contract);
     setLobbyTx(tx?.hash);
+
+    if (owner === ownerAddress) {
+      if (!connection) {
+        throw 'error: no connection';
+      }
+      const lobbyAdminTools = await LobbyAdminTools.create(lobby, connection);
+      setLobbyAdminTools(lobbyAdminTools);
+      history.push(`${root}/extras`);
+    }
   }
 
   const onMapChange = useMemo(() => {
@@ -111,7 +110,6 @@ export function LobbyConfigPage({
     updateConfig(action);
   }
 
-  
   let content = (
     <>
       <ConfigurationPane
