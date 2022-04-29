@@ -165,7 +165,7 @@ export class LobbyAdminTools {
     await tx.confirmedPromise;
     console.log(`reveal tx accepted`);
     const createdPlanet = this.createdPlanets.find((p) => p.x == planet.x && p.y == planet.y);
-    if (!createdPlanet) throw 'created planet not found';
+    if (!createdPlanet) throw new Error('created planet not found');
     createdPlanet.revealTx = tx?.hash;
   }
 
