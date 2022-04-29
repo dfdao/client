@@ -17,6 +17,6 @@ export function getLobbyCreatedEvent(
       lobby: address(contract.interface.parseLog(log).args.lobbyAddress),
     };
   } else {
-    throw 'Lobby Created event not found';
+    throw new Error('Lobby Created event not found');
   }
 }
