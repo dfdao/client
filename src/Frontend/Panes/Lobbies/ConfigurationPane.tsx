@@ -167,7 +167,7 @@ export function ConfigurationPane({
       <Row>{error}</Row>
 
       {/* Button this in the title slot but at the end moves it to the end of the title bar */}
-      <ConfigDownload disabled = {createDisabled} onError={setError} address={lobbyAdminTools?.address} config={config} />
+      <ConfigDownload onError={setError} address={lobbyAdminTools?.address} config={config} />
       <ConfigUpload disabled = {createDisabled} onError={setError} onUpload={configUploadSuccess} />
     </Modal>
   );

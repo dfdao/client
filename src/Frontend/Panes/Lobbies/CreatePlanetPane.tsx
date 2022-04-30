@@ -173,7 +173,7 @@ export function CreatePlanetPane({
     ) : (
       <Row>
         <Sub>
-          {lobbyAdminTools ? 'No Planets created ' : 'Cannot create planets until world is created'}
+          {lobbyAdminTools ? 'No planets created ' : 'Cannot create planets until world is created'}
         </Sub>
       </Row>
     );
