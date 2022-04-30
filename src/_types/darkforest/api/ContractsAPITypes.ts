@@ -328,7 +328,8 @@ export interface ContractConstants {
     boolean,
     boolean,
     boolean
-  ]
+  ];
+  START_TIME: number;
 }
 
 export type ClientMockchainData =

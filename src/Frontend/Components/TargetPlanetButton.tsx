@@ -1,7 +1,5 @@
-import { EMPTY_ADDRESS } from '@darkforest_eth/constants';
 import {
-  isUnconfirmedClaimVictoryTx,
-  isUnconfirmedInvadeTargetPlanetTx,
+  isUnconfirmedClaimVictoryTx
 } from '@darkforest_eth/serde';
 import { Planet, TooltipName } from '@darkforest_eth/types';
 import React, { useCallback, useMemo } from 'react';
@@ -9,13 +7,11 @@ import styled from 'styled-components';
 import { Wrapper } from '../../Backend/Utils/Wrapper';
 import { TooltipTrigger } from '../Panes/Tooltip';
 import { useAccount, useUIManager } from '../Utils/AppHooks';
-import { useEmitterValue } from '../Utils/EmitterHooks';
 import { INVADE } from '../Utils/ShortcutConstants';
 import { ShortcutBtn } from './Btn';
 import { LoadingSpinner } from './LoadingSpinner';
-import { MaybeShortcutButton } from './MaybeShortcutButton';
 import { Row } from './Row';
-import { Green, Red, White } from './Text';
+import { Green, White } from './Text';
 
 const StyledRow = styled(Row)`
   .button {
@@ -33,36 +29,36 @@ export function TargetPlanetButton({
   const account = useAccount(uiManager);
   const gameManager = uiManager.getGameManager();
   const planet = planetWrapper.value;
-  const owned = planetWrapper.value?.owner === account;
-  const isTargetPlanet = planetWrapper.value?.isTargetPlanet;
+  if(!planet) return <></> ;
+  const owned = planet.owner === account;
+  const isTargetPlanet = planet.isTargetPlanet;
 
   const shouldShow = useMemo(
     () => owned && isTargetPlanet,
-    [owned, planetWrapper]
+    [owned, planet]
   );
 
   const energyLeftToClaimVictory = useMemo(() => {
-    if (!planetWrapper.value || !owned) {
+    if (!owned) {
       return undefined;
     }
     const energyRequired = gameManager.getContractConstants().CLAIM_VICTORY_ENERGY_PERCENT;
-    const planetEnergyPercent = planetWrapper.value.energy * 100 / planetWrapper.value.energyCap;
+    const planetEnergyPercent = planet.energy * 100 / planet.energyCap;
     const percentNeeded =  Math.floor(energyRequired - planetEnergyPercent);
-    const energyNeeded = Math.floor(percentNeeded / 100 * planetWrapper.value.energyCap);
+    const energyNeeded = Math.floor(percentNeeded / 100 * planet.energyCap);
     return {percentNeeded: percentNeeded, energyNeeded: energyNeeded}
-  }, [planetWrapper]);
+  }, [planet.energy]);
 
   const claimable = useMemo(() => energyLeftToClaimVictory && energyLeftToClaimVictory.percentNeeded < 0, [energyLeftToClaimVictory]);
 
   const claimingVictory = useMemo(
-    () => planetWrapper.value?.transactions?.hasTransaction(isUnconfirmedClaimVictoryTx),
-    [planetWrapper]
+    () => planet.transactions?.hasTransaction(isUnconfirmedClaimVictoryTx),
+    [planet]
   );
 
   const claimVictory = useCallback(() => {
-    if (!planetWrapper.value) return;
-    gameManager.claimVictory(planetWrapper.value.locationId);
-  }, [gameManager, planetWrapper]);
+    gameManager.claimVictory(planet.locationId);
+  }, [gameManager, planet]);
 
   return (
     <StyledRow>

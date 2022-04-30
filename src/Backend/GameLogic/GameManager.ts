@@ -1219,7 +1219,7 @@ class GameManager extends EventEmitter {
    * Returns whether or not the current round has ended.
    */
   public isRoundOver(): boolean {
-    return Date.now() / 1000 > this.getTokenMintEndTimeSeconds();
+    return this.gameover;
   }
 
   /**
@@ -1699,6 +1699,7 @@ class GameManager extends EventEmitter {
   private async setGameover(gameover: boolean) {
     this.gameover = gameover;
     this.winners = await this.contractsAPI.getWinners();
+    this.endTimeSeconds = await this.contractsAPI.getEndTime();
   }
 
   private async refreshTwitters(): Promise<void> {
@@ -1728,7 +1729,7 @@ class GameManager extends EventEmitter {
   }
 
   private checkGameHasEnded(): boolean {
-    if (Date.now() / 1000 > this.endTimeSeconds) {
+    if (this.gameover) {
       this.terminal.current?.println('[ERROR] Game has ended.');
       return true;
     }
@@ -3663,6 +3664,17 @@ class GameManager extends EventEmitter {
 
   public isAdmin(): boolean {
     return this.getAddress() === this.contractConstants.adminAddress;
+  }
+
+  public gameDuration() {
+    if(this.endTimeSeconds) {
+      return this.endTimeSeconds - this.contractConstants.START_TIME;
+    }
+    return Date.now() / 1000 - this.contractConstants.START_TIME;
+  }
+
+  public startTime() {
+      return this.contractConstants.START_TIME;
   }
 
   /**
