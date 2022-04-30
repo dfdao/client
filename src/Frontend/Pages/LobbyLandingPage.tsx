@@ -2,9 +2,12 @@ import { EthConnection, ThrottledConcurrentQueue, weiToEth } from '@darkforest_e
 import { address } from '@darkforest_eth/serde';
 import { EthAddress } from '@darkforest_eth/types';
 import { utils, Wallet } from 'ethers';
+import { formatEther } from 'ethers/lib/utils';
+import { add } from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
 import { addAccount, getAccounts } from '../../Backend/Network/AccountManager';
 import { getEthConnection } from '../../Backend/Network/Blockchain';
+import { requestFaucet } from '../../Backend/Network/UtilityServerAPI';
 import { InitRenderState, TerminalWrapper } from '../Components/GameLandingPageComponents';
 import { MythicLabelText } from '../Components/Labels/MythicLabel';
 import { TextPreview } from '../Components/TextPreview';
@@ -63,8 +66,8 @@ class LobbyPageTerminal {
       return;
     }
 
-    this.terminal.println(`Log in to create a lobby. We recommend using an account`);
-    this.terminal.println(`which owns at least 0.25 xDAI.`);
+    this.terminal.println(`Log in to create a lobby. If your account has less than 0.01 xDAi`);
+    this.terminal.println(`it will get dripped 0.05 Optimism xDai`);
     this.terminal.newline();
 
     if (accounts.length > 0) {
@@ -113,14 +116,16 @@ class LobbyPageTerminal {
     if (isNaN(selection) || selection > accounts.length) {
       this.terminal.println('Unrecognized input. Please try again.', TerminalTextStyle.Red);
       await this.displayAccounts();
-    } else if (this.balancesEth[selection - 1] < 0.25) {
-      this.terminal.println('Not enough xDAI. Select another account.', TerminalTextStyle.Red);
-      await this.displayAccounts();
-    } else {
+    }
+    // else if (this.balancesEth[selection - 1] < 0.05) {
+    //   this.terminal.println('Not enough xDAI. Select another account.', TerminalTextStyle.Red);
+    //   await this.displayAccounts();}
+    else {
       const account = accounts[selection - 1];
       try {
         await this.ethConnection.setAccount(account.privateKey);
-        this.accountSet(account.address);
+        await this.sendDrip(account.address);
+        // this.accountSet(account.address);
       } catch (e) {
         this.terminal.println(
           'An unknown error occurred. please try again.',
@@ -158,7 +163,8 @@ class LobbyPageTerminal {
       this.terminal.println('Press any key to continue:', TerminalTextStyle.Text);
 
       await this.terminal.getInput();
-      this.accountSet(newAddr);
+      await this.sendDrip(newAddr);
+      // this.accountSet(newAddr);
     } catch (e) {
       console.log(e);
       this.terminal.println('An unknown error occurred. please try again.', TerminalTextStyle.Red);
@@ -185,11 +191,60 @@ class LobbyPageTerminal {
 
       this.ethConnection.setAccount(newSKey);
       this.terminal.println(`Imported account with address ${newAddr}.`);
-      this.accountSet(newAddr);
+      await this.sendDrip(newAddr);
     } catch (e) {
       this.terminal.println('An unknown error occurred. please try again.', TerminalTextStyle.Red);
       this.terminal.println('');
       this.importAccount();
+    }
+  }
+
+  private async sendDrip(address: EthAddress) {
+    // If drip fails
+    try {
+      const currBalance = weiToEth(await this.ethConnection.loadBalance(address));
+      if (currBalance > 0.05) {
+        this.terminal.println(`You have enough xDAI $(${currBalance})`, TerminalTextStyle.Blue);
+        await new Promise((r) => setTimeout(r, 1000));
+        this.accountSet(address);
+      } else {
+        this.terminal.println(`Getting xDAI from faucet...`, TerminalTextStyle.Blue);
+        const success = await requestFaucet(address);
+
+        if (success) {
+          const newBalance = weiToEth(await this.ethConnection.loadBalance(address));
+          this.terminal.println(
+            `Your balance has increased by ${newBalance - currBalance}.`,
+            TerminalTextStyle.Green
+          );
+          await new Promise((r) => setTimeout(r, 1500));
+
+          this.accountSet(address);
+        } else {
+          this.terminal.println(
+            'An error occurred in faucet.\nCheck the console for details and inform the dev.',
+            TerminalTextStyle.Red
+          );
+          this.terminal.println(
+            'Please try again with an account that has enough xDAI.',
+            TerminalTextStyle.Red
+          );
+          this.terminal.printLink(
+            'Click here to manually get Optimism xDAI\n',
+            () => {
+              window.open(
+                'https://www.xdaichain.com/for-developers/optimism-optimistic-rollups-on-gc'
+              );
+            },
+            TerminalTextStyle.Blue
+          );
+          this.terminal.println('');
+          this.chooseAccount();
+        }
+      }
+    } catch (e) {
+      console.log(e);
+      this.terminal.println('An unknown error occurred. please try again.', TerminalTextStyle.Red);
     }
   }
 }
