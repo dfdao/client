@@ -486,7 +486,7 @@ export function TargetPlanet() {
   const claimPercentage = uiManager.getClaimVictoryPercentage()
   return (
     <>
-      This planet is a <Red>Target Planet!</Red> Capture it and fill it with {claimPercentage} % energy to win!
+      This planet is a <Red>Target Planet!</Red> Capture it and fill it with {claimPercentage}% energy to win!
     </>
   );
 }

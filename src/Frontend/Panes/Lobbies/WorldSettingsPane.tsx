@@ -72,6 +72,7 @@ const panes: ReadonlyArray<PaneConfig> = [
     title: 'Capture zones',
     shortcut: `7`,
     path: '/zones',
+    disabled: true,
     Pane: (props: LobbiesPaneProps) => <CaptureZonesPane {...props} />,
   },
   {
@@ -130,12 +131,20 @@ export function WorldSettingsPane({
       // Index key is fine here because the array is stable
       <ButtonRow key={idx}>
         {fst && (
-          <LinkButton disabled={!!createDisabled || fst.disabled} to={fst.path} shortcut={fst.shortcut}>
+          <LinkButton
+            disabled={!!createDisabled || fst.disabled}
+            to={fst.path}
+            shortcut={fst.shortcut}
+          >
             {fst.title}
           </LinkButton>
         )}
         {snd && (
-          <LinkButton disabled={!!createDisabled || snd.disabled} to={snd.path} shortcut={snd.shortcut}>
+          <LinkButton
+            disabled={!!createDisabled || snd.disabled}
+            to={snd.path}
+            shortcut={snd.shortcut}
+          >
             {snd.title}
           </LinkButton>
         )}
@@ -162,18 +171,19 @@ export function WorldSettingsPane({
           Here you can customize the configuration of your world. Once you have created your world,
           add custom planets on the next pane.
           <Spacer height={6} />
-          <Sub>Capture zones are under construction on Optimism .</Sub>
+          <Sub>Capture zones are under construction on Optimism.</Sub>
         </div>
         {buttons}
         <Spacer height={20} />
+        <Row>
+            <Warning>{error}</Warning>
+          </Row>
         <div>
           <Row style={jcSpaceBetween}>
             <Btn onClick={() => history.push(`${root}`)}>← Choose a map</Btn>
             <Btn onClick={() => history.push(`${root}/extras`)}>Add planets →</Btn>
           </Row>
-          <Row>
-            <Warning>{error}</Warning>
-          </Row>
+
         </div>
         {lobbyContent}
       </>
