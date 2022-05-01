@@ -5,7 +5,6 @@ import {
   WhitelistStatusResponse,
 } from '@darkforest_eth/types';
 import * as EmailValidator from 'email-validator';
-import { add } from 'lodash';
 import timeout from 'p-timeout';
 import { TerminalHandle } from '../../Frontend/Views/Terminal';
 import { AddressTwitterMap } from '../../_types/darkforest/api/UtilityServerAPITypes';
