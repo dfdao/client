@@ -3703,6 +3703,10 @@ class GameManager extends EventEmitter {
       return this.contractConstants.START_TIME;
   }
 
+  public claimVictoryPercentage() {
+    return this.contractConstants.CLAIM_VICTORY_ENERGY_PERCENT;
+}
+
   /**
    * Right now the only buffs supported in this way are
    * speed/range buffs from Abandoning a planet.
