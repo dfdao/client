@@ -75,7 +75,6 @@ export default function LandingPage() {
             <Spacer height={8} />
             <table>
               <tbody>
-                {' '}
                 <TRow>
                   <td>
                     Arena Mode

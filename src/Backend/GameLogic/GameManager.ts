@@ -243,7 +243,7 @@ class GameManager extends EventEmitter {
   /**
    * @todo change this to the correct timestamp each round.
    */
-  private readonly endTimeSeconds: number = 1948939200; // new Date("2031-10-05T04:00:00.000Z").getTime() / 1000
+  private endTimeSeconds: number = 1948939200; // new Date("2031-10-05T04:00:00.000Z").getTime() / 1000
 
   /**
    * An interface to the blockchain that is a little bit lower-level than {@link ContractsAPI}. It
@@ -1700,7 +1700,7 @@ class GameManager extends EventEmitter {
   private async setGameover(gameover: boolean) {
     this.gameover = gameover;
     this.winners = await this.contractsAPI.getWinners();
-    this.endTimeSeconds = await this.contractsAPI.getEndTime();
+    this.endTimeSeconds = (await this.contractsAPI.getEndTime()).toNumber();
   }
 
   private async refreshTwitters(): Promise<void> {
@@ -3762,6 +3762,7 @@ class GameManager extends EventEmitter {
   public getWinners(): string[] {
     return this.winners;
   }
+  
 }
 
 export default GameManager;

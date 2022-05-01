@@ -4,6 +4,7 @@ import { Route, Switch, useHistory } from 'react-router-dom';
 import { Btn } from '../../Components/Btn';
 import { Spacer, Title } from '../../Components/CoreUI';
 import { Row } from '../../Components/Row';
+import { Sub } from '../../Components/Text';
 import { AdminPermissionsPane } from './AdminPermissionsPane';
 import { ArtifactSettingsPane } from './ArtifactSettingsPane';
 import { CaptureZonesPane } from './CaptureZonesPane';
@@ -26,6 +27,7 @@ interface PaneConfig {
   title: string;
   shortcut: string;
   path: string;
+  disabled?: boolean;
   Pane: (props: LobbiesPaneProps) => JSX.Element;
 }
 
@@ -160,7 +162,7 @@ export function WorldSettingsPane({
           Here you can customize the configuration of your world. Once you have created your world,
           add custom planets on the next pane.
           <Spacer height={6} />
-          <Sub>Capture zones are disabled for now because they don't work on Optimistic XDai.</Sub>
+          <Sub>Capture zones are under construction on Optimism .</Sub>
         </div>
         {buttons}
         <Spacer height={20} />

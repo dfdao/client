@@ -1436,6 +1436,10 @@ class GameUIManager extends EventEmitter {
     return this.gameManager.getWinners();
   }
 
+  public getGameDuration() : number {
+    return this.gameManager.gameDuration();
+  }
+
   public getSilverScoreValue(): number {
     return this.contractConstants.SILVER_SCORE_VALUE;
   }
