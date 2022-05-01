@@ -128,12 +128,12 @@ export function WorldSettingsPane({
       // Index key is fine here because the array is stable
       <ButtonRow key={idx}>
         {fst && (
-          <LinkButton disabled={!!createDisabled} to={fst.path} shortcut={fst.shortcut}>
+          <LinkButton disabled={!!createDisabled || fst.disabled} to={fst.path} shortcut={fst.shortcut}>
             {fst.title}
           </LinkButton>
         )}
         {snd && (
-          <LinkButton disabled={!!createDisabled} to={snd.path} shortcut={snd.shortcut}>
+          <LinkButton disabled={!!createDisabled || snd.disabled} to={snd.path} shortcut={snd.shortcut}>
             {snd.title}
           </LinkButton>
         )}
@@ -157,10 +157,10 @@ export function WorldSettingsPane({
       <>
         <Title slot='title'>World Settings</Title>
         <div>
-          <Spacer height={12} />
           Here you can customize the configuration of your world. Once you have created your world,
           add custom planets on the next pane.
-          <Spacer height={12} />
+          <Spacer height={6} />
+          <Sub>Capture zones are disabled for now because they don't work on Optimistic XDai.</Sub>
         </div>
         {buttons}
         <Spacer height={20} />

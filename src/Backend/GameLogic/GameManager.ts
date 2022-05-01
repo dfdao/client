@@ -2114,7 +2114,9 @@ class GameManager extends EventEmitter {
 
       let planet: LocatablePlanet;
       if (this.contractConstants.MANUAL_SPAWN) {
+        this.terminal.current?.println(``);
         this.terminal.current?.println(`Retrieving available manual planets`);
+        this.terminal.current?.println(``);
 
         const spawnPlanets = await this.contractsAPI.getSpawnPlanetIds(0);
         console.log(`all manually created spawn planets: ${spawnPlanets}`);
@@ -2155,7 +2157,7 @@ class GameManager extends EventEmitter {
           }
 
           this.terminal.current?.println('');
-          this.terminal.current?.println(`Choose an available planet:`);
+          this.terminal.current?.println(`Choose a spawn planet:`, TerminalTextStyle.White);
           selection = +((await this.terminal.current?.getInput()) || '');
           if (isNaN(selection) || selection > potentialHomePlanets.length) {
             this.terminal.current?.println('Unrecognized input. Please try again.');

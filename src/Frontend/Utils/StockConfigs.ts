@@ -2,7 +2,7 @@ import { LobbyInitializers } from '../Panes/Lobbies/Reducer';
 
 const onePlayerRace: LobbyInitializers = {
   ADMIN_CAN_ADD_PLANETS: true,
-  WORLD_RADIUS_LOCKED: false,
+  WORLD_RADIUS_LOCKED: true,
   WORLD_RADIUS_MIN: 3000,
   DISABLE_ZK_CHECKS: true,
   PLANETHASH_KEY: 2694,
@@ -13,7 +13,7 @@ const onePlayerRace: LobbyInitializers = {
   PERLIN_MIRROR_Y: false,
   CLAIM_PLANET_COOLDOWN: 0,
   MAX_NATURAL_PLANET_LEVEL: 4,
-  TIME_FACTOR_HUNDREDTHS: 1500,
+  TIME_FACTOR_HUNDREDTHS: 1700,
   PERLIN_THRESHOLD_1: 11,
   PERLIN_THRESHOLD_2: 14,
   PERLIN_THRESHOLD_3: 18,
@@ -22,8 +22,8 @@ const onePlayerRace: LobbyInitializers = {
   BIOME_THRESHOLD_1: 14,
   BIOME_THRESHOLD_2: 17,
   SILVER_SCORE_VALUE: 10,
-  PLANET_LEVEL_THRESHOLDS: [400002, 400001, 400000, 262128, 65520, 16368, 4080, 1008, 240, 48],
-  PLANET_RARITY: 12000,
+  PLANET_LEVEL_THRESHOLDS: [16777216, 4194292, 1048561, 262128, 65520, 16368, 4080, 1008, 240, 48],
+  PLANET_RARITY: 9000,
   PLANET_TRANSFER_ENABLED: true,
   PLANET_TYPE_WEIGHTS: [
     [
@@ -104,7 +104,7 @@ const onePlayerRace: LobbyInitializers = {
     {
       x: -1950,
       y: -1950,
-      level: 2,
+      level: 0,
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: true,
@@ -270,7 +270,7 @@ const fourPlayerBattle: LobbyInitializers = {
 
 const sprint: LobbyInitializers = {
   ADMIN_CAN_ADD_PLANETS: true,
-  WORLD_RADIUS_LOCKED: false,
+  WORLD_RADIUS_LOCKED: true,
   WORLD_RADIUS_MIN: 7000,
   DISABLE_ZK_CHECKS: true,
   PLANETHASH_KEY: 7304,
