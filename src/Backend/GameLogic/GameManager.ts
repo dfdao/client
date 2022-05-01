@@ -243,7 +243,7 @@ class GameManager extends EventEmitter {
   /**
    * @todo change this to the correct timestamp each round.
    */
-  private endTimeSeconds: number = 1948939200; // new Date("2031-10-05T04:00:00.000Z").getTime() / 1000
+  private endTimeSeconds: number;
 
   /**
    * An interface to the blockchain that is a little bit lower-level than {@link ContractsAPI}. It
