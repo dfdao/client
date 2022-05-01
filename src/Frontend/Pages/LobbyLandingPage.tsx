@@ -2,8 +2,6 @@ import { EthConnection, ThrottledConcurrentQueue, weiToEth } from '@darkforest_e
 import { address } from '@darkforest_eth/serde';
 import { EthAddress } from '@darkforest_eth/types';
 import { utils, Wallet } from 'ethers';
-import { formatEther } from 'ethers/lib/utils';
-import { add } from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
 import { addAccount, getAccounts } from '../../Backend/Network/AccountManager';
 import { getEthConnection } from '../../Backend/Network/Blockchain';
@@ -66,7 +64,7 @@ class LobbyPageTerminal {
       return;
     }
 
-    this.terminal.println(`Log in to create a lobby. If your account has less than 0.01 xDAi`);
+    this.terminal.println(`Log in to create a lobby. If your account has less than 0.05 xDAi`);
     this.terminal.println(`it will get dripped 0.05 Optimism xDai`);
     this.terminal.newline();
 
@@ -103,7 +101,7 @@ class LobbyPageTerminal {
       this.terminal.print(`(${i + 1}): `, TerminalTextStyle.Sub);
       this.terminal.print(`${accounts[i].address} `);
 
-      if (this.balancesEth[i] < 0.25) {
+      if (this.balancesEth[i] < 0.05) {
         this.terminal.println(this.balancesEth[i].toFixed(2) + ' xDAI', TerminalTextStyle.Red);
       } else {
         this.terminal.println(this.balancesEth[i].toFixed(2) + ' xDAI', TerminalTextStyle.Green);
@@ -203,7 +201,7 @@ class LobbyPageTerminal {
     // If drip fails
     try {
       const currBalance = weiToEth(await this.ethConnection.loadBalance(address));
-      if (currBalance > 0.05) {
+      if (currBalance >= 0.05) {
         this.terminal.println(`You have enough xDAI $(${currBalance})`, TerminalTextStyle.Blue);
         await new Promise((r) => setTimeout(r, 1000));
         this.accountSet(address);

@@ -3,7 +3,6 @@ import { address } from '@darkforest_eth/serde';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { requestFaucet } from '../../Backend/Network/UtilityServerAPI';
 import { Btn } from '../Components/Btn';
 import { EmSpacer, Link, Spacer, Title } from '../Components/CoreUI';
 import { EmailCTA, EmailCTAMode } from '../Components/Email';
@@ -66,14 +65,6 @@ export default function LandingPage() {
             <ButtonWrapper>
               <Btn size='large' onClick={() => history.push(`/lobby/${defaultAddress}`)}>
                 Create Arena
-              </Btn>
-            </ButtonWrapper>
-
-            <Spacer height={16} />
-
-            <ButtonWrapper>
-              <Btn size='large' onClick={async () => await requestFaucet(address('0x3097403b64fe672467345bf159f4c9c5464bd89e'))}>
-                Test Faucet
               </Btn>
             </ButtonWrapper>
           </Header>
