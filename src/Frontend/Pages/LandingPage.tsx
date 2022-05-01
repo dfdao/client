@@ -11,7 +11,6 @@ import { HideSmall, Red, Sub, Text, White } from '../Components/Text';
 import dfstyles from '../Styles/dfstyles';
 import { LandingPageRoundArt } from '../Views/LandingPageRoundArt';
 
-
 export const enum LandingPageZIndex {
   Background = 0,
   Canvas = 1,
@@ -245,7 +244,8 @@ const VariousLinksContainer = styled.div`
 const PrettyOverlayGradient = styled.div`
   width: 100vw;
   height: 100vh;
-  background-image: linear-gradient(to right bottom, #511111, #5b0023, #5d003c, #510659, #262077);  background-position: 50%, 50%;
+  background-image: linear-gradient(to right bottom, #511111, #5b0023, #5d003c, #510659, #262077);
+  background-position: 50%, 50%;
   display: inline-block;
   position: fixed;
   top: 0;
