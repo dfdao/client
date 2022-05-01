@@ -202,8 +202,8 @@ class LobbyPageTerminal {
     try {
       const currBalance = weiToEth(await this.ethConnection.loadBalance(address));
       if (currBalance >= 0.05) {
-        this.terminal.println(`You have enough xDAI $(${currBalance})`, TerminalTextStyle.Blue);
-        await new Promise((r) => setTimeout(r, 1000));
+        // this.terminal.println(`You have enough xDAI $(${currBalance})`, TerminalTextStyle.Blue);
+        // await new Promise((r) => setTimeout(r, 1000));
         this.accountSet(address);
       } else {
         this.terminal.println(`Getting xDAI from faucet...`, TerminalTextStyle.Blue);
@@ -220,15 +220,11 @@ class LobbyPageTerminal {
           this.accountSet(address);
         } else {
           this.terminal.println(
-            'An error occurred in faucet.\nCheck the console for details and inform the dev.',
-            TerminalTextStyle.Red
-          );
-          this.terminal.println(
-            'Please try again with an account that has enough xDAI.',
+            'An error occurred in faucet. Try again with an account that has XDAI',
             TerminalTextStyle.Red
           );
           this.terminal.printLink(
-            'Click here to manually get Optimism xDAI\n',
+            'or click here to manually get Optimism xDAI\n',
             () => {
               window.open(
                 'https://www.xdaichain.com/for-developers/optimism-optimistic-rollups-on-gc'
@@ -237,7 +233,7 @@ class LobbyPageTerminal {
             TerminalTextStyle.Blue
           );
           this.terminal.println('');
-          this.chooseAccount();
+          return;
         }
       }
     } catch (e) {
