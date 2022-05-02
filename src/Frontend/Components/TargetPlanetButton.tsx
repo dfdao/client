@@ -81,17 +81,22 @@ export function TargetPlanetButton({
                 extraContent={
                   <>
                     <Green>
-                      Capture this planet to win the game!{' '}
+                      {gameOver && (
+                          <>
+                            The game is over!
+                          </>
+                      )}
+                      {!gameOver && (
+                          <>
+                            Capture this planet to win the game!
+                          </>
+                      )}
                       {!!energyLeftToClaimVictory && energyLeftToClaimVictory.percentNeeded >= 0 && (
                         <>
                           You need <White>{energyLeftToClaimVictory.energyNeeded}</White> ({energyLeftToClaimVictory.percentNeeded}%) more energy to claim victory with this planet.
                         </>
                       )}
-                       {gameOver && (
-                        <>
-                          The game is over!
-                        </>
-                      )}
+
                     </Green>
                   </>
                 }
