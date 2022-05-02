@@ -1,21 +1,17 @@
-import { EMPTY_ADDRESS } from '@darkforest_eth/constants';
 import {
-  isUnconfirmedClaimVictoryTx,
-  isUnconfirmedInvadeTargetPlanetTx,
+  isUnconfirmedClaimVictoryTx
 } from '@darkforest_eth/serde';
 import { Planet, TooltipName } from '@darkforest_eth/types';
-import React, { useCallback, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { Wrapper } from '../../Backend/Utils/Wrapper';
 import { TooltipTrigger } from '../Panes/Tooltip';
 import { useAccount, useUIManager } from '../Utils/AppHooks';
-import { useEmitterValue } from '../Utils/EmitterHooks';
 import { INVADE } from '../Utils/ShortcutConstants';
-import { ShortcutBtn } from './Btn';
 import { LoadingSpinner } from './LoadingSpinner';
 import { MaybeShortcutButton } from './MaybeShortcutButton';
 import { Row } from './Row';
-import { Green, Red, White } from './Text';
+import { Green, White } from './Text';
 
 const StyledRow = styled(Row)`
   .button {
@@ -32,91 +28,44 @@ export function TargetPlanetButton({
   const uiManager = useUIManager();
   const account = useAccount(uiManager);
   const gameManager = uiManager.getGameManager();
-  const currentBlockNumber = useEmitterValue(uiManager.getEthConnection().blockNumber$, undefined);
-  const owned = planetWrapper.value?.owner === account;
-  const isTargetPlanet = planetWrapper.value?.isTargetPlanet;
+  const planet = planetWrapper.value;
+  const owned = planet?.owner === account;
+  const isTargetPlanet = planet?.isTargetPlanet;
+  const gameOver = gameManager.isRoundOver();
 
   const shouldShow = useMemo(
-    () => owned && planetWrapper.value?.capturer === EMPTY_ADDRESS && isTargetPlanet,
-    [owned, planetWrapper]
+    () => owned && isTargetPlanet,
+    [owned, planet]
   );
 
-  const shouldShowInvadeTarget = useMemo(
-    () => planetWrapper.value?.invader === EMPTY_ADDRESS,
-    [planetWrapper]
-  );
-
-  const invadable = useMemo(() => planetWrapper.value?.invader === EMPTY_ADDRESS, [planetWrapper]);
-
-  const invading = useMemo(
-    () => planetWrapper.value?.transactions?.hasTransaction(isUnconfirmedInvadeTargetPlanetTx),
-    [planetWrapper]
-  );
-
-  const invadeTarget = useCallback(() => {
-    if (!planetWrapper.value) return;
-    gameManager.invadeTargetPlanet(planetWrapper.value.locationId);
-  }, [gameManager, planetWrapper]);
-
-  const shouldShowClaimVictory = useMemo(() => planetWrapper.value?.invader !== EMPTY_ADDRESS, [owned, planetWrapper]);
-
-  const blocksLeftToClaimVictory = useMemo(() => {
-    if (!planetWrapper.value || !currentBlockNumber) {
+  const energyLeftToClaimVictory = useMemo(() => {
+    if (!owned || !planet) {
       return undefined;
     }
-    const planet = planetWrapper.value;
+    const energyRequired = gameManager.getContractConstants().CLAIM_VICTORY_ENERGY_PERCENT;
+    const planetEnergyPercent = planet.energy * 100 / planet.energyCap;
+    const percentNeeded =  Math.floor(energyRequired - planetEnergyPercent);
+    const energyNeeded = Math.floor(percentNeeded / 100 * planet.energyCap);
+    return {percentNeeded: percentNeeded, energyNeeded: energyNeeded}
+  }, [planet?.energy]);
 
-    if (!planet.invadeStartBlock) return undefined;
-    const holdBlocksRequired = uiManager
-      .getGameManager()
-      .getContractConstants().TARGET_PLANET_HOLD_BLOCKS_REQUIRED;
-
-
-    return Math.min(
-      planet.invadeStartBlock + holdBlocksRequired - currentBlockNumber,
-      holdBlocksRequired
-    );
-  }, [uiManager, planetWrapper, currentBlockNumber]);
-
-  const claimable = useMemo(() => blocksLeftToClaimVictory !== undefined && blocksLeftToClaimVictory <= 0, [blocksLeftToClaimVictory]);
+  const claimable = useMemo(() => energyLeftToClaimVictory && energyLeftToClaimVictory.percentNeeded < 0 && !gameOver, [energyLeftToClaimVictory, gameManager]);
 
   const claimingVictory = useMemo(
-    () => planetWrapper.value?.transactions?.hasTransaction(isUnconfirmedClaimVictoryTx),
-    [planetWrapper]
+    () => planet?.transactions?.hasTransaction(isUnconfirmedClaimVictoryTx),
+    [planet]
   );
 
-  const claimVictory = useCallback(() => {
-    if (!planetWrapper.value) return;
-    gameManager.claimVictory(planetWrapper.value.locationId);
-  }, [gameManager, planetWrapper]);
+  const claimVictory = () => {
+    if(!planet || gameOver) return;
+    gameManager.claimVictory(planet.locationId);
+  };
 
   return (
     <StyledRow>
       {shouldShow && (
         <>
-          {shouldShowInvadeTarget && (
             <MaybeShortcutButton
-              className='button'
-              size='stretch'
-              active={invading}
-              disabled={!invadable || invading}
-              onClick={invadeTarget}
-              onShortcutPressed={invadeTarget}
-              shortcutKey={INVADE}
-              shortcutText={INVADE}
-            >
-              <TooltipTrigger
-                style={{ width: '100%', textAlign: 'center' }}
-                name={TooltipName.Empty}
-                extraContent={<>Invade this target planet. </>}
-              >
-                {invading ? <LoadingSpinner initialText={'Invading target...'} /> : 'Invade Target'}
-              </TooltipTrigger>
-            </MaybeShortcutButton>
-          )}
-
-          {shouldShowClaimVictory && (
-            <ShortcutBtn
               className='button'
               size='stretch'
               active={claimingVictory}
@@ -132,13 +81,22 @@ export function TargetPlanetButton({
                 extraContent={
                   <>
                     <Green>
-                      Capture this planet to win the game!{' '}
-                      {!!blocksLeftToClaimVictory && blocksLeftToClaimVictory >= 0 && (
+                      {gameOver && (
+                          <>
+                            The game is over!
+                          </>
+                      )}
+                      {!gameOver && (
+                          <>
+                            Capture this planet to win the game!
+                          </>
+                      )}
+                      {!!energyLeftToClaimVictory && energyLeftToClaimVictory.percentNeeded >= 0 && (
                         <>
-                          You must wait <White>{blocksLeftToClaimVictory}</White> blocks (~{blocksLeftToClaimVictory * 7} seconds) until you
-                          can claim victory with this planet.
+                          You need <White>{energyLeftToClaimVictory.energyNeeded}</White> ({energyLeftToClaimVictory.percentNeeded}%) more energy to claim victory with this planet.
                         </>
                       )}
+
                     </Green>
                   </>
                 }
@@ -149,8 +107,7 @@ export function TargetPlanetButton({
                   'Claim Victory!'
                 )}
               </TooltipTrigger>
-            </ShortcutBtn>
-          )}
+            </MaybeShortcutButton>
         </>
       )}
     </StyledRow>

@@ -62,6 +62,7 @@ import {
   PlanetLevel,
   PlanetMessageType,
   PlanetType,
+  PlanetTypeNames,
   Player,
   QueuedArrival,
   Radii,
@@ -242,7 +243,7 @@ class GameManager extends EventEmitter {
   /**
    * @todo change this to the correct timestamp each round.
    */
-  private readonly endTimeSeconds: number = 1948939200; // new Date("2031-10-05T04:00:00.000Z").getTime() / 1000
+  private endTimeSeconds: number;
 
   /**
    * An interface to the blockchain that is a little bit lower-level than {@link ContractsAPI}. It
@@ -534,7 +535,7 @@ class GameManager extends EventEmitter {
     this.refreshScoreboard();
     this.refreshNetworkHealth();
 
-    if (!spectator) this.getSpaceships();
+    // if (!spectator) this.getSpaceships();
 
     this.safeMode = false;
   }
@@ -893,14 +894,7 @@ class GameManager extends EventEmitter {
       .on(ContractsAPIEvent.Gameover, async () => {
         gameManager.setGameover(true);
         gameManager.gameover$.publish(true);
-      })
-      .on(
-        ContractsAPIEvent.TargetPlanetInvaded,
-        async (player: EthAddress, planetId: LocationId) => {
-          const planet = gameManager.getPlanetWithId(planetId);
-          if (planet) NotificationManager.getInstance().targetPlanetInvaded(planet);
-        }
-      );
+      });
 
     const unconfirmedTxs = await persistentChunkStore.getUnconfirmedSubmittedEthTxs();
     const confirmationQueue = new ThrottledConcurrentQueue({
@@ -1226,7 +1220,7 @@ class GameManager extends EventEmitter {
    * Returns whether or not the current round has ended.
    */
   public isRoundOver(): boolean {
-    return Date.now() / 1000 > this.getTokenMintEndTimeSeconds();
+    return this.gameover;
   }
 
   /**
@@ -1706,6 +1700,7 @@ class GameManager extends EventEmitter {
   private async setGameover(gameover: boolean) {
     this.gameover = gameover;
     this.winners = await this.contractsAPI.getWinners();
+    this.endTimeSeconds = (await this.contractsAPI.getEndTime()).toNumber();
   }
 
   private async refreshTwitters(): Promise<void> {
@@ -1735,7 +1730,7 @@ class GameManager extends EventEmitter {
   }
 
   private checkGameHasEnded(): boolean {
-    if (Date.now() / 1000 > this.endTimeSeconds) {
+    if (this.gameover) {
       this.terminal.current?.println('[ERROR] Game has ended.');
       return true;
     }
@@ -2055,6 +2050,10 @@ class GameManager extends EventEmitter {
         throw new Error('game is over');
       }
 
+      if (this.paused) {
+        throw new Error('game is paused');
+      }
+
       if (!planet) {
         throw new Error('planet is not loaded');
       }
@@ -2075,13 +2074,9 @@ class GameManager extends EventEmitter {
         throw new Error('you can only capture target planets');
       }
 
-      if (
-        !planet.invadeStartBlock ||
-        this.ethConnection.getCurrentBlockNumber() <
-          planet.invadeStartBlock + this.contractConstants.TARGET_PLANET_HOLD_BLOCKS_REQUIRED
-      ) {
+      if (planet.energy < this.contractConstants.CLAIM_VICTORY_ENERGY_PERCENT) {
         throw new Error(
-          `you need to hold a planet for ${this.contractConstants.TARGET_PLANET_HOLD_BLOCKS_REQUIRED} blocks before capturing`
+          `planet energy must be ${this.contractConstants.CLAIM_VICTORY_ENERGY_PERCENT} before claiming victory`
         );
       }
 
@@ -2113,7 +2108,9 @@ class GameManager extends EventEmitter {
 
       let planet: LocatablePlanet;
       if (this.contractConstants.MANUAL_SPAWN) {
+        this.terminal.current?.println(``);
         this.terminal.current?.println(`Retrieving available manual planets`);
+        this.terminal.current?.println(``);
 
         const spawnPlanets = await this.contractsAPI.getSpawnPlanetIds(0);
         console.log(`all manually created spawn planets: ${spawnPlanets}`);
@@ -2137,10 +2134,33 @@ class GameManager extends EventEmitter {
         if (potentialHomeIds.length == 0) {
           throw new Error('no spawn locations available');
         }
-        const potentialHomePlanets = potentialHomeIds.map((planetId) => {
-          return this.getGameObjects().getPlanetWithId(planetId) as LocatablePlanet;
-        });
-        planet = potentialHomePlanets[0];
+        const potentialHomePlanets = potentialHomeIds.map(planetId => {
+          return this.getGameObjects().getPlanetWithId(planetId) as LocatablePlanet
+        })
+        let selected = false;
+        let selection;
+        do {
+          for (let i = 0; i < potentialHomePlanets.length; i++) {
+            const x = potentialHomePlanets[i].location.coords.x;
+            const y = potentialHomePlanets[i].location.coords.y;
+            const type = potentialHomePlanets[i].planetType;
+
+            const level = potentialHomePlanets[i].planetLevel;
+            this.terminal.current?.print(`(${i + 1}): `, TerminalTextStyle.Sub);
+            this.terminal.current?.println(`Level ${level} ${PlanetTypeNames[type]} at (${x},${y})`);
+          }
+
+          this.terminal.current?.println('');
+          this.terminal.current?.println(`Choose a spawn planet:`, TerminalTextStyle.White);
+          selection = +((await this.terminal.current?.getInput()) || '');
+          if (isNaN(selection) || selection > potentialHomePlanets.length) {
+            this.terminal.current?.println('Unrecognized input. Please try again.');
+            this.terminal.current?.println('');
+          } else {
+            selected = true;
+          }
+        } while (!selected);
+        planet = potentialHomePlanets[selection - 1];
       } else {
         planet = await this.findRandomHomePlanet();
       }
@@ -3672,6 +3692,21 @@ class GameManager extends EventEmitter {
     return this.getAddress() === this.contractConstants.adminAddress;
   }
 
+  public gameDuration() {
+    if(this.endTimeSeconds) {
+      return this.endTimeSeconds - this.contractConstants.START_TIME;
+    }
+    return Date.now() / 1000 - this.contractConstants.START_TIME;
+  }
+
+  public startTime() {
+      return this.contractConstants.START_TIME;
+  }
+
+  public claimVictoryPercentage() {
+    return this.contractConstants.CLAIM_VICTORY_ENERGY_PERCENT;
+}
+
   /**
    * Right now the only buffs supported in this way are
    * speed/range buffs from Abandoning a planet.
@@ -3731,6 +3766,7 @@ class GameManager extends EventEmitter {
   public getWinners(): string[] {
     return this.winners;
   }
+  
 }
 
 export default GameManager;

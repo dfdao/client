@@ -1,5 +1,6 @@
 import { Initializers } from '@darkforest_eth/settings';
-import { AdminPlanet, EthAddress } from '@darkforest_eth/types';
+import { EthAddress } from '@darkforest_eth/types';
+import { LobbyPlanet } from './LobbiesUtils';
 
 export const SAFE_UPPER_BOUNDS = Number.MAX_SAFE_INTEGER - 1;
 
@@ -116,8 +117,9 @@ export type LobbyConfigAction =
   | { type: 'WHITELIST_ENABLED'; value: boolean | undefined }
   | {
       type: 'ADMIN_PLANETS';
-      value: AdminPlanet | undefined;
+      value: LobbyPlanet | undefined;
       index: number;
+      number? : number;
     }
   | { type: 'MANUAL_SPAWN'; value: Initializers['MANUAL_SPAWN'] | undefined }
   | {
@@ -125,8 +127,8 @@ export type LobbyConfigAction =
       value: Initializers['TARGET_PLANETS'] | undefined;
     }
   | {
-      type: 'TARGET_PLANET_HOLD_BLOCKS_REQUIRED';
-      value: Initializers['TARGET_PLANET_HOLD_BLOCKS_REQUIRED'] | undefined;
+      type: 'CLAIM_VICTORY_ENERGY_PERCENT';
+      value: Initializers['CLAIM_VICTORY_ENERGY_PERCENT'] | undefined;
     }
   | {
       type: 'MODIFIERS';
@@ -147,7 +149,7 @@ export type LobbyConfigAction =
 // TODO(#2328): WHITELIST_ENABLED should just be on Initializers
 export type LobbyInitializers = Initializers & {
   WHITELIST_ENABLED: boolean | undefined;
-  ADMIN_PLANETS: AdminPlanet[];
+  ADMIN_PLANETS: LobbyPlanet[];
   WHITELIST: EthAddress[];
 };
 
@@ -353,12 +355,12 @@ export function lobbyConfigReducer(state: LobbyConfigState, action: LobbyAction)
       update = ofBoolean(action, state);
       break;
     }
-    case 'TARGET_PLANET_HOLD_BLOCKS_REQUIRED': {
+    case 'CLAIM_VICTORY_ENERGY_PERCENT': {
       update = ofPositiveInteger(action, state);
       break;
     }
     case 'ADMIN_PLANETS': {
-      update = ofAdminPlanets(action, state);
+      update = ofLobbyPlanets(action, state);
       break;
     }
     case 'WHITELIST': {
@@ -874,7 +876,7 @@ export function lobbyConfigInit(startingConfig: LobbyInitializers) {
         };
         break;
       }
-      case 'TARGET_PLANET_HOLD_BLOCKS_REQUIRED': {
+      case 'CLAIM_VICTORY_ENERGY_PERCENT': {
         const defaultValue = startingConfig[key];
         state[key] = {
           currentValue: defaultValue,
@@ -1904,8 +1906,8 @@ export function ofPlanetLevelThresholds(
   };
 }
 
-export function ofAdminPlanets(
-  { type, index, value }: Extract<LobbyConfigAction, { type: 'ADMIN_PLANETS' }>,
+export function ofLobbyPlanets(
+  { type, index, value, number = 1 }: Extract<LobbyConfigAction, { type: 'ADMIN_PLANETS' }>,
   state: LobbyConfigState
 ) {
   const prevCurrentValue = state[type].currentValue;
@@ -1925,6 +1927,21 @@ export function ofAdminPlanets(
     };
   }
 
+  const currentValue = [...prevCurrentValue];
+  const displayValue = [...prevDisplayValue];
+
+  if (currentValue[index]) {
+    currentValue.splice(index, number);
+    displayValue.splice(index, number);
+
+    return {
+      ...state[type],
+      currentValue,
+      displayValue,
+      warning: undefined,
+    };
+  }
+
   if (value === undefined) {
     return {
       ...state[type],
@@ -1941,21 +1958,6 @@ export function ofAdminPlanets(
     return {
       ...state[type],
       warning: 'coords, level and planetType must be numbers',
-    };
-  }
-
-  const currentValue = [...prevCurrentValue];
-  const displayValue = [...prevDisplayValue];
-
-  if (currentValue[index]) {
-    currentValue.splice(index, 1);
-    displayValue.splice(index, 1);
-
-    return {
-      ...state[type],
-      currentValue,
-      displayValue,
-      warning: undefined,
     };
   }
 
