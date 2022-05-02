@@ -70,9 +70,9 @@ interface ContractsApiConfig {
  */
 export class ContractsAPI extends EventEmitter {
   /**
-   * Don't allow users to submit txs if balance falls below this amount/
+   * Don't allow users to submit txs if balance falls below this amount (in wei)
    */
-  private static readonly MIN_BALANCE = ethToWei(0.002);
+  private static readonly MIN_BALANCE = 100;
 
   /**
    * Instrumented {@link ThrottledConcurrentQueue} for blockchain reads.
@@ -153,6 +153,7 @@ export class ContractsAPI extends EventEmitter {
     if (!address) throw new Error("can't send a transaction, no signer");
 
     const balance = await this.ethConnection.loadBalance(address);
+    console.log('balance', balance, 'min balance', ContractsAPI.MIN_BALANCE);
 
     if (balance.lt(ContractsAPI.MIN_BALANCE)) {
       const notifsManager = NotificationManager.getInstance();
