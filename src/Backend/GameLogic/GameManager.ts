@@ -243,7 +243,7 @@ class GameManager extends EventEmitter {
   /**
    * @todo change this to the correct timestamp each round.
    */
-  private endTimeSeconds: number;
+  private endTimeSeconds: number | undefined;
 
   /**
    * An interface to the blockchain that is a little bit lower-level than {@link ContractsAPI}. It
@@ -395,7 +395,8 @@ class GameManager extends EventEmitter {
     paused: boolean,
     gameover: boolean,
     winners: string[],
-    spectator: boolean
+    spectator: boolean,
+    endTime : number | undefined,
   ) {
     super();
 
@@ -503,6 +504,7 @@ class GameManager extends EventEmitter {
     this.snarkHelper = snarkHelper;
     this.useMockHash = useMockHash;
     this.paused = paused;
+    this.endTimeSeconds = endTime;
 
     this.spectator = spectator;
     this.ethConnection = ethConnection;
@@ -709,7 +711,8 @@ class GameManager extends EventEmitter {
       initialState.paused,
       initialState.gameover,
       initialState.winners,
-      spectator
+      spectator,
+      initialState.endTime
     );
 
     gameManager.setPlayerTwitters(initialState.twitters);
@@ -1119,7 +1122,7 @@ class GameManager extends EventEmitter {
    * The game ends at a particular time in the future - get this time measured
    * in seconds from the epoch.
    */
-  public getEndTimeSeconds(): number {
+  public getEndTimeSeconds(): number | undefined {
     return this.endTimeSeconds;
   }
 
@@ -1700,7 +1703,7 @@ class GameManager extends EventEmitter {
   private async setGameover(gameover: boolean) {
     this.gameover = gameover;
     this.winners = await this.contractsAPI.getWinners();
-    this.endTimeSeconds = (await this.contractsAPI.getEndTime()).toNumber();
+    this.endTimeSeconds = (await this.contractsAPI.getEndTime());
   }
 
   private async refreshTwitters(): Promise<void> {

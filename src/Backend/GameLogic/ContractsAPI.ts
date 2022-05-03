@@ -756,8 +756,9 @@ export class ContractsAPI extends EventEmitter {
     return this.makeCall(this.contract.getWinners);
   }
 
-  public async getEndTime(): Promise<BigNumber> {
-    return this.makeCall(this.contract.getEndTime);
+  public async getEndTime(): Promise<number | undefined> {
+    const endTime = (await this.makeCall(this.contract.getEndTime)).toNumber();
+    return endTime == 0 ? undefined : endTime ;
   }
 
   public async getRevealedPlanetsCoords(

@@ -809,8 +809,8 @@ export function GameLandingPage({ match }: RouteComponentProps<{ contract: strin
         setStep(TerminalPromptStep.TERMINATED);
         return;
       }
-
-      if (Date.now() / 1000 > gameUIManager.getEndTimeSeconds()) {
+      const endTime = gameUIManager.getEndTimeSeconds()
+      if (endTime && Date.now() / 1000 > endTime) {
         terminal.current?.println('ERROR: This game has ended. Terminating session.');
         setStep(TerminalPromptStep.TERMINATED);
         return;
