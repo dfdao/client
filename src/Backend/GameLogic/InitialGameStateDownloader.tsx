@@ -2,6 +2,7 @@ import {
   Artifact,
   ArtifactId,
   ClaimedCoords,
+  EthAddress,
   LocationId,
   Planet,
   Player,
@@ -42,7 +43,7 @@ export interface InitialGameState {
   paused: boolean;
   endTime : number | undefined;
   gameover: boolean;
-  winners: string[];
+  winners: EthAddress[] | undefined;
 }
 
 export class InitialGameStateDownloader {

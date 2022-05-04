@@ -752,8 +752,9 @@ export class ContractsAPI extends EventEmitter {
     return this.makeCall(this.contract.getGameover);
   }
 
-  public async getWinners(): Promise<string[]> {
-    return this.makeCall(this.contract.getWinners);
+  public async getWinners(): Promise<EthAddress[]> {
+    const winnerString = await this.makeCall(this.contract.getWinners);
+    return winnerString.map(w => address(w));
   }
 
   public async getEndTime(): Promise<number | undefined> {

@@ -365,7 +365,7 @@ class GameManager extends EventEmitter {
 
   public gameover$: Monomitter<boolean>;
 
-  private winners: string[];
+  private winners: EthAddress[] | undefined;
 
   private spectator: boolean;
   /**
@@ -394,7 +394,7 @@ class GameManager extends EventEmitter {
     ethConnection: EthConnection,
     paused: boolean,
     gameover: boolean,
-    winners: string[],
+    winners: EthAddress[] | undefined,
     spectator: boolean,
     endTime : number | undefined,
   ) {
@@ -866,11 +866,6 @@ class GameManager extends EventEmitter {
             gameManager.hardRefreshPlanet(tx.intent.locationId),
           ]);
         } else if (isUnconfirmedClaimVictoryTx(tx)) {
-          await Promise.all([
-            gameManager.hardRefreshPlayer(gameManager.getAccount()),
-            gameManager.hardRefreshPlanet(tx.intent.locationId),
-          ]);
-        } else if (isUnconfirmedInvadeTargetPlanetTx(tx)) {
           await Promise.all([
             gameManager.hardRefreshPlayer(gameManager.getAccount()),
             gameManager.hardRefreshPlanet(tx.intent.locationId),

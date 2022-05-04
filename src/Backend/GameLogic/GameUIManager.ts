@@ -1432,7 +1432,7 @@ class GameUIManager extends EventEmitter {
     return this.gameManager.getGameover$();
   }
 
-  public getWinners(): string[] {
+  public getWinners(): EthAddress[] | undefined{
     return this.gameManager.getWinners();
   }
 
