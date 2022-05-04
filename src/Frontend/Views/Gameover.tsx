@@ -1,4 +1,4 @@
-import { EthAddress, TooltipName } from '@darkforest_eth/types';
+import { TooltipName } from '@darkforest_eth/types';
 import React from 'react';
 import styled from 'styled-components';
 import { AccountLabel } from '../Components/Labels/Labels';
