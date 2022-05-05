@@ -7,8 +7,9 @@ import { Btn } from '../Components/Btn';
 import { EmSpacer, Link, Spacer, Title } from '../Components/CoreUI';
 import { EmailCTA, EmailCTAMode } from '../Components/Email';
 import { Modal } from '../Components/Modal';
-import { HideSmall, Red, Sub, Text, White } from '../Components/Text';
+import { Red, Sub, Text, White } from '../Components/Text';
 import dfstyles from '../Styles/dfstyles';
+import { ArenaLeaderboard } from '../Views/ArenaLeaderboard';
 import { LandingPageRoundArt } from '../Views/LandingPageRoundArt';
 
 export const enum LandingPageZIndex {
@@ -80,135 +81,7 @@ export default function LandingPage() {
 
           <EmSpacer height={3} />
 
-          <div style={{ color: dfstyles.colors.text }}>
-            <HallOfFameTitle>Space Masters</HallOfFameTitle>
-            <Spacer height={8} />
-            <table>
-              <tbody>
-                <TRow>
-                  <td>
-                    Arena Mode
-                  </td>
-                  <td>
-                    05/01/<HideSmall>20</HideSmall>22
-                  </td>
-                  <td>
-                    ?????
-                  </td>
-                </TRow>
-                <TRow>
-                  <td>
-                    <HideSmall>v</HideSmall>0.6 round 5
-                  </td>
-                  <td>
-                    02/18/<HideSmall>20</HideSmall>22
-                  </td>
-                  <td>
-                    <Link to='https://twitter.com/d_fdao'>@d_fdao</Link>
-                    {' + '}
-                    <Link to='https://twitter.com/orden_gg'>@orden_gg</Link>
-                  </td>
-                </TRow>
-                <TRow>
-                  <td>
-                    <HideSmall>v</HideSmall>0.6 round 4
-                  </td>
-                  <td>
-                    10/01/<HideSmall>20</HideSmall>21
-                  </td>
-                  <td>
-                    <Link to='https://twitter.com/orden_gg'>@orden_gg</Link>
-                  </td>
-                </TRow>
-                <TRow>
-                  <td>
-                    <HideSmall>v</HideSmall>0.6 round 3
-                  </td>
-                  <td>
-                    08/22/<HideSmall>20</HideSmall>21
-                  </td>
-                  <td>
-                    <Link to='https://twitter.com/dropswap_gg'>@dropswap_gg</Link>
-                  </td>
-                </TRow>
-                <TRow>
-                  <td>
-                    <HideSmall>v</HideSmall>0.6 round 2
-                  </td>
-                  <td>
-                    07/07/<HideSmall>20</HideSmall>21
-                  </td>
-                  <td>
-                    <Link to='https://twitter.com/orden_gg'>@orden_gg</Link>
-                  </td>
-                </TRow>
-                <TRow>
-                  <td>
-                    <HideSmall>v</HideSmall>0.6 round 1
-                  </td>
-                  <td>
-                    05/22/<HideSmall>20</HideSmall>21
-                  </td>
-                  <td>
-                    <Link to='https://twitter.com/adietrichs'>Ansgar Dietrichs</Link>
-                  </td>
-                </TRow>
-                <TRow>
-                  <td>
-                    <HideSmall>v</HideSmall>0.5
-                  </td>
-                  <td>
-                    12/25/<HideSmall>20</HideSmall>20
-                  </td>
-                  <td>0xb05d9542...</td>
-                </TRow>
-                <TRow>
-                  <td>
-                    <HideSmall>v</HideSmall>0.4
-                  </td>
-                  <td>
-                    10/02/<HideSmall>20</HideSmall>20
-                  </td>
-                  <td>
-                    <Link to='https://twitter.com/jacobrosenthal'>Jacob Rosenthal</Link>
-                  </td>
-                </TRow>
-                <TRow>
-                  <td>
-                    <HideSmall>v</HideSmall>0.3
-                  </td>
-                  <td>
-                    08/07/<HideSmall>20</HideSmall>20
-                  </td>
-                  <td>
-                    <Link to='https://twitter.com/hideandcleanse'>@hideandcleanse</Link>
-                  </td>
-                </TRow>
-                <TRow>
-                  <td>
-                    <HideSmall>v</HideSmall>0.2
-                  </td>
-                  <td>
-                    06/24/<HideSmall>20</HideSmall>20
-                  </td>
-                  <td>Nate Foss</td>
-                </TRow>
-                <TRow>
-                  <td>
-                    <HideSmall>v</HideSmall>0.1
-                  </td>
-                  <td>
-                    02/22/<HideSmall>20</HideSmall>20
-                  </td>
-                  <td>
-                    <a href='https://twitter.com/zoink'>Dylan Field</a>
-                  </td>
-                </TRow>
-              </tbody>
-            </table>
-          </div>
-
-          <Spacer height={32} />
+          {/* <Spacer height={32} /> */}
 
           <EmailWrapper>
             <EmailCTA mode={EmailCTAMode.SUBSCRIBE} />
@@ -243,9 +116,10 @@ export default function LandingPage() {
           </VariousLinksContainer>
         </MainContentContainer>
 
-        <Spacer height={128} />
+        <Spacer height={28} />
 
         {/* <LeadboardDisplay /> */}
+        <ArenaLeaderboard/>
 
         <Spacer height={256} />
       </Page>

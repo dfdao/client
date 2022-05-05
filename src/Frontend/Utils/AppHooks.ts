@@ -1,5 +1,7 @@
 import { getActivatedArtifact, isActivated } from '@darkforest_eth/gamelogic';
+import { address } from '@darkforest_eth/serde';
 import {
+  ArenaLeaderboard,
   Artifact,
   ArtifactId,
   EthAddress,
@@ -8,7 +10,7 @@ import {
   Planet,
   Player,
   Transaction,
-  TransactionId,
+  TransactionId
 } from '@darkforest_eth/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import GameUIManager from '../../Backend/GameLogic/GameUIManager';
@@ -202,6 +204,43 @@ export function useLeaderboard(poll: number | undefined = undefined): {
   const load = useCallback(async function load() {
     try {
       setLeaderboard(await loadLeaderboard());
+    } catch (e) {
+      console.log('error loading leaderboard', e);
+      setError(e);
+    }
+  }, []);
+
+  usePoll(load, poll, true);
+
+  return { leaderboard, error };
+}
+
+const dummyLeaderboard: ArenaLeaderboard = {
+  entries: [
+    {
+      ethAddress: address('0x0000000000000000000000000000000000000000'),
+      games: 5,
+      wins: 2,
+    },
+    {
+      ethAddress: address('0x0000000000000000000000000000000000000001'),
+      twitter: 'Velorum',
+      games: 100,
+      wins: 0,
+    },
+  ],
+};
+
+export function useArenaLeaderboard(poll: number | undefined = undefined): {
+  leaderboard: ArenaLeaderboard | undefined;
+  error: Error | undefined;
+} {
+  const [leaderboard, setLeaderboard] = useState<ArenaLeaderboard | undefined>();
+  const [error, setError] = useState<Error | undefined>();
+
+  const load = useCallback(async function load() {
+    try {
+      setLeaderboard(dummyLeaderboard);
     } catch (e) {
       console.log('error loading leaderboard', e);
       setError(e);
