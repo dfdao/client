@@ -365,7 +365,7 @@ class GameManager extends EventEmitter {
 
   public gameover$: Monomitter<boolean>;
 
-  private winners: EthAddress[] | undefined;
+  private winners: EthAddress[];
 
   private spectator: boolean;
   /**
@@ -394,7 +394,7 @@ class GameManager extends EventEmitter {
     ethConnection: EthConnection,
     paused: boolean,
     gameover: boolean,
-    winners: EthAddress[] | undefined,
+    winners: EthAddress[],
     spectator: boolean,
     endTime : number | undefined,
   ) {

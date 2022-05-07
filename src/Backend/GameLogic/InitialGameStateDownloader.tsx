@@ -43,7 +43,7 @@ export interface InitialGameState {
   paused: boolean;
   endTime : number | undefined;
   gameover: boolean;
-  winners: EthAddress[] | undefined;
+  winners: EthAddress[];
 }
 
 export class InitialGameStateDownloader {
