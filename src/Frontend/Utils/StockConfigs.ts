@@ -120,6 +120,8 @@ const onePlayerRace: LobbyInitializers = {
   ],
   TOKEN_MINT_END_TIMESTAMP: 1682435240778,
   WHITELIST: [],
+  TEAMS_ENABLED: false,
+  NUM_TEAMS: 2,
 };
 
 const fourPlayerBattle: LobbyInitializers = {
@@ -266,6 +268,8 @@ const fourPlayerBattle: LobbyInitializers = {
   ],
   TOKEN_MINT_END_TIMESTAMP: 1682174749561,
   WHITELIST: [],
+  TEAMS_ENABLED: false,
+  NUM_TEAMS: 2,
 };
 
 const sprint: LobbyInitializers = {
@@ -396,6 +400,8 @@ const sprint: LobbyInitializers = {
   ],
   TOKEN_MINT_END_TIMESTAMP: 1682435240778,
   WHITELIST: [],
+  TEAMS_ENABLED: false,
+  NUM_TEAMS: 2,
 };
 
 export const stockConfig = {

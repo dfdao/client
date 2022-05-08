@@ -457,6 +457,8 @@ export class ContractsAPI extends EventEmitter {
       MODIFIERS,
       SPACESHIPS,
       START_TIME,
+      TEAMS_ENABLED,
+      NUM_TEAMS
     } = await this.makeCall(this.contract.getArenaConstants);
 
     const TOKEN_MINT_END_SECONDS = (
@@ -595,6 +597,9 @@ export class ContractsAPI extends EventEmitter {
       ],
       SPACESHIPS: [SPACESHIPS[0], SPACESHIPS[1], SPACESHIPS[2], SPACESHIPS[3], SPACESHIPS[4]],
       START_TIME: START_TIME.toNumber(),
+
+      TEAMS_ENABLED: TEAMS_ENABLED,
+      NUM_TEAMS: NUM_TEAMS.toNumber(),
     };
 
     return constants;
@@ -605,16 +610,23 @@ export class ContractsAPI extends EventEmitter {
   ): Promise<Map<string, Player>> {
     const nPlayers: number = (await this.makeCall<EthersBN>(this.contract.getNPlayers)).toNumber();
 
-    const players = await aggregateBulkGetter<Player>(
+    const players = await aggregateBulkGetter(
       nPlayers,
       200,
-      async (start, end) =>
-        (await this.makeCall(this.contract.bulkGetPlayers, [start, end])).map(decodePlayer),
+      async (start, end) => await this.makeCall(this.contract.bulkGetPlayers, [start, end]),
+      onProgress
+    );
+
+    const arenaPlayers = await aggregateBulkGetter(
+      nPlayers,
+      200,
+      async (start, end) => await this.makeCall(this.contract.bulkGetArenaPlayers, [start, end]),
       onProgress
     );
 
     const playerMap: Map<EthAddress, Player> = new Map();
-    for (const player of players) {
+    for (let i = 0; i < nPlayers; i ++) {
+      const player = decodePlayer(players[i], arenaPlayers[i]);
       playerMap.set(player.address, player);
     }
     return playerMap;
@@ -622,8 +634,10 @@ export class ContractsAPI extends EventEmitter {
 
   public async getPlayerById(playerId: EthAddress): Promise<Player | undefined> {
     const rawPlayer = await this.makeCall(this.contract.players, [playerId]);
+    const rawArenaPlayer = await this.makeCall(this.contract.arenaPlayers, [playerId]);
+
     if (!rawPlayer.isInitialized) return undefined;
-    const player = decodePlayer(rawPlayer);
+    const player = decodePlayer(rawPlayer, rawArenaPlayer);
 
     return player;
   }

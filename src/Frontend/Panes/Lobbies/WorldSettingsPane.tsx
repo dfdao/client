@@ -18,6 +18,7 @@ import { SpaceJunkPane } from './SpaceJunkPane';
 import { SpaceshipsPane } from './SpaceshipsPane';
 import { SpaceTypeBiomePane } from './SpaceTypeBiomePane';
 import { TargetPlanetPane } from './TargetPlanetPane';
+import { TeamsPane } from './TeamsPane';
 import { WorldSizePane } from './WorldSizePane';
 
 const jcSpaceBetween = { justifyContent: 'space-between' } as CSSStyleDeclaration &
@@ -68,13 +69,13 @@ const panes: ReadonlyArray<PaneConfig> = [
     path: '/junk',
     Pane: (props: LobbiesPaneProps) => <SpaceJunkPane {...props} />,
   },
-  {
-    title: 'Capture zones',
-    shortcut: `7`,
-    path: '/zones',
-    disabled: true,
-    Pane: (props: LobbiesPaneProps) => <CaptureZonesPane {...props} />,
-  },
+  // {
+  //   title: 'Capture zones',
+  //   shortcut: `7`,
+  //   path: '/zones',
+  //   disabled: true,
+  //   Pane: (props: LobbiesPaneProps) => <CaptureZonesPane {...props} />,
+  // },
   {
     title: 'Artifacts',
     shortcut: `8`,
@@ -104,6 +105,12 @@ const panes: ReadonlyArray<PaneConfig> = [
     shortcut: `+`,
     path: '/spaceships',
     Pane: (props: LobbiesPaneProps) => <SpaceshipsPane {...props} />,
+  },
+  {
+    title: 'Teams',
+    shortcut: `+`,
+    path: '/teams',
+    Pane: (props: LobbiesPaneProps) => <TeamsPane {...props} />,
   },
 ] as const;
 

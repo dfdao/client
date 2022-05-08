@@ -330,6 +330,9 @@ export interface ContractConstants {
     boolean
   ];
   START_TIME: number;
+
+  TEAMS_ENABLED: boolean;
+  NUM_TEAMS: number;
 }
 
 export type ClientMockchainData =

@@ -2100,7 +2100,7 @@ class GameManager extends EventEmitter {
   /**
    * Attempts to join the game. Should not be called once you've already joined.
    */
-  public async joinGame(beforeRetry: (e: Error) => Promise<boolean>): Promise<void> {
+  public async joinGame(beforeRetry: (e: Error) => Promise<boolean>, team: number): Promise<void> {
     try {
       if (this.checkGameHasEnded()) {
         throw new Error('game has ended');
@@ -2186,7 +2186,7 @@ class GameManager extends EventEmitter {
           TerminalTextStyle.Sub
         );
         this.terminal.current?.newline();
-        return args;
+        return [...args, team];
       };
 
       const txIntent: UnconfirmedInit = {

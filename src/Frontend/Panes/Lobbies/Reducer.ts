@@ -367,12 +367,13 @@ export function lobbyConfigReducer(state: LobbyConfigState, action: LobbyAction)
       update = ofWhitelist(action, state);
       break;
     }
-    case 'RESET': {
-      // Hard reset all values that were available in the JSON
-      return {
-        ...state,
-        ...action.value,
-      };
+    case 'TEAMS_ENABLED': {
+      update = ofBoolean(action, state);
+      break;
+    }
+    case 'NUM_TEAMS': {
+      update = ofPositiveInteger(action, state);
+      break;
     }
     case 'MODIFIERS': {
       update = ofModifiers(action, state);
@@ -386,6 +387,14 @@ export function lobbyConfigReducer(state: LobbyConfigState, action: LobbyAction)
       update = ofWhitelist(action, state);
       break;
     }
+    case 'RESET': {
+      // Hard reset all values that were available in the JSON
+      return {
+        ...state,
+        ...action.value,
+      };
+    }
+   
     default: {
       // https://www.typescriptlang.org/docs/handbook/2/narrowing.html#exhaustiveness-checking
       const _exhaustive: never = action;
@@ -911,6 +920,27 @@ export function lobbyConfigInit(startingConfig: LobbyInitializers) {
       case 'WHITELIST': {
         // Default this to false if we don't have it
         const defaultValue = startingConfig[key] || [];
+        state[key] = {
+          currentValue: defaultValue,
+          displayValue: defaultValue,
+          defaultValue,
+          warning: undefined,
+        };
+        break;
+      }
+      case 'TEAMS_ENABLED': {
+        // Default this to false if we don't have it
+        const defaultValue = startingConfig[key] || false;
+        state[key] = {
+          currentValue: defaultValue,
+          displayValue: defaultValue,
+          defaultValue,
+          warning: undefined,
+        };
+        break;
+      }
+      case 'NUM_TEAMS': {
+        const defaultValue = startingConfig[key];
         state[key] = {
           currentValue: defaultValue,
           displayValue: defaultValue,
@@ -2141,19 +2171,14 @@ export function ofWhitelist(
     };
   }
 
-  if (
-    value === undefined 
-  ) {
+  if (value === undefined) {
     return {
       ...state[type],
       warning: 'Address cannot be undefined',
     };
   }
 
-  if (
-    value.slice(0 , 2) !== "0x" ||
-    value.length !== 42 
-  ) {
+  if (value.slice(0, 2) !== '0x' || value.length !== 42) {
     return {
       ...state[type],
       warning: 'Improperly formatted address',
