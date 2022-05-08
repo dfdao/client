@@ -3761,7 +3761,7 @@ class GameManager extends EventEmitter {
     return this.gameover$;
   }
 
-  public getWinners(): EthAddress[] | undefined {
+  public getWinners(): EthAddress[] {
     return this.winners;
   }
   

@@ -20,7 +20,7 @@ export function Gameover() {
   const winners = uiManager.getWinners();
   const gameDuration = uiManager.getGameDuration();
   const gameover = useGameover();
-  if (!gameover || !winners) {
+  if (!gameover || winners.length == 0) {
     return <></>;
   }
 
