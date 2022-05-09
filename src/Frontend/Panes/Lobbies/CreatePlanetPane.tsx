@@ -189,7 +189,6 @@ export function CreatePlanetPane({
   }
   function stagePlanet() {
     setError(undefined);
-    // console.log(JSON.stringify(planet));
     if (createdPlanets?.find((p) => planet.x == p.x && planet.y == p.y)) {
       setError('planet with identical coords created');
       return;
