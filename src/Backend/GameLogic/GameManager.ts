@@ -1729,7 +1729,7 @@ class GameManager extends EventEmitter {
 
   private checkGameHasEnded(): boolean {
     if (this.gameover) {
-      this.terminal.current?.println('[ERROR] Game has ended.');
+      this.terminal.current?.println('[ERROR] Game has ended.', TerminalTextStyle.Red);
       return true;
     }
     return false;
