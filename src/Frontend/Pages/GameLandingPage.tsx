@@ -439,7 +439,7 @@ export function GameLandingPage({ match }: RouteComponentProps<{ contract: strin
           terminal.current?.printLink(
             'https://blockscout.com/poa/xdai/optimism',
             () => {
-              window.open('https://blockscout.com/poa/xdai/optimism');
+              window.open('https://blockscout.com/xdai/optimism');
             },
             TerminalTextStyle.Red
           );
