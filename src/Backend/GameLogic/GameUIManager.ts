@@ -690,7 +690,7 @@ class GameUIManager extends EventEmitter {
     return this.gameManager.getTwitter(address);
   }
 
-  public getEndTimeSeconds(): number {
+  public getEndTimeSeconds(): number | undefined {
     return this.gameManager.getEndTimeSeconds();
   }
 
@@ -1436,7 +1436,7 @@ class GameUIManager extends EventEmitter {
     return this.gameManager.getGameover$();
   }
 
-  public getWinners(): string[] {
+  public getWinners(): EthAddress[]{
     return this.gameManager.getWinners();
   }
 
