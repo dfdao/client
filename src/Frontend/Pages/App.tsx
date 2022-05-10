@@ -35,8 +35,13 @@ function App() {
             <Route path='/' exact component={LandingPage} />
             <Redirect path='/lobby' to={`/lobby/${defaultAddress}`} push={true} exact={true} />
             <Route path='/lobby/:contract' component={CreateLobby} />
+            
+            {/* deactivating these because getting arrivals in 
+                ReaderDataStore.loadPlanetFromContract fails when teams is enabled. 
+                Also they do nothing in arena mode
+                
             <Route path='/planet/:locationId' component={SharePlanet} />
-            <Route path='/artifact/:artifactId' component={ShareArtifact} />
+            <Route path='/artifact/:artifactId' component={ShareArtifact} /> */}
             <Route
               path='/wallet/:contract/:addr/:actionId/:balance/:method'
               component={TxConfirmPopup}

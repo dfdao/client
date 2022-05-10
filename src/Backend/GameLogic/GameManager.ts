@@ -494,6 +494,7 @@ class GameManager extends EventEmitter {
       persistentChunkStore.allChunks(),
       unprocessedArrivals,
       unprocessedPlanetArrivalIds,
+      this,
       contractConstants,
       worldRadius
     );
@@ -3765,6 +3766,10 @@ class GameManager extends EventEmitter {
 
   public getWinners(): string[] {
     return this.winners;
+  }
+
+  getTeamsEnabled() {
+    return this.contractConstants.TEAMS_ENABLED;
   }
   
 }

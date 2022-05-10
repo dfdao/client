@@ -144,6 +144,14 @@ export type LobbyConfigAction =
       type: 'WHITELIST';
       index: number;
       value: EthAddress | undefined;
+    }
+  | {
+      type: 'TEAMS_ENABLED';
+      value: Initializers['TEAMS_ENABLED'] | undefined;
+    }
+  | {
+      type: 'NUM_TEAMS';
+      value: Initializers['NUM_TEAMS'] | undefined;
     };
 
 // TODO(#2328): WHITELIST_ENABLED should just be on Initializers
@@ -2189,7 +2197,6 @@ export function ofWhitelist(
   const displayValue = [...prevDisplayValue];
 
   if (currentValue[index]) {
-    console.log(`deleting ${currentValue[index]}`)
     currentValue.splice(index, 1);
     displayValue.splice(index, 1);
 

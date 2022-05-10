@@ -193,7 +193,7 @@ export function TopBar({ twitterVerifyHook }: { twitterVerifyHook: Hook<boolean>
           name={TooltipName.Empty}
           extraContent={<Text>Your burner wallet address.</Text>}
         >
-          <AccountLabel includeAddressIfHasTwitter={true} width={'50px'} />
+          <AccountLabel includeAddressIfHasTwitter={true} width={'75px'} />
         </TooltipTrigger>
         <TooltipTrigger
           name={TooltipName.Empty}

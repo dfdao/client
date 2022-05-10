@@ -50,13 +50,13 @@ function hashToHue(hash: string): number {
   return baseHue;
 }
 
-export const getPlayerColor: (player: EthAddress) => string = (player) => {
-  return hslStr(hashToHue(player.slice(2)), 100, 70); // remove 0x
-};
+// export const getPlayerColor: (player: EthAddress) => string = (player) => {
+//   return hslStr(hashToHue(player.slice(2)), 100, 70); // remove 0x
+// };
 
-export const getOwnerColor: (planet: Planet) => string = (planet) => {
-  return planet.owner ? getPlayerColor(planet.owner) : 'hsl(0,1%,50%)';
-};
+// export const getOwnerColor: (planet: Planet) => string = (planet) => {
+//   return planet.owner ? getPlayerColor(planet.owner) : 'hsl(0,1%,50%)';
+// };
 
 export const getRandomActionId = () => {
   const hex = '0123456789abcdef';

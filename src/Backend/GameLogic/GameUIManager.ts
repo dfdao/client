@@ -694,6 +694,10 @@ class GameUIManager extends EventEmitter {
     return this.gameManager.getEndTimeSeconds();
   }
 
+  public getTeamsEnabled(): boolean {
+    return this.gameManager.getTeamsEnabled();
+  }
+
   public isRoundOver(): boolean {
     return this.gameManager.isRoundOver();
   }

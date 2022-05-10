@@ -72,6 +72,7 @@ import {
 } from '../../Frontend/Utils/EmitterUtils';
 import { ContractConstants } from '../../_types/darkforest/api/ContractsAPITypes';
 import { arrive, PlanetDiff, updatePlanetToTime } from './ArrivalUtils';
+import GameManager from './GameManager';
 import { LayeredMap } from './LayeredMap';
 
 type CoordsString = Abstract<string, 'CoordString'>;
@@ -188,6 +189,7 @@ export class GameObjects {
    */
   private readonly contractConstants: ContractConstants;
 
+  private readonly gameManager: GameManager;
   /**
    * Map from a stringified representation of an x-y coordinate to an object that contains some more
    * information about the world at that location.
@@ -234,6 +236,7 @@ export class GameObjects {
     allChunks: Iterable<Chunk>,
     unprocessedArrivals: Map<VoyageId, QueuedArrival>,
     unprocessedPlanetArrivalIds: Map<LocationId, VoyageId[]>,
+    gameManager: GameManager,
     contractConstants: ContractConstants,
     worldRadius: number
   ) {
@@ -248,6 +251,7 @@ export class GameObjects {
     this.artifacts = artifacts;
     this.myArtifacts = new Map();
     this.contractConstants = contractConstants;
+    this.gameManager = gameManager;
     this.coordsToLocation = new Map();
     this.planetLocationMap = new Map();
     const planetArrivalIds = new Map();
@@ -1074,12 +1078,17 @@ export class GameObjects {
     if (previous.owner === this.address && current.owner !== this.address) {
       notifManager.planetLost(current as LocatablePlanet);
     }
+    const teamsEnabled = this.gameManager.getTeamsEnabled();
+    const arrivalPlayer = this.gameManager.getPlayer(arrival.player);
+    const currentOwner = this.gameManager.getPlayer(current.owner);
     if (
       arrival.player !== this.address &&
       current.owner === this.address &&
       arrival.energyArriving !== 0
     ) {
-      notifManager.planetAttacked(current as LocatablePlanet);
+      if (teamsEnabled && arrivalPlayer?.team == currentOwner?.team)
+        notifManager.planetSupported(current as LocatablePlanet);
+      else notifManager.planetAttacked(current as LocatablePlanet);
     }
   }
 
@@ -1105,15 +1114,19 @@ export class GameObjects {
     arrivals.sort((a, b) => a.arrivalTime - b.arrivalTime);
     const nowInSeconds = Date.now() / 1000;
     for (const arrival of arrivals) {
+      const arrivalPlayer = this.gameManager.getPlayer(arrival.player);
       try {
         if (nowInSeconds - arrival.arrivalTime > 0) {
+          const toOwner = this.gameManager.getPlayer(planet.owner);
           // if arrival happened in the past, run this arrival
           const update = arrive(
             planet,
             this.getPlanetArtifacts(planet.locationId),
             arrival,
             this.getArtifactById(arrival.artifactId),
-            this.contractConstants
+            this.contractConstants,
+            arrivalPlayer,
+            toOwner
           );
 
           this.removeArrival(planetId, update.arrival.eventId);
@@ -1122,12 +1135,16 @@ export class GameObjects {
           // otherwise, set a timer to do this arrival in the future
           // and append it to arrivalsWithTimers
           const applyFutureArrival = setTimeout(() => {
+            const toOwner = this.gameManager.getPlayer(planet.owner);
+
             const update = arrive(
               planet,
               this.getPlanetArtifacts(planet.locationId),
               arrival,
               this.getArtifactById(arrival.artifactId),
-              this.contractConstants
+              this.contractConstants,
+              arrivalPlayer,
+              toOwner
             );
             this.emitArrivalNotifications(update);
             this.removeArrival(planetId, update.arrival.eventId);

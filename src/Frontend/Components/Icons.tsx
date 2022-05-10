@@ -150,6 +150,9 @@ export const FoundCorrupted = ({ height, width }: AlertIcon) => {
 export const PlanetAttacked = ({ height, width }: AlertIcon) => {
   return <img height={height} width={width} src='/public/icons/alerts/combat/planetattacked.svg' />;
 };
+export const PlanetSupported = ({ height, width }: AlertIcon) => {
+  return <img height={height} width={width} src='/public/icons/alerts/combat/planetsupported.svg' />;
+};
 export const PlanetLost = ({ height, width }: AlertIcon) => {
   return <img height={height} width={width} src='/public/icons/alerts/combat/planetlost.svg' />;
 };
