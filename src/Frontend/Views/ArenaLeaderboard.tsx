@@ -11,7 +11,7 @@ import dfstyles from '../Styles/dfstyles';
 import { useArenaLeaderboard } from '../Utils/AppHooks';
 import { formatDuration } from '../Utils/TimeUtils';
 import { GenericErrorBoundary } from './GenericErrorBoundary';
-import { Table } from './Table';
+import { SortableTable } from './SortableTable';
 
 export function ArenaLeaderboard() {
   const { leaderboard, error } = useArenaLeaderboard();
@@ -57,35 +57,85 @@ function getRankColor([rank, score]: [number, number | undefined]) {
 
   if (score === 0) {
     return RarityColors[ArtifactRarity.Legendary];
-
   }
 
   return dfstyles.colors.dfgreen;
 }
 
-function ArenaLeaderboardTable({ rows }: { rows: Array<[string, number | undefined, number | undefined]> }) {
+function numberSort(a: number | undefined, b: number | undefined) {
+  if (a == undefined && b == undefined) {
+    return 0;
+  }
+  if (a == undefined) {
+    return 1;
+  }
+  if (b == undefined) {
+    return -1;
+  }
+
+  return b - a;
+}
+
+type Row = [string, number | undefined, number | undefined];
+
+const sortFunctions = [
+  (
+    left: Row,
+    right: Row
+  ) => {
+    if(!left && !right) return 0;
+    if(!left || !left[0]) return 1;
+    if(!right || right[0]) return -1;
+    return left[0].localeCompare(right[0]);
+  },
+  (
+    left: Row,
+    right: Row
+  ) => {
+    if(!left && !right) return 0;
+    if(!left || !left[1]) return 1;
+    if(!right || !right[1]) return -1;
+    return right[1] - left[1];
+  },
+  (
+    left: Row,
+    right: Row
+  ) => {
+    if(!left && !right) return 0;
+    if(!left || !left[2]) return 1;
+    if(!right || !right[2]) return -1;
+    return right[2] - left[2];
+  },
+];
+
+function ArenaLeaderboardTable({
+  rows,
+}: {
+  rows: Row[];
+}) {
   return (
     <TableContainer>
-      <Table
+      <SortableTable
         alignments={['r', 'l', 'r']}
         headers={[
           <Cell key='player'>player</Cell>,
           <Cell key='score'>games</Cell>,
           <Cell key='place'>wins</Cell>,
         ]}
+        sortFunctions={sortFunctions}
         rows={rows}
         columns={[
-          (row: [string, number | undefined, number | undefined], i) => {
+          (row: Row, i) => {
             const color = getRankColor([i, row[2]]);
             return <Cell style={{ color }}>{playerToEntry(row[0], color)}</Cell>;
           },
-          (row: [string, number | undefined, number | undefined], i) => (
+          (row: Row, i) => (
             <Cell style={{ color: getRankColor([i, row[2]]) }}>
               {row[1] === undefined || row[1] === null ? '0' : scoreToString(row[1])}
             </Cell>
           ),
-        
-          (row: [string, number | undefined, number | undefined], i) => {
+
+          (row: Row, i) => {
             return (
               <Cell style={{ color: getRankColor([i, row[2]]) }}>{scoreToString(row[2])}</Cell>
             );
@@ -126,33 +176,21 @@ function CountDown() {
 }
 
 function ArenaLeaderboardBody({ leaderboard }: { leaderboard: ArenaLeaderboard }) {
+  const rows: [string, number | undefined, number | undefined][] = leaderboard.entries.map(
+    (entry) => {
+      if (typeof entry.twitter === 'string') {
+        return [entry.twitter, entry.games, entry.wins];
+      }
 
-  leaderboard.entries.sort((a, b) => {
-    if (typeof a.wins !== 'number' && typeof b.wins !== 'number') {
-      return 0;
-    } else if (typeof a.wins !== 'number') {
-      return 1;
-    } else if (typeof b.wins !== 'number') {
-      return -1;
+      return [entry.address, entry.games, entry.wins];
     }
-
-    return b.wins - a.wins;
-  });
-
-  const rows: [string, number | undefined, number | undefined][] = leaderboard.entries.map((entry) => {
-    if (typeof entry.twitter === 'string') {
-      return [entry.twitter, entry.games, entry.wins];
-    }
-
-    return [entry.address, entry.games, entry.wins];
-  });
+  );
 
   return (
     <div>
       <StatsTableContainer>
         <StatsTable>
           <tbody>
-          
             <tr>
               <td>players</td>
               <td>{leaderboard.entries.length}</td>
@@ -173,6 +211,7 @@ function ArenaLeaderboardBody({ leaderboard }: { leaderboard: ArenaLeaderboard }
 const Cell = styled.div`
   padding: 4px 8px;
   color: ${dfstyles.colors.text};
+  background: transparent
 `;
 
 const TableContainer = styled.div`
