@@ -1,5 +1,4 @@
 import { getActivatedArtifact, isActivated } from '@darkforest_eth/gamelogic';
-import { address } from '@darkforest_eth/serde';
 import {
   ArenaLeaderboard,
   Artifact,
@@ -14,6 +13,7 @@ import {
 } from '@darkforest_eth/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import GameUIManager from '../../Backend/GameLogic/GameUIManager';
+import { loadArenaLeaderboard } from '../../Backend/Network/ArenaLeaderboardApi';
 import { loadLeaderboard } from '../../Backend/Network/LeaderboardApi';
 import { Wrapper } from '../../Backend/Utils/Wrapper';
 import { ContractsAPIEvent } from '../../_types/darkforest/api/ContractsAPITypes';
@@ -215,22 +215,6 @@ export function useLeaderboard(poll: number | undefined = undefined): {
   return { leaderboard, error };
 }
 
-const dummyLeaderboard: ArenaLeaderboard = {
-  entries: [
-    {
-      ethAddress: address('0x0000000000000000000000000000000000000000'),
-      games: 5,
-      wins: 2,
-    },
-    {
-      ethAddress: address('0x0000000000000000000000000000000000000001'),
-      twitter: 'Velorum',
-      games: 100,
-      wins: 0,
-    },
-  ],
-};
-
 export function useArenaLeaderboard(poll: number | undefined = undefined): {
   leaderboard: ArenaLeaderboard | undefined;
   error: Error | undefined;
@@ -240,7 +224,7 @@ export function useArenaLeaderboard(poll: number | undefined = undefined): {
 
   const load = useCallback(async function load() {
     try {
-      setLeaderboard(dummyLeaderboard);
+      setLeaderboard(await loadArenaLeaderboard());
     } catch (e) {
       console.log('error loading leaderboard', e);
       setError(e);

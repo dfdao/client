@@ -55,31 +55,12 @@ function getRankColor([rank, score]: [number, number | undefined]) {
     return dfstyles.colors.subtext;
   }
 
-  if (rank === 0) {
-    return RarityColors[ArtifactRarity.Mythic];
-  }
-
-  if (rank === 1 || rank === 2) {
+  if (score === 0) {
     return RarityColors[ArtifactRarity.Legendary];
+
   }
 
-  if (rank >= 3 && rank <= 6) {
-    return RarityColors[ArtifactRarity.Epic];
-  }
-
-  if (rank >= 7 && rank <= 14) {
-    return RarityColors[ArtifactRarity.Rare];
-  }
-
-  if (rank >= 15 && rank <= 30) {
-    return dfstyles.colors.dfgreen;
-  }
-
-  if (rank >= 31 && rank <= 62) {
-    return 'white';
-  }
-
-  return dfstyles.colors.subtext;
+  return dfstyles.colors.dfgreen;
 }
 
 function ArenaLeaderboardTable({ rows }: { rows: Array<[string, number | undefined, number | undefined]> }) {
@@ -95,18 +76,18 @@ function ArenaLeaderboardTable({ rows }: { rows: Array<[string, number | undefin
         rows={rows}
         columns={[
           (row: [string, number | undefined, number | undefined], i) => {
-            const color = getRankColor([i, row[1]]);
+            const color = getRankColor([i, row[2]]);
             return <Cell style={{ color }}>{playerToEntry(row[0], color)}</Cell>;
           },
           (row: [string, number | undefined, number | undefined], i) => (
-            <Cell style={{ color: getRankColor([i, row[1]]) }}>
+            <Cell style={{ color: getRankColor([i, row[2]]) }}>
               {row[1] === undefined || row[1] === null ? '0' : scoreToString(row[1])}
             </Cell>
           ),
         
           (row: [string, number | undefined, number | undefined], i) => {
             return (
-              <Cell style={{ color: getRankColor([i, row[1]]) }}>{scoreToString(row[2])}</Cell>
+              <Cell style={{ color: getRankColor([i, row[2]]) }}>{scoreToString(row[2])}</Cell>
             );
           },
         ]}
@@ -163,7 +144,7 @@ function ArenaLeaderboardBody({ leaderboard }: { leaderboard: ArenaLeaderboard }
       return [entry.twitter, entry.games, entry.wins];
     }
 
-    return [entry.ethAddress, entry.games, entry.wins];
+    return [entry.address, entry.games, entry.wins];
   });
 
   return (
