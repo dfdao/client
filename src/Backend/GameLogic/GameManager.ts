@@ -33,7 +33,6 @@ import {
   isUnconfirmedFindArtifactTx,
   isUnconfirmedInitTx,
   isUnconfirmedInvadePlanetTx,
-  isUnconfirmedInvadeTargetPlanetTx,
   isUnconfirmedMoveTx,
   isUnconfirmedProspectPlanetTx,
   isUnconfirmedRevealTx,
@@ -82,7 +81,6 @@ import {
   UnconfirmedFindArtifact,
   UnconfirmedInit,
   UnconfirmedInvadePlanet,
-  UnconfirmedInvadeTargetPlanet,
   UnconfirmedMove,
   UnconfirmedPlanetTransfer,
   UnconfirmedProspectPlanet,
@@ -1921,72 +1919,6 @@ class GameManager extends EventEmitter {
     }
   }
 
-  public async invadeTargetPlanet(locationId: LocationId) {
-    try {
-      if (!this.contractConstants.TARGET_PLANETS) {
-        throw new Error('Target planets are not enabled in this game');
-      }
-
-      const planet = this.entityStore.getPlanetWithId(locationId);
-
-      if (!planet || !isLocatable(planet)) {
-        throw new Error("you can't invade a planet you haven't discovered");
-      }
-
-      if (planet.destroyed) {
-        throw new Error("you can't invade destroyed planets");
-      }
-
-      if (planet.invader !== EMPTY_ADDRESS) {
-        throw new Error("you can't invade planets that have already been invaded");
-      }
-
-      if (planet.owner !== this.account) {
-        throw new Error('you can only invade planets you own');
-      }
-
-      if (!planet.isTargetPlanet) {
-        throw new Error('you can only invade target planets');
-      }
-
-      localStorage.setItem(`${this.getAccount()?.toLowerCase()}-invadeTargetPlanet`, locationId);
-
-      const getArgs = async () => {
-        const revealArgs = await this.snarkHelper.getRevealArgs(
-          planet.location.coords.x,
-          planet.location.coords.y
-        );
-
-        this.terminal.current?.println(
-          'REVEAL: calculated SNARK with args:',
-          TerminalTextStyle.Sub
-        );
-        this.terminal.current?.println(
-          JSON.stringify(hexifyBigIntNestedArray(revealArgs.slice(0, 3))),
-          TerminalTextStyle.Sub
-        );
-        this.terminal.current?.newline();
-
-        return revealArgs;
-      };
-
-      const txIntent: UnconfirmedInvadeTargetPlanet = {
-        methodName: ContractMethodName.INVADE_TARGET_PLANET,
-        contract: this.contractsAPI.contract,
-        locationId,
-        args: getArgs(),
-      };
-
-      const tx = await this.contractsAPI.submitTransaction(txIntent);
-      return tx;
-    } catch (e) {
-      this.getNotificationsManager().txInitError(
-        ContractMethodName.INVADE_TARGET_PLANET,
-        e.message
-      );
-      throw e;
-    }
-  }
 
   public async capturePlanet(locationId: LocationId) {
     try {
@@ -2080,7 +2012,7 @@ class GameManager extends EventEmitter {
       localStorage.setItem(`${this.getAccount()?.toLowerCase()}-claimVictory`, locationId);
 
       const txIntent: UnconfirmedClaimVictory = {
-        methodName: ContractMethodName.CLAIM_VICTORY,
+        methodName: 'claimTargetPlanetVictory',
         contract: this.contractsAPI.contract,
         locationId,
         args: Promise.resolve([locationIdToDecStr(locationId)]),
@@ -2089,7 +2021,7 @@ class GameManager extends EventEmitter {
       const tx = await this.contractsAPI.submitTransaction(txIntent);
       return tx;
     } catch (e) {
-      this.getNotificationsManager().txInitError(ContractMethodName.CLAIM_VICTORY, e.message);
+      this.getNotificationsManager().txInitError('claimTargetPlanetVictory', e.message);
       throw e;
     }
   }

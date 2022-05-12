@@ -200,7 +200,13 @@ async function addAddressToWhitelist(address: EthAddress) {
   return tx;
 }
 
-async function createPlanet(coords: WorldCoords, level: number, type: PlanetType) {
+async function createPlanet(
+  coords: WorldCoords,
+  level: number,
+  type: PlanetType,
+  isSpawn: boolean,
+  isTarget: boolean
+) {
   coords.x = Math.round(coords.x);
   coords.y = Math.round(coords.y);
 
@@ -216,13 +222,15 @@ async function createPlanet(coords: WorldCoords, level: number, type: PlanetType
       requireValidLocationId: false,
       location: location,
       perlin: perlinValue,
+      isSpawnPlanet: isSpawn,
+      isTargetPlanet: isTarget,
     },
   ]);
 
   const tx = await df.submitTransaction({
     args,
     contract: df.getContract(),
-    methodName: 'createPlanet',
+    methodName: 'createArenaPlanet',
   });
 
   await tx.confirmedPromise;
@@ -356,10 +364,12 @@ function PlanetCreator() {
   const [planetType, setPlanetType] = useState(PlanetType.PLANET);
   const [choosingLocation, setChoosingLocation] = useState(false);
   const [planetCoords, setPlanetCoords] = useState(null);
+  const [isSpawn, setIsSpawn] = useState(false);
+  const [isTarget, setIsTarget] = useState(false);
 
   const placePlanet = useCallback(
     (coords: WorldCoords) => {
-      createPlanet(coords, parseInt(level), planetType);
+      createPlanet(coords, parseInt(level), planetType, isSpawn, isTarget);
       setChoosingLocation(false);
     },
     [level, planetType, setChoosingLocation]
@@ -388,7 +398,7 @@ function PlanetCreator() {
 
   return html`
     <div style=${{ width: '100%' }}>
-      <h2>Create Planet</h2>
+      <${Heading} title="Create planet" />
       <div style=${rowStyle}>
         <df-slider
           label="Planet Level"
@@ -407,6 +417,24 @@ function PlanetCreator() {
         </div>
       </div>
       <div style=${{ ...rowStyle, justifyContent: 'space-between' }}>
+        <div style=${rowStyle}>
+          <input
+            type="checkbox"
+            id="spawn"
+            value=${isSpawn}
+            onChange=${() => setIsSpawn(!isSpawn)}
+          />
+          ${' Spawn Planet'}
+        </div>
+        <div style=${rowStyle}>
+          <input
+            type="checkbox"
+            id="target"
+            value=${isTarget}
+            onChange=${() => setIsTarget(!isTarget)}
+          />
+          ${' Target Planet'}
+        </div>
         ${!choosingLocation &&
         html`
           <df-button
