@@ -13,7 +13,7 @@ import { formatDuration } from '../Utils/TimeUtils';
 import { GenericErrorBoundary } from './GenericErrorBoundary';
 import { SortableTable } from './SortableTable';
 
-export function ArenaLeaderboard() {
+export function ArenaLeaderboardElt() {
   const { leaderboard, error } = useArenaLeaderboard();
 
   const errorMessage = 'Error Loading Leaderboard';
