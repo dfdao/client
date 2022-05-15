@@ -6,6 +6,8 @@ import styled from 'styled-components';
 import { CreatedPlanet, LobbyAdminTools } from '../../../Backend/Utils/LobbyAdminTools';
 import { Btn } from '../../Components/Btn';
 import { Link, SelectFrom } from '../../Components/CoreUI';
+import Button from '../../Components/Button';
+
 import {
   Checkbox,
   DarkForestCheckbox,
@@ -16,7 +18,7 @@ import { LoadingSpinner } from '../../Components/LoadingSpinner';
 import { Row } from '../../Components/Row';
 import { Green, Red, Sub } from '../../Components/Text';
 import { Table } from '../../Views/Table';
-import { LobbiesPaneProps, LobbyPlanet, Warning } from './LobbiesUtils';
+import { LobbiesPaneProps, LobbyPlanet, mirrorX, mirrorY, Warning } from './LobbiesUtils';
 import { InvalidConfigError, toInitializers } from './Reducer';
 
 const jcFlexEnd = { display: 'flex', justifyContent: 'flex-end' } as CSSStyleDeclaration &
@@ -109,7 +111,7 @@ export function CreatePlanetPane({
               headers={headers}
               columns={columns}
               alignments={alignments}
-              itemsPerPage={5}
+              itemsPerPage = {5}
             />
           </TableContainer>
         </Row>
@@ -183,9 +185,15 @@ export function CreatePlanetPane({
     );
   }
 
+  function mirrorPlanetX() {
+    setPlanet({ ...planet, x: -planet.x });
+  }
+
+  function mirrorPlanetY() {
+    setPlanet({ ...planet, y: -planet.y });
+  }
   function stagePlanet() {
     setError(undefined);
-    // console.log(JSON.stringify(planet));
     if (createdPlanets?.find((p) => planet.x == p.x && planet.y == p.y)) {
       setError('planet with identical coords created');
       return;
@@ -326,9 +334,17 @@ export function CreatePlanetPane({
           <StageContainer>
             <Row>
               <span>Stage Custom Planets</span>
-              <Btn style={jcFlexEnd} onClick={stagePlanet}>
-                Stage Planet
-              </Btn>
+              <div style = {{display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <Button style={jcFlexEnd} onClick={mirrorPlanetX}>
+                  {mirrorX}
+                </Button>
+                <Button style={jcFlexEnd} onClick={mirrorPlanetY}>
+                  {mirrorY}
+                </Button>
+                <Btn style={jcFlexEnd} onClick={() => stagePlanet()}>
+                  Stage Planet
+                </Btn>
+              </div>
             </Row>
             {lobbyPlanetElems}
           </StageContainer>

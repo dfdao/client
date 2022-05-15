@@ -28,7 +28,6 @@ import {
   ArtifactId,
   ArtifactType,
   AutoGasSetting,
-  ContractMethodName,
   DiagnosticUpdater,
   EthAddress,
   LocationId,
@@ -122,8 +121,7 @@ export class ContractsAPI extends EventEmitter {
    */
   private getGasFeeForTransaction(tx: Transaction): AutoGasSetting | string {
     if (
-      (tx.intent.methodName === ContractMethodName.INIT ||
-        tx.intent.methodName === ContractMethodName.GET_SHIPS) &&
+      (tx.intent.methodName === 'initializePlayer' || tx.intent.methodName === 'getSpaceShips') &&
       tx.intent.contract.address === this.contract.address
     ) {
       return '50';
@@ -752,12 +750,14 @@ export class ContractsAPI extends EventEmitter {
     return this.makeCall(this.contract.getGameover);
   }
 
-  public async getWinners(): Promise<string[]> {
-    return this.makeCall(this.contract.getWinners);
+  public async getWinners(): Promise<EthAddress[]> {
+    const winnerString = await this.makeCall(this.contract.getWinners);
+    return winnerString.map(w => address(w));
   }
 
-  public async getEndTime(): Promise<BigNumber> {
-    return this.makeCall(this.contract.getEndTime);
+  public async getEndTime(): Promise<number | undefined> {
+    const endTime = (await this.makeCall(this.contract.getEndTime)).toNumber();
+    return endTime == 0 ? undefined : endTime ;
   }
 
   public async getRevealedPlanetsCoords(
@@ -815,7 +815,10 @@ export class ContractsAPI extends EventEmitter {
         await this.makeCall(this.contract.bulkGetPlanetsExtendedInfoByIds, [
           toLoadPlanets.slice(start, end).map(locationIdToDecStr),
         ]),
-      onProgressMetadata
+      (fractionCompleted) => {
+        if (!onProgressMetadata) return;
+        onProgressMetadata(fractionCompleted / 2);
+      }
     );
 
     const rawPlanetsExtendedInfo2 = await aggregateBulkGetter(
@@ -825,7 +828,10 @@ export class ContractsAPI extends EventEmitter {
         await this.makeCall(this.contract.bulkGetPlanetsExtendedInfo2ByIds, [
           toLoadPlanets.slice(start, end).map(locationIdToDecStr),
         ]),
-      onProgressMetadata
+      (fractionCompleted) => {
+        if (!onProgressMetadata) return;
+        onProgressMetadata(0.5 + fractionCompleted / 2);
+      }
     );
 
     const rawPlanetsArenaInfo = await aggregateBulkGetter(
