@@ -9,6 +9,7 @@ import {
   isUnconfirmedBuyHat,
   isUnconfirmedBuyHatTx,
   isUnconfirmedCapturePlanetTx,
+  isUnconfirmedClaimVictoryTx,
   isUnconfirmedDeactivateArtifact,
   isUnconfirmedDeactivateArtifactTx,
   isUnconfirmedDepositArtifact,
@@ -493,7 +494,10 @@ export class GameObjects {
 
       // Possibly non updated props
       planet.heldArtifactIds = localPlanet.heldArtifactIds;
+    } else {
+      this.planets.set(planet.locationId, planet);
     }
+
     if (updatedArtifactsOnPlanet) {
       planet.heldArtifactIds = updatedArtifactsOnPlanet;
     }
@@ -579,7 +583,7 @@ export class GameObjects {
   public addPlanetLocation(planetLocation: WorldLocation): void {
     this.layeredMap.insertPlanet(
       planetLocation,
-      this.getPlanetWithId(planetLocation.hash, false)?.planetLevel ||
+      this.getPlanetWithId(planetLocation.hash, false)?.planetLevel ??
         this.planetLevelFromHexPerlin(planetLocation.hash, planetLocation.perlin)
     );
 
@@ -788,6 +792,12 @@ export class GameObjects {
         planet.transactions?.addTransaction(tx);
         this.setPlanet(planet);
       }
+    }  else if (isUnconfirmedClaimVictoryTx(tx)) {
+      const planet = this.getPlanetWithId(tx.intent.locationId);
+      if (planet) {
+        planet.transactions?.addTransaction(tx);
+        this.setPlanet(planet);
+      }
     }
   }
 
@@ -914,6 +924,12 @@ export class GameObjects {
         this.setPlanet(planet);
       }
     } else if (isUnconfirmedInvadePlanetTx(tx)) {
+      const planet = this.getPlanetWithId(tx.intent.locationId);
+      if (planet) {
+        planet.transactions?.removeTransaction(tx);
+        this.setPlanet(planet);
+      }
+    } else if (isUnconfirmedClaimVictoryTx(tx)) {
       const planet = this.getPlanetWithId(tx.intent.locationId);
       if (planet) {
         planet.transactions?.removeTransaction(tx);
