@@ -498,7 +498,10 @@ export class GameObjects {
 
       // Possibly non updated props
       planet.heldArtifactIds = localPlanet.heldArtifactIds;
+    } else {
+      this.planets.set(planet.locationId, planet);
     }
+
     if (updatedArtifactsOnPlanet) {
       planet.heldArtifactIds = updatedArtifactsOnPlanet;
     }
@@ -584,7 +587,7 @@ export class GameObjects {
   public addPlanetLocation(planetLocation: WorldLocation): void {
     this.layeredMap.insertPlanet(
       planetLocation,
-      this.getPlanetWithId(planetLocation.hash, false)?.planetLevel ||
+      this.getPlanetWithId(planetLocation.hash, false)?.planetLevel ??
         this.planetLevelFromHexPerlin(planetLocation.hash, planetLocation.perlin)
     );
 
