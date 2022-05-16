@@ -2120,7 +2120,7 @@ class GameManager extends EventEmitter {
       };
 
       const txIntent: UnconfirmedInit = {
-        methodName: 'initializePlayer',
+        methodName: 'arenaInitializePlayer',
         contract: this.contractsAPI.contract,
         locationId: planet.location.hash,
         location: planet.location,
@@ -2156,7 +2156,7 @@ class GameManager extends EventEmitter {
 
       this.emit(GameManagerEvent.InitializedPlayer);
     } catch (e) {
-      this.getNotificationsManager().txInitError('initializePlayer', e.message);
+      this.getNotificationsManager().txInitError('arenaInitializePlayer', e.message);
       throw e;
     }
   }
