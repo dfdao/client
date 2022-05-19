@@ -39,10 +39,13 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
     );
   } else if (tutorialState === TutorialState.SpaceJunk) {
     return (
-      <div>
-        When you sent energy to a planet you accumulated some <White>Space Junk</White>. Sending
-        energy to planets that no one has moved to yet will give you junk. You are not allowed to
-        take on more junk than your maximum limit and will be unable to make moves.
+      <div><p>
+        When you send planet you accumulate <White>Space Junk</White>. Once you hit the Space Junk limit, you 
+        won't be able to move to new planets. 
+        </p>
+        <p>
+          To reduce your space junk, <Red>Abandon</Red> planets and keep expanding!
+        </p>
         <br />
         <br />
         Take a look at the top of the screen to see you current and maximum{' '}
