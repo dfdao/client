@@ -1100,7 +1100,6 @@ class GameUIManager extends EventEmitter {
           a.artifactType == ArtifactType.ShipGear ||
           a.artifactType == ArtifactType.ShipTitan
       );
-      console.log('spaceships:', ships);
       return ships;
   }
 
