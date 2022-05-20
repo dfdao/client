@@ -207,7 +207,6 @@ async function createPlanet(
   isSpawn: boolean,
   isTarget: boolean
 ) {
-  console.log(`isSpawn: ${isSpawn}, isTarget: ${isTarget}`)
   coords.x = Math.round(coords.x);
   coords.y = Math.round(coords.y);
 
