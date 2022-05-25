@@ -224,6 +224,7 @@ export class ContractsAPI extends EventEmitter {
           contract.filters.PauseStateChanged(null).topics,
           contract.filters.LobbyCreated(null, null).topics,
           contract.filters.Gameover(null).topics,
+          contract.filters.GameStarted(null).topics,
         ].map((topicsOrUndefined) => (topicsOrUndefined || [])[0]),
       ] as Array<string | Array<string>>,
     };
@@ -372,6 +373,9 @@ export class ContractsAPI extends EventEmitter {
         this.emit(ContractsAPIEvent.PlanetUpdate, locationIdFromEthersBN(location));
         this.emit(ContractsAPIEvent.Gameover);
       },
+      [ContractEvent.GameStarted]: (player: string) => {
+        this.emit(ContractsAPIEvent.GameStarted);
+      },
     };
 
     this.ethConnection.subscribeToContractEvents(contract, eventHandlers, filter);
@@ -395,6 +399,7 @@ export class ContractsAPI extends EventEmitter {
     contract.removeAllListeners(ContractEvent.PlanetInvaded);
     contract.removeAllListeners(ContractEvent.PlanetCaptured);
     contract.removeAllListeners(ContractEvent.Gameover);
+    contract.removeAllListeners(ContractEvent.GameStarted);
   }
 
   public getContractAddress(): EthAddress {
@@ -453,8 +458,7 @@ export class ContractsAPI extends EventEmitter {
       TARGET_PLANETS,
       CLAIM_VICTORY_ENERGY_PERCENT,
       MODIFIERS,
-      SPACESHIPS,
-      START_TIME,
+      SPACESHIPS
     } = await this.makeCall(this.contract.getArenaConstants);
 
     const TOKEN_MINT_END_SECONDS = (
@@ -592,7 +596,6 @@ export class ContractsAPI extends EventEmitter {
         MODIFIERS[7].toNumber(),
       ],
       SPACESHIPS: [SPACESHIPS[0], SPACESHIPS[1], SPACESHIPS[2], SPACESHIPS[3], SPACESHIPS[4]],
-      START_TIME: START_TIME.toNumber(),
     };
 
     return constants;
@@ -762,6 +765,11 @@ export class ContractsAPI extends EventEmitter {
   public async getWinners(): Promise<EthAddress[]> {
     const winnerString = await this.makeCall(this.contract.getWinners);
     return winnerString.map(w => address(w));
+  }
+
+  public async getStartTime(): Promise<number | undefined> {
+    const startTime = (await this.makeCall(this.contract.getStartTime)).toNumber();
+    return startTime == 0 ? undefined : startTime ;
   }
 
   public async getEndTime(): Promise<number | undefined> {
