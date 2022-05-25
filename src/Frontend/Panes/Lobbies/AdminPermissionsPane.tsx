@@ -15,6 +15,9 @@ export function AdminPermissionsPane({ config, onUpdate }: LobbiesPaneProps) {
           }
         />
       </Row>
+        <Row>
+        <Warning>{config.NO_ADMIN.warning}</Warning>
+      </Row>
       <Row>
         <Checkbox
           label='Admin can add planets?'
