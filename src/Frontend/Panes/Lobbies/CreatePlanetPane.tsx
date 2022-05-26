@@ -331,7 +331,7 @@ export function CreatePlanetPane({
       {config.ADMIN_CAN_ADD_PLANETS.displayValue ? (
         <>
           {config.NO_ADMIN.displayValue && lobbyAdminTools ? (
-            <Sub>You cannot stage planets after universe creation if no admin</Sub>
+            <Sub>You cannot stage planets after universe creation if admin disabled.</Sub>
           ) : (
             <StageContainer>
               <Row>
