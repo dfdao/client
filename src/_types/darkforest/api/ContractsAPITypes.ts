@@ -331,6 +331,7 @@ export interface ContractConstants {
     boolean
   ];
   START_TIME: number;
+  RANDOM_ARTIFACTS: boolean;
 }
 
 export type ClientMockchainData =
