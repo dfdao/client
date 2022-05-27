@@ -373,8 +373,8 @@ export class ContractsAPI extends EventEmitter {
         this.emit(ContractsAPIEvent.PlanetUpdate, locationIdFromEthersBN(location));
         this.emit(ContractsAPIEvent.Gameover);
       },
-      [ContractEvent.GameStarted]: (player: string) => {
-        this.emit(ContractsAPIEvent.GameStarted);
+      [ContractEvent.GameStarted]: (timestamp: EthersBN) => {
+        this.emit(ContractsAPIEvent.GameStarted, timestamp.toNumber());
       },
     };
 
