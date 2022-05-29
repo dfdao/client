@@ -306,7 +306,6 @@ export function SettingsPane({
         <Section>
           <SectionHeader>Change RPC Endpoint</SectionHeader>
 
-          {/* <Spacer height={8} /> */}
           Current RPC Endpoint: {rpcUrl}
           <Spacer height={8} />
           Official Endpoints:
