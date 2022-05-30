@@ -224,6 +224,7 @@ export class ContractsAPI extends EventEmitter {
           contract.filters.PauseStateChanged(null).topics,
           contract.filters.LobbyCreated(null, null).topics,
           contract.filters.Gameover(null).topics,
+          contract.filters.GameStarted(null).topics,
         ].map((topicsOrUndefined) => (topicsOrUndefined || [])[0]),
       ] as Array<string | Array<string>>,
     };
@@ -372,6 +373,9 @@ export class ContractsAPI extends EventEmitter {
         this.emit(ContractsAPIEvent.PlanetUpdate, locationIdFromEthersBN(location));
         this.emit(ContractsAPIEvent.Gameover);
       },
+      [ContractEvent.GameStarted]: (timestamp: EthersBN) => {
+        this.emit(ContractsAPIEvent.GameStarted, timestamp.toNumber());
+      },
     };
 
     this.ethConnection.subscribeToContractEvents(contract, eventHandlers, filter);
@@ -395,6 +399,7 @@ export class ContractsAPI extends EventEmitter {
     contract.removeAllListeners(ContractEvent.PlanetInvaded);
     contract.removeAllListeners(ContractEvent.PlanetCaptured);
     contract.removeAllListeners(ContractEvent.Gameover);
+    contract.removeAllListeners(ContractEvent.GameStarted);
   }
 
   public getContractAddress(): EthAddress {
@@ -454,8 +459,10 @@ export class ContractsAPI extends EventEmitter {
       CLAIM_VICTORY_ENERGY_PERCENT,
       MODIFIERS,
       SPACESHIPS,
-      START_TIME,
       RANDOM_ARTIFACTS
+      NO_ADMIN,
+      CONFIG_HASH,
+      INIT_PLANET_HASHES
     } = await this.makeCall(this.contract.getArenaConstants);
 
     const TOKEN_MINT_END_SECONDS = (
@@ -593,8 +600,11 @@ export class ContractsAPI extends EventEmitter {
         MODIFIERS[7].toNumber(),
       ],
       SPACESHIPS: [SPACESHIPS[0], SPACESHIPS[1], SPACESHIPS[2], SPACESHIPS[3], SPACESHIPS[4]],
-      START_TIME: START_TIME.toNumber(),
+
       RANDOM_ARTIFACTS : RANDOM_ARTIFACTS,
+      NO_ADMIN: NO_ADMIN,
+      INIT_PLANET_HASHES: INIT_PLANET_HASHES,
+      CONFIG_HASH: CONFIG_HASH,
     };
 
     return constants;
@@ -605,16 +615,23 @@ export class ContractsAPI extends EventEmitter {
   ): Promise<Map<string, Player>> {
     const nPlayers: number = (await this.makeCall<EthersBN>(this.contract.getNPlayers)).toNumber();
 
-    const players = await aggregateBulkGetter<Player>(
+    const players = await aggregateBulkGetter(
       nPlayers,
       200,
-      async (start, end) =>
-        (await this.makeCall(this.contract.bulkGetPlayers, [start, end])).map(decodePlayer),
+      async (start, end) => await this.makeCall(this.contract.bulkGetPlayers, [start, end]),
+      onProgress
+    );
+
+    const arenaPlayers = await aggregateBulkGetter(
+      nPlayers,
+      200,
+      async (start, end) => await this.makeCall(this.contract.bulkGetArenaPlayers, [start, end]),
       onProgress
     );
 
     const playerMap: Map<EthAddress, Player> = new Map();
-    for (const player of players) {
+    for (let i = 0; i < nPlayers; i ++) {
+      const player = decodePlayer(players[i], arenaPlayers[i]);
       playerMap.set(player.address, player);
     }
     return playerMap;
@@ -622,8 +639,10 @@ export class ContractsAPI extends EventEmitter {
 
   public async getPlayerById(playerId: EthAddress): Promise<Player | undefined> {
     const rawPlayer = await this.makeCall(this.contract.players, [playerId]);
+    const rawArenaPlayer = await this.makeCall(this.contract.arenaPlayers, [playerId]);
+
     if (!rawPlayer.isInitialized) return undefined;
-    const player = decodePlayer(rawPlayer);
+    const player = decodePlayer(rawPlayer, rawArenaPlayer);
 
     return player;
   }
@@ -755,6 +774,11 @@ export class ContractsAPI extends EventEmitter {
   public async getWinners(): Promise<EthAddress[]> {
     const winnerString = await this.makeCall(this.contract.getWinners);
     return winnerString.map(w => address(w));
+  }
+
+  public async getStartTime(): Promise<number | undefined> {
+    const startTime = (await this.makeCall(this.contract.getStartTime)).toNumber();
+    return startTime == 0 ? undefined : startTime ;
   }
 
   public async getEndTime(): Promise<number | undefined> {
