@@ -373,8 +373,8 @@ export class ContractsAPI extends EventEmitter {
         this.emit(ContractsAPIEvent.PlanetUpdate, locationIdFromEthersBN(location));
         this.emit(ContractsAPIEvent.Gameover);
       },
-      [ContractEvent.GameStarted]: (timestamp: EthersBN) => {
-        this.emit(ContractsAPIEvent.GameStarted, timestamp.toNumber());
+      [ContractEvent.GameStarted]: (player: string) => {
+        this.emit(ContractsAPIEvent.GameStarted, address(player));
       },
     };
 
@@ -459,7 +459,7 @@ export class ContractsAPI extends EventEmitter {
       CLAIM_VICTORY_ENERGY_PERCENT,
       MODIFIERS,
       SPACESHIPS,
-      RANDOM_ARTIFACTS
+      RANDOM_ARTIFACTS,
       NO_ADMIN,
       CONFIG_HASH,
       INIT_PLANET_HASHES
