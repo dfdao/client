@@ -1,10 +1,10 @@
-import { ArenaLeaderboard, ArtifactRarity } from '@darkforest_eth/types';
+import { ArenaLeaderboard, ArtifactRarity, Leaderboard } from '@darkforest_eth/types';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Spacer } from '../Components/CoreUI';
 import { TwitterLink } from '../Components/Labels/Labels';
 import { LoadingSpinner } from '../Components/LoadingSpinner';
-import { Red } from '../Components/Text';
+import { Red, Subber } from '../Components/Text';
 import { TextPreview } from '../Components/TextPreview';
 import { RarityColors } from '../Styles/Colors';
 import dfstyles from '../Styles/dfstyles';
@@ -12,16 +12,26 @@ import { useArenaLeaderboard } from '../Utils/AppHooks';
 import { formatDuration } from '../Utils/TimeUtils';
 import { GenericErrorBoundary } from './GenericErrorBoundary';
 import { SortableTable } from './SortableTable';
+import { TabbedView } from './TabbedView';
+import { Table } from './Table';
 
-export function ArenaLeaderboardElt() {
-  const { leaderboard, error } = useArenaLeaderboard();
+export function ArenaLeaderboardDisplay() {
+  const { leaderboard, competitiveLeaderboard, error } = useArenaLeaderboard();
 
   const errorMessage = 'Error Loading Leaderboard';
 
   return (
     <GenericErrorBoundary errorMessage={errorMessage}>
-      {!leaderboard && !error && <LoadingSpinner initialText={'Loading Leaderboard...'} />}
-      {leaderboard && <ArenaLeaderboardBody leaderboard={leaderboard} />}
+      <div>Leaderboard</div>
+      {!leaderboard && !competitiveLeaderboard && !error && (
+        <LoadingSpinner initialText={'Loading Leaderboards...'} />
+      )}
+      {leaderboard && competitiveLeaderboard && (
+        <ArenaLeaderboardBody
+          leaderboard={leaderboard}
+          competitiveLeaderboard={competitiveLeaderboard}
+        />
+      )}
       {error && <Red>{errorMessage}</Red>}
     </GenericErrorBoundary>
   );
@@ -79,40 +89,27 @@ function numberSort(a: number | undefined, b: number | undefined) {
 type Row = [string, number | undefined, number | undefined];
 
 const sortFunctions = [
-  (
-    left: Row,
-    right: Row
-  ) => {
-    if(!left && !right) return 0;
-    if(!left || !left[0]) return 1;
-    if(!right || right[0]) return -1;
+  (left: Row, right: Row) => {
+    if (!left && !right) return 0;
+    if (!left || !left[0]) return 1;
+    if (!right || right[0]) return -1;
     return left[0].localeCompare(right[0]);
   },
-  (
-    left: Row,
-    right: Row
-  ) => {
-    if(!left && !right) return 0;
-    if(!left || !left[1]) return 1;
-    if(!right || !right[1]) return -1;
+  (left: Row, right: Row) => {
+    if (!left && !right) return 0;
+    if (!left || !left[1]) return 1;
+    if (!right || !right[1]) return -1;
     return right[1] - left[1];
   },
-  (
-    left: Row,
-    right: Row
-  ) => {
-    if(!left && !right) return 0;
-    if(!left || !left[2]) return 1;
-    if(!right || !right[2]) return -1;
+  (left: Row, right: Row) => {
+    if (!left && !right) return 0;
+    if (!left || !left[2]) return 1;
+    if (!right || !right[2]) return -1;
     return right[2] - left[2];
   },
 ];
 
-function ArenaLeaderboardTable({
-  rows,
-}: {
-  rows: Row[];
-}) {
+function ArenaLeaderboardTable({ rows }: { rows: Row[] }) {
   return (
     <TableContainer>
       <SortableTable
@@ -146,8 +143,40 @@ function ArenaLeaderboardTable({
   );
 }
 
+function CompetitiveLeaderboardTable({ rows }: { rows: Array<[string, number | undefined]> }) {
+  return (
+    <TableContainer>
+      <Table
+        alignments={['r', 'l', 'r']}
+        headers={[
+          <Cell key='place'>place</Cell>,
+          <Cell key='player'>player</Cell>,
+          <Cell key='score'>score</Cell>,
+        ]}
+        rows={rows}
+        columns={[
+          (row: [string, number], i) => (
+            <Cell style={{ color: getRankColor([i, row[1]]) }}>
+              {row[1] === undefined || row[1] === null ? 'unranked' : i + 1 + '.'}
+            </Cell>
+          ),
+          (row: [string, number | undefined], i) => {
+            const color = getRankColor([i, row[1]]);
+            return <Cell style={{ color }}>{playerToEntry(row[0], color)}</Cell>;
+          },
+          (row: [string, number], i) => {
+            return (
+              <Cell style={{ color: getRankColor([i, row[1]]) }}>{scoreToString(row[1])}</Cell>
+            );
+          },
+        ]}
+      />
+    </TableContainer>
+  );
+}
+
 // TODO: update this each round, or pull from contract constants
-const roundEndTimestamp = '2022-03-01T05:00:00.000Z';
+const roundEndTimestamp = '2022-06-06T00:00:00.000Z';
 const roundEndTime = new Date(roundEndTimestamp).getTime();
 
 function CountDown() {
@@ -175,7 +204,37 @@ function CountDown() {
   return <>{str}</>;
 }
 
-function ArenaLeaderboardBody({ leaderboard }: { leaderboard: ArenaLeaderboard }) {
+function ArenaLeaderboardBody({
+  leaderboard,
+  competitiveLeaderboard,
+}: {
+  leaderboard: ArenaLeaderboard;
+  competitiveLeaderboard: Leaderboard;
+}) {
+  leaderboard.entries.sort((a, b) => {
+    if (typeof a.games !== 'number' && typeof b.games !== 'number') {
+      return 0;
+    } else if (typeof a.games !== 'number') {
+      return 1;
+    } else if (typeof b.games !== 'number') {
+      return -1;
+    }
+
+    return b.games - a.games;
+  });
+
+  competitiveLeaderboard.entries.sort((a, b) => {
+    if (typeof a.score !== 'number' && typeof b.score !== 'number') {
+      return 0;
+    } else if (typeof a.score !== 'number') {
+      return 1;
+    } else if (typeof b.score !== 'number') {
+      return -1;
+    }
+
+    return b.score - a.score;
+  });
+
   const rows: [string, number | undefined, number | undefined][] = leaderboard.entries.map(
     (entry) => {
       if (typeof entry.twitter === 'string') {
@@ -186,32 +245,73 @@ function ArenaLeaderboardBody({ leaderboard }: { leaderboard: ArenaLeaderboard }
     }
   );
 
+  const competitiveRows: [string, number | undefined][] = competitiveLeaderboard.entries.map(
+    (entry) => {
+      if (typeof entry.twitter === 'string') {
+        return [entry.twitter, entry.score];
+      }
+
+      return [entry.ethAddress, entry.score];
+    }
+  );
+
   return (
-    <div>
-      <StatsTableContainer>
-        <StatsTable>
-          <tbody>
-            <tr>
-              <td>players</td>
-              <td>{leaderboard.entries.length}</td>
-            </tr>
-            <tr>
-              <td>lobbies created</td>
-              <td>{leaderboard.entries.reduce((partialSum, a) => partialSum + a.games, 0)}</td>
-            </tr>
-          </tbody>
-        </StatsTable>
-      </StatsTableContainer>
-      <Spacer height={8} />
-      <ArenaLeaderboardTable rows={rows} />
-    </div>
+    <TabbedView
+      style={{ height: '100%', width: '500px' }}
+      tabTitles={['Competitive', 'Casual']}
+      tabContents={(i) => {
+        if (i === 0) {
+          return (
+            <LeaderboardContainer>
+              <StatsTableContainer>
+                <StatsTable>
+                  <tbody>
+                    <tr>
+                      <td>time left</td>
+                      <td>
+                        {' '}
+                        <CountDown />
+                      </td>
+                    </tr>
+                  </tbody>
+                </StatsTable>
+              </StatsTableContainer>
+              <Spacer height={8} />
+              <CompetitiveLeaderboardTable rows={competitiveRows} />
+            </LeaderboardContainer>
+          );
+        }
+        return (
+          <LeaderboardContainer>
+            <StatsTableContainer>
+              <StatsTable>
+                <tbody>
+                  <tr>
+                    <td>players</td>
+                    <td>{leaderboard.entries.length}</td>
+                  </tr>
+                  <tr>
+                    <td>lobbies created</td>
+                    <td>
+                      {leaderboard.entries.reduce((partialSum, a) => partialSum + a.games, 0)}
+                    </td>
+                  </tr>
+                </tbody>
+              </StatsTable>
+            </StatsTableContainer>
+            <Spacer height={8} />
+            <ArenaLeaderboardTable rows={rows} />
+          </LeaderboardContainer>
+        );
+      }}
+    />
   );
 }
 
 const Cell = styled.div`
   padding: 4px 8px;
   color: ${dfstyles.colors.text};
-  background: transparent
+  background: transparent;
 `;
 
 const TableContainer = styled.div`
@@ -221,6 +321,12 @@ const TableContainer = styled.div`
   padding: 16px;
 `;
 
+const LeaderboardContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`
 const StatsTableContainer = styled.div`
   display: flex;
   justify-content: center;

@@ -217,9 +217,11 @@ export function useLeaderboard(poll: number | undefined = undefined): {
 
 export function useArenaLeaderboard(poll: number | undefined = undefined): {
   leaderboard: ArenaLeaderboard | undefined;
+  competitiveLeaderboard: Leaderboard | undefined;
   error: Error | undefined;
 } {
   const [leaderboard, setLeaderboard] = useState<ArenaLeaderboard | undefined>();
+  const [competitiveLeaderboard, setCompetitiveLeaderboard] = useState<Leaderboard | undefined>();
   const [error, setError] = useState<Error | undefined>();
 
   const load = useCallback(async function load() {
@@ -231,9 +233,22 @@ export function useArenaLeaderboard(poll: number | undefined = undefined): {
     }
   }, []);
 
-  usePoll(load, poll, true);
+  const loadCompetitive = useCallback(async function loadCompetitive() {
+    try {
+      setCompetitiveLeaderboard(await loadLeaderboard());
+    } catch (e) {
+      console.log('error loading leaderboard', e);
+      setError(e);
+    }
+  }, []);
 
-  return { leaderboard, error };
+  
+
+  usePoll(load, poll, true);
+  usePoll(loadCompetitive, poll, true);
+
+
+  return { leaderboard, competitiveLeaderboard, error };
 }
 
 export function usePopAllOnSelectedPlanetChanged(
