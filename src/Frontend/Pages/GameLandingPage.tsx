@@ -446,11 +446,6 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
         setStep(TerminalPromptStep.CONTRACT_SET);
       } else {
         terminal.current?.println('');
-        terminal.current?.println(
-          'Press ENTER to generate your competitive arena and spawn planets.'
-        );
-        await terminal.current?.getInput();
-        terminal.current?.println('');
         terminal.current?.print('Creating new arena instance...');
         try {
           await createLobby();
@@ -459,6 +454,12 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
         } catch (e) {
           console.error(e);
           terminal.current?.println('FAILED', TerminalTextStyle.Red);
+          terminal.current?.println('');
+          terminal.current?.println(
+            'Press ENTER to try again.'
+          );
+          await terminal.current?.getInput();
+          terminal.current?.println('');
 
           await advanceStateFromAccountSet(terminal);
         }
@@ -966,30 +967,29 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
         setStep(TerminalPromptStep.TERMINATED);
         return;
       }
-      const endTime = gameUIManager.getEndTimeSeconds();
+      const endTime = gameUIManager.getEndTimeSeconds()
       if (endTime && Date.now() / 1000 > endTime) {
-        terminal.current?.println(
-          'ERROR: This game has ended. Terminating session.',
-          TerminalTextStyle.Red
-        );
+        terminal.current?.println('ERROR: This game has ended. Terminating session.', TerminalTextStyle.Red);
         setStep(TerminalPromptStep.TERMINATED);
         return;
       }
 
       terminal.current?.newline();
-
+      
       terminal.current?.println('We collect a minimal set of statistics such as SNARK proving');
       terminal.current?.println('times and average transaction times across browsers, to help ');
       terminal.current?.println('us optimize performance and fix bugs. You can opt out of this');
       terminal.current?.println('in the Settings pane.');
       terminal.current?.println('');
 
-      terminal.current?.newline();
 
-      terminal.current?.println('Press ENTER to find a home planet. This may take up to 120s.');
-      terminal.current?.println('This will consume a lot of CPU.');
+      if(!gameUIManager.getGameManager().getContractConstants().MANUAL_SPAWN){
+        terminal.current?.newline();
+        terminal.current?.println('Press ENTER to find a home planet. This may take up to 120s.');
+        terminal.current?.println('This will consume a lot of CPU.');
 
-      await terminal.current?.getInput();
+        await terminal.current?.getInput();
+      }
 
       gameUIManager.getGameManager().on(GameManagerEvent.InitializedPlayer, () => {
         setTimeout(() => {
@@ -1123,26 +1123,6 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
     },
     [
       step,
-      // advanceStateFromAccountSet,
-      // advanceStateFromContractSet,
-      // advanceStateFromArenaCreated,
-      // advanceStateFromPlanetsCreated,
-      // advanceStateFromAddAccount,
-      // advanceStateFromAllChecksPass,
-      // advanceStateFromAskAddAccount,
-      // advanceStateFromAskHasWhitelistKey,
-      // advanceStateFromAskPlayerEmail,
-      // advanceStateFromAskWaitlistEmail,
-      // advanceStateFromAskWhitelistKey,
-      // advanceStateFromCompatibilityPassed,
-      // advanceStateFromComplete,
-      // advanceStateFromDisplayAccounts,
-      // advanceStateFromError,
-      // advanceStateFromFetchingEthData,
-      // advanceStateFromGenerateAccount,
-      // advanceStateFromImportAccount,
-      // advanceStateFromNoHomePlanet,
-      // advanceStateFromNone,
       ethConnection,
     ]
   );
