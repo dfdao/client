@@ -343,7 +343,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
   );
 
   async function loadBalances(addresses: EthAddress[]) {
-    if(!ethConnection) throw new Error('error: cannot load balances');
+    if (!ethConnection) throw new Error('error: cannot load balances');
     const queue = new ThrottledConcurrentQueue({
       invocationIntervalMs: 1000,
       maxInvocationsPerIntervalMs: 25,
@@ -384,10 +384,6 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
           const account = accounts[selection - 1];
           await ethConnection?.setAccount(account.privateKey);
           setStep(TerminalPromptStep.ACCOUNT_SET);
-          terminal.current?.println(
-            'An unknown error occurred. please try again.',
-            TerminalTextStyle.Red
-          );
         }
       } catch (e) {
         console.log(e);
@@ -473,12 +469,55 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
     },
     [ethConnection]
   );
-  
   const advanceStateFromAccountSet = useCallback(
     async (terminal: React.MutableRefObject<TerminalHandle | undefined>) => {
       if (contractAddress) {
         setStep(TerminalPromptStep.CONTRACT_SET);
       } else {
+        const playerAddress = ethConnection?.getAddress();
+        if (!playerAddress || !ethConnection) throw new Error('not logged in');
+
+        const currBalance = weiToEth(await ethConnection.loadBalance(playerAddress));
+        const faucet = await ethConnection.loadContract<DFArenaFaucet>(
+          FAUCET_ADDRESS,
+          loadFaucetContract
+        );
+        const nextAccessTimeSeconds = (await faucet.getNextAccessTime(playerAddress)).toNumber();
+        const nowSeconds = Date.now() / 1000;
+        console.log(
+          `You can receive another drip in ${Math.floor(
+            (nextAccessTimeSeconds - nowSeconds) / 60 / 60
+          )} hours`
+        );
+        if (currBalance < 0.05 && nowSeconds > nextAccessTimeSeconds) {
+          terminal.current?.println(`Getting xDAI from faucet...`, TerminalTextStyle.Blue);
+          const success = await requestFaucet(playerAddress);
+          if (success) {
+            const newBalance = weiToEth(await ethConnection.loadBalance(playerAddress));
+            terminal.current?.println(
+              `Your balance has increased by ${newBalance - currBalance}.`,
+              TerminalTextStyle.Green
+            );
+            await new Promise((r) => setTimeout(r, 1500));
+          } else {
+            terminal.current?.println(
+              'An error occurred in faucet. Try again with an account that has XDAI',
+              TerminalTextStyle.Red
+            );
+
+            terminal.current?.printLink(
+              'or click here to manually get Optimism xDAI\n',
+              () => {
+                window.open(
+                  'https://www.xdaichain.com/for-developers/optimism-optimistic-rollups-on-gc'
+                );
+              },
+              TerminalTextStyle.Blue
+            );
+            terminal.current?.println('');
+            return;
+          }
+        }
         terminal.current?.println('');
         terminal.current?.print('Creating new arena instance...');
         try {
@@ -1221,22 +1260,23 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
       contractAddress,
     });
 
-    // 
     _.chunk(config.INIT_PLANETS, CHUNK_SIZE).map(async (chunk) => {
+      const args = Promise.resolve([chunk]);
+      const txIntent = {
+        methodName: 'bulkCreateAndReveal' as ContractMethodName,
+        contract: contractsAPI.contract,
+        args: args,
+      };
 
-        const args = Promise.resolve([chunk]);
-        const txIntent = {
-          methodName: 'bulkCreateAndReveal' as ContractMethodName,
-          contract: contractsAPI.contract,
-          args: args,
-        };
+      const tx = await contractsAPI.submitTransaction(txIntent, {
+        gasLimit: '15000000',
+      });
 
-        const tx = await contractsAPI.submitTransaction(txIntent, {
-          gasLimit: '15000000',
-        });
-
-        await tx.confirmedPromise;
-        console.log(`successfully created planets`, chunk.map(i => i))
+      await tx.confirmedPromise;
+      console.log(
+        `successfully created planets`,
+        chunk.map((i) => i)
+      );
     });
   }
 
