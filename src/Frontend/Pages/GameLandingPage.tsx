@@ -1,7 +1,12 @@
 import { BLOCK_EXPLORER_URL } from '@darkforest_eth/constants';
 import { CONTRACT_ADDRESS, FAUCET_ADDRESS, INIT_ADDRESS } from '@darkforest_eth/contracts';
 import { DarkForest, DFArenaFaucet, DFArenaInitialize } from '@darkforest_eth/contracts/typechain';
-import { EthConnection, neverResolves, weiToEth } from '@darkforest_eth/network';
+import {
+  EthConnection,
+  neverResolves,
+  ThrottledConcurrentQueue,
+  weiToEth,
+} from '@darkforest_eth/network';
 import { address } from '@darkforest_eth/serde';
 import { bigIntFromKey } from '@darkforest_eth/whitelist';
 import { utils, Wallet } from 'ethers';
@@ -337,34 +342,63 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
     [isLobby, ethConnection, selectedAddress]
   );
 
+  async function loadBalances(addresses: EthAddress[]) {
+    if(!ethConnection) throw new Error('error: cannot load balances');
+    const queue = new ThrottledConcurrentQueue({
+      invocationIntervalMs: 1000,
+      maxInvocationsPerIntervalMs: 25,
+    });
+
+    const balances = await Promise.all(
+      addresses.map((address) => queue.add(() => ethConnection.loadBalance(address)))
+    );
+
+    return balances.map(weiToEth);
+  }
+
   const advanceStateFromDisplayAccounts = useCallback(
     async (terminal: React.MutableRefObject<TerminalHandle | undefined>) => {
       terminal.current?.println(``);
       const accounts = getAccounts();
-      for (let i = 0; i < accounts.length; i += 1) {
-        terminal.current?.print(`(${i + 1}): `, TerminalTextStyle.Sub);
-        terminal.current?.println(`${accounts[i].address}`);
-      }
-      terminal.current?.println(``);
-      terminal.current?.println(`Select an account:`, TerminalTextStyle.Text);
 
-      const selection = +((await terminal.current?.getInput()) || '');
-      if (isNaN(selection) || selection > accounts.length) {
-        terminal.current?.println('Unrecognized input. Please try again.');
-        await advanceStateFromDisplayAccounts(terminal);
-      } else {
-        const account = accounts[selection - 1];
-        try {
+      try {
+        const balances = await loadBalances(accounts.map((a) => a.address));
+
+        for (let i = 0; i < accounts.length; i += 1) {
+          terminal.current?.print(`(${i + 1}): `, TerminalTextStyle.Sub);
+          terminal.current?.print(`${accounts[i].address} `);
+          if (balances[i] == 0) {
+            terminal.current?.println(balances[i].toFixed(2) + ' xDAI', TerminalTextStyle.Red);
+          } else {
+            terminal.current?.println(balances[i].toFixed(2) + ' xDAI', TerminalTextStyle.Green);
+          }
+        }
+        terminal.current?.println(``);
+        terminal.current?.println(`Select an account:`, TerminalTextStyle.Text);
+
+        const selection = +((await terminal.current?.getInput()) || '');
+        if (isNaN(selection) || selection > accounts.length) {
+          terminal.current?.println('Unrecognized input. Please try again.');
+          await advanceStateFromDisplayAccounts(terminal);
+        } else {
+          const account = accounts[selection - 1];
           await ethConnection?.setAccount(account.privateKey);
           setStep(TerminalPromptStep.ACCOUNT_SET);
-        } catch (e) {
           terminal.current?.println(
             'An unknown error occurred. please try again.',
             TerminalTextStyle.Red
           );
         }
+      } catch (e) {
+        console.log(e);
+        terminal.current?.println(
+          'An unknown error occurred. please try again.',
+          TerminalTextStyle.Red
+        );
+        return;
       }
     },
+
     [ethConnection]
   );
 
