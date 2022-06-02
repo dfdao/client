@@ -14,6 +14,7 @@ import {
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import GameUIManager from '../../Backend/GameLogic/GameUIManager';
 import { loadArenaLeaderboard } from '../../Backend/Network/ArenaLeaderboardApi';
+import { loadCompetitiveLeaderboard } from '../../Backend/Network/CompetitiveLeaderboardApi';
 import { loadLeaderboard } from '../../Backend/Network/LeaderboardApi';
 import { Wrapper } from '../../Backend/Utils/Wrapper';
 import { ContractsAPIEvent } from '../../_types/darkforest/api/ContractsAPITypes';
@@ -217,11 +218,9 @@ export function useLeaderboard(poll: number | undefined = undefined): {
 
 export function useArenaLeaderboard(poll: number | undefined = undefined): {
   leaderboard: ArenaLeaderboard | undefined;
-  competitiveLeaderboard: Leaderboard | undefined;
   error: Error | undefined;
 } {
   const [leaderboard, setLeaderboard] = useState<ArenaLeaderboard | undefined>();
-  const [competitiveLeaderboard, setCompetitiveLeaderboard] = useState<Leaderboard | undefined>();
   const [error, setError] = useState<Error | undefined>();
 
   const load = useCallback(async function load() {
@@ -233,24 +232,36 @@ export function useArenaLeaderboard(poll: number | undefined = undefined): {
     }
   }, []);
 
-  const loadCompetitive = useCallback(async function loadCompetitive() {
-    try {
-      setCompetitiveLeaderboard(await loadLeaderboard());
-    } catch (e) {
-      console.log('error loading leaderboard', e);
-      setError(e);
-    }
-  }, []);
-
-  
 
   usePoll(load, poll, true);
-  usePoll(loadCompetitive, poll, true);
 
 
-  return { leaderboard, competitiveLeaderboard, error };
+  return { leaderboard, error };
 }
 
+export function useCompetitiveLeaderboard(poll: number | undefined = undefined ): {
+competitiveLeaderboard: Leaderboard | undefined;
+competitiveError: Error | undefined;
+} {
+const [competitiveLeaderboard, setCompetitiveLeaderboard] = useState<Leaderboard | undefined>();
+const [competitiveError, setCompetitiveError] = useState<Error | undefined>();
+
+const loadCompetitive = useCallback(async function loadCompetitive() {
+  try {
+    setCompetitiveLeaderboard(await loadCompetitiveLeaderboard());
+  } catch (e) {
+    console.log('error loading leaderboard', e);
+    setCompetitiveError(e);
+  }
+}, []);
+
+
+
+usePoll(loadCompetitive, poll, true);
+
+
+return { competitiveLeaderboard, competitiveError };
+}
 export function usePopAllOnSelectedPlanetChanged(
   modal: ModalHandle,
   startingId: LocationId | undefined
