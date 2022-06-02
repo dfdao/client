@@ -9,6 +9,7 @@ import { TextPreview } from '../Components/TextPreview';
 import { RarityColors } from '../Styles/Colors';
 import dfstyles from '../Styles/dfstyles';
 import { useArenaLeaderboard, useCompetitiveLeaderboard } from '../Utils/AppHooks';
+import { roundEndTimestamp, roundStartTimestamp } from '../Utils/constants';
 import { formatDuration } from '../Utils/TimeUtils';
 import { GenericErrorBoundary } from './GenericErrorBoundary';
 import { SortableTable } from './SortableTable';
@@ -200,16 +201,19 @@ function CompetitiveLeaderboardTable({ rows }: { rows: Array<[string, number | u
   );
 }
 
-// TODO: update this each round, or pull from contract constants
-const roundEndTimestamp = '2022-06-06T00:00:00.000Z';
+const roundStartTime = new Date(roundStartTimestamp).getTime();
+
 const roundEndTime = new Date(roundEndTimestamp).getTime();
 
 function CountDown() {
   const [str, setStr] = useState('');
 
   const update = () => {
+    const timeUntilStartms = roundStartTime - new Date().getTime();
     const timeUntilEndms = roundEndTime - new Date().getTime();
-    if (timeUntilEndms <= 0) {
+    if(timeUntilStartms > 0) {
+      setStr(`starts in ${formatDuration(timeUntilStartms)}`)
+    } else if (timeUntilEndms <= 0) {
       setStr('yes');
     } else {
       setStr(formatDuration(timeUntilEndms));
