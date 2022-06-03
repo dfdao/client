@@ -33,9 +33,9 @@ const defaultAddress = address(CONTRACT_ADDRESS);
 
 const ButtonWrapper = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: center;
   gap: 8px;
-  flex-direction: row;
 
   @media only screen and (max-device-width: 1000px) {
     grid-template-columns: auto;
@@ -99,29 +99,20 @@ export default function LandingPage() {
 
             <LandingPageRoundArt />
 
-            <p>
-              <White>Dark Forest</White> <Text>zkSNARK space warfare</Text>
-              <br />
-              <Red>Battle Arena</Red>
-            </p>
-
             <Spacer height={16} />
 
             <ButtonWrapper>
-              <Btn size='large' onClick={() => history.push(`/arena/${defaultAddress}`)}>
-                Create Arena
+              <Btn
+                size='large'
+                disabled={!isRoundOngoing()}
+                style={{ borderColor: 'red', color: 'red' } as CSSStyleDeclaration & CSSProperties}
+                onClick={() => history.push(`/play/`)}
+              >
+                Race the Grand Prix
               </Btn>
-                <Btn
-                  size='large'
-                  disabled = {!isRoundOngoing()}
-                  style={
-                    { borderColor: 'red', color: 'red' } as CSSStyleDeclaration & CSSProperties
-                  }
-                  onClick={() => history.push(`/play/`)}
-                >
-                  Grand Prix
-                </Btn>
-
+              <Btn size='large' onClick={() => history.push(`/arena/${defaultAddress}`)}>
+                Create Custom Arena
+              </Btn>
             </ButtonWrapper>
           </Header>
             

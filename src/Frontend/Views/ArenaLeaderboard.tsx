@@ -25,32 +25,15 @@ export function ArenaLeaderboardDisplay() {
 
   return (
     <GenericErrorBoundary errorMessage={errorMessage}>
-      <div>Leaderboard</div>
-      {!leaderboard && !competitiveLeaderboard && !error && (
-        <LoadingSpinner initialText={'Loading Leaderboards...'} />
-      )}
-      <TabbedView
-        style={{ height: '100%', width: '500px' }}
-        tabTitles={['Grand Prix', 'Casual']}
-        tabContents={(i) =>
-          i === 0 ? (
-            <LeaderboardContainer>
-              <StatsTableContainer>
-                <StatsTable>
-                  <CountDown />
-                </StatsTable>
-              </StatsTableContainer>
-              <Spacer height={8} />
-              <CompetitiveLeaderboardBody
-                leaderboard={competitiveLeaderboard}
-                error={competitiveError}
-              />
-            </LeaderboardContainer>
-          ) : (
-            <ArenaLeaderboardBody leaderboard={leaderboard} error={error} />
-          )
-        }
-      />
+      <LeaderboardContainer>
+        <StatsTableContainer>
+          <StatsTable>
+            <CountDown />
+          </StatsTable>
+        </StatsTableContainer>
+        <Spacer height={8} />
+        <CompetitiveLeaderboardBody leaderboard={competitiveLeaderboard} error={competitiveError} />
+      </LeaderboardContainer>
     </GenericErrorBoundary>
   );
 }
@@ -218,13 +201,13 @@ function CountDown() {
     const timeUntilStartms = roundStartTime - new Date().getTime();
     const timeUntilEndms = roundEndTime - new Date().getTime();
     if (timeUntilStartms > 0) {
-      setStr('starts in');
+      setStr('Grand Prix starts in');
       setTime(`${formatDuration(timeUntilStartms)}`);
     } else if (timeUntilEndms <= 0) {
       setStr('');
-      setTime('round complete');
+      setTime('Grand Prix complete');
     } else {
-      setStr('time left');
+      setStr('Grand Prix time left');
       setTime(formatDuration(timeUntilEndms));
     }
   };
