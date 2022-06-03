@@ -112,7 +112,7 @@ export default function LandingPage() {
               </Btn>
               <Btn size='large' style = {{borderColor: "red", color: "red"} as CSSStyleDeclaration & CSSProperties} onClick={() => history.push(`/play/`)}>
 
-                Solo Challenge
+                Grand Prix
               </Btn>
 
             </ButtonWrapper>
