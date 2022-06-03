@@ -34,10 +34,18 @@ export function ArenaLeaderboardDisplay() {
         tabTitles={['Grand Prix', 'Casual']}
         tabContents={(i) =>
           i === 0 ? (
-            <CompetitiveLeaderboardBody
-              leaderboard={competitiveLeaderboard}
-              error={competitiveError}
-            />
+            <LeaderboardContainer>
+              <StatsTableContainer>
+                <StatsTable>
+                  <CountDown />
+                </StatsTable>
+              </StatsTableContainer>
+              <Spacer height={8} />
+              <CompetitiveLeaderboardBody
+                leaderboard={competitiveLeaderboard}
+                error={competitiveError}
+              />
+            </LeaderboardContainer>
           ) : (
             <ArenaLeaderboardBody leaderboard={leaderboard} error={error} />
           )
@@ -168,6 +176,7 @@ function ArenaLeaderboardTable({ rows }: { rows: Row[] }) {
 }
 
 function CompetitiveLeaderboardTable({ rows }: { rows: Array<[string, number | undefined]> }) {
+  if (rows.length == 0) return <Subber>No players finished</Subber>;
   return (
     <TableContainer>
       <Table
@@ -256,11 +265,7 @@ function CompetitiveLeaderboardBody({
   }
 
   if (leaderboard == undefined) {
-    return (
-      <LeaderboardContainer>
-        <Subber>Leaderboard loading...</Subber>
-      </LeaderboardContainer>
-    );
+    return <Subber>Leaderboard loading...</Subber>;
   }
 
   leaderboard.entries.sort((a, b) => {
@@ -283,25 +288,7 @@ function CompetitiveLeaderboardBody({
     return [entry.ethAddress, entry.score];
   });
 
-  if (competitiveRows.length == 0) {
-    return (
-      <LeaderboardContainer>
-        <Subber>No players finished</Subber>
-      </LeaderboardContainer>
-    );
-  }
-
-  return (
-    <LeaderboardContainer>
-      <StatsTableContainer>
-        <StatsTable>
-          <CountDown />
-        </StatsTable>
-      </StatsTableContainer>
-      <Spacer height={8} />
-      <CompetitiveLeaderboardTable rows={competitiveRows} />
-    </LeaderboardContainer>
-  );
+  return <CompetitiveLeaderboardTable rows={competitiveRows} />;
 }
 
 function ArenaLeaderboardBody({
