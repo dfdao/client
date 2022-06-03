@@ -6,12 +6,12 @@ import {
   Leaderboard,
   LeaderboardEntry,
 } from '@darkforest_eth/types';
-import { roundEndTimestamp, roundStartTimestamp } from '../../Frontend/Utils/constants';
+import { roundEndTimestamp, roundStartTimestamp, competitiveConfig } from '../../Frontend/Utils/constants';
 import { getAllTwitters } from './UtilityServerAPI';
 
 const QUERY = `
 query {
-  arenas(where: {configHash: "0x7d4292d4eb14e7d0661f846a93a5a0389a6db9262046a6c28d7c5b459f18dbb1"}) {
+  arenas(where: {configHash: "${competitiveConfig}"}) {
     id
     startTime
     creator

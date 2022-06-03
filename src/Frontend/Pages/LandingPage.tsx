@@ -3,11 +3,12 @@ import { address } from '@darkforest_eth/serde';
 import React, { CSSProperties } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
+import { isRoundOngoing } from '../../Backend/Utils/Utils';
 import { Btn } from '../Components/Btn';
 import { EmSpacer, Link, Spacer, Title } from '../Components/CoreUI';
 import { EmailCTA, EmailCTAMode } from '../Components/Email';
 import { Modal } from '../Components/Modal';
-import { HideSmall, Red, Text, White } from '../Components/Text';
+import { Red, White, Text } from '../Components/Text';
 import dfstyles from '../Styles/dfstyles';
 import { ArenaLeaderboardDisplay } from '../Views/ArenaLeaderboard';
 import { LandingPageRoundArt } from '../Views/LandingPageRoundArt';
@@ -110,24 +111,30 @@ export default function LandingPage() {
               <Btn size='large' onClick={() => history.push(`/arena/${defaultAddress}`)}>
                 Create Arena
               </Btn>
-              <Btn size='large' style = {{borderColor: "red", color: "red"} as CSSStyleDeclaration & CSSProperties} onClick={() => history.push(`/play/`)}>
-
-                Grand Prix
-              </Btn>
+                <Btn
+                  size='large'
+                  disabled = {!isRoundOngoing()}
+                  style={
+                    { borderColor: 'red', color: 'red' } as CSSStyleDeclaration & CSSProperties
+                  }
+                  onClick={() => history.push(`/play/`)}
+                >
+                  Grand Prix
+                </Btn>
 
             </ButtonWrapper>
           </Header>
             
-          <Spacer height={32} />
-          <EmailWrapper>
+          {/* <Spacer height={32} /> */}
+          {/* <EmailWrapper>
             <EmailCTA mode={EmailCTAMode.SUBSCRIBE} />
-          </EmailWrapper>
+          </EmailWrapper> */}
         </MainContentContainer>
 
         <Spacer height={28} />
 
         {/* <LeadboardDisplay /> */}
-        <ArenaLeaderboardDisplay/>
+        <ArenaLeaderboardDisplay />
 
         <Spacer height={256} />
       </Page>

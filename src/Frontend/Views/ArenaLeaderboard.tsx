@@ -31,7 +31,7 @@ export function ArenaLeaderboardDisplay() {
       )}
       <TabbedView
         style={{ height: '100%', width: '500px' }}
-        tabTitles={['Competitive', 'Casual']}
+        tabTitles={['Grand Prix', 'Casual']}
         tabContents={(i) =>
           i === 0 ? (
             <CompetitiveLeaderboardBody
@@ -64,13 +64,12 @@ function scoreToTime(score?: number | null) {
     return 'n/a';
   }
   score = Math.floor(score);
-  
+
   const seconds = String(score % 60).padStart(2, '0');
-  const minutes = String((Math.floor(score / 60)) % 60).padStart(2,'0');
-  const hours = String(Math.min(9999,Math.floor(score / 3600))).padStart(4,'0');
+  const minutes = String(Math.floor(score / 60) % 60).padStart(2, '0');
+  const hours = String(Math.min(99, Math.floor(score / 3600))).padStart(2, '0');
 
-
-  return hours + ':' + minutes + ":" + seconds;
+  return hours + ':' + minutes + ':' + seconds;
 }
 
 // pass in either an address, or a twitter handle. this function will render the appropriate
@@ -93,14 +92,13 @@ function getRankColor([rank, score]: [number, number | undefined]) {
     return RarityColors[ArtifactRarity.Legendary];
   }
 
-  if(rank === 0) {
+  if (rank === 0) {
     return RarityColors[ArtifactRarity.Legendary];
   }
 
-  if(rank < 6) {
+  if (rank < 6) {
     return RarityColors[ArtifactRarity.Epic];
   }
-
 
   return dfstyles.colors.dfgreen;
 }
@@ -191,9 +189,7 @@ function CompetitiveLeaderboardTable({ rows }: { rows: Array<[string, number | u
             return <Cell style={{ color }}>{playerToEntry(row[0], color)}</Cell>;
           },
           (row: [string, number], i) => {
-            return (
-              <Cell style={{ color: getRankColor([i, row[1]]) }}>{scoreToTime(row[1])}</Cell>
-            );
+            return <Cell style={{ color: getRankColor([i, row[1]]) }}>{scoreToTime(row[1])}</Cell>;
           },
         ]}
       />
@@ -206,17 +202,21 @@ const roundStartTime = new Date(roundStartTimestamp).getTime();
 const roundEndTime = new Date(roundEndTimestamp).getTime();
 
 function CountDown() {
+  const [time, setTime] = useState('');
   const [str, setStr] = useState('');
 
   const update = () => {
     const timeUntilStartms = roundStartTime - new Date().getTime();
     const timeUntilEndms = roundEndTime - new Date().getTime();
-    if(timeUntilStartms > 0) {
-      setStr(`starts in ${formatDuration(timeUntilStartms)}`)
+    if (timeUntilStartms > 0) {
+      setStr('starts in');
+      setTime(`${formatDuration(timeUntilStartms)}`);
     } else if (timeUntilEndms <= 0) {
-      setStr('yes');
+      setStr('');
+      setTime('round complete');
     } else {
-      setStr(formatDuration(timeUntilEndms));
+      setStr('time left');
+      setTime(formatDuration(timeUntilEndms));
     }
   };
 
@@ -230,7 +230,14 @@ function CountDown() {
     return () => clearInterval(interval);
   }, []);
 
-  return <>{str}</>;
+  return (
+    <tbody>
+      <tr>
+        <td>{str}</td>
+        <td>{time}</td>
+      </tr>
+    </tbody>
+  );
 }
 
 function CompetitiveLeaderboardBody({
@@ -240,10 +247,18 @@ function CompetitiveLeaderboardBody({
   leaderboard: Leaderboard | undefined;
   error: Error | undefined;
 }) {
-  if (leaderboard == undefined || error) {
+  if (error) {
     return (
       <LeaderboardContainer>
         <Red>{errorMessage}</Red>
+      </LeaderboardContainer>
+    );
+  }
+
+  if (leaderboard == undefined) {
+    return (
+      <LeaderboardContainer>
+        <Subber>Leaderboard loading...</Subber>
       </LeaderboardContainer>
     );
   }
@@ -268,19 +283,19 @@ function CompetitiveLeaderboardBody({
     return [entry.ethAddress, entry.score];
   });
 
+  if (competitiveRows.length == 0) {
+    return (
+      <LeaderboardContainer>
+        <Subber>No players finished</Subber>
+      </LeaderboardContainer>
+    );
+  }
+
   return (
     <LeaderboardContainer>
       <StatsTableContainer>
         <StatsTable>
-          <tbody>
-            <tr>
-              <td>time left</td>
-              <td>
-                {' '}
-                <CountDown />
-              </td>
-            </tr>
-          </tbody>
+          <CountDown />
         </StatsTable>
       </StatsTableContainer>
       <Spacer height={8} />
