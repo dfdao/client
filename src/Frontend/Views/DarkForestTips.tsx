@@ -46,14 +46,12 @@ export function DarkForestTips({
 
   return (
     <TipsContainer>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <HeaderText style={{ textDecoration: 'none' }}>{title ?? 'Dark Forest Tips'}</HeaderText>{' '}
-        <PrevNextContainer>
-          <TextButton onClick={() => incrementTipIndex(-1, true)}>previous</TextButton>
-          <Spacer width={16} />
-          <TextButton onClick={() => incrementTipIndex(1, true)}>next</TextButton>
-        </PrevNextContainer>
-      </div>
+      <HeaderText style={{ textDecoration: 'none' }}>{title ?? 'Dark Forest Tips'}</HeaderText>{' '}
+      <PrevNextContainer>
+        <TextButton onClick={() => incrementTipIndex(-1, true)}>previous</TextButton>
+        <Spacer width={16} />
+        <TextButton onClick={() => incrementTipIndex(1, true)}>next</TextButton>
+      </PrevNextContainer>
       <br />
       <br />
       <TipText>{tips[tipIndex]}</TipText>
@@ -73,12 +71,10 @@ const PrevNextContainer = styled.div`
 const TipsContainer = styled.div`
   margin-bottom: 8px;
   background-color: ${dfstyles.colors.backgrounddark};
+  width: 400px;
+  height: 250px;
   padding: 16px;
   border-radius: 3px;
   overflow: hidden;
   border: 1px solid ${dfstyles.colors.border};
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  max-width: 400px;
 `;
