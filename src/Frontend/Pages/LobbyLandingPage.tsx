@@ -135,7 +135,7 @@ class LobbyPageTerminal {
       this.terminal.println('Also, clearing browser local storage/cache will render your');
       this.terminal.println('burner wallets inaccessible, unless you export your private keys.');
       this.terminal.println('');
-      this.terminal.println('Press any key to continue:', TerminalTextStyle.Text);
+      this.terminal.println('Press Enter to continue:', TerminalTextStyle.Text);
 
       await this.terminal.getInput();
       await this.sendDrip(newAddr);
