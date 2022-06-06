@@ -15,7 +15,7 @@ import { getAllTwitters } from './UtilityServerAPI';
 
 const QUERY = `
 query {
-  arenas(where: {configHash: "${competitiveConfig}"}) {
+  arenas(first:1000, where: {configHash: "${competitiveConfig}"}) {
     id
     startTime
     winners(first :1) {
@@ -59,7 +59,6 @@ async function fetchGQL(query: any, graphApiUrl = API_URL_GRAPH) {
   });
 
   const rep = await response.json();
-  console.log('data', rep);
 
   if (rep.error) {
     throw new Error(rep.error);
@@ -104,5 +103,5 @@ async function convertData(arenas: graphArena[]): Promise<Leaderboard> {
     }
   }
 
-  return { entries };
+  return { entries, length: arenas.length };
 }
