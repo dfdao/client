@@ -100,7 +100,8 @@ export default function LandingPage() {
             <LandingPageRoundArt />
 
             <Spacer height={16} />
-
+            Happy Birthday Will! - dfdao family
+            <Spacer height={16} />
             <ButtonWrapper>
               <Btn
                 size='large'

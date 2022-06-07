@@ -253,7 +253,7 @@ function ArenasCreated({
         <tbody>
           <tr>
             <td>Total races</td>
-            <td>{leaderboard.length}</td>
+            <td>{leaderboard.entries.length}</td>
           </tr>
         </tbody>
       </div>
