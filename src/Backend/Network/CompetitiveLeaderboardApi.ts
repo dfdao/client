@@ -103,5 +103,5 @@ async function convertData(arenas: graphArena[]): Promise<Leaderboard> {
     }
   }
 
-  return { entries };
+  return { entries, length: arenas.length };
 }
