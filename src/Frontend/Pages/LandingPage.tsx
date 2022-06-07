@@ -100,7 +100,7 @@ export default function LandingPage() {
             <LandingPageRoundArt />
 
             <Spacer height={16} />
-            Happy Birthday Will! - dfdao family
+            6/7 - Happy Birthday 🥳 <Link to={'https://twitter.com/DangerWillRobin'}> Will</Link> ! - dfdao family
             <Spacer height={16} />
             <ButtonWrapper>
               <Btn
