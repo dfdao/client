@@ -57,6 +57,7 @@ function OnboardMoney({ advance }: { advance: () => void }) {
         Race against the clock to capture the Target Planet (it has a big 🎯 floating above it)
         and <Green>claim victory when it contains <Gold>{victoryThreshold}%</Gold> energy!</Green>
       </p>
+      <p>The ⏲️ starts when you make your first move. </p>
       {isCompetitive && (
         <p>The player with the fastest time after 48hrs will win XDAI and a 🏆!</p>
       )}
@@ -135,7 +136,7 @@ function OnboardKeys({
           {viewHomeCoords ? 'Hide' : 'View'} home coords
         </Btn>{' '}
         <br />
-        Your private key is:{' '}
+        Your home coords are:{' '}
         <TextPreview
           text={viewHomeCoords ? home : 'hidden'}
           focusedWidth={'150px'}
