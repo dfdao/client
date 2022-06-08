@@ -48,9 +48,6 @@ class LobbyPageTerminal {
     this.terminal.printElement(<MythicLabelText text='Create an Arena' />);
     this.terminal.newline();
     this.terminal.newline();
-    // this.terminal.printElement(<DarkForestTips tips={lobbyTips} title='Lobby Tips' />);
-    // this.terminal.newline();
-
     const accounts = getAccounts();
     this.terminal.println(`Found ${accounts.length} accounts on this device. Loading balances...`);
     this.terminal.newline();

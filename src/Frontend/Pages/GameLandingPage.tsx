@@ -102,6 +102,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
   const CHUNK_SIZE = 5;
   const config = stockConfig.competitive;
   const defaultAddress = address(CONTRACT_ADDRESS);
+  const isGrandPrix = !contractAddress;
 
   useEffect(() => {
     getEthConnection()
@@ -556,6 +557,10 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
 
   const advanceStateFromContractSet = useCallback(
     async (terminal: React.MutableRefObject<TerminalHandle | undefined>) => {
+      if(isGrandPrix) {
+        setStep(TerminalPromptStep.PLAYING);
+        return;
+      }
       terminal.current?.println(``);
       terminal.current?.println(
         `Would you like to play or spectate this game?`,
@@ -1086,16 +1091,16 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
 
   const advanceStateFromAllChecksPass = useCallback(
     async (terminal: React.MutableRefObject<TerminalHandle | undefined>) => {
-      terminal.current?.println('');
-      terminal.current?.println('Press ENTER to begin');
-      terminal.current?.println("Press 's' then ENTER to begin in SAFE MODE - plugins disabled");
+      // terminal.current?.println('');
+      // terminal.current?.println('Press ENTER to begin');
+      // terminal.current?.println("Press 's' then ENTER to begin in SAFE MODE - plugins disabled");
 
-      const input = await terminal.current?.getInput();
+      // const input = await terminal.current?.getInput();
 
-      if (input === 's') {
-        const gameUIManager = gameUIManagerRef.current;
-        gameUIManager?.getGameManager()?.setSafeMode(true);
-      }
+      // if (input === 's') {
+      //   const gameUIManager = gameUIManagerRef.current;
+      //   gameUIManager?.getGameManager()?.setSafeMode(true);
+      // }
 
       setStep(TerminalPromptStep.COMPLETE);
       setInitRenderState(InitRenderState.COMPLETE);
