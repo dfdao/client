@@ -45,7 +45,7 @@ class LobbyPageTerminal {
   }
 
   public async chooseAccount() {
-    this.terminal.printElement(<MythicLabelText text='Create a Lobby' />);
+    this.terminal.printElement(<MythicLabelText text='Create an Arena' />);
     this.terminal.newline();
     this.terminal.newline();
     // this.terminal.printElement(<DarkForestTips tips={lobbyTips} title='Lobby Tips' />);
