@@ -15,7 +15,7 @@ export const enum TutorialState {
   Spaceship,
   Deselect,
   HowToGetScore,
-  // ScoringDetails,
+  ScoringDetails,
   ZoomOut,
   MinerMove,
   MinerPause,
@@ -68,8 +68,9 @@ class TutorialManager extends EventEmitter {
   }
 
   private shouldSkipState(state: TutorialState) {
-    if(!this.uiManager.getSpaceJunkEnabled() && state === TutorialState.SpaceJunk) return true;
-    if(this.uiManager.getMySpaceships().length == 0 && state === TutorialState.Spaceship) return true;
+    if (!this.uiManager.getSpaceJunkEnabled() && state === TutorialState.SpaceJunk) return true;
+    if (this.uiManager.getMySpaceships().length == 0 && state === TutorialState.Spaceship)
+      return true;
     return false;
   }
 

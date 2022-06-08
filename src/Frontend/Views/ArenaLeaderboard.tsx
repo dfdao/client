@@ -228,7 +228,7 @@ function CountDown() {
   return (
     <tbody>
       <tr>
-        <td>{str}</td>
+       {str && <td>{str}</td>}
         <td>{time}</td>
       </tr>
     </tbody>

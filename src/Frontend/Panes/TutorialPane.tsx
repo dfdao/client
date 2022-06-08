@@ -34,8 +34,9 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
         <Gold>silver</Gold> for upgrades.
         <br />
         <br />
-        <White>Try sending energy to another planet.</White> You can click and drag to look for
-        other planets.
+        <White>Try sending energy to another planet.</White> You can click and drag to send energy
+        to another planet. Alternatively, click your planet, press {<White>q</White>}, and click a
+        nearby planet.
       </div>
     );
   } else if (tutorialState === TutorialState.SpaceJunk) {
@@ -62,10 +63,12 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
   } else if (tutorialState === TutorialState.Spaceship) {
     return (
       <div>
-        You also control several space ships - check your home planet! You can move spaceships
-        between any two planets, even if you don't own the source or destination planets. Space
-        ships can move any distance!{' '}
-        <White>Try moving a spaceship you own to another planet now!</White>
+        <p>
+          You also control several space ships - check your home planet! You can move spaceships
+          between any two planets, even if you don't own them. Space ships can move any distance!{' '}
+          <White>Try moving a spaceship you own to another planet now!</White>
+        </p>
+        <p>Tip: Before moving, click a spaceship to select it. Then execute your move.</p>
       </div>
     );
   } else if (tutorialState === TutorialState.Deselect) {
@@ -152,24 +155,23 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
         </div>
       </div>
     );
-  }
-  //  else if (tutorialState === TutorialState.ScoringDetails) {
-  //   return (
-  //     <div className='tutzoom'>
-  //       To win, take ownership of the target planet and fill its energy to{' '}
-  //       {uiManager.getGameManager().getContractConstants().CLAIM_VICTORY_ENERGY_PERCENT}%. Then
-  //       claim victory on that planet. If you capture the target planet first, you win!
-  //       <div>
-  //         <Btn
-  //           className='btn'
-  //           onClick={() => tutorialManager.acceptInput(TutorialState.ScoringDetails)}
-  //         >
-  //           Next
-  //         </Btn>
-  //       </div>
-  //     </div>
-  //   );
-  // } 
+  } else if (tutorialState === TutorialState.ScoringDetails) {
+    return (
+      <div className='tutzoom'>
+        To win, take ownership of the target planet and fill its energy to{' '}
+        {uiManager.getGameManager().getContractConstants().CLAIM_VICTORY_ENERGY_PERCENT}%. Then
+        claim victory on that planet. If you capture the target planet first, you win!
+        <div>
+          <Btn
+            className='btn'
+            onClick={() => tutorialManager.acceptInput(TutorialState.ScoringDetails)}
+          >
+            Next
+          </Btn>
+        </div>
+      </div>
+    );
+  } 
   // else if (tutorialState === TutorialState.Valhalla) {
   //   return (
   //     <div className='tutalmost'>
