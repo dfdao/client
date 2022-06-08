@@ -100,16 +100,15 @@ export default function LandingPage() {
             <LandingPageRoundArt />
 
             <Spacer height={16} />
-            Happy Birthday Will! - dfdao family
-            <Spacer height={16} />
+            
             <ButtonWrapper>
               <Btn
                 size='large'
-                disabled={!isRoundOngoing()}
+                // disabled={!isRoundOngoing()}
                 style={{ borderColor: 'red', color: 'red' } as CSSStyleDeclaration & CSSProperties}
                 onClick={() => history.push(`/play/`)}
               >
-                Race the Grand Prix
+                Practice Grand Prix #1
               </Btn>
               <Btn size='large' onClick={() => history.push(`/arena/${defaultAddress}`)}>
                 Create Custom Arena
