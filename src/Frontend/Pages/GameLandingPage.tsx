@@ -297,7 +297,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
           terminal.current?.print(`${account.address} `);
           terminal.current?.println(
             balances[i].toFixed(2) + ' xDAi',
-            balances[i] < 0.01 ? TerminalTextStyle.Red : TerminalTextStyle.Green
+            balances[i] < 0.001 ? TerminalTextStyle.Red : TerminalTextStyle.Green
           );
         });
       } catch (e) {
