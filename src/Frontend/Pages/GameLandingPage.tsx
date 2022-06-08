@@ -158,7 +158,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
       if (isLobby) {
         terminal.current?.newline();
         terminal.current?.printElement(
-          <MythicLabelText text={`You are joining a Dark Forest lobby`} />
+          <MythicLabelText text={`You are joining a Dark Forest Arena`} />
         );
         terminal.current?.newline();
         terminal.current?.newline();
@@ -472,8 +472,8 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
             (nextAccessTimeSeconds - nowSeconds) / 60 / 60
           )} hours`
         );
-        if (currBalance < 0.05 && nowSeconds > nextAccessTimeSeconds) {
-          terminal.current?.println(`Getting xDAI from faucet...`, TerminalTextStyle.Blue);
+        if (currBalance < 0.005 && nowSeconds > nextAccessTimeSeconds) {
+          terminal.current?.println(`Getting .01 xDAI from faucet...`, TerminalTextStyle.Blue);
           const success = await requestFaucet(playerAddress);
           if (success) {
             const newBalance = weiToEth(await ethConnection.loadBalance(playerAddress));

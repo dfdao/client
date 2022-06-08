@@ -28,7 +28,10 @@ export function ArenaLeaderboardDisplay() {
       <LeaderboardContainer>
         <StatsTableContainer>
           <StatsTable>
-            <CountDown />
+            <LeaderboardContainer>
+              <CountDown />
+              <ArenasCreated leaderboard={competitiveLeaderboard} error={competitiveError} />
+            </LeaderboardContainer>
           </StatsTable>
         </StatsTableContainer>
         <Spacer height={8} />
@@ -230,6 +233,37 @@ function CountDown() {
       </tr>
     </tbody>
   );
+}
+
+function ArenasCreated({
+  leaderboard,
+  error,
+}: {
+  leaderboard: Leaderboard | undefined;
+  error: Error | undefined;
+}) {
+  if (error) {
+    return (
+      <LeaderboardContainer>
+        <Red>{errorMessage}</Red>
+      </LeaderboardContainer>
+    );
+  }
+  if (leaderboard) {
+    return (
+      <div>
+        <tbody>
+          <tr>
+            <td>Total races</td>
+            <td>{leaderboard.length}</td>
+          </tr>
+        </tbody>
+      </div>
+    );
+  }
+  else {
+    return <></>;
+  }
 }
 
 function CompetitiveLeaderboardBody({

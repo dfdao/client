@@ -66,8 +66,8 @@ class LobbyPageTerminal {
       return;
     }
 
-    this.terminal.println(`Log in to create a lobby. If your account has less than 0.05 xDAi`);
-    this.terminal.println(`it will get dripped 0.05 Optimism xDai`);
+    this.terminal.println(`Log in to create a lobby. If your account has less than 0.005 xDAi`);
+    this.terminal.println(`it will get dripped 0.01 Optimism xDai`);
     this.terminal.newline();
 
     accounts.forEach((account, i) => {
@@ -91,6 +91,7 @@ class LobbyPageTerminal {
 
     if (+userInput && +userInput <= accounts.length && +userInput > 0) {
       const selectedAccount = accounts[+userInput - 1];
+
       try {
         await this.ethConnection.setAccount(selectedAccount.privateKey);
         await this.sendDrip(selectedAccount.address);
@@ -198,7 +199,7 @@ class LobbyPageTerminal {
           (nextAccessTimeSeconds - nowSeconds) / 60 / 60
         )} hours`
       );
-      if (currBalance < 0.05 && nowSeconds > nextAccessTimeSeconds) {
+      if (currBalance < 0.005 && nowSeconds > nextAccessTimeSeconds) {
         this.terminal.println(`Getting xDAI from faucet...`, TerminalTextStyle.Blue);
         const success = await requestFaucet(address);
 
