@@ -1202,7 +1202,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
   );
 
   async function createLobby() {
-    if (!ethConnection || !defaultAddress) throw new Error('cannot create lobby');
+    if (!ethConnection || !defaultAddress) throw new Error('cannot create arena');
 
     const contractsAPI = await makeContractsAPI({
       connection: ethConnection,
