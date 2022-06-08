@@ -488,7 +488,7 @@ class Viewport {
   }
 
   private isValidWorldWidth(width: number) {
-    return width >= this.minWorldWidth && width <= this.maxWorldWidth;
+    return width >= this.minWorldWidth && width <= this.maxWorldWidth * 1.2;
   }
 
   private setWorldWidth(width: number): void {

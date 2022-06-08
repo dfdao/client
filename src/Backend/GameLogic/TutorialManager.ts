@@ -14,14 +14,13 @@ export const enum TutorialState {
   SpaceJunk,
   Spaceship,
   Deselect,
+  HowToGetScore,
+  // ScoringDetails,
   ZoomOut,
   MinerMove,
   MinerPause,
   Terminal,
-  HowToGetScore,
-  ScoringDetails,
-  Valhalla,
-
+  // Valhalla,
   AlmostCompleted,
   Completed,
 }
@@ -52,6 +51,12 @@ class TutorialManager extends EventEmitter {
     if (newState === TutorialState.Completed) {
       const notifManager = NotificationManager.getInstance();
       notifManager.welcomePlayer();
+    } else if (newState === TutorialState.HowToGetScore) {
+      const targetLocation = this.uiManager.getGameManager().getTargetPlanets();
+      if (targetLocation.length > 0) this.uiManager.centerLocationId(targetLocation[0]);
+    } else if (newState === TutorialState.ZoomOut) {
+      const homeLocation = this.uiManager.getHomeHash();
+      if (homeLocation) this.uiManager.centerLocationId(homeLocation);
     }
   }
 

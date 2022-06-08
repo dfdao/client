@@ -3513,6 +3513,11 @@ class GameManager extends EventEmitter {
     return this.entityStore.getPlanetMap();
   }
 
+  public getTargetPlanets() : LocationId[] {
+    const targets = [...this.getPlanetMap()].filter(([, planet]) => planet.isTargetPlanet);
+    return targets.map(p => p[0]);
+  }
+
   /** Return a reference to the artifact map */
   public getArtifactMap(): Map<ArtifactId, Artifact> {
     return this.entityStore.getArtifactMap();

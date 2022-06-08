@@ -253,7 +253,7 @@ export function CreatePlanetPane({
 
   async function bulkCreateAndRevealPlanets() {
     if (!lobbyAdminTools) {
-      setError("You haven't created a arena.");
+      setError("You haven't created an arena.");
       return;
     }
     if (!config.ADMIN_PLANETS.currentValue) {

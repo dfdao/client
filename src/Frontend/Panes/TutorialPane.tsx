@@ -8,7 +8,7 @@ import TutorialManager, {
 import { Hook } from '../../_types/global/GlobalTypes';
 import { Btn } from '../Components/Btn';
 import { Icon, IconType } from '../Components/Icons';
-import { Gold, Red, White } from '../Components/Text';
+import { Gold, Green, Red, White } from '../Components/Text';
 import dfstyles from '../Styles/dfstyles';
 import { useUIManager } from '../Utils/AppHooks';
 import { useBooleanSetting } from '../Utils/SettingsHooks';
@@ -81,13 +81,8 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
   } else if (tutorialState === TutorialState.ZoomOut) {
     return (
       <div className='tutzoom'>
-        Great! You'll notice that most of the universe appears grayed out. You need to explore those
-        areas before you can view them.
-        <br />
-        <br />
-        You'll notice a target <Icon type={IconType.Target} /> indicating where you are currently
-        exploring. <White>Press next when you can see it.</White> You can also zoom using the mouse
-        wheel.
+        <p>Great! You can zoom using the mouse wheel. </p>
+        <p>Try zooming all the way out so you can find the target planet!</p>
         <div>
           <Btn className='btn' onClick={() => tutorialManager.acceptInput(TutorialState.ZoomOut)}>
             Next
@@ -98,13 +93,16 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
   } else if (tutorialState === TutorialState.MinerMove) {
     return (
       <div>
-        You can move your explorer by using the bottom-left context menu when nothing is selected.
+        Most of the universe appears greyed out. You need to use your explorer{' '}
+        <Icon type={IconType.Target} /> to reveal those areas.
         <br />
+        The explorer <Icon type={IconType.Target} /> indicates where you are
+        exploring.
         <br />
         <White>
-          Try moving your explorer by clicking on the Move <Icon type={IconType.Target} /> button
+          Move your explorer with the bottom-left context menu by clicking on the Move <Icon type={IconType.Target} /> button
         </White>
-        , then clicking somewhere in space.
+        , then clicking in a grey region.
       </div>
     );
   } else if (tutorialState === TutorialState.MinerPause) {
@@ -127,29 +125,23 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
       </div>
     );
   } else if (tutorialState === TutorialState.HowToGetScore) {
-    let content = (
-      <>
-        <White>It's an Arena Battle!</White> <br />
-        <br />
-        Capture the Target Planet (it has a big target floating above it) to win!
-        <br />
-      </>
-    );
-    if (uiManager.getGameManager().isCompetitive()) {
-      content = (
-        <>
-          <White>It's a Grand Prix!</White> <br />
-          <br />
-          Race against the clock to capture the Target Planet (it has a big target floating above
-          it) as fast as possible! The player with the fastest time after 48hrs will win XDAI and a
-          trophy 🏆. Good luck!
-          <br />
-        </>
-      );
-    }
+    const isCompetitive = uiManager.getGameManager().isCompetitive();
+    const victoryThreshold = uiManager
+      .getGameManager()
+      .getContractConstants().CLAIM_VICTORY_ENERGY_PERCENT;
     return (
       <div className='tutzoom'>
-        {content}
+        <White>It's a{isCompetitive ? ' Grand Prix!' : 'n Arena Battle!'}</White>
+        <p>
+          Race against the clock to capture the Target Planet (it has a big target floating above
+          it) and{' '}
+          <Green>
+            claim victory when it contains <Gold>{victoryThreshold}%</Gold> energy!
+          </Green>
+        </p>
+        {isCompetitive && (
+          <p>The player with the fastest time after 48hrs will win XDAI and a 🏆!</p>
+        )}
         <div>
           <Btn
             className='btn'
@@ -160,39 +152,42 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
         </div>
       </div>
     );
-  } else if (tutorialState === TutorialState.ScoringDetails) {
-    return (
-      <div className='tutzoom'>
-        To win, take ownership of the target planet and fill its energy to{' '}
-        {uiManager.getGameManager().getContractConstants().CLAIM_VICTORY_ENERGY_PERCENT}%. Then
-        claim victory on that planet. If you capture the target planet first, you win!
-        <div>
-          <Btn
-            className='btn'
-            onClick={() => tutorialManager.acceptInput(TutorialState.ScoringDetails)}
-          >
-            Next
-          </Btn>
-        </div>
-      </div>
-    );
-  } else if (tutorialState === TutorialState.Valhalla) {
-    return (
-      <div className='tutalmost'>
-        If you win an official round (one of the default worlds on the home page), you will improve
-        your ELO and see your name on the leaderboard! More details about rewards and competitive
-        play will be released soon ;).
-        <br />
-        <br />
-        To win, capture the target planet (^:
-        <div>
-          <Btn className='btn' onClick={() => tutorialManager.acceptInput(TutorialState.Valhalla)}>
-            Next
-          </Btn>
-        </div>
-      </div>
-    );
-  } else if (tutorialState === TutorialState.AlmostCompleted) {
+  }
+  //  else if (tutorialState === TutorialState.ScoringDetails) {
+  //   return (
+  //     <div className='tutzoom'>
+  //       To win, take ownership of the target planet and fill its energy to{' '}
+  //       {uiManager.getGameManager().getContractConstants().CLAIM_VICTORY_ENERGY_PERCENT}%. Then
+  //       claim victory on that planet. If you capture the target planet first, you win!
+  //       <div>
+  //         <Btn
+  //           className='btn'
+  //           onClick={() => tutorialManager.acceptInput(TutorialState.ScoringDetails)}
+  //         >
+  //           Next
+  //         </Btn>
+  //       </div>
+  //     </div>
+  //   );
+  // } 
+  // else if (tutorialState === TutorialState.Valhalla) {
+  //   return (
+  //     <div className='tutalmost'>
+  //       If you win an official round (one of the default worlds on the home page), you will improve
+  //       your ELO and see your name on the leaderboard! More details about rewards and competitive
+  //       play will be released soon ;).
+  //       <br />
+  //       <br />
+  //       To win, capture the target planet (^:
+  //       <div>
+  //         <Btn className='btn' onClick={() => tutorialManager.acceptInput(TutorialState.Valhalla)}>
+  //           Next
+  //         </Btn>
+  //       </div>
+  //     </div>
+  //   );
+  // } 
+  else if (tutorialState === TutorialState.AlmostCompleted) {
     return (
       <div className='tutalmost'>
         This is the end of the tutorial. Go out and explore the universe! More information will pop
