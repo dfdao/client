@@ -54,7 +54,7 @@ function OnboardMoney({ advance }: { advance: () => void }) {
   return (
     <StyledOnboardingContent>
       <p>
-        Race against the clock to capture the Target Planet (it has a big target floating above it)
+        Race against the clock to capture the Target Planet (it has a big 🎯 floating above it)
         and <Green>claim victory when it contains <Gold>{victoryThreshold}%</Gold> energy!</Green>
       </p>
       {isCompetitive && (

@@ -1253,7 +1253,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
       contractAddress,
     });
 
-    _.chunk(config.INIT_PLANETS, CHUNK_SIZE).map(async (chunk) => {
+    const createPlanetTxs = _.chunk(config.INIT_PLANETS, CHUNK_SIZE).map(async (chunk) => {
       const args = Promise.resolve([chunk]);
       const txIntent = {
         methodName: 'bulkCreateAndReveal' as ContractMethodName,
@@ -1265,12 +1265,15 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
         gasLimit: '15000000',
       });
 
-      await tx.confirmedPromise;
-      console.log(
-        `successfully created planets`,
-        chunk.map((i) => i)
-      );
+      return tx.confirmedPromise;
     });
+    
+    await Promise.all(createPlanetTxs);
+    console.log(
+      `successfully created planets`,
+      createPlanetTxs.map((i) => i)
+    );
+
   }
 
   useEffect(() => {

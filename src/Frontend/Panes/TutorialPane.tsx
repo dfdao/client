@@ -136,7 +136,7 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
       <div className='tutzoom'>
         <White>It's a{isCompetitive ? ' Grand Prix!' : 'n Arena Battle!'}</White>
         <p>
-          Race against the clock to capture the Target Planet (it has a big target floating above
+          Race against the clock to capture the Target Planet (it has a big 🎯 floating above
           it) and{' '}
           <Green>
             claim victory when it contains <Gold>{victoryThreshold}%</Gold> energy!
