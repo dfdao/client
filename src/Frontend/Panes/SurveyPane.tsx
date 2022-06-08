@@ -23,7 +23,7 @@ function SurveyPaneContent() {
       <br/>
       <p>Consider helping us improve the Arena by  </p>
       <Link
-      to = {'https://forms.gle/pFuL63gwv4re8nhh8'}>
+      to = {'https://docs.google.com/forms/d/1NTkjl5D9iz77aEv3gD_lrlgUE8dIYWKkwLL_Jys6pBM/'}>
         {' '}
         providing feedback on our short survey!
       </Link>
