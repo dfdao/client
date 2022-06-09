@@ -187,7 +187,7 @@ export default function OnboardingPane({
   return (
     <ModalPane
       id={ModalName.Onboarding}
-      title={`Welcome to Dark Forest Arena${isCompetitive && ': Grand Prix'}!`}
+      title={`Welcome to Dark Forest Arena${isCompetitive ? ': Grand Prix' : ''}!`}
       hideClose
       visible={visible}
       onClose={() => onClose(openTutorial)}

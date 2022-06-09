@@ -15,7 +15,7 @@ export const enum TutorialState {
   Spaceship,
   Deselect,
   HowToGetScore,
-  ScoringDetails,
+  // ScoringDetails,
   ZoomOut,
   MinerMove,
   MinerPause,
@@ -53,7 +53,9 @@ class TutorialManager extends EventEmitter {
       notifManager.welcomePlayer();
     } else if (newState === TutorialState.HowToGetScore) {
       const targetLocation = this.uiManager.getGameManager().getTargetPlanets();
-      if (targetLocation.length > 0) this.uiManager.centerLocationId(targetLocation[0]);
+      if (targetLocation.length > 0) {
+        this.uiManager.centerLocationId(targetLocation[0])
+      };
     } else if (newState === TutorialState.ZoomOut) {
       const homeLocation = this.uiManager.getHomeHash();
       if (homeLocation) this.uiManager.centerLocationId(homeLocation);

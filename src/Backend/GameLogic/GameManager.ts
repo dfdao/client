@@ -2097,8 +2097,9 @@ class GameManager extends EventEmitter {
 
           this.terminal.current?.println('');
           this.terminal.current?.println(`Choose a spawn planet:`, TerminalTextStyle.White);
-          selection = +((await this.terminal.current?.getInput()) || '');
+          selection = +((await this.terminal.current?.getInput()) || 'error');
           if (isNaN(selection) || selection > potentialHomePlanets.length) {
+            this.terminal.current?.println('');
             this.terminal.current?.println('Unrecognized input. Please try again.');
             this.terminal.current?.println('');
           } else {

@@ -57,7 +57,7 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
     );
   } else if (tutorialState === TutorialState.SpaceJunk) {
     return (
-      <div>
+      <div className='tutzoom'>
         <p>
           When you send planet you accumulate <White>Space Junk</White>. Once you hit the Space Junk
           limit, you won't be able to move to new planets.
@@ -224,26 +224,27 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
         </div>
       </div>
     );
-  } else if (tutorialState === TutorialState.ScoringDetails) {
-    return (
-      <div className='tutzoom'>
-        To win, take ownership of the target planet and fill its energy to{' '}
-        {uiManager.getGameManager().getContractConstants().CLAIM_VICTORY_ENERGY_PERCENT}%. Then
-        claim victory on that planet. If you capture the target planet first, you win!
-        <div style={{ gap: '5px' }}>
-          <Btn className='btn' onClick={() => tutorialManager.complete()}>
-            Exit
-          </Btn>
-          <Btn
-            className='btn'
-            onClick={() => tutorialManager.acceptInput(TutorialState.ScoringDetails)}
-          >
-            Next
-          </Btn>
-        </div>
-      </div>
-    );
   } 
+  // else if (tutorialState === TutorialState.ScoringDetails) {
+  //   return (
+  //     <div className='tutzoom'>
+  //       To win, take ownership of the target planet and fill its energy to{' '}
+  //       {uiManager.getGameManager().getContractConstants().CLAIM_VICTORY_ENERGY_PERCENT}%. Then
+  //       claim victory on that planet. If you capture the target planet first, you win!
+  //       <div style={{ gap: '5px' }}>
+  //         <Btn className='btn' onClick={() => tutorialManager.complete()}>
+  //           Exit
+  //         </Btn>
+  //         <Btn
+  //           className='btn'
+  //           onClick={() => tutorialManager.acceptInput(TutorialState.ScoringDetails)}
+  //         >
+  //           Next
+  //         </Btn>
+  //       </div>
+  //     </div>
+  //   );
+  // } 
   // else if (tutorialState === TutorialState.Valhalla) {
   //   return (
   //     <div className='tutalmost'>
