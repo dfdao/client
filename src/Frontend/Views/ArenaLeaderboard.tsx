@@ -13,7 +13,6 @@ import { roundEndTimestamp, roundStartTimestamp } from '../Utils/constants';
 import { formatDuration } from '../Utils/TimeUtils';
 import { GenericErrorBoundary } from './GenericErrorBoundary';
 import { SortableTable } from './SortableTable';
-import { TabbedView } from './TabbedView';
 import { Table } from './Table';
 
 const errorMessage = 'Error Loading Leaderboard';
@@ -127,8 +126,7 @@ function ArenaLeaderboardTable({ rows }: { rows: Row[] }) {
         alignments={['r', 'r', 'l', 'r']}
         headers={[
           <Cell key='player'>place</Cell>,
-
-          <Cell key='player'>player</Cell>,
+          <Cell key='player'>twitter</Cell>,
           <Cell key='score'>games</Cell>,
           <Cell key='place'>wins</Cell>,
         ]}
@@ -161,30 +159,50 @@ function ArenaLeaderboardTable({ rows }: { rows: Row[] }) {
   );
 }
 
-function CompetitiveLeaderboardTable({ rows }: { rows: Array<[string, number | undefined]> }) {
+function CompetitiveLeaderboardTable({
+  rows,
+}: {
+  rows: Array<[string, string | undefined, number | undefined]>;
+}) {
   if (rows.length == 0) return <Subber>No players finished</Subber>;
   return (
     <TableContainer>
       <Table
-        alignments={['r', 'l', 'r']}
+        alignments={['r', 'l', 'l', 'r']}
         headers={[
           <Cell key='place'>place</Cell>,
           <Cell key='player'>player</Cell>,
+          <Cell key='player'>address</Cell>,
           <Cell key='score'>time</Cell>,
         ]}
         rows={rows}
         columns={[
-          (row: [string, number], i) => (
-            <Cell style={{ color: getRankColor([i, row[1]]) }}>
-              {row[1] === undefined || row[1] === null ? 'unranked' : i + 1 + '.'}
+          (row: [string, string | undefined, number | undefined], i) => (
+            <Cell style={{ color: getRankColor([i, row[2]]) }}>
+              {row[2] === undefined || row[2] === null ? 'unranked' : i + 1 + '.'}
             </Cell>
           ),
-          (row: [string, number | undefined], i) => {
-            const color = getRankColor([i, row[1]]);
-            return <Cell style={{ color }}>{playerToEntry(row[0], color)}</Cell>;
+          (row: [string, string | undefined, number | undefined], i) => {
+            const color = getRankColor([i, row[2]]);
+            return (
+              <Cell style={{ color }}>
+                {row[1] ? <TwitterLink twitter={row[1]} color={color} /> : '--'}{' '}
+              </Cell>
+            );
           },
-          (row: [string, number], i) => {
-            return <Cell style={{ color: getRankColor([i, row[1]]) }}>{scoreToTime(row[1])}</Cell>;
+          (row: [string, string | undefined, number | undefined], i) => {
+            const color = getRankColor([i, row[2]]);
+            return (
+              <Cell style={{ color }}>
+                <a href={`https://blockscout.com/xdai/optimism/address/${row[0]}`}>
+
+                  <TextPreview text={row[0]} focusedWidth={'150px'} unFocusedWidth={'150px'} disabled/>
+                </a>
+              </Cell>
+            );
+          },
+          (row: [string, string | undefined, number | undefined], i) => {
+            return <Cell style={{ color: getRankColor([i, row[2]]) }}>{scoreToTime(row[2])}</Cell>;
           },
         ]}
       />
@@ -228,7 +246,7 @@ function CountDown() {
   return (
     <tbody>
       <tr>
-       {str && <td>{str}</td>}
+        {str && <td>{str}</td>}
         <td>{time}</td>
       </tr>
     </tbody>
@@ -260,8 +278,7 @@ function ArenasCreated({
         </tbody>
       </div>
     );
-  }
-  else {
+  } else {
     return <></>;
   }
 }
@@ -297,13 +314,10 @@ function CompetitiveLeaderboardBody({
     return a.score - b.score;
   });
 
-  const competitiveRows: [string, number | undefined][] = leaderboard.entries.map((entry) => {
-    if (typeof entry.twitter === 'string') {
-      return [entry.twitter, entry.score];
-    }
-
-    return [entry.ethAddress, entry.score];
-  });
+  const competitiveRows: [string, string | undefined, number | undefined][] =
+    leaderboard.entries.map((entry) => {
+      return [entry.ethAddress, entry.twitter, entry.score];
+    });
 
   return <CompetitiveLeaderboardTable rows={competitiveRows} />;
 }
