@@ -2084,29 +2084,35 @@ class GameManager extends EventEmitter {
         })
         let selected = false;
         let selection;
-        do {
-          for (let i = 0; i < potentialHomePlanets.length; i++) {
-            const x = potentialHomePlanets[i].location.coords.x;
-            const y = potentialHomePlanets[i].location.coords.y;
-            const type = potentialHomePlanets[i].planetType;
 
-            const level = potentialHomePlanets[i].planetLevel;
-            this.terminal.current?.print(`(${i + 1}): `, TerminalTextStyle.Sub);
-            this.terminal.current?.println(`Level ${level} ${PlanetTypeNames[type]} at (${x},${y})`);
-          }
-
-          this.terminal.current?.println('');
-          this.terminal.current?.println(`Choose a spawn planet:`, TerminalTextStyle.White);
-          selection = +((await this.terminal.current?.getInput()) || 'error');
-          if (isNaN(selection) || selection > potentialHomePlanets.length) {
+        // If only one spawn planet, don't let player choose.
+        if(potentialHomePlanets.length == 1) {
+          planet = potentialHomePlanets[0];
+        }
+        else {
+          do {
+            for (let i = 0; i < potentialHomePlanets.length; i++) {
+              const x = potentialHomePlanets[i].location.coords.x;
+              const y = potentialHomePlanets[i].location.coords.y;
+              const type = potentialHomePlanets[i].planetType;
+  
+              const level = potentialHomePlanets[i].planetLevel;
+              this.terminal.current?.print(`(${i + 1}): `, TerminalTextStyle.Sub);
+              this.terminal.current?.println(`Level ${level} ${PlanetTypeNames[type]} at (${x},${y})`);
+            }
+  
             this.terminal.current?.println('');
-            this.terminal.current?.println('Unrecognized input. Please try again.');
-            this.terminal.current?.println('');
-          } else {
-            selected = true;
-          }
-        } while (!selected);
-        planet = potentialHomePlanets[selection - 1];
+            this.terminal.current?.println(`Choose a spawn planet:`, TerminalTextStyle.White);
+            selection = +((await this.terminal.current?.getInput()) || '');
+            if (isNaN(selection) || selection > potentialHomePlanets.length) {
+              this.terminal.current?.println('Unrecognized input. Please try again.');
+              this.terminal.current?.println('');
+            } else {
+              selected = true;
+            }
+          } while (!selected);
+          planet = potentialHomePlanets[selection - 1];
+        }
       } else {
         planet = await this.findRandomHomePlanet();
       }
