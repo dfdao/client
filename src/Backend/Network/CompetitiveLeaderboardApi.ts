@@ -84,8 +84,8 @@ async function convertData(arenas: graphArena[]): Promise<Leaderboard> {
       arena.startTime == 0 ||
       arena.winners.length == 0 ||
       !arena.winners[0].address ||
-      roundEnd < arena.endTime ||
-      roundStart > arena.startTime
+      roundEnd <= arena.endTime ||
+      roundStart >= arena.startTime
     )
       continue;
 

@@ -63,15 +63,15 @@ class LobbyPageTerminal {
       return;
     }
 
-    this.terminal.println(`Log in to create an arena. If your account has less than 0.005 xDAi`);
-    this.terminal.println(`it will get dripped 0.01 Optimism xDai`);
+    this.terminal.println(`Log in to create an arena. If your account has less than 0.005 xDAI`);
+    this.terminal.println(`it will get dripped 0.01 Optimism xDAI`);
     this.terminal.newline();
 
     accounts.forEach((account, i) => {
       this.terminal.print(`(${i + 1}): `, TerminalTextStyle.Sub);
       this.terminal.print(`${account.address} `);
       this.terminal.println(
-        this.balancesEth[i].toFixed(2) + ' xDAi',
+        this.balancesEth[i].toFixed(2) + ' xDAI',
         this.balancesEth[i] < 0.01 ? TerminalTextStyle.Red : TerminalTextStyle.Green
       );
     });
