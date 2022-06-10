@@ -1,7 +1,9 @@
 import { ArenaLeaderboard, ArtifactRarity, Leaderboard } from '@darkforest_eth/types';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { getRank, Rank } from '../../Backend/Utils/Rank';
 import { Spacer } from '../Components/CoreUI';
+import { Star } from '../Components/Icons';
 import { TwitterLink } from '../Components/Labels/Labels';
 import { LoadingSpinner } from '../Components/LoadingSpinner';
 import { Red, Subber } from '../Components/Text';
@@ -81,21 +83,25 @@ function getRankColor([rank, score]: [number, number | undefined]) {
     return dfstyles.colors.subtext;
   }
 
-  if (score === 0) {
-    return RarityColors[ArtifactRarity.Legendary];
+  if (getRank(score) == Rank.GOLD) {
+    return dfstyles.colors.dfgold;
   }
+  if (getRank(score) == Rank.SILVER) return dfstyles.colors.dfsilver;
 
-  if (rank === 0) {
-    return RarityColors[ArtifactRarity.Legendary];
-  }
+  if (getRank(score) == Rank.BRONZE) return dfstyles.colors.dfbronze;
 
-  if (rank < 6) {
-    return RarityColors[ArtifactRarity.Epic];
-  }
-
-  return dfstyles.colors.dfgreen;
+  return dfstyles.colors.subtext;
 }
 
+function getRankStar(rank: number) {
+  const gold =
+    'invert(73%) sepia(29%) saturate(957%) hue-rotate(354deg) brightness(100%) contrast(95%)';
+    const purple = 'invert(39%) sepia(54%) saturate(6205%) hue-rotate(264deg) brightness(100%) contrast(103%)';
+  if (rank < 6) {
+    return <Star width={'20px'} height={'20px'} color={rank == 0 ? gold : purple}></Star>;
+  }
+  return <></>;
+}
 type Row = [string, number | undefined, number | undefined];
 
 const sortFunctions = [
@@ -126,7 +132,7 @@ function ArenaLeaderboardTable({ rows }: { rows: Row[] }) {
         alignments={['r', 'r', 'l', 'r']}
         headers={[
           <Cell key='player'>place</Cell>,
-          <Cell key='player'>twitter</Cell>,
+          <Cell key='twitter'>twitter</Cell>,
           <Cell key='score'>games</Cell>,
           <Cell key='place'>wins</Cell>,
         ]}
@@ -170,6 +176,7 @@ function CompetitiveLeaderboardTable({
       <Table
         alignments={['r', 'l', 'l', 'r']}
         headers={[
+          <Cell key='star'></Cell>,
           <Cell key='place'>place</Cell>,
           <Cell key='player'>player</Cell>,
           <Cell key='player'>address</Cell>,
@@ -177,6 +184,7 @@ function CompetitiveLeaderboardTable({
         ]}
         rows={rows}
         columns={[
+          (row: [string, string | undefined, number | undefined], i) => getRankStar(i),
           (row: [string, string | undefined, number | undefined], i) => (
             <Cell style={{ color: getRankColor([i, row[2]]) }}>
               {row[2] === undefined || row[2] === null ? 'unranked' : i + 1 + '.'}
@@ -195,8 +203,12 @@ function CompetitiveLeaderboardTable({
             return (
               <Cell style={{ color }}>
                 <a href={`https://blockscout.com/xdai/optimism/address/${row[0]}`}>
-
-                  <TextPreview text={row[0]} focusedWidth={'150px'} unFocusedWidth={'150px'} disabled/>
+                  <TextPreview
+                    text={row[0]}
+                    focusedWidth={'150px'}
+                    unFocusedWidth={'150px'}
+                    disabled
+                  />
                 </a>
               </Cell>
             );
