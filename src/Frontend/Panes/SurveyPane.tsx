@@ -106,7 +106,7 @@ function SurveyPaneContent() {
       {competitiveStats}
       <div style={{ textAlign: 'center' }}>
         <p>Help us improve Grand Prix by </p>
-        <Link to={'https://docs.google.com/forms/d/1NTkjl5D9iz77aEv3gD_lrlgUE8dIYWKkwLL_Jys6pBM/'}>
+        <Link to={'https://forms.gle/coFn68RvPrEKaXcKA'}>
           {' '}
           giving feedback on this survey 😊
         </Link>
