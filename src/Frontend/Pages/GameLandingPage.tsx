@@ -1210,8 +1210,6 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
     // @ts-expect-error The Operand of a delete must be optional
     delete initializers.ADMIN_PLANETS;
 
-    console.log('config', initializers);
-
     const initContract = await ethConnection.loadContract<DFArenaInitialize>(
       INIT_ADDRESS,
       loadInitContract

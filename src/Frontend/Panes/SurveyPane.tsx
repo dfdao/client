@@ -56,10 +56,9 @@ function SurveyPaneContent() {
   const uiManager = useUIManager();
   const time = uiManager.getGameDuration();
   const isCompetitive = uiManager.getGameManager().isCompetitive();
-  // const config = uiManager.getGameManager().getContractConstants().CONFIG_HASH;
-  const config = '0x8ea5aaee703231d3893553d7c2d287c2da33e2251811dce40cca2d768b3a7950'
+  const config = uiManager.getGameManager().getContractConstants().CONFIG_HASH;
+  // const config = '0x8ea5aaee703231d3893553d7c2d287c2da33e2251811dce40cca2d768b3a7950'
   const { competitiveLeaderboard, competitiveError } = useCompetitiveLeaderboard(false, config);
-  console.log(competitiveLeaderboard);
 
   let competitiveStats = undefined;
   if (isCompetitive) {
@@ -77,7 +76,7 @@ function SurveyPaneContent() {
           Bronze time: <Bronze>{formatDuration(bronzeTime * 1000)}</Bronze>
         </Row>
         <div style={{ textAlign: 'center' }}>
-          <p>Your finish: {getStyledRank(rank)}</p>
+          <p>Rank: {getStyledRank(rank)}</p>
         </div>
       </div>
     );
@@ -87,12 +86,12 @@ function SurveyPaneContent() {
   return (
     <div>
       <Row>
-        Your time: <Green>{formatDuration(time * 1000)}</Green>
+        Time: <Green>{formatDuration(time * 1000)}</Green>
       </Row>
       <Row style = {{justifyContent: 'center'} as CSSStyleDeclaration & CSSProperties}>
       {competitiveLeaderboard && !competitiveError && (
             <p>
-              Your place:{' '}
+              Place:{' '}
               <White>
                 {getPlace(competitiveLeaderboard, time)}/{competitiveLeaderboard.entries.length}
               </White>
