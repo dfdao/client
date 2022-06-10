@@ -24,7 +24,23 @@ const roundEndTimestamp = '2022-06-07T00:00:00.000Z';
 
 const roundStartTimestamp = '2022-06-05T00:00:00.000Z';
 
-export { MIN_CHUNK_SIZE, MAX_CHUNK_SIZE, LOCATION_ID_UB,roundEndTimestamp,roundStartTimestamp, competitiveConfig };
+const bronzeTime = 5400; // 90 minutes in seconds
+
+const silverTime = 3600; // 1 hour in seconds
+
+const goldTime = 1800; // 30 minutes in seconds
+
+export {
+  MIN_CHUNK_SIZE,
+  MAX_CHUNK_SIZE,
+  LOCATION_ID_UB,
+  roundEndTimestamp,
+  roundStartTimestamp,
+  competitiveConfig,
+  bronzeTime,
+  silverTime,
+  goldTime
+};
 
 export const enum DFZIndex {
   MenuBar = 4,
