@@ -108,7 +108,7 @@ export default function LandingPage() {
                 style={{ borderColor: 'red', color: 'red' } as CSSStyleDeclaration & CSSProperties}
                 onClick={() => history.push(`/play/`)}
               >
-                Enter Grand Prix
+                Race the Grand Prix
               </Btn>
               <Btn size='large' onClick={() => history.push(`/arena/${defaultAddress}`)}>
                 Create Custom Arena
