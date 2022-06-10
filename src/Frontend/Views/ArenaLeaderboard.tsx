@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { getRank, Rank } from '../../Backend/Utils/Rank';
 import { Spacer } from '../Components/CoreUI';
-import { Star } from '../Components/Icons';
+import { Gnosis, Star } from '../Components/Icons';
 import { TwitterLink } from '../Components/Labels/Labels';
 import { LoadingSpinner } from '../Components/LoadingSpinner';
 import { Red, Subber } from '../Components/Text';
@@ -69,6 +69,33 @@ function scoreToTime(score?: number | null) {
 
 // pass in either an address, or a twitter handle. this function will render the appropriate
 // component
+function compPlayerToEntry(
+  playerAddress: string,
+  playerTwitter: string | undefined,
+  color: string
+) {
+  return (
+    <span
+      style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '5px' }}
+    >
+      {playerTwitter ? (
+        <TwitterLink twitter={playerTwitter} color={color} />
+      ) : (
+        <TextPreview text={playerAddress} focusedWidth={'150px'} unFocusedWidth={'150px'} />
+      )}
+
+      <a
+        style={{ display: 'flex', alignItems: 'center' }}
+        href={`https://blockscout.com/xdai/optimism/address/${playerAddress}`}
+      >
+        <GnoButton>
+          <Gnosis height='25px' width='25Fpx' />
+        </GnoButton>
+      </a>
+    </span>
+  );
+}
+
 function playerToEntry(playerStr: string, color: string) {
   // if this is an address
   if (playerStr.startsWith('0x') && playerStr.length === 42) {
@@ -96,7 +123,8 @@ function getRankColor([rank, score]: [number, number | undefined]) {
 function getRankStar(rank: number) {
   const gold =
     'invert(73%) sepia(29%) saturate(957%) hue-rotate(354deg) brightness(100%) contrast(95%)';
-    const purple = 'invert(39%) sepia(54%) saturate(6205%) hue-rotate(264deg) brightness(100%) contrast(103%)';
+  const purple =
+    'invert(39%) sepia(54%) saturate(6205%) hue-rotate(264deg) brightness(100%) contrast(103%)';
   if (rank < 6) {
     return <Star width={'20px'} height={'20px'} color={rank == 0 ? gold : purple}></Star>;
   }
@@ -194,22 +222,7 @@ function CompetitiveLeaderboardTable({
             const color = getRankColor([i, row[2]]);
             return (
               <Cell style={{ color }}>
-                {row[1] ? <TwitterLink twitter={row[1]} color={color} /> : '--'}{' '}
-              </Cell>
-            );
-          },
-          (row: [string, string | undefined, number | undefined], i) => {
-            const color = getRankColor([i, row[2]]);
-            return (
-              <Cell style={{ color }}>
-                <a href={`https://blockscout.com/xdai/optimism/address/${row[0]}`}>
-                  <TextPreview
-                    text={row[0]}
-                    focusedWidth={'150px'}
-                    unFocusedWidth={'150px'}
-                    disabled
-                  />
-                </a>
+                {compPlayerToEntry(row[0], row[1], color)}
               </Cell>
             );
           },
@@ -432,4 +445,10 @@ const StatsTable = styled.table`
       text-align: left;
     }
   }
+`;
+
+const GnoButton = styled.button`
+  // background-color: ${dfstyles.colors.text};
+  border-radius: 30%;
+  border-color: ${dfstyles.colors.border};
 `;

@@ -58,7 +58,7 @@ function SurveyPaneContent() {
   const isCompetitive = uiManager.getGameManager().isCompetitive();
   // const config = uiManager.getGameManager().getContractConstants().CONFIG_HASH;
   const config = '0x8ea5aaee703231d3893553d7c2d287c2da33e2251811dce40cca2d768b3a7950'
-  const { competitiveLeaderboard, competitiveError } = useCompetitiveLeaderboard(config, false);
+  const { competitiveLeaderboard, competitiveError } = useCompetitiveLeaderboard(false, config);
   console.log(competitiveLeaderboard);
 
   let competitiveStats = undefined;

@@ -239,7 +239,7 @@ export function useArenaLeaderboard(poll: number | undefined = undefined): {
   return { leaderboard, error };
 }
 
-export function useCompetitiveLeaderboard(address : string | undefined = undefined , isCompetitive: boolean = true, poll: number | undefined = undefined ): {
+export function useCompetitiveLeaderboard(isCompetitive: boolean = true, address : string | undefined = undefined , poll: number | undefined = undefined ): {
 competitiveLeaderboard: Leaderboard | undefined;
 competitiveError: Error | undefined;
 } {

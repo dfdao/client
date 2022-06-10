@@ -128,7 +128,7 @@ export default function LandingPage() {
                     <HideSmall>Week{' '}</HideSmall>1
                   </td>
                   <td>
-                    06/06/<HideSmall>20</HideSmall>22
+                    06/05/<HideSmall>20</HideSmall>22
                   </td>
                   <td>
                     <Link to='https://twitter.com/TheVelorum'>Velorum</Link>
@@ -139,7 +139,7 @@ export default function LandingPage() {
                     <HideSmall>Week{' '}</HideSmall>2
                   </td>
                   <td>
-                    06/12/<HideSmall>20</HideSmall>22
+                    06/11/<HideSmall>20</HideSmall>22
                   </td>
                   <td>?????
                   </td>
@@ -170,7 +170,7 @@ export default function LandingPage() {
 const PrettyOverlayGradient = styled.div`
   width: 100vw;
   height: 100vh;
-  background-image: linear-gradient(to right bottom, #511111, #5b0023, #5d003c, #510659, #262077);
+  background-image: linear-gradient(to left bottom, #012338, #1e2142, #3e173e, #56042a, #5e0808);
   background-position: 50%, 50%;
   display: inline-block;
   position: fixed;
@@ -287,13 +287,11 @@ function GrandPrix() {
 
           <br />
           <br />
-          Come join the chat in{' '}
-          <Link to='https://discord.gg/aaHada53mQ'>
-          Discord
+          If you enjoy the game, consider donating to our{' '} 
+          <Link to='https://gitcoin.co/grants/4875/dfdao-dark-forest-gaming-collective'>
+          Gitcoin GR14 grant!
           </Link>
-          {' '} and follow us on {' '}
-          <Link to='https://twitter.com/d_fdao'>Twitter</Link>.
-          <br />
+          <br/>
           <br />
           Happy racing!
         </div>
