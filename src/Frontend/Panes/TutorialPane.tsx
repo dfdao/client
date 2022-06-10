@@ -205,7 +205,7 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
           Race against the clock to capture the Target Planet (it has a big 🎯 floating above it)
           and{' '}
           <Green>
-            claim victory when it contains <Gold>{victoryThreshold}%</Gold> energy!
+            claim victory when it contains at least <Gold>{victoryThreshold}%</Gold> energy!
           </Green>
         </p>
         {isCompetitive && (

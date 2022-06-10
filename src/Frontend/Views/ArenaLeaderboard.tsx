@@ -86,6 +86,7 @@ function compPlayerToEntry(
 
       <a
         style={{ display: 'flex', alignItems: 'center' }}
+        target="_blank"
         href={`https://blockscout.com/xdai/optimism/address/${playerAddress}`}
       >
         <GnoButton>
