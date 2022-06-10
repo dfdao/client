@@ -3,10 +3,13 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Btn } from '../Components/Btn';
 import { Icon, IconType } from '../Components/Icons';
-import { Blue, Gold, Green, Red, White } from '../Components/Text';
+import { Row } from '../Components/Row';
+import { Blue, Gold, Green, Red, White, Silver, Bronze } from '../Components/Text';
 import { TextPreview } from '../Components/TextPreview';
 import dfstyles from '../Styles/dfstyles';
 import { useAccount, useUIManager } from '../Utils/AppHooks';
+import { goldTime, silverTime, bronzeTime } from '../Utils/constants';
+import { formatDuration } from '../Utils/TimeUtils';
 import { ModalPane } from '../Views/ModalPane';
 
 const StyledOnboardingContent = styled.div`
@@ -54,13 +57,28 @@ function OnboardMoney({ advance }: { advance: () => void }) {
   return (
     <StyledOnboardingContent>
       <p>
-        Race against the clock to capture the Target Planet (it has a big 🎯 floating above it)
-        and <Green>claim victory when it contains <Gold>{victoryThreshold}%</Gold> energy!</Green>
+        Race against the clock to capture the Target Planet (it has a big 🎯 floating above it) and{' '}
+        <Green>
+          claim victory when it contains <Gold>{victoryThreshold}%</Gold> energy!
+        </Green>
       </p>
-      <p>The ⏲️ starts when you make your first move. </p>
       {isCompetitive && (
-        <p>The player with the fastest time after 48hrs will win XDAI and a 🏆!</p>
+        <p>
+          <div>NOW INTRODUCING RANKS</div>
+          <div>End the race in a certain time to earn Bronze, Silver, and Gold ranks.</div>
+          <div>
+            Gold: <Gold>{formatDuration(goldTime * 1000)}</Gold>
+          </div>
+          <div>
+            Silver: <Silver>{formatDuration(silverTime * 1000)}</Silver>
+          </div>
+          <div>
+            Bronze: <Bronze>{formatDuration(bronzeTime * 1000)}</Bronze>
+          </div>
+        </p>
       )}
+      <p>The ⏲️ starts when you make your first move. </p>
+      {isCompetitive && <p>The player with the fastest time after 48hrs will win XDAI and a 🏆!</p>}
       <p>
         We have initialized a{' '}
         <a onClick={() => window.open('https://github.com/austintgriffith/burner-wallet')}>
@@ -167,7 +185,7 @@ function OnboardKeys({
 export default function OnboardingPane({
   visible,
   onClose,
-  isCompetitive = false
+  isCompetitive = false,
 }: {
   visible: boolean;
   onClose: (tutorial: boolean) => void;

@@ -13,6 +13,7 @@ export function Timer() {
   const uiManager = useUIManager();
   const [time, setTime] = useState('00:00:00');
   const [color, setColor] = useState(dfstyles.colors.dfwhite)
+  const isCompetitive = uiManager.getGameManager().isCompetitive();
   function CountDown({colored} : {colored : boolean}) {
 
     const update = () => {
@@ -40,7 +41,7 @@ export function Timer() {
 
   return (
     <TimeContainer>
-      <CountDown colored />
+      <CountDown colored = {isCompetitive} />
     </TimeContainer>
   );
 }

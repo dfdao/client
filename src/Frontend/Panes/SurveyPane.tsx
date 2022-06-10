@@ -20,7 +20,6 @@ import { formatDuration } from '../Utils/TimeUtils';
 import { ModalPane } from '../Views/ModalPane';
 import { LinkButton } from './Lobbies/LobbiesUtils';
 
-
 function getPlace(leaderboard: Leaderboard, time: number) {
   const entries = leaderboard.entries;
   entries.sort((a, b) => {
@@ -51,7 +50,6 @@ function getStyledRank(rank: Rank) {
   return <p>None</p>;
 }
 
-
 function SurveyPaneContent() {
   const uiManager = useUIManager();
   const time = uiManager.getGameDuration();
@@ -75,9 +73,15 @@ function SurveyPaneContent() {
         <Row>
           Bronze time: <Bronze>{formatDuration(bronzeTime * 1000)}</Bronze>
         </Row>
-        <div style={{ textAlign: 'center' }}>
+        <hr />
+        <Row>
           <p>Rank: {getStyledRank(rank)}</p>
-        </div>
+        </Row>
+        <Row>
+          <a style={{ width: '100%' }} target='_blank' href='https://arena.dfdao.xyz/play/'>
+            <Btn size='stretch'>Race again</Btn>
+          </a>
+        </Row>
       </div>
     );
   }
@@ -86,30 +90,25 @@ function SurveyPaneContent() {
   return (
     <div>
       <Row>
+        <White>Run Statistics</White>
+      </Row>
+      <Row>
         Time: <Green>{formatDuration(time * 1000)}</Green>
       </Row>
-      <Row style = {{justifyContent: 'center'} as CSSStyleDeclaration & CSSProperties}>
       {competitiveLeaderboard && !competitiveError && (
-            <p>
-              Place:{' '}
-              <White>
-                {getPlace(competitiveLeaderboard, time)}/{competitiveLeaderboard.entries.length}
-              </White>
-            </p>
-          )}
-      </Row>
+        <Row>
+          Place:{' '}
+          <White>
+            {getPlace(competitiveLeaderboard, time)}/{competitiveLeaderboard.entries.length}
+          </White>
+        </Row>
+      )}
       {competitiveStats}
-      <br />
-      <Row>
-        <a style={{ width: '100%' }} target='_blank' href='https://arena.dfdao.xyz/play/'>
-          <Btn size='stretch'>Race again</Btn>
-        </a>
-      </Row>
       <div style={{ textAlign: 'center' }}>
         <p>Help us improve Grand Prix by </p>
         <Link to={'https://docs.google.com/forms/d/1NTkjl5D9iz77aEv3gD_lrlgUE8dIYWKkwLL_Jys6pBM/'}>
           {' '}
-          giving feedback on this survey
+          giving feedback on this survey 😊
         </Link>
       </div>{' '}
     </div>
