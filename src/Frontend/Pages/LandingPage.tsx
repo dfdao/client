@@ -104,11 +104,11 @@ export default function LandingPage() {
             <ButtonWrapper>
               <Btn
                 size='large'
-                // disabled={!isRoundOngoing()}
+                disabled={!isRoundOngoing()}
                 style={{ borderColor: 'red', color: 'red' } as CSSStyleDeclaration & CSSProperties}
                 onClick={() => history.push(`/play/`)}
               >
-                Practice Grand Prix #1
+                Enter Grand Prix
               </Btn>
               <Btn size='large' onClick={() => history.push(`/arena/${defaultAddress}`)}>
                 Create Custom Arena

@@ -20,7 +20,6 @@ import { formatDuration } from '../Utils/TimeUtils';
 import { ModalPane } from '../Views/ModalPane';
 import { LinkButton } from './Lobbies/LobbiesUtils';
 
-
 function getPlace(leaderboard: Leaderboard, time: number) {
   const entries = leaderboard.entries;
   entries.sort((a, b) => {
@@ -51,13 +50,12 @@ function getStyledRank(rank: Rank) {
   return <p>None</p>;
 }
 
-
 function SurveyPaneContent() {
   const uiManager = useUIManager();
   const time = uiManager.getGameDuration();
   const isCompetitive = uiManager.getGameManager().isCompetitive();
-  // const config = uiManager.getGameManager().getContractConstants().CONFIG_HASH;
-  const config = '0x8ea5aaee703231d3893553d7c2d287c2da33e2251811dce40cca2d768b3a7950'
+  const config = uiManager.getGameManager().getContractConstants().CONFIG_HASH;
+  // const config = '0x8ea5aaee703231d3893553d7c2d287c2da33e2251811dce40cca2d768b3a7950'
   const { competitiveLeaderboard, competitiveError } = useCompetitiveLeaderboard(false, config);
 
   let competitiveStats = undefined;
@@ -75,9 +73,15 @@ function SurveyPaneContent() {
         <Row>
           Bronze time: <Bronze>{formatDuration(bronzeTime * 1000)}</Bronze>
         </Row>
-        <div style={{ textAlign: 'center' }}>
-          <p>Your finish: {getStyledRank(rank)}</p>
-        </div>
+        <hr />
+        <Row>
+          <p>Rank: {getStyledRank(rank)}</p>
+        </Row>
+        <Row>
+          <a style={{ width: '100%' }} target='_blank' href='https://arena.dfdao.xyz/play/'>
+            <Btn size='stretch'>Race again</Btn>
+          </a>
+        </Row>
       </div>
     );
   }
@@ -86,30 +90,25 @@ function SurveyPaneContent() {
   return (
     <div>
       <Row>
-        Your time: <Green>{formatDuration(time * 1000)}</Green>
+        <White>Run Statistics</White>
       </Row>
-      <Row style = {{justifyContent: 'center'} as CSSStyleDeclaration & CSSProperties}>
-      {competitiveLeaderboard && !competitiveError && (
-            <p>
-              Your place:{' '}
-              <White>
-                {getPlace(competitiveLeaderboard, time)}/{competitiveLeaderboard.entries.length}
-              </White>
-            </p>
-          )}
-      </Row>
-      {competitiveStats}
-      <br />
       <Row>
-        <a style={{ width: '100%' }} target='_blank' href='https://arena.dfdao.xyz/play/'>
-          <Btn size='stretch'>Race again</Btn>
-        </a>
+        Time: <Green>{formatDuration(time * 1000)}</Green>
       </Row>
+      {competitiveLeaderboard && !competitiveError && (
+        <Row>
+          Place:{' '}
+          <White>
+            {getPlace(competitiveLeaderboard, time)}/{competitiveLeaderboard.entries.length}
+          </White>
+        </Row>
+      )}
+      {competitiveStats}
       <div style={{ textAlign: 'center' }}>
         <p>Help us improve Grand Prix by </p>
         <Link to={'https://forms.gle/coFn68RvPrEKaXcKA'}>
           {' '}
-          giving feedback on this survey
+          giving feedback on this survey 😊
         </Link>
       </div>{' '}
     </div>

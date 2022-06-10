@@ -102,7 +102,7 @@ export function PlanetCard({
         {!randomArtifacts && isFoundry && !triedFinding ? 
         <AlignCenterHorizontally style={{ justifyContent: 'space-between' }}>
           <InlineBlock>
-          <span>spawns</span>
+          <span>Contains</span>
           {' '}
           <ArtifactRarityLabelAnim rarity={rarity}/>
           {' '}
