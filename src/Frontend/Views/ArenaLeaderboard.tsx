@@ -174,13 +174,13 @@ function CompetitiveLeaderboardTable({
   return (
     <TableContainer>
       <Table
-        alignments={['r', 'l', 'l', 'r']}
+        alignments={['r', 'r', 'l', 'l', 'r']}
         headers={[
           <Cell key='star'></Cell>,
-          <Cell key='place'>place</Cell>,
-          <Cell key='player'>player</Cell>,
-          <Cell key='player'>address</Cell>,
-          <Cell key='score'>time</Cell>,
+          <Cell key='place'></Cell>,
+          <Cell key='player'></Cell>,
+          <Cell key='player'></Cell>,
+          <Cell key='score'></Cell>,
         ]}
         rows={rows}
         columns={[

@@ -8,7 +8,7 @@ import { Btn } from '../Components/Btn';
 import { EmSpacer, Link, Spacer, Title } from '../Components/CoreUI';
 import { EmailCTA, EmailCTAMode } from '../Components/Email';
 import { Modal } from '../Components/Modal';
-import { Red, White, Text } from '../Components/Text';
+import { Red, White, Text, HideSmall } from '../Components/Text';
 import dfstyles from '../Styles/dfstyles';
 import { ArenaLeaderboardDisplay } from '../Views/ArenaLeaderboard';
 import { LandingPageRoundArt } from '../Views/LandingPageRoundArt';
@@ -117,6 +117,36 @@ export default function LandingPage() {
           </Header>
 
           <Spacer height={32} />
+
+          <HallOfFame style={{ color: dfstyles.colors.text }}>
+            <HallOfFameTitle>Racing Legends</HallOfFameTitle>
+            <Spacer height={8} />
+            <table style = {{width: '100%'}}>
+              <tbody style = {{width: '100%'}}>
+                <TRow>
+                  <td>
+                    <HideSmall>Week{' '}</HideSmall>1
+                  </td>
+                  <td>
+                    06/06/<HideSmall>20</HideSmall>22
+                  </td>
+                  <td>
+                    <Link to='https://twitter.com/TheVelorum'>Velorum</Link>
+                  </td>
+                </TRow>
+                <TRow>
+                  <td>
+                    <HideSmall>Week{' '}</HideSmall>2
+                  </td>
+                  <td>
+                    06/12/<HideSmall>20</HideSmall>22
+                  </td>
+                  <td>?????
+                  </td>
+                </TRow>
+              </tbody>
+            </table>
+          </HallOfFame>
           {/* <Link to='https://medium.com/dfdao/dark-forest-arena-grand-prix-f761896a752e'>
             🏎 Grand Prix Info 🏎
           </Link> */}
