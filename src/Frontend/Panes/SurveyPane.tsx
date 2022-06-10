@@ -59,7 +59,6 @@ function SurveyPaneContent() {
   // const config = uiManager.getGameManager().getContractConstants().CONFIG_HASH;
   const config = '0x8ea5aaee703231d3893553d7c2d287c2da33e2251811dce40cca2d768b3a7950'
   const { competitiveLeaderboard, competitiveError } = useCompetitiveLeaderboard(false, config);
-  console.log(competitiveLeaderboard);
 
   let competitiveStats = undefined;
   if (isCompetitive) {
@@ -108,7 +107,7 @@ function SurveyPaneContent() {
       </Row>
       <div style={{ textAlign: 'center' }}>
         <p>Help us improve Grand Prix by </p>
-        <Link to={'https://docs.google.com/forms/d/1NTkjl5D9iz77aEv3gD_lrlgUE8dIYWKkwLL_Jys6pBM/'}>
+        <Link to={'https://forms.gle/coFn68RvPrEKaXcKA'}>
           {' '}
           giving feedback on this survey
         </Link>
