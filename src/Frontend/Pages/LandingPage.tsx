@@ -104,14 +104,18 @@ export default function LandingPage() {
               <Btn
                 size='large'
                 // disabled={!isRoundOngoing()}
-                style={{ borderColor: 'red', color: 'red' } as CSSStyleDeclaration & CSSProperties}
                 onClick={() => history.push(`/play/`)}
               >
-                Practice Grand Prix #2
+                <p style={{minWidth: '400px'}}>Practice Grand Prix #2</p>
               </Btn>
-              <Btn size='large' onClick={() => history.push(`/arena/${defaultAddress}`)}>
-                Create Custom Arena
-              </Btn>
+              <ButtonWrapper style={{ flexDirection: 'row' }}>
+                <Btn size='large' onClick={() => history.push(`/arena/${defaultAddress}`)}>
+                  <p style={button}>Create Custom Arena</p>
+                </Btn>
+                <Btn size='large' onClick={() => history.push('/portal')}>
+                  <p style={button}>View Active Games</p>
+                </Btn>
+              </ButtonWrapper>
             </ButtonWrapper>
           </Header>
 
@@ -120,11 +124,11 @@ export default function LandingPage() {
           <HallOfFame style={{ color: dfstyles.colors.text }}>
             <HallOfFameTitle>Racing Legends</HallOfFameTitle>
             <Spacer height={8} />
-            <table style = {{width: '100%'}}>
-              <tbody style = {{width: '100%'}}>
+            <table style={{ width: '100%' }}>
+              <tbody style={{ width: '100%' }}>
                 <TRow>
                   <td>
-                    <HideSmall>Week{' '}</HideSmall>1
+                    <HideSmall>Week </HideSmall>1
                   </td>
                   <td>
                     06/05/<HideSmall>20</HideSmall>22
@@ -135,7 +139,7 @@ export default function LandingPage() {
                 </TRow>
                 <TRow>
                   <td>
-                    <HideSmall>Week{' '}</HideSmall>2
+                    <HideSmall>Week </HideSmall>2
                   </td>
                   <td>
                     06/11/<HideSmall>20</HideSmall>22
@@ -168,7 +172,7 @@ export default function LandingPage() {
   );
 }
 
-const PrettyOverlayGradient = styled.div`
+export const PrettyOverlayGradient = styled.div`
   width: 100vw;
   height: 100vh;
   background-image: linear-gradient(to left bottom, #012338, #1e2142, #3e173e, #56042a, #5e0808);
@@ -201,6 +205,8 @@ const TRow = styled.tr`
     padding-left: 16pt;
   }
 `;
+
+const button = { minWidth: '200px' } as CSSStyleDeclaration & CSSProperties;
 
 const MainContentContainer = styled.div`
   max-width: 100%;

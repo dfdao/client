@@ -12,6 +12,7 @@ import { GameLandingPage } from './GameLandingPage';
 import { GifMaker } from './GifMaker';
 import LandingPage from './LandingPage';
 import { NotFoundPage } from './NotFoundPage';
+import { PortalPage } from './PortalPage';
 import { ShareArtifact } from './ShareArtifact';
 import { SharePlanet } from './SharePlanet';
 import { TestArtifactImages } from './TestArtifactImages';
@@ -34,6 +35,7 @@ function App() {
             {/* <Redirect path='/play' to={`/play/${defaultAddress}`} push={true} exact={true} /> */}
             <Route path='/play/' component={GameLandingPage} exact = {true}/>
             <Route path='/play/:contract' component={GameLandingPage} />
+            <Route path='/portal' component={PortalPage}/>
             <Route path='/events' component={EventsPage} />
             <Route path='/' exact component={LandingPage} />
             <Redirect path='/arena' to={`/arena/${defaultAddress}`} push={true} exact={true} />

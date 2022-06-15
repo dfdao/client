@@ -8,14 +8,16 @@ import {
   LocationId,
   Planet,
   Player,
+  SpyArena,
   Transaction,
-  TransactionId
+  TransactionId,
 } from '@darkforest_eth/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import GameUIManager from '../../Backend/GameLogic/GameUIManager';
 import { loadArenaLeaderboard } from '../../Backend/Network/ArenaLeaderboardApi';
 import { loadCompetitiveLeaderboard } from '../../Backend/Network/CompetitiveLeaderboardApi';
 import { loadLeaderboard } from '../../Backend/Network/LeaderboardApi';
+import { loadSpyArenas } from '../../Backend/Network/SpyApi';
 import { Wrapper } from '../../Backend/Utils/Wrapper';
 import { ContractsAPIEvent } from '../../_types/darkforest/api/ContractsAPITypes';
 import { ModalHandle } from '../Views/ModalPane';
@@ -239,29 +241,54 @@ export function useArenaLeaderboard(poll: number | undefined = undefined): {
   return { leaderboard, error };
 }
 
-export function useCompetitiveLeaderboard(isCompetitive: boolean, address : string | undefined = undefined , poll: number | undefined = undefined ): {
-competitiveLeaderboard: Leaderboard | undefined;
-competitiveError: Error | undefined;
+export function useCompetitiveLeaderboard(
+  isCompetitive: boolean,
+  address: string | undefined = undefined,
+  poll: number | undefined = undefined
+): {
+  competitiveLeaderboard: Leaderboard | undefined;
+  competitiveError: Error | undefined;
 } {
-const [competitiveLeaderboard, setCompetitiveLeaderboard] = useState<Leaderboard | undefined>();
-const [competitiveError, setCompetitiveError] = useState<Error | undefined>();
+  const [competitiveLeaderboard, setCompetitiveLeaderboard] = useState<Leaderboard | undefined>();
+  const [competitiveError, setCompetitiveError] = useState<Error | undefined>();
 
-const loadCompetitive = useCallback(async function loadCompetitive() {
-  try {
-    setCompetitiveLeaderboard(await loadCompetitiveLeaderboard(address, isCompetitive));
-  } catch (e) {
-    console.log('error loading leaderboard', e);
-    setCompetitiveError(e);
-  }
-}, []);
+  const loadCompetitive = useCallback(async function loadCompetitive() {
+    try {
+      setCompetitiveLeaderboard(await loadCompetitiveLeaderboard(address, isCompetitive));
+    } catch (e) {
+      console.log('error loading leaderboard', e);
+      setCompetitiveError(e);
+    }
+  }, []);
 
+  usePoll(loadCompetitive, poll, true);
 
-
-usePoll(loadCompetitive, poll, true);
-
-
-return { competitiveLeaderboard, competitiveError };
+  return { competitiveLeaderboard, competitiveError };
 }
+
+export function useSpyArenas(
+  address: string | undefined = undefined,
+  poll: number | undefined = undefined
+): {
+  spyArenas: SpyArena | undefined;
+  spyError: Error | undefined;
+} {
+  const [spyArenas, setSpyArenas] = useState<SpyArena | undefined>();
+  const [spyError, setSpyError] = useState<Error | undefined>();
+  const loadSpy = useCallback(async function loadSpy() {
+    try {
+      setSpyArenas(await loadSpyArenas(address));
+    } catch (e) {
+      console.log('error loading leaderboard', e);
+      setSpyError(e);
+    }
+  }, []);
+
+  usePoll(loadSpy, poll, true);
+
+  return { spyArenas, spyError };
+}
+
 export function usePopAllOnSelectedPlanetChanged(
   modal: ModalHandle,
   startingId: LocationId | undefined

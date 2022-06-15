@@ -10,10 +10,10 @@ import {
   roundEndTimestamp,
   roundStartTimestamp,
   competitiveConfig,
+  apiUrl,
 } from '../../Frontend/Utils/constants';
+import { getGraphQLData } from './GraphApi';
 import { getAllTwitters } from './UtilityServerAPI';
-
-const API_URL_GRAPH = 'https://graph-optimism.gnosischain.com/subgraphs/name/dfdao/arena-v1';
 
 export async function loadCompetitiveLeaderboard(
   config: string = competitiveConfig,
@@ -34,8 +34,15 @@ query {
 }
 `;
 
-  const data = await fetchGQL(QUERY, isCompetitive);
-  return data;
+  const rawData = await getGraphQLData(QUERY, apiUrl);
+
+  if (rawData.error) {
+    throw new Error(rawData.error);
+  }
+
+  const ret = await convertData(rawData.data.arenas, isCompetitive);
+
+  return ret;
 }
 
 interface winners {
@@ -49,27 +56,6 @@ interface graphArena {
   gameOver: boolean;
   id: string;
   startTime: number;
-}
-
-async function fetchGQL(query: any, isCompetitive: boolean) {
-  const response = await fetch(API_URL_GRAPH, {
-    method: 'POST',
-    body: JSON.stringify({ query }),
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-    },
-  });
-
-  const rep = await response.json();
-
-  if (rep.error) {
-    throw new Error(rep.error);
-  }
-
-  const ret = await convertData(rep.data.arenas, isCompetitive);
-
-  return ret;
 }
 
 async function convertData(arenas: graphArena[], isCompetitive: boolean): Promise<Leaderboard> {

@@ -1,5 +1,7 @@
 import { THEGRAPH_API_URL } from '@darkforest_eth/constants';
 import { ArenaLeaderboard, ArenaLeaderboardEntry } from '@darkforest_eth/types';
+import { apiUrl } from '../../Frontend/Utils/constants';
+import { getGraphQLData } from './GraphApi';
 import { getAllTwitters } from './UtilityServerAPI';
 
 const QUERY = `
@@ -14,35 +16,20 @@ query {
 const API_URL_GRAPH = 'https://graph-optimism.gnosischain.com/subgraphs/name/arena/test';
 
 export async function loadArenaLeaderboard(): Promise<ArenaLeaderboard> {
-  const data = await fetchGQL(QUERY);
+  const rawData = await getGraphQLData(QUERY, apiUrl);
 
-  return data;
+  if (rawData.error) {
+    throw new Error(rawData.error);
+  }
+
+  const ret = await convertData(rawData.data.arenas);
+
+  return ret;
 }
 
 interface graphPlayer {
   address: string;
   winner: boolean;
-}
-
-async function fetchGQL(query: any, graphApiUrl = API_URL_GRAPH) {
-  const response = await fetch(graphApiUrl, {
-    method: 'POST',
-    body: JSON.stringify({ query }),
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-    },
-  });
-
-  const rep = await response.json();
-
-  if (rep.error) {
-    throw new Error(rep.error);
-  }
-
-  const ret = await convertData(rep.data.arenaPlayers);
-
-  return ret;
 }
 
 async function convertData(inputPlayers: graphPlayer[]): Promise<ArenaLeaderboard> {

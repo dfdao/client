@@ -18,6 +18,9 @@ const LOCATION_ID_UB = bigInt(
   '21888242871839275222246405745257275088548364400416034343698204186575808495617'
 );
 
+const apiUrl = 'https://graph-optimism.gnosischain.com/subgraphs/name/dfdao/arena-v1';
+
+
 const competitiveConfig = '0x38329f176da42d2c89b7e424175e8b0ab3c9008cb0d98f947857884d76c6d9d2';
 
 const roundStartTimestamp = '2022-06-20T00:00:00.000Z';
@@ -34,6 +37,7 @@ export {
   MIN_CHUNK_SIZE,
   MAX_CHUNK_SIZE,
   LOCATION_ID_UB,
+  apiUrl,
   roundEndTimestamp,
   roundStartTimestamp,
   competitiveConfig,
