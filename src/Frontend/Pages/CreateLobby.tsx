@@ -9,7 +9,7 @@ import { LobbyInitializers } from '../Panes/Lobbies/Reducer';
 import { listenForKeyboardEvents, unlinkKeyboardEvents } from '../Utils/KeyEmitters';
 import { CadetWormhole } from '../Views/CadetWormhole';
 import { LobbyConfigPage } from './LobbyConfigPage';
-import { LobbyLandingPage } from './LobbyLandingPage';
+import { PortalLandingPage } from './PortalLandingPage';
 
 type ErrorState =
   | { type: 'invalidAddress' }
@@ -113,7 +113,7 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
         root={`/arena/${contractAddress}`}
       />
     ) : (
-      <LobbyLandingPage onReady={onReady} />
+      <PortalLandingPage onReady={onReady} />
     );
 
   return (

@@ -17,7 +17,7 @@ import { makeContractsAPI } from '../../Backend/GameLogic/ContractsAPI';
 import GameManager, { GameManagerEvent } from '../../Backend/GameLogic/GameManager';
 import GameUIManager from '../../Backend/GameLogic/GameUIManager';
 import TutorialManager, { TutorialState } from '../../Backend/GameLogic/TutorialManager';
-import { addAccount, getAccounts } from '../../Backend/Network/AccountManager';
+import { addAccount, getAccounts, getActive, resetActive, setActive } from '../../Backend/Network/AccountManager';
 import {
   getEthConnection,
   loadDiamondContract,
@@ -285,7 +285,15 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
         terminal.current?.newline();
         terminal.current?.newline();
       }
+      const account = getActive();
 
+      if(account) {
+        terminal.current?.println(`Found active account: ${account.address}`);
+        await ethConnection?.setAccount(account.privateKey);
+        setStep(TerminalPromptStep.ACCOUNT_SET);
+        return;
+      }
+      
       const accounts = getAccounts();
       terminal.current?.println(`Found ${accounts.length} accounts on this device.`);
       terminal.current?.println(``);
@@ -345,6 +353,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
         if (userInput && +userInput && +userInput <= accounts.length && +userInput > 0) {
           const account = accounts[+userInput - 1];
           await ethConnection?.setAccount(account.privateKey);
+          setActive(account);
           setStep(TerminalPromptStep.ACCOUNT_SET);
         } else if (userInput === 'n') {
           setStep(TerminalPromptStep.GENERATE_ACCOUNT);
@@ -381,6 +390,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
       try {
         addAccount(newSKey);
         ethConnection?.setAccount(newSKey);
+        setActive({address: newAddr, privateKey: newSKey});
 
         terminal.current?.println(``);
         terminal.current?.print(`Created new burner wallet with address `);
@@ -442,6 +452,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
         addAccount(newSKey);
 
         ethConnection?.setAccount(newSKey);
+        setActive({address: newAddr, privateKey: newSKey});
         terminal.current?.println(`Imported account with address ${newAddr}.`);
         setStep(TerminalPromptStep.ACCOUNT_SET);
       } catch (e) {
@@ -557,10 +568,10 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
 
   const advanceStateFromContractSet = useCallback(
     async (terminal: React.MutableRefObject<TerminalHandle | undefined>) => {
-      if(isGrandPrix) {
-        setStep(TerminalPromptStep.PLAYING);
-        return;
-      }
+      // if(isGrandPrix) {
+      //   setStep(TerminalPromptStep.PLAYING);
+      //   return;
+      // }
       terminal.current?.println(``);
       terminal.current?.println(
         `Would you like to play or spectate this game?`,
@@ -571,6 +582,9 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
       terminal.current?.println(`Play.`);
       terminal.current?.print('(s) ', TerminalTextStyle.Sub);
       terminal.current?.println(`Spectate.`);
+      terminal.current?.print(`(d) `, TerminalTextStyle.Sub);
+      terminal.current?.println(`Change account.`);
+
       terminal.current?.println(``);
       terminal.current?.println(`Select an option:`, TerminalTextStyle.Text);
 
@@ -579,6 +593,9 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
         setStep(TerminalPromptStep.PLAYING);
       } else if (userInput === 's') {
         setStep(TerminalPromptStep.SPECTATING);
+      } else if (userInput === 'd') {
+          resetActive();
+          setStep(TerminalPromptStep.COMPATIBILITY_CHECKS_PASSED);
       } else {
         terminal.current?.println('Unrecognized input. Please try again.');
         await advanceStateFromContractSet(terminal);

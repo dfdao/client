@@ -54,14 +54,14 @@ export default function LandingPage() {
   return (
     <>
       <PrettyOverlayGradient />
-      <GrandPrix />
+      {/* <GrandPrix /> */}
 
       <Page>
         <OnlyMobile>
           <Spacer height={8} />
         </OnlyMobile>
         <HideOnMobile>
-          <Spacer height={150} />
+          <Spacer height={50} />
         </HideOnMobile>
 
         <MainContentContainer>
@@ -101,28 +101,17 @@ export default function LandingPage() {
 
             <Spacer height={16} />
             <ButtonWrapper>
-              <Btn
-                size='large'
-                // disabled={!isRoundOngoing()}
-                onClick={() => history.push(`/play/`)}
-              >
-                <p style={{minWidth: '400px'}}>Practice Grand Prix #2</p>
-              </Btn>
-              <ButtonWrapper style={{ flexDirection: 'row' }}>
-                <Btn size='large' onClick={() => history.push(`/arena/${defaultAddress}`)}>
-                  <p style={button}>Create Custom Arena</p>
-                </Btn>
+            
                 <Btn size='large' onClick={() => history.push('/portal')}>
-                  <p style={button}>View Active Games</p>
+                  <p style={button}>Enter</p>
                 </Btn>
-              </ButtonWrapper>
             </ButtonWrapper>
           </Header>
 
           <Spacer height={32} />
 
           <HallOfFame style={{ color: dfstyles.colors.text }}>
-            <HallOfFameTitle>Racing Legends</HallOfFameTitle>
+            <HallOfFameTitle>Grand Prix Legends</HallOfFameTitle>
             <Spacer height={8} />
             <table style={{ width: '100%' }}>
               <tbody style={{ width: '100%' }}>
@@ -161,12 +150,12 @@ export default function LandingPage() {
           </EmailWrapper> */}
         </MainContentContainer>
 
-        <Spacer height={28} />
+        {/* <Spacer height={28} /> */}
 
         {/* <LeadboardDisplay /> */}
-        <ArenaLeaderboardDisplay />
+        {/* <ArenaLeaderboardDisplay /> */}
 
-        <Spacer height={256} />
+        {/* <Spacer height={256} /> */}
       </Page>
     </>
   );
