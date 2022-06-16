@@ -42,18 +42,6 @@ export function ArenaLeaderboardDisplay() {
   );
 }
 
-function scoreToString(score?: number | null) {
-  if (score === null || score === undefined) {
-    return 'n/a';
-  }
-  score = Math.floor(score);
-  if (score < 10000) {
-    return score + '';
-  }
-
-  return score.toLocaleString();
-}
-
 function scoreToTime(score?: number | null) {
   if (score === null || score === undefined) {
     return 'n/a';
@@ -95,15 +83,6 @@ function compPlayerToEntry(
       </a>
     </span>
   );
-}
-
-function playerToEntry(playerStr: string, color: string) {
-  // if this is an address
-  if (playerStr.startsWith('0x') && playerStr.length === 42) {
-    return <TextPreview text={playerStr} focusedWidth={'150px'} unFocusedWidth={'150px'} />;
-  }
-
-  return <TwitterLink twitter={playerStr} color={color} />;
 }
 
 function getRankColor([rank, score]: [number, number | undefined]) {
@@ -153,46 +132,6 @@ const sortFunctions = [
     return right[2] - left[2];
   },
 ];
-
-function ArenaLeaderboardTable({ rows }: { rows: Row[] }) {
-  return (
-    <TableContainer>
-      <SortableTable
-        alignments={['r', 'r', 'l', 'r']}
-        headers={[
-          <Cell key='player'>place</Cell>,
-          <Cell key='twitter'>twitter</Cell>,
-          <Cell key='score'>games</Cell>,
-          <Cell key='place'>wins</Cell>,
-        ]}
-        sortFunctions={sortFunctions}
-        rows={rows}
-        columns={[
-          (row: Row, i) => (
-            <Cell style={{ color: getRankColor([i, row[1]]) }}>
-              {row[1] === undefined || row[1] === null ? 'unranked' : i + 1 + '.'}
-            </Cell>
-          ),
-          (row: Row, i) => {
-            const color = getRankColor([i, row[1]]);
-            return <Cell style={{ color }}>{playerToEntry(row[0], color)}</Cell>;
-          },
-          (row: Row, i) => (
-            <Cell style={{ color: getRankColor([i, row[1]]) }}>
-              {row[1] === undefined || row[1] === null ? '0' : scoreToString(row[1])}
-            </Cell>
-          ),
-
-          (row: Row, i) => {
-            return (
-              <Cell style={{ color: getRankColor([i, row[1]]) }}>{scoreToString(row[2])}</Cell>
-            );
-          },
-        ]}
-      />
-    </TableContainer>
-  );
-}
 
 function CompetitiveLeaderboardTable({
   rows,
@@ -348,65 +287,6 @@ function CompetitiveLeaderboardBody({
   return <CompetitiveLeaderboardTable rows={competitiveRows} />;
 }
 
-function ArenaLeaderboardBody({
-  leaderboard,
-  error,
-}: {
-  leaderboard: ArenaLeaderboard | undefined;
-  error: Error | undefined;
-}) {
-  if (leaderboard == undefined || error) {
-    return (
-      <LeaderboardContainer>
-        <Red>{errorMessage}</Red>
-      </LeaderboardContainer>
-    );
-  }
-
-  leaderboard.entries.sort((a, b) => {
-    if (typeof a.games !== 'number' && typeof b.games !== 'number') {
-      return 0;
-    } else if (typeof a.games !== 'number') {
-      return 1;
-    } else if (typeof b.games !== 'number') {
-      return -1;
-    }
-
-    return b.games - a.games;
-  });
-
-  const rows: [string, number | undefined, number | undefined][] = leaderboard.entries.map(
-    (entry) => {
-      if (typeof entry.twitter === 'string') {
-        return [entry.twitter, entry.games, entry.wins];
-      }
-
-      return [entry.address, entry.games, entry.wins];
-    }
-  );
-
-  return (
-    <LeaderboardContainer>
-      <StatsTableContainer>
-        <StatsTable>
-          <tbody>
-            <tr>
-              <td>players</td>
-              <td>{leaderboard.entries.length}</td>
-            </tr>
-            <tr>
-              <td>lobbies created</td>
-              <td>{leaderboard.entries.reduce((partialSum, a) => partialSum + a.games, 0)}</td>
-            </tr>
-          </tbody>
-        </StatsTable>
-      </StatsTableContainer>
-      <Spacer height={8} />
-      <ArenaLeaderboardTable rows={rows} />
-    </LeaderboardContainer>
-  );
-}
-
 const Cell = styled.div`
   padding: 4px 8px;
   color: ${dfstyles.colors.text};
@@ -418,6 +298,7 @@ const TableContainer = styled.div`
   border-radius: 2px 2px 0 0px;
   border-bottom: none;
   padding: 16px;
+  overflow: scroll;
 `;
 
 const LeaderboardContainer = styled.div`

@@ -149,13 +149,6 @@ export default function LandingPage() {
             <EmailCTA mode={EmailCTAMode.SUBSCRIBE} />
           </EmailWrapper> */}
         </MainContentContainer>
-
-        {/* <Spacer height={28} /> */}
-
-        {/* <LeadboardDisplay /> */}
-        {/* <ArenaLeaderboardDisplay /> */}
-
-        {/* <Spacer height={256} /> */}
       </Page>
     </>
   );
