@@ -29,7 +29,7 @@ export function MapInfoView({ config }: { config: string }) {
           </a>
         </Btn>
       </OverviewContainer>
-      <ArenaLeaderboardDisplay />
+      <ArenaLeaderboardDisplay config = {config}/>
     </MapInfoContainer>
   );
 }

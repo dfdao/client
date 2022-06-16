@@ -1,55 +1,95 @@
-import { THEGRAPH_API_URL } from '@darkforest_eth/constants';
-import { ArenaLeaderboard, ArenaLeaderboardEntry } from '@darkforest_eth/types';
-import { apiUrl } from '../../Frontend/Utils/constants';
+import { EMPTY_ADDRESS } from '@darkforest_eth/constants';
+import { address } from '@darkforest_eth/serde';
+import {
+  ArenaLeaderboard,
+  ArenaLeaderboardEntry,
+  Leaderboard,
+  LeaderboardEntry,
+} from '@darkforest_eth/types';
+import {
+  roundEndTimestamp,
+  roundStartTimestamp,
+  competitiveConfig,
+  apiUrl,
+} from '../../Frontend/Utils/constants';
 import { getGraphQLData } from './GraphApi';
 import { getAllTwitters } from './UtilityServerAPI';
 
-const QUERY = `
+export async function loadArenaLeaderboard(
+  config: string = competitiveConfig,
+  isCompetitive: boolean
+): Promise<Leaderboard> {
+  const QUERY = `
 query {
-  arenaPlayers(first: 1000) {
-    address
-    winner
+  arenas(first:1000, where: {configHash: "${config}"}) {
+    id
+    startTime
+    winners(first :1) {
+      address
+   }
+    gameOver
+    endTime
+    duration
   }
 }
 `;
 
-const API_URL_GRAPH = 'https://graph-optimism.gnosischain.com/subgraphs/name/arena/test';
-
-export async function loadArenaLeaderboard(): Promise<ArenaLeaderboard> {
   const rawData = await getGraphQLData(QUERY, apiUrl);
 
   if (rawData.error) {
     throw new Error(rawData.error);
   }
 
-  const ret = await convertData(rawData.data.arenas);
+  const ret = await convertData(rawData.data.arenas, isCompetitive);
 
   return ret;
 }
 
-interface graphPlayer {
+interface winners {
   address: string;
-  winner: boolean;
+}
+interface graphArena {
+  winners: winners[];
+  creator: string;
+  duration: number | null;
+  endTime: number | null;
+  gameOver: boolean;
+  id: string;
+  startTime: number;
 }
 
-async function convertData(inputPlayers: graphPlayer[]): Promise<ArenaLeaderboard> {
-  let players: ArenaLeaderboardEntry[] = [];
+async function convertData(arenas: graphArena[], isCompetitive: boolean): Promise<Leaderboard> {
+  let entries: LeaderboardEntry[] = [];
   const twitters = await getAllTwitters();
 
-  for (const player of inputPlayers) {
-    const entry = players.find((p) => player.address == p.address);
-    if (!!entry) {
-      entry.games++;
-      if (player.winner) entry.wins++;
-    } else {
-      players.push({
-        address: player.address,
-        games: 1,
-        wins: player.winner ? 1 : 0,
-        twitter: twitters[player.address],
+  const roundStart = new Date(roundStartTimestamp).getTime() / 1000;
+
+  const roundEnd = new Date(roundEndTimestamp).getTime() / 1000;
+  for (const arena of arenas) {
+    if (
+      !arena.gameOver ||
+      !arena.endTime ||
+      !arena.duration ||
+      arena.startTime == 0 ||
+      arena.winners.length == 0 ||
+      !arena.winners[0].address || 
+      isCompetitive && (roundEnd <= arena.endTime || roundStart >= arena.startTime)
+    )
+      continue;
+
+    const winnerAddress = address(arena.winners[0].address);
+    const entry = entries.find((p) => winnerAddress == p.ethAddress);
+
+    if (!entry) {
+      entries.push({
+        ethAddress: winnerAddress,
+        score: arena.duration,
+        twitter: twitters[winnerAddress],
       });
+    } else if (entry.score && entry.score > arena.duration) {
+      entry.score = arena.duration;
     }
   }
 
-  return { entries: players } as ArenaLeaderboard;
+  return { entries, length: arenas.length };
 }

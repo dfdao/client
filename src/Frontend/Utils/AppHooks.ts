@@ -15,7 +15,6 @@ import {
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import GameUIManager from '../../Backend/GameLogic/GameUIManager';
 import { loadArenaLeaderboard } from '../../Backend/Network/ArenaLeaderboardApi';
-import { loadCompetitiveLeaderboard } from '../../Backend/Network/CompetitiveLeaderboardApi';
 import { loadLeaderboard } from '../../Backend/Network/LeaderboardApi';
 import { loadSpyArenas } from '../../Backend/Network/SpyApi';
 import { Wrapper } from '../../Backend/Utils/Wrapper';
@@ -218,52 +217,29 @@ export function useLeaderboard(poll: number | undefined = undefined): {
   return { leaderboard, error };
 }
 
-export function useArenaLeaderboard(poll: number | undefined = undefined): {
-  leaderboard: ArenaLeaderboard | undefined;
-  error: Error | undefined;
-} {
-  const [leaderboard, setLeaderboard] = useState<ArenaLeaderboard | undefined>();
-  const [error, setError] = useState<Error | undefined>();
-
-  const load = useCallback(async function load() {
-    try {
-      setLeaderboard(await loadArenaLeaderboard());
-    } catch (e) {
-      console.log('error loading leaderboard', e);
-      setError(e);
-    }
-  }, []);
-
-
-  usePoll(load, poll, true);
-
-
-  return { leaderboard, error };
-}
-
-export function useCompetitiveLeaderboard(
+export function useArenaLeaderboard(
   isCompetitive: boolean,
   address: string | undefined = undefined,
   poll: number | undefined = undefined
 ): {
-  competitiveLeaderboard: Leaderboard | undefined;
-  competitiveError: Error | undefined;
+  arenaLeaderboard: Leaderboard | undefined;
+  arenaError: Error | undefined;
 } {
-  const [competitiveLeaderboard, setCompetitiveLeaderboard] = useState<Leaderboard | undefined>();
-  const [competitiveError, setCompetitiveError] = useState<Error | undefined>();
+  const [arenaLeaderboard, setArenaLeaderboard] = useState<Leaderboard | undefined>();
+  const [arenaError, setArenaError] = useState<Error | undefined>();
 
-  const loadCompetitive = useCallback(async function loadCompetitive() {
+  const loadArena = useCallback(async function loadArena() {
     try {
-      setCompetitiveLeaderboard(await loadCompetitiveLeaderboard(address, isCompetitive));
+      setArenaLeaderboard(await loadArenaLeaderboard(address, isCompetitive));
     } catch (e) {
       console.log('error loading leaderboard', e);
-      setCompetitiveError(e);
+      setArenaError(e);
     }
   }, []);
 
-  usePoll(loadCompetitive, poll, true);
+  usePoll(loadArena, poll, true);
 
-  return { competitiveLeaderboard, competitiveError };
+  return { arenaLeaderboard, arenaError };
 }
 
 export function useSpyArenas(

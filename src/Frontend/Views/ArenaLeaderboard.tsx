@@ -10,7 +10,7 @@ import { Red, Subber } from '../Components/Text';
 import { TextPreview } from '../Components/TextPreview';
 import { RarityColors } from '../Styles/Colors';
 import dfstyles from '../Styles/dfstyles';
-import { useArenaLeaderboard, useCompetitiveLeaderboard } from '../Utils/AppHooks';
+import { useArenaLeaderboard } from '../Utils/AppHooks';
 import { roundEndTimestamp, roundStartTimestamp } from '../Utils/constants';
 import { formatDuration } from '../Utils/TimeUtils';
 import { GenericErrorBoundary } from './GenericErrorBoundary';
@@ -19,10 +19,9 @@ import { Table } from './Table';
 
 const errorMessage = 'Error Loading Leaderboard';
 
-export function ArenaLeaderboardDisplay() {
-  const { leaderboard, error } = useArenaLeaderboard();
+export function ArenaLeaderboardDisplay({config} : {config: string}) {
 
-  const { competitiveLeaderboard, competitiveError } = useCompetitiveLeaderboard(false);
+  const { arenaLeaderboard, arenaError } = useArenaLeaderboard(false, config);
 
   return (
     <GenericErrorBoundary errorMessage={errorMessage}>
@@ -31,12 +30,12 @@ export function ArenaLeaderboardDisplay() {
           <StatsTable>
             <LeaderboardContainer>
               <CountDown />
-              <ArenasCreated leaderboard={competitiveLeaderboard} error={competitiveError} />
+              <ArenasCreated leaderboard={arenaLeaderboard} error={arenaError} />
             </LeaderboardContainer>
           </StatsTable>
         </StatsTableContainer>
         <Spacer height={8} />
-        <CompetitiveLeaderboardBody leaderboard={competitiveLeaderboard} error={competitiveError} />
+        <ArenaLeaderboardBody leaderboard={arenaLeaderboard} error={arenaError} />
       </LeaderboardContainer>
     </GenericErrorBoundary>
   );
@@ -110,33 +109,84 @@ function getRankStar(rank: number) {
   }
   return <></>;
 }
-type Row = [string, number | undefined, number | undefined];
+type Row = [string, string | undefined, number | undefined];
 
-const sortFunctions = [
-  (left: Row, right: Row) => {
-    if (!left && !right) return 0;
-    if (!left || !left[0]) return 1;
-    if (!right || right[0]) return -1;
-    return left[0].localeCompare(right[0]);
-  },
-  (left: Row, right: Row) => {
-    if (!left && !right) return 0;
-    if (!left || !left[1]) return 1;
-    if (!right || !right[1]) return -1;
-    return right[1] - left[1];
-  },
-  (left: Row, right: Row) => {
-    if (!left && !right) return 0;
-    if (!left || !left[2]) return 1;
-    if (!right || !right[2]) return -1;
-    return right[2] - left[2];
-  },
-];
 
-function CompetitiveLeaderboardTable({
+function CountDown() {
+  const [time, setTime] = useState('');
+  const [str, setStr] = useState('');
+
+  const update = () => {
+    const roundStartTime = new Date(roundStartTimestamp).getTime();
+
+const roundEndTime = new Date(roundEndTimestamp).getTime();
+
+    const timeUntilStartms = roundStartTime - new Date().getTime();
+    const timeUntilEndms = roundEndTime - new Date().getTime();
+    if (timeUntilStartms > 0) {
+      setStr('Grand Prix starts in');
+      setTime(`${formatDuration(timeUntilStartms)}`);
+    } else if (timeUntilEndms <= 0) {
+      setStr('');
+      setTime('Grand Prix complete');
+    } else {
+      setStr('Grand Prix time left');
+      setTime(formatDuration(timeUntilEndms));
+    }
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      update();
+    }, 499);
+
+    update();
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <tbody style = {{fontSize: '1.25em'}}>
+      <tr>
+        {str && <td>{str}</td>}
+        <td>{time}</td>
+      </tr>
+    </tbody>
+  );
+}
+
+function ArenasCreated({
+  leaderboard,
+  error,
+}: {
+  leaderboard: Leaderboard | undefined;
+  error: Error | undefined;
+}) {
+  if (error) {
+    return (
+      <LeaderboardContainer>
+        <Red>{errorMessage}</Red>
+      </LeaderboardContainer>
+    );
+  }
+  if (leaderboard) {
+    return (
+        <tbody style = {{fontSize: '1.25em'}}>
+          <tr>
+            <td>Total races</td>
+            <td>{leaderboard.length}</td>
+          </tr>
+        </tbody>
+    );
+  } else {
+    return <></>;
+  }
+}
+
+function ArenaLeaderboardTable({
   rows,
 }: {
-  rows: Array<[string, string | undefined, number | undefined]>;
+  rows: Row[];
 }) {
   if (rows.length == 0) return <Subber>No players finished</Subber>;
   return (
@@ -175,80 +225,7 @@ function CompetitiveLeaderboardTable({
   );
 }
 
-const roundStartTime = new Date(roundStartTimestamp).getTime();
-
-const roundEndTime = new Date(roundEndTimestamp).getTime();
-
-function CountDown() {
-  const [time, setTime] = useState('');
-  const [str, setStr] = useState('');
-
-  const update = () => {
-    const timeUntilStartms = roundStartTime - new Date().getTime();
-    const timeUntilEndms = roundEndTime - new Date().getTime();
-    if (timeUntilStartms > 0) {
-      setStr('Grand Prix starts in');
-      setTime(`${formatDuration(timeUntilStartms)}`);
-    } else if (timeUntilEndms <= 0) {
-      setStr('');
-      setTime('Grand Prix complete');
-    } else {
-      setStr('Grand Prix time left');
-      setTime(formatDuration(timeUntilEndms));
-    }
-  };
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      update();
-    }, 499);
-
-    update();
-
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <tbody>
-      <tr>
-        {str && <td>{str}</td>}
-        <td>{time}</td>
-      </tr>
-    </tbody>
-  );
-}
-
-function ArenasCreated({
-  leaderboard,
-  error,
-}: {
-  leaderboard: Leaderboard | undefined;
-  error: Error | undefined;
-}) {
-  if (error) {
-    return (
-      <LeaderboardContainer>
-        <Red>{errorMessage}</Red>
-      </LeaderboardContainer>
-    );
-  }
-  if (leaderboard) {
-    return (
-      <div>
-        <tbody>
-          <tr>
-            <td>Total races</td>
-            <td>{leaderboard.length}</td>
-          </tr>
-        </tbody>
-      </div>
-    );
-  } else {
-    return <></>;
-  }
-}
-
-function CompetitiveLeaderboardBody({
+function ArenaLeaderboardBody({
   leaderboard,
   error,
 }: {
@@ -279,18 +256,19 @@ function CompetitiveLeaderboardBody({
     return a.score - b.score;
   });
 
-  const competitiveRows: [string, string | undefined, number | undefined][] =
+  const arenaRows: Row[] =
     leaderboard.entries.map((entry) => {
       return [entry.ethAddress, entry.twitter, entry.score];
     });
 
-  return <CompetitiveLeaderboardTable rows={competitiveRows} />;
+  return <ArenaLeaderboardTable rows={arenaRows} />;
 }
 
 const Cell = styled.div`
   padding: 4px 8px;
   color: ${dfstyles.colors.text};
   background: transparent;
+  font-size: 1.25em;
 `;
 
 const TableContainer = styled.div`
@@ -304,7 +282,7 @@ const TableContainer = styled.div`
 const LeaderboardContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
 `;
 const StatsTableContainer = styled.div`

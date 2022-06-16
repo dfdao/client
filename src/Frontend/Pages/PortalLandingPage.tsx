@@ -52,7 +52,7 @@ class PortalPageTerminal {
   }
 
   public async chooseAccount() {
-    this.terminal.printElement(<MythicLabelText text='Create an Arena' />);
+    this.terminal.printElement(<MythicLabelText text='Welcome to Dark Forest Arena' />);
     this.terminal.newline();
     this.terminal.newline();
 
