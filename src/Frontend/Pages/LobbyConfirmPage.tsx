@@ -9,6 +9,7 @@ import { Link, Spacer } from '../Components/CoreUI';
 import { Sidebar } from '../Components/Sidebar';
 import { MinimapPane } from '../Panes/Lobbies/MinimapPane';
 import { MinimapConfig } from '../Panes/Lobbies/MinimapUtils';
+import { PlanetListPane } from '../Panes/Lobbies/PlanetListPane';
 import {
   LobbyAction,
   LobbyConfigAction,
@@ -39,12 +40,20 @@ export function LobbyConfirmPage({
   ownerAddress: EthAddress;
   lobbyTx: string | undefined;
 }) {
+  const history = useHistory();
   return (
     <Container>
       <Sidebar previousPath={root} title={'← Choose Map'}>
         <span>Confirm your map configuration before creating your DF Arena Universe.</span>
         <Spacer height={24} />
-        <h1>List of staged planets goes here</h1>
+        <PlanetListPane
+          config={config}
+          onUpdate={onUpdate}
+          onPlanetHover={(planet) => {}}
+          onPlanetSelect={(planet) => {}}
+          root={root}
+          lobbyAdminTools={lobbyAdminTools}
+        />
       </Sidebar>
       <MainContent>
         <MainContentInner>
@@ -77,11 +86,35 @@ export function LobbyConfirmPage({
           you can enter the universe!
         </span>
         <Spacer height={24} />
-        <h1>Lobby buttons go here</h1>
+        <Button primary>Create Universe</Button>
+        <Spacer height={16} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Button onClick={() => history.push(`${root}/edit-map`)}>Edit map</Button>
+          <Button onClick={() => history.push(`${root}/settings/game`)}>Game Settings</Button>
+        </div>
       </MapContainer>
     </Container>
   );
 }
+
+const Button = styled.button<{ primary?: boolean }>`
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border: ${({ primary }) => (primary ? '2px solid #2EE7BA' : '1px solid #5F5F5F')};
+  color: ${({ primary }) => (primary ? '#2EE7BA' : '#fff')};
+  background: ${({ primary }) => (primary ? '#09352B' : '#252525')};
+  padding: 16px;
+  border-radius: 4px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background 80ms ease 0s, border-color;
+  &:hover {
+    background: ${({ primary }) => (primary ? '#0E5141' : '#3D3D3D')};
+    border-color: ${({ primary }) => (primary ? '#30FFCD' : '#797979')};
+  }
+`;
 
 const Title = styled.h1`
   font-size: 24px;
