@@ -6,11 +6,12 @@ import { ContractMethodName, EthAddress, UnconfirmedCreateLobby } from '@darkfor
 import { Contract } from 'ethers';
 import _, { initial } from 'lodash';
 import React, { useEffect, useMemo, useReducer, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { Route, Switch, useHistory } from 'react-router-dom';
 import { ContractsAPI } from '../../Backend/GameLogic/ContractsAPI';
 import { loadInitContract } from '../../Backend/Network/Blockchain';
 import { LobbyAdminTools } from '../../Backend/Utils/LobbyAdminTools';
 import { ConfigurationPane } from '../Panes/Lobbies/ConfigurationPane';
+import { ExtrasNavPane } from '../Panes/Lobbies/ExtrasNavPane';
 import { MinimapPane } from '../Panes/Lobbies/MinimapPane';
 import { MinimapConfig } from '../Panes/Lobbies/MinimapUtils';
 import {
@@ -19,7 +20,11 @@ import {
   lobbyConfigReducer,
   LobbyInitializers,
 } from '../Panes/Lobbies/Reducer';
+import { WorldSettingsPane } from '../Panes/Lobbies/WorldSettingsPane';
 import { getLobbyCreatedEvent, lobbyPlanetsToInitPlanets } from '../Utils/helpers';
+import { LobbyMapSelectPage } from './LobbyMapSelectPage';
+
+type Status = 'creating' | 'created' | 'errored' | undefined;
 
 export function LobbyConfigPage({
   contract,
@@ -38,6 +43,12 @@ export function LobbyConfigPage({
   const [minimapConfig, setMinimapConfig] = useState<MinimapConfig | undefined>();
   const [lobbyAdminTools, setLobbyAdminTools] = useState<LobbyAdminTools>();
   const [lobbyTx, setLobbyTx] = useState<string | undefined>();
+  const [status, setStatus] = useState<Status>(undefined);
+  const [error, setError] = useState<string | undefined>();
+
+  const createDisabled = status === 'creating' || status === 'created';
+  const creating = status === 'creating' || (status === 'created' && !lobbyAdminTools?.address);
+  const created = status === 'created' && lobbyAdminTools?.address;
 
   const history = useHistory();
   async function createLobby(config: LobbyInitializers) {
@@ -125,28 +136,61 @@ export function LobbyConfigPage({
     updateConfig(action);
   }
 
-  let content = (
-    <>
-      <ConfigurationPane
-        modalIndex={2}
-        config={config}
-        startingConfig={startingConfig}
-        updateConfig={updateConfig}
-        onCreate={createLobby}
-        lobbyAdminTools={lobbyAdminTools}
-        lobbyTx={lobbyTx}
-        ownerAddress={ownerAddress}
-        root={root}
-      />
-      {/* Minimap uses modalIndex=1 so it is always underneath the configuration pane */}
-      <MinimapPane
-        modalIndex={1}
-        minimapConfig={minimapConfig}
-        onUpdate={updateConfig}
-        created={!!lobbyAdminTools}
-      />
-    </>
-  );
+  const lobbyContent: JSX.Element = <div>Temporary Lobby Content</div>;
 
-  return content;
+  // let content = (
+  //   <>
+  //     <ConfigurationPane
+  //       modalIndex={2}
+  //       config={config}
+  //       startingConfig={startingConfig}
+  //       updateConfig={updateConfig}
+  //       onCreate={createLobby}
+  //       lobbyAdminTools={lobbyAdminTools}
+  //       lobbyTx={lobbyTx}
+  //       ownerAddress={ownerAddress}
+  //       root={root}
+  //     />
+  //     {/* Minimap uses modalIndex=1 so it is always underneath the configuration pane */}
+  //     <MinimapPane
+  //       modalIndex={1}
+  //       minimapConfig={minimapConfig}
+  //       onUpdate={updateConfig}
+  //       created={!!lobbyAdminTools}
+  //     />
+  //   </>
+  // );
+
+  return (
+    <Switch>
+      <Route path={root} exact={true}>
+        <LobbyMapSelectPage
+          startingConfig={startingConfig}
+          updateConfig={updateConfig}
+          lobbyAdminTools={lobbyAdminTools}
+          createDisabled={createDisabled}
+          root={root}
+          setError={setError}
+        />
+      </Route>
+      <Route path={`${root}/settings`}>
+        <WorldSettingsPane
+          config={config}
+          onUpdate={updateConfig}
+          createDisabled={createDisabled}
+          lobbyContent={lobbyContent}
+          root={root}
+        />
+      </Route>
+      <Route path={`${root}/extras`}>
+        <ExtrasNavPane
+          lobbyAdminTools={lobbyAdminTools}
+          config={config}
+          onUpdate={updateConfig}
+          lobbyContent={lobbyContent}
+          root={root}
+        />
+      </Route>
+    </Switch>
+  );
 }

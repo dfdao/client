@@ -17,7 +17,7 @@ import {
   lobbyConfigInit,
   LobbyConfigState,
   LobbyInitializers,
-  toInitializers
+  toInitializers,
 } from './Reducer';
 import { WorldSettingsPane } from './WorldSettingsPane';
 
@@ -56,10 +56,10 @@ export function ConfigurationPane({
   useEffect(() => {
     async function fetchTwitters() {
       const allTwitters = await getAllTwitters();
-      setMyTwitter(allTwitters[ownerAddress])
+      setMyTwitter(allTwitters[ownerAddress]);
     }
     fetchTwitters();
-  },[]);
+  }, []);
 
   // Separated IO Errors from Download/Upload so they show on any pane of the modal
 
@@ -114,10 +114,8 @@ export function ConfigurationPane({
     <>
       <Row style={jcCenter}>
         <div>
-          <Link to={blockscoutURL} style = {{textDecoration: 'none'}}>
-          <MythicLabelText
-            text='Your universe has been created!'
-          ></MythicLabelText>
+          <Link to={blockscoutURL} style={{ textDecoration: 'none' }}>
+            <MythicLabelText text='Your universe has been created!'></MythicLabelText>
           </Link>
         </div>
       </Row>
@@ -141,8 +139,8 @@ export function ConfigurationPane({
             updateConfig={updateConfig}
             lobbyAdminTools={lobbyAdminTools}
             createDisabled={createDisabled}
-            lobbyContent = {lobbyContent}
-            root = {root}
+            lobbyContent={lobbyContent}
+            root={root}
           />
         </Route>
         <Route path={`${root}/settings`}>
@@ -150,7 +148,7 @@ export function ConfigurationPane({
             config={config}
             onUpdate={updateConfig}
             createDisabled={createDisabled}
-            lobbyContent = {lobbyContent}
+            lobbyContent={lobbyContent}
             root={root}
           />
         </Route>
@@ -159,7 +157,7 @@ export function ConfigurationPane({
             lobbyAdminTools={lobbyAdminTools}
             config={config}
             onUpdate={updateConfig}
-            lobbyContent = {lobbyContent}
+            lobbyContent={lobbyContent}
             root={root}
           />
         </Route>
@@ -168,7 +166,7 @@ export function ConfigurationPane({
 
       {/* Button this in the title slot but at the end moves it to the end of the title bar */}
       <ConfigDownload onError={setError} address={lobbyAdminTools?.address} config={config} />
-      <ConfigUpload disabled = {createDisabled} onError={setError} onUpload={configUploadSuccess} />
+      <ConfigUpload disabled={createDisabled} onError={setError} onUpload={configUploadSuccess} />
     </Modal>
   );
 }

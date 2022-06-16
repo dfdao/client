@@ -11,13 +11,13 @@ import { Red } from '../../Components/Text';
 import { LobbyConfigAction, LobbyConfigState, toInitializers } from './Reducer';
 
 export declare type LobbyPlanet = {
-    x: number;
-    y: number;
-    level: number;
-    planetType: number;
-    isTargetPlanet: boolean;
-    isSpawnPlanet: boolean;
-}
+  x: number;
+  y: number;
+  level: number;
+  planetType: number;
+  isTargetPlanet: boolean;
+  isSpawnPlanet: boolean;
+};
 
 export interface LobbiesPaneProps {
   config: LobbyConfigState;
@@ -33,7 +33,12 @@ export const ButtonRow = styled(Row)`
 `;
 
 export const mirrorX = (
-  <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='20' style = {{fill : '#bbbbbb'}}>
+  <svg
+    xmlns='http://www.w3.org/2000/svg'
+    viewBox='0 0 24 24'
+    width='20'
+    style={{ fill: '#bbbbbb' }}
+  >
     <g>
       <path d='M15 21h2v-2h-2v2zm4-12h2V7h-2v2zM3 5v14c0 1.1.9 2 2 2h4v-2H5V5h4V3H5c-1.1 0-2 .9-2 2zm16-2v2h2c0-1.1-.9-2-2-2zm-8 20h2V1h-2v22zm8-6h2v-2h-2v2zM15 5h2V3h-2v2zm4 8h2v-2h-2v2zm0 8c1.1 0 2-.9 2-2h-2v2z' />
     </g>
@@ -41,7 +46,13 @@ export const mirrorX = (
 );
 
 export const mirrorY = (
-  <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='20' transform = "rotate(90)" style = {{fill : '#bbbbbb'}}>
+  <svg
+    xmlns='http://www.w3.org/2000/svg'
+    viewBox='0 0 24 24'
+    width='20'
+    transform='rotate(90)'
+    style={{ fill: '#bbbbbb' }}
+  >
     <g>
       <path d='M15 21h2v-2h-2v2zm4-12h2V7h-2v2zM3 5v14c0 1.1.9 2 2 2h4v-2H5V5h4V3H5c-1.1 0-2 .9-2 2zm16-2v2h2c0-1.1-.9-2-2-2zm-8 20h2V1h-2v22zm8-6h2v-2h-2v2zM15 5h2V3h-2v2zm4 8h2v-2h-2v2zm0 8c1.1 0 2-.9 2-2h-2v2z' />
     </g>
@@ -52,8 +63,8 @@ export function LinkButton({
   to,
   shortcut,
   children,
-  disabled = false
-}: React.PropsWithChildren<{ to: string; shortcut?: string; disabled?: boolean}>) {
+  disabled = false,
+}: React.PropsWithChildren<{ to: string; shortcut?: string; disabled?: boolean }>) {
   const { url } = useRouteMatch();
   const history = useHistory();
 
@@ -70,7 +81,7 @@ export function LinkButton({
       onShortcutPressed={navigate}
       shortcutKey={shortcut}
       shortcutText={shortcut}
-      disabled = {disabled}
+      disabled={disabled}
     >
       {children}
     </ShortcutBtn>
@@ -119,12 +130,12 @@ export function ConfigDownload({
   onError,
   address,
   config,
-  disabled = false
+  disabled = false,
 }: {
   onError: (msg: string) => void;
   address: EthAddress | undefined;
   config: LobbyConfigState;
-  disabled? : boolean;
+  disabled?: boolean;
 }) {
   function doDownload() {
     try {
@@ -145,7 +156,7 @@ export function ConfigDownload({
   }
 
   return (
-    <Btn disabled = {disabled} slot='title' size='small' onClick={doDownload}>
+    <Btn disabled={disabled} slot='title' size='small' onClick={doDownload}>
       Download
     </Btn>
   );
@@ -154,12 +165,13 @@ export function ConfigDownload({
 export function ConfigUpload({
   onError,
   onUpload,
-  disabled = false
-
+  disabled = false,
+  renderer: Renderer,
 }: {
   onError: (msg: string) => void;
   onUpload: (initializers: Initializers) => void;
-  disabled? : boolean;
+  disabled?: boolean;
+  renderer?: () => JSX.Element;
 }) {
   function doUpload() {
     const reader = new FileReader();
@@ -176,6 +188,7 @@ export function ConfigUpload({
     };
     const inputFile = document.createElement('input');
     inputFile.type = 'file';
+    inputFile.accept = 'application/json'; // enforce only JSON file uploads in file picker
     inputFile.onchange = () => {
       try {
         const file = inputFile.files?.item(0);
@@ -193,9 +206,17 @@ export function ConfigUpload({
     inputFile.click();
   }
 
-  return (
-    <Btn disabled = {disabled} slot='title' size='small' onClick={doUpload}>
-      Upload
-    </Btn>
-  );
+  if (Renderer) {
+    return (
+      <div onClick={doUpload}>
+        <Renderer />;
+      </div>
+    );
+  } else {
+    return (
+      <Btn disabled={disabled} slot='title' size='small' onClick={doUpload}>
+        Upload custom map (JSON)
+      </Btn>
+    );
+  }
 }
