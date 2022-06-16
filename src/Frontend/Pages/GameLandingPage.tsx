@@ -1228,12 +1228,9 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
     const initInterface = initContract.interface;
     const initAddress = INIT_ADDRESS;
     const initFunctionCall = initInterface.encodeFunctionData('init', [
+      initializers.WHITELIST_ENABLED,
+      artifactBaseURI,
       initializers,
-      {
-        allowListEnabled: initializers.WHITELIST_ENABLED,
-        artifactBaseURI,
-        allowedAddresses: [] // Eventually will be from initializers
-      }
     ]);
     const txIntent: UnconfirmedCreateLobby = {
       methodName: 'createLobby',
@@ -1256,9 +1253,9 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
       loadDiamondContract
     );
 
-    const startTx = await diamond.start();
-    const startRct = startTx.wait();
-    console.log(`initialized arena with ${(await startRct).gasUsed} gas`);
+    // const startTx = await diamond.start();
+    // const startRct = startTx.wait();
+    // console.log(`initialized arena with ${(await startRct).gasUsed} gas`);
 
     if (owner === playerAddress) {
       history.push({ pathname: `${match.path}${lobby}`, state: { contract: lobby } });
