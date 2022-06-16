@@ -23,6 +23,7 @@ import {
 import { WorldSettingsPane } from '../Panes/Lobbies/WorldSettingsPane';
 import { getLobbyCreatedEvent, lobbyPlanetsToInitPlanets } from '../Utils/helpers';
 import { LobbyMapSelectPage } from './LobbyMapSelectPage';
+import { LobbyWorldSettingsPage } from './LobbyWorldSettingsPage';
 
 type Status = 'creating' | 'created' | 'errored' | undefined;
 
@@ -174,12 +175,13 @@ export function LobbyConfigPage({
         />
       </Route>
       <Route path={`${root}/settings`}>
-        <WorldSettingsPane
+        <LobbyWorldSettingsPage
           config={config}
           onUpdate={updateConfig}
           createDisabled={createDisabled}
-          lobbyContent={lobbyContent}
           root={root}
+          minimapConfig={minimapConfig}
+          lobbyAdminTools={lobbyAdminTools}
         />
       </Route>
       <Route path={`${root}/extras`}>
