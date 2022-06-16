@@ -20,10 +20,10 @@ import {
   lobbyConfigReducer,
   LobbyInitializers,
 } from '../Panes/Lobbies/Reducer';
-import { WorldSettingsPane } from '../Panes/Lobbies/WorldSettingsPane';
 import { getLobbyCreatedEvent, lobbyPlanetsToInitPlanets } from '../Utils/helpers';
 import { LobbyMapSelectPage } from './LobbyMapSelectPage';
 import { LobbyWorldSettingsPage } from './LobbyWorldSettingsPage';
+import { LobbyConfirmPage } from './LobbyConfirmPage';
 
 type Status = 'creating' | 'created' | 'errored' | undefined;
 
@@ -133,34 +133,7 @@ export function LobbyConfigPage({
     lobbyAdminTools,
   ]);
 
-  function onUpdate(action: LobbyConfigAction) {
-    updateConfig(action);
-  }
-
   const lobbyContent: JSX.Element = <div>Temporary Lobby Content</div>;
-
-  // let content = (
-  //   <>
-  //     <ConfigurationPane
-  //       modalIndex={2}
-  //       config={config}
-  //       startingConfig={startingConfig}
-  //       updateConfig={updateConfig}
-  //       onCreate={createLobby}
-  //       lobbyAdminTools={lobbyAdminTools}
-  //       lobbyTx={lobbyTx}
-  //       ownerAddress={ownerAddress}
-  //       root={root}
-  //     />
-  //     {/* Minimap uses modalIndex=1 so it is always underneath the configuration pane */}
-  //     <MinimapPane
-  //       modalIndex={1}
-  //       minimapConfig={minimapConfig}
-  //       onUpdate={updateConfig}
-  //       created={!!lobbyAdminTools}
-  //     />
-  //   </>
-  // );
 
   return (
     <Switch>
@@ -172,6 +145,20 @@ export function LobbyConfigPage({
           createDisabled={createDisabled}
           root={root}
           setError={setError}
+        />
+      </Route>
+      <Route path={`${root}/confirm`}>
+        <LobbyConfirmPage
+          updateConfig={updateConfig}
+          lobbyAdminTools={lobbyAdminTools}
+          minimapConfig={minimapConfig}
+          config={config}
+          onUpdate={updateConfig}
+          createDisabled={createDisabled}
+          root={root}
+          createLobby={createLobby}
+          ownerAddress={ownerAddress}
+          lobbyTx={lobbyTx}
         />
       </Route>
       <Route path={`${root}/settings`}>

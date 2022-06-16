@@ -19,7 +19,6 @@ import {
   LobbyInitializers,
   toInitializers,
 } from './Reducer';
-import { WorldSettingsPane } from './WorldSettingsPane';
 
 type Status = 'creating' | 'created' | 'errored' | undefined;
 
@@ -138,15 +137,6 @@ export function ConfigurationPane({
             startingConfig={startingConfig}
             updateConfig={updateConfig}
             lobbyAdminTools={lobbyAdminTools}
-            createDisabled={createDisabled}
-            lobbyContent={lobbyContent}
-            root={root}
-          />
-        </Route>
-        <Route path={`${root}/settings`}>
-          <WorldSettingsPane
-            config={config}
-            onUpdate={updateConfig}
             createDisabled={createDisabled}
             lobbyContent={lobbyContent}
             root={root}
