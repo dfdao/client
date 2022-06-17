@@ -59,10 +59,14 @@ export function LobbyConfigPage({
     const artifactBaseURI = '';
     const initInterface = initContract.interface;
     const initAddress = INIT_ADDRESS;
+    console.log('INITIALIZERS', initializers);
     const initFunctionCall = initInterface.encodeFunctionData('init', [
-      initializers.WHITELIST_ENABLED,
-      artifactBaseURI,
       initializers,
+      {
+        allowListEnabled: initializers.WHITELIST_ENABLED,
+        artifactBaseURI,
+        allowedAddresses: []
+      }
     ]);
     const txIntent: UnconfirmedCreateLobby = {
       methodName: 'createLobby',

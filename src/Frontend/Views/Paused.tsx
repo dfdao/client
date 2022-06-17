@@ -30,6 +30,6 @@ export function Paused() {
 }
 
 const PausedContainer = styled.div`
-  font-size: 4em;
+  font-size: 2em;
   text-align: center;
 `;

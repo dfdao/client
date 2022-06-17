@@ -337,6 +337,11 @@ export interface ContractConstants {
   NO_ADMIN: boolean;
   INIT_PLANET_HASHES: string[];
   CONFIG_HASH: string;
+  CONFIRM_START: boolean;
+  BLOCK_MOVES: boolean;
+  BLOCK_CAPTURE: boolean;
+  BLOCKLIST: string[][];
+  TARGETS_REQUIRED_FOR_VICTORY: number;
 }
 
 export type ClientMockchainData =

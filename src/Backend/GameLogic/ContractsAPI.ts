@@ -451,6 +451,7 @@ export class ContractsAPI extends EventEmitter {
       CAPTURE_ZONE_PLANET_LEVEL_SCORE,
       CAPTURE_ZONE_HOLD_BLOCKS_REQUIRED,
       CAPTURE_ZONES_PER_5000_WORLD_RADIUS,
+      BLOCKLIST,
     } = await this.makeCall(this.contract.getGameConstants);
 
     const {
@@ -462,7 +463,11 @@ export class ContractsAPI extends EventEmitter {
       RANDOM_ARTIFACTS,
       NO_ADMIN,
       CONFIG_HASH,
-      INIT_PLANET_HASHES
+      INIT_PLANET_HASHES,
+      CONFIRM_START,
+      BLOCK_CAPTURE,
+      BLOCK_MOVES,
+      TARGETS_REQUIRED_FOR_VICTORY,
     } = await this.makeCall(this.contract.getArenaConstants);
 
     const TOKEN_MINT_END_SECONDS = (
@@ -601,13 +606,20 @@ export class ContractsAPI extends EventEmitter {
       ],
       SPACESHIPS: [SPACESHIPS[0], SPACESHIPS[1], SPACESHIPS[2], SPACESHIPS[3], SPACESHIPS[4]],
 
-      RANDOM_ARTIFACTS : RANDOM_ARTIFACTS,
-      NO_ADMIN: NO_ADMIN,
-      INIT_PLANET_HASHES: INIT_PLANET_HASHES,
-      CONFIG_HASH: CONFIG_HASH,
+      RANDOM_ARTIFACTS,
+      NO_ADMIN,
+      INIT_PLANET_HASHES,
+      CONFIG_HASH,
+      CONFIRM_START,
+      BLOCK_CAPTURE,
+      BLOCK_MOVES,
+      BLOCKLIST: BLOCKLIST.map(b => b.map(p => {
+        return locationIdFromEthersBN(p)
+      })),
+      TARGETS_REQUIRED_FOR_VICTORY: TARGETS_REQUIRED_FOR_VICTORY.toNumber(),
     };
 
-    return constants;
+    return constants; 
   }
 
   public async getPlayers(

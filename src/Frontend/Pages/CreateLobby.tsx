@@ -65,6 +65,7 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
           setStartingConfig({
             ...config,
             WHITELIST_ENABLED: false,
+            CONFIRM_START: false,
             START_PAUSED: false,
             CLAIM_PLANET_COOLDOWN: 0,
             ADMIN_PLANETS: [],

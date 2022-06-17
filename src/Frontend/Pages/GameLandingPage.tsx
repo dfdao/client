@@ -913,6 +913,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
         );
 
         const configHash = (await diamond.getArenaConstants()).CONFIG_HASH;
+        console.log('loaded config hash', configHash);
 
         newGameManager = await GameManager.create({
           connection: ethConnection,
@@ -1090,7 +1091,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
         })
         .catch((error: Error) => {
           terminal.current?.println(
-            `[ERROR] An error occurred: ${error.toString().slice(0, 10000)}`,
+            `[ERROR] ${error.toString().slice(0, 10000)}`,
             TerminalTextStyle.Red
           );
         });
@@ -1209,6 +1210,8 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
     const playerAddress = ethConnection.getAddress();
 
     var initializers = config;
+    console.log('INITIALIZERS', initializers);
+    
     if (initializers.ADMIN_PLANETS) {
       initializers.INIT_PLANETS = lobbyPlanetsToInitPlanets(
         initializers.ADMIN_PLANETS,
@@ -1228,9 +1231,12 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
     const initInterface = initContract.interface;
     const initAddress = INIT_ADDRESS;
     const initFunctionCall = initInterface.encodeFunctionData('init', [
-      initializers.WHITELIST_ENABLED,
-      artifactBaseURI,
       initializers,
+      {
+        allowListEnabled: initializers.WHITELIST_ENABLED,
+        artifactBaseURI,
+        allowedAddresses: []
+      }      
     ]);
     const txIntent: UnconfirmedCreateLobby = {
       methodName: 'createLobby',
@@ -1253,9 +1259,9 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
       loadDiamondContract
     );
 
-    // const startTx = await diamond.start();
-    // const startRct = startTx.wait();
-    // console.log(`initialized arena with ${(await startRct).gasUsed} gas`);
+    const startTx = await diamond.start();
+    const startRct = startTx.wait();
+    console.log(`initialized arena with ${(await startRct).gasUsed} gas`);
 
     if (owner === playerAddress) {
       history.push({ pathname: `${match.path}${lobby}`, state: { contract: lobby } });

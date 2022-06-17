@@ -99,7 +99,7 @@ const onePlayerRace: LobbyInitializers = {
   MODIFIERS: [100, 100, 100, 100, 75, 100, 100, 100],
   SPACESHIPS: [true, true, false, true, false],
   RANDOM_ARTIFACTS: false,
-  NO_ADMIN: true,
+  NO_ADMIN: false,
   WHITELIST_ENABLED: false,
   START_PAUSED: false,
   ADMIN_PLANETS: [
@@ -171,6 +171,11 @@ const onePlayerRace: LobbyInitializers = {
   TOKEN_MINT_END_TIMESTAMP: 1717258179,
   WHITELIST: [],
   INIT_PLANETS: [],
+  CONFIRM_START: false,
+  TARGETS_REQUIRED_FOR_VICTORY: 1,
+  BLOCKLIST: [],
+  BLOCK_CAPTURE: false,
+  BLOCK_MOVES: false,
 };
 
 const fourPlayerBattle: LobbyInitializers = {
@@ -288,7 +293,7 @@ const fourPlayerBattle: LobbyInitializers = {
       y: 0,
       level: 3,
       planetType: 0,
-      isTargetPlanet: false,
+      isTargetPlanet: true,
       isSpawnPlanet: true,
     },
     {
@@ -320,6 +325,11 @@ const fourPlayerBattle: LobbyInitializers = {
   NO_ADMIN: false,
   INIT_PLANETS: [],
   WHITELIST: [],
+  CONFIRM_START: true,
+  TARGETS_REQUIRED_FOR_VICTORY: 2,
+  BLOCKLIST: [],
+  BLOCK_CAPTURE: false,
+  BLOCK_MOVES: false,
 };
 
 const sprint: LobbyInitializers = {
@@ -453,6 +463,11 @@ const sprint: LobbyInitializers = {
   NO_ADMIN: false,
   INIT_PLANETS: [],
   WHITELIST: [],
+  CONFIRM_START: true,
+  TARGETS_REQUIRED_FOR_VICTORY: 1,
+  BLOCKLIST: [],
+  BLOCK_CAPTURE: false,
+  BLOCK_MOVES: false,
 };
 
 const grandPrixWeek2: LobbyInitializers = {
@@ -554,7 +569,7 @@ const grandPrixWeek2: LobbyInitializers = {
   MODIFIERS: [95, 100, 150, 150, 75, 100, 100, 100],
   SPACESHIPS: [true, true, false, true, false],
   RANDOM_ARTIFACTS: false,
-  NO_ADMIN: true,
+  NO_ADMIN: false,
   WHITELIST_ENABLED: false,
   START_PAUSED: false,
   ADMIN_PLANETS: [
@@ -634,6 +649,11 @@ const grandPrixWeek2: LobbyInitializers = {
   TOKEN_MINT_END_TIMESTAMP: 1682435240778,
   INIT_PLANETS: [],
   WHITELIST: [],
+  CONFIRM_START: true,
+  TARGETS_REQUIRED_FOR_VICTORY: 1,
+  BLOCKLIST: [],
+  BLOCK_CAPTURE: false,
+  BLOCK_MOVES: false,
 };
 const competitive: LobbyInitializers = grandPrixWeek2;
 
