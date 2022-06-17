@@ -19,23 +19,29 @@ import { Table } from './Table';
 
 const errorMessage = 'Error Loading Leaderboard';
 
-export function ArenaLeaderboardDisplay({config} : {config: string}) {
-
+export function ArenaLeaderboardWithData({ config }: { config: string }) {
   const { arenaLeaderboard, arenaError } = useArenaLeaderboard(false, config);
+  return <ArenaLeaderboardDisplay leaderboard={arenaLeaderboard} error={arenaError} />;
+}
 
+export function ArenaLeaderboardDisplay({
+  leaderboard,
+  error,
+}: {
+  leaderboard: Leaderboard | undefined;
+  error: Error | undefined;
+}) {
   return (
     <GenericErrorBoundary errorMessage={errorMessage}>
       <LeaderboardContainer>
         <StatsTableContainer>
           <StatsTable>
-            <LeaderboardContainer>
               <CountDown />
-              <ArenasCreated leaderboard={arenaLeaderboard} error={arenaError} />
-            </LeaderboardContainer>
+              <ArenasCreated leaderboard={leaderboard} error={error} />
           </StatsTable>
         </StatsTableContainer>
-        <Spacer height={8} />
-        <ArenaLeaderboardBody leaderboard={arenaLeaderboard} error={arenaError} />
+        {/* <Spacer height={8} /> */}
+        <ArenaLeaderboardBody leaderboard={leaderboard} error={error} />
       </LeaderboardContainer>
     </GenericErrorBoundary>
   );
@@ -73,7 +79,7 @@ function compPlayerToEntry(
 
       <a
         style={{ display: 'flex', alignItems: 'center' }}
-        target="_blank"
+        target='_blank'
         href={`https://blockscout.com/xdai/optimism/address/${playerAddress}`}
       >
         <GnoButton>
@@ -111,15 +117,14 @@ function getRankStar(rank: number) {
 }
 type Row = [string, string | undefined, number | undefined];
 
-
 function CountDown() {
-  const [time, setTime] = useState('');
-  const [str, setStr] = useState('');
+  const [time, setTime] = useState<string | undefined>();
+  const [str, setStr] = useState<string | undefined>();
 
   const update = () => {
     const roundStartTime = new Date(roundStartTimestamp).getTime();
 
-const roundEndTime = new Date(roundEndTimestamp).getTime();
+    const roundEndTime = new Date(roundEndTimestamp).getTime();
 
     const timeUntilStartms = roundStartTime - new Date().getTime();
     const timeUntilEndms = roundEndTime - new Date().getTime();
@@ -146,12 +151,12 @@ const roundEndTime = new Date(roundEndTimestamp).getTime();
   }, []);
 
   return (
-    <tbody style = {{fontSize: '1.25em'}}>
-      <tr>
-        {str && <td>{str}</td>}
-        <td>{time}</td>
-      </tr>
-    </tbody>
+      <tbody style={{ fontSize: '1.25em' }}>
+        <tr>
+          {str && <td>{str}</td>}
+          {time && <td>{time}</td>}
+        </tr>
+      </tbody>
   );
 }
 
@@ -171,23 +176,19 @@ function ArenasCreated({
   }
   if (leaderboard) {
     return (
-        <tbody style = {{fontSize: '1.25em'}}>
-          <tr>
-            <td>Total races</td>
-            <td>{leaderboard.length}</td>
-          </tr>
-        </tbody>
+      <tbody style={{ fontSize: '1.25em' }}>
+        <tr>
+          <td>Total races</td>
+          <td>{leaderboard.length}</td>
+        </tr>
+      </tbody>
     );
   } else {
     return <></>;
   }
 }
 
-function ArenaLeaderboardTable({
-  rows,
-}: {
-  rows: Row[];
-}) {
+function ArenaLeaderboardTable({ rows }: { rows: Row[] }) {
   if (rows.length == 0) return <Subber>No players finished</Subber>;
   return (
     <TableContainer>
@@ -210,11 +211,7 @@ function ArenaLeaderboardTable({
           ),
           (row: [string, string | undefined, number | undefined], i) => {
             const color = getRankColor([i, row[2]]);
-            return (
-              <Cell style={{ color }}>
-                {compPlayerToEntry(row[0], row[1], color)}
-              </Cell>
-            );
+            return <Cell style={{ color }}>{compPlayerToEntry(row[0], row[1], color)}</Cell>;
           },
           (row: [string, string | undefined, number | undefined], i) => {
             return <Cell style={{ color: getRankColor([i, row[2]]) }}>{scoreToTime(row[2])}</Cell>;
@@ -256,10 +253,9 @@ function ArenaLeaderboardBody({
     return a.score - b.score;
   });
 
-  const arenaRows: Row[] =
-    leaderboard.entries.map((entry) => {
-      return [entry.ethAddress, entry.twitter, entry.score];
-    });
+  const arenaRows: Row[] = leaderboard.entries.map((entry) => {
+    return [entry.ethAddress, entry.twitter, entry.score];
+  });
 
   return <ArenaLeaderboardTable rows={arenaRows} />;
 }
@@ -268,7 +264,7 @@ const Cell = styled.div`
   padding: 4px 8px;
   color: ${dfstyles.colors.text};
   background: transparent;
-  font-size: 1.25em;
+  // font-size: 1.25em;
 `;
 
 const TableContainer = styled.div`
@@ -284,6 +280,7 @@ const LeaderboardContainer = styled.div`
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  overflow: hidden;
 `;
 const StatsTableContainer = styled.div`
   display: flex;

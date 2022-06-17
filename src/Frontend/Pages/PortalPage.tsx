@@ -35,8 +35,6 @@ export function PortalPage() {
 }
 
 function Portal({ address }: { address: EthAddress }) {
-  const history = useHistory();
-
   return (
     <>
       <PrettyOverlayGradient />
@@ -54,7 +52,8 @@ const PortalContainer = styled.div`
   vertical-align: baseline;
   display: grid;
   margin: 0 auto;
-  grid-template-columns: 350px minmax(500px,100%) 0;
+  grid-template-columns: 245px 800px;
   min-height: 100vh;
+  justify-content: center;
 
 `;

@@ -85,5 +85,5 @@ export function Minimap({
     return () => worker.removeEventListener('message', onMessage);
   }, [worker, setRefreshing]);
 
-  return <canvas ref={canvasRef} style={{...style, margin: 'auto'}} width='400' height='400' />;
+  return <canvas ref={canvasRef} style={{...style, margin: '0 auto'}} width='400' height='400' />;
 }

@@ -12,22 +12,21 @@ import { competitiveConfig } from '../../Utils/constants';
 import { MapInfoView } from './MapInfoView';
 
 export function PortalMainView({ address }: { address: EthAddress }) {
-
-  const [config, setConfig] = useState<LobbyInitializers | undefined>()
+  const [config, setConfig] = useState<LobbyInitializers | undefined>();
 
   useEffect(() => {
     loadConfig().then((c) => setConfig(c));
-  }, [])
+  }, []);
 
   return (
     <MainContainer>
-        <TopBar>
-          <Title>Grand Prix</Title>
-          <p style = {{fontSize: '1.5em'}}>Race the clock to get the fastest time!</p>
-        </TopBar>
-        <MapInfoView configHash = {competitiveConfig} config = {config}/>
-
-
+      <TopBar>
+        <TitleContainer>
+          <Title>Grand Prix </Title>
+          <p>Race the clock to get the fastest time!</p>
+        </TitleContainer>
+      </TopBar>
+      <MapInfoView configHash={competitiveConfig} config={config} />
     </MainContainer>
   );
 }
@@ -36,36 +35,41 @@ const MainContainer = styled.div`
   display: flex;
   flex: 1 1;
   flex-direction: column;
-  border-right: 1px solid ${dfstyles.colors.border};
   border-left: 1px solid ${dfstyles.colors.border};
   height: 100vh;
   overflow: hidden;
   padding-bottom: 3em;
+  background: rgba(255, 255, 255, 0.04);
+
 `;
 
 const TopBar = styled.div`
-border-bottom: 1px solid ${dfstyles.colors.border};
-// margin: auto;
-height: 10em;
-display: flex;
-flex-direction: column;
-justify-content: center;
-align-items: flex-start;
-width: 100%;
-padding: 20px;
+  border-bottom: 1px solid ${dfstyles.colors.border};
+
+  height: 56px;
+  max-height: 56px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  padding-inline: 16px;
+`;
+
+const Title = styled.p`
+  font-weight: 600;
+  font-size: 1.5em;
 `
 
-const Title = styled.div`
+const TitleContainer = styled.div`
   display: flex;
   align-items: center;
   overflow: hidden;
   display: grid;
   width: 100%;
   grid-template-columns: minmax(100px, min-content) minmax(100px, min-content);
-  font-size: 3em;
-  font-weight: 500;
   white-space: nowrap;
-`
+  justify-content: space-between;
+`;
 const TimeContainer = styled.div`
   font-size: 1em;
   text-align: center;

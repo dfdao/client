@@ -42,7 +42,7 @@ export function AccountView({ address }: { address: EthAddress }) {
   return (
     <PaneContainer>
       <Account address={address} />
-      <Btn variant = {'portal'} onClick={logOut}>Log out</Btn>
+      <Btn variant = {'portal'} size = 'small' onClick={logOut}>Logout</Btn>
 
     </PaneContainer>
   );
