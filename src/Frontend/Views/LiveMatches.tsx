@@ -14,19 +14,26 @@ import { GenericErrorBoundary } from './GenericErrorBoundary';
 import { Table } from './Table';
 
 const errorMessage = 'Error Loading Leaderboard';
-export function LiveMatchesDisplay({config} : {config: string}) {
+export function LiveMatchesDisplay({ config }: { config: string }) {
   const { liveMatches, spyError } = useLiveMatches(config);
-  return <LiveMatches game = {liveMatches} error = {spyError}/>
+  return <LiveMatches game={liveMatches} error={spyError} />;
 }
 
-export function LiveMatches({game, error} : {game : LiveMatch | undefined, error: Error | undefined}) {
-
+export function LiveMatches({
+  game,
+  error,
+}: {
+  game: LiveMatch | undefined;
+  error: Error | undefined;
+}) {
   return (
     <GenericErrorBoundary errorMessage={errorMessage}>
       <LeaderboardContainer>
-        <LeaderboardBody leaderboard={game} error={error}/>
+        <LeaderboardBody leaderboard={game} error={error} />
       </LeaderboardContainer>
-      <Subber>Thanks Bulmenisaurus for the initial implementation of this panel!</Subber>
+      <Subber>
+        Credit: <Link to={'https://twitter.com/bulmenisaurus'}>Bulmenisaurus</Link>
+      </Subber>
     </GenericErrorBoundary>
   );
 }

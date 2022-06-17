@@ -1,24 +1,13 @@
 import { getConfigName } from '@darkforest_eth/procedural';
-import { EthAddress, Leaderboard, TooltipName } from '@darkforest_eth/types';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Btn } from '../../Components/Btn';
-import { AccountLabel } from '../../Components/Labels/Labels';
+import { LoadingSpinner } from '../../Components/LoadingSpinner';
 import { Minimap } from '../../Components/Minimap';
-import { Gold } from '../../Components/Text';
 import { TextPreview } from '../../Components/TextPreview';
 import { generateMinimapConfig } from '../../Panes/Lobbies/MinimapUtils';
 import { LobbyInitializers } from '../../Panes/Lobbies/Reducer';
-import { TooltipTrigger } from '../../Panes/Tooltip';
-import dfstyles from '../../Styles/dfstyles';
-import {
-  useArenaLeaderboard,
-  useGameover,
-  useLiveMatches,
-  useUIManager,
-} from '../../Utils/AppHooks';
-import { competitiveConfig } from '../../Utils/constants';
-import { ArenaLeaderboardDisplay } from '../ArenaLeaderboard';
+
 import { MapDetails } from './MapDetails';
 
 function MapOverview({
@@ -28,6 +17,8 @@ function MapOverview({
   configHash: string;
   config: LobbyInitializers | undefined;
 }) {
+  const [refreshing, setRefreshing] = useState(false);
+
   const mapName = getConfigName(configHash);
 
   return (
@@ -35,9 +26,27 @@ function MapOverview({
       <div>
         <Title>{mapName}</Title>
         <TextPreview text={configHash} focusedWidth={'200px'} unFocusedWidth={'200px'} />
-        </div>
+      </div>
 
-      {!!config && <Minimap style = {{width: '300px', height: '300px'}} minimapConfig={generateMinimapConfig(config, 5)} />}
+      {!config ? (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: '300px',
+            height: '300px',
+          }}
+        >
+          <LoadingSpinner initialText='Loading...' />
+        </div>
+      ) : (
+        <Minimap
+          style={{ width: '300px', height: '300px' }}
+          minimapConfig={generateMinimapConfig(config, 5)}
+          setRefreshing={setRefreshing}
+        />
+      )}
       <Btn variant='portal' size='large'>
         <a target='blank' href='https://arena.dfdao.xyz/play'>
           Play Grand Prix
@@ -74,7 +83,7 @@ const MapInfoContainer = styled.div`
 
 const OverviewContainer = styled.div`
   flex: 1 1 50%;
-  display: flex; 
+  display: flex;
   flex-direction: column;
   align-items: center;
   gap: 10px;

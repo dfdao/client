@@ -11,7 +11,7 @@ import { useGameover, useUIManager } from '../../Utils/AppHooks';
 import { competitiveConfig } from '../../Utils/constants';
 import { MapInfoView } from './MapInfoView';
 
-export function PortalMainView({ address }: { address: EthAddress }) {
+export function PortalMainView() {
   const [config, setConfig] = useState<LobbyInitializers | undefined>();
 
   useEffect(() => {
@@ -52,7 +52,7 @@ const TopBar = styled.div`
   justify-content: space-between;
   align-items: flex-start;
   width: 100%;
-  padding-inline: 16px;
+  padding: 16px;
 `;
 
 const Title = styled.p`

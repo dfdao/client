@@ -11,7 +11,7 @@ export interface Account {
   privateKey: string;
 }
 
-const ACTIVE_TIME = 1000 * 60 * 60;
+const ACTIVE_TIME = 1000 * 60 * 60 * 24 * 7;
 /**
  * This is the key in local storage in which we keep an array of all the public addresses of the
  * accounts that have been imported/generated into this client.

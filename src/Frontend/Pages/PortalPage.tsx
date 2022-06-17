@@ -42,7 +42,7 @@ function Portal({ address }: { address: EthAddress }) {
         <HideSmall>
           <PortalSidebarView address={address} />
         </HideSmall>
-        <PortalMainView address={address} />
+        <PortalMainView/>
       </PortalContainer>
     </>
   );
