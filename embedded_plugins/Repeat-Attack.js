@@ -91,7 +91,9 @@ class Repeater {
     localStorage.setItem(`repeatAttacks-${this.account}`, JSON.stringify(this.attacks));
   }
   addAttack(srcId, targetId) {
-    this.attacks.push({ srcId, targetId });
+    const newAttacks = this.attacks.filter(item => item.srcId !== srcId);
+    newAttacks.push({ srcId, targetId });
+    this.attacks = newAttacks;
     this.saveAttacks();
   }
   removeAttack(position) {
