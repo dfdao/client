@@ -3450,7 +3450,6 @@ class GameManager extends EventEmitter {
    * Overwrites all the saved plugins to equal the given array of plugins.
    */
   public async savePlugins(savedPlugins: SerializedPlugin[]): Promise<void> {
-    console.log('saving plugins');
     await this.persistentChunkStore.savePlugins(savedPlugins);
     await this.configHashPersistentChunkStore.savePlugins(savedPlugins);
   }
