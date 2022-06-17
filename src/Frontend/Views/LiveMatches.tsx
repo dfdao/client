@@ -1,4 +1,4 @@
-import { SpyArena } from '@darkforest_eth/types';
+import { LiveMatch } from '@darkforest_eth/types';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Btn } from '../Components/Btn';
@@ -8,21 +8,25 @@ import { TwitterLink } from '../Components/Labels/Labels';
 import { Red, Subber } from '../Components/Text';
 import { TextPreview } from '../Components/TextPreview';
 import dfstyles from '../Styles/dfstyles';
-import { useSpyArenas } from '../Utils/AppHooks';
+import { useLiveMatches } from '../Utils/AppHooks';
 import { formatDuration } from '../Utils/TimeUtils';
 import { GenericErrorBoundary } from './GenericErrorBoundary';
 import { Table } from './Table';
 
 const errorMessage = 'Error Loading Leaderboard';
+export function LiveMatchesDisplay({config} : {config: string}) {
+  const { liveMatches, spyError } = useLiveMatches(config);
+  return <LiveMatches game = {liveMatches} error = {spyError}/>
+}
 
-export function SpyArenaDisplay() {
-  const { spyArenas, spyError } = useSpyArenas();
+export function LiveMatches({game, error} : {game : LiveMatch | undefined, error: Error | undefined}) {
 
   return (
     <GenericErrorBoundary errorMessage={errorMessage}>
       <LeaderboardContainer>
-        <LeaderboardBody leaderboard={spyArenas} error={spyError}/>
+        <LeaderboardBody leaderboard={game} error={error}/>
       </LeaderboardContainer>
+      <Subber>Thanks Bulmenisaurus for the initial implementation of this panel!</Subber>
     </GenericErrorBoundary>
   );
 }
@@ -37,7 +41,7 @@ function playerToEntry(playerAddress: string, playerTwitter: string | undefined)
       {playerTwitter ? (
         <TwitterLink twitter={playerTwitter} />
       ) : (
-        <TextPreview text={playerAddress} focusedWidth={'150px'} unFocusedWidth={'150px'} />
+        <TextPreview text={playerAddress} focusedWidth={'100px'} unFocusedWidth={'100px'} />
       )}
 
       <a
@@ -91,7 +95,7 @@ function LeaderboardTable({ rows }: { rows: Row[] }) {
           (row: Row, i) => {
             return (
               <Cell>
-                <TextPreview text={row.id} focusedWidth={'150px'} unFocusedWidth={'150px'} />
+                <TextPreview text={row.id} focusedWidth={'75px'} unFocusedWidth={'75px'} />
               </Cell>
             );
           },
@@ -117,7 +121,7 @@ function LeaderboardBody({
   leaderboard,
   error,
 }: {
-  leaderboard: SpyArena | undefined;
+  leaderboard: LiveMatch | undefined;
   error: Error | undefined;
 }) {
   if (error) {
@@ -168,6 +172,7 @@ const TableContainer = styled.div`
   border-radius: 2px 2px 0 0px;
   border-bottom: none;
   padding: 16px;
+  overflow: auto;
 `;
 
 const LeaderboardContainer = styled.div`
@@ -175,6 +180,7 @@ const LeaderboardContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
 `;
 const StatsTableContainer = styled.div`
   display: flex;

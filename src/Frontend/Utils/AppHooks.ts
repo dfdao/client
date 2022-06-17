@@ -5,10 +5,10 @@ import {
   ArtifactId,
   EthAddress,
   Leaderboard,
+  LiveMatch,
   LocationId,
   Planet,
   Player,
-  SpyArena,
   Transaction,
   TransactionId,
 } from '@darkforest_eth/types';
@@ -16,7 +16,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import GameUIManager from '../../Backend/GameLogic/GameUIManager';
 import { loadArenaLeaderboard } from '../../Backend/Network/ArenaLeaderboardApi';
 import { loadLeaderboard } from '../../Backend/Network/LeaderboardApi';
-import { loadSpyArenas } from '../../Backend/Network/SpyApi';
+import { loadLiveMatches } from '../../Backend/Network/SpyApi';
 import { Wrapper } from '../../Backend/Utils/Wrapper';
 import { ContractsAPIEvent } from '../../_types/darkforest/api/ContractsAPITypes';
 import { ModalHandle } from '../Views/ModalPane';
@@ -242,18 +242,18 @@ export function useArenaLeaderboard(
   return { arenaLeaderboard, arenaError };
 }
 
-export function useSpyArenas(
-  address: string | undefined = undefined,
+export function useLiveMatches(
+  config: string | undefined = undefined,
   poll: number | undefined = undefined
 ): {
-  spyArenas: SpyArena | undefined;
+  liveMatches: LiveMatch | undefined;
   spyError: Error | undefined;
 } {
-  const [spyArenas, setSpyArenas] = useState<SpyArena | undefined>();
+  const [liveMatches, setLiveMatches] = useState<LiveMatch | undefined>();
   const [spyError, setSpyError] = useState<Error | undefined>();
   const loadSpy = useCallback(async function loadSpy() {
     try {
-      setSpyArenas(await loadSpyArenas(address));
+      setLiveMatches(await loadLiveMatches(config));
     } catch (e) {
       console.log('error loading leaderboard', e);
       setSpyError(e);
@@ -262,7 +262,7 @@ export function useSpyArenas(
 
   usePoll(loadSpy, poll, true);
 
-  return { spyArenas, spyError };
+  return { liveMatches, spyError };
 }
 
 export function usePopAllOnSelectedPlanetChanged(

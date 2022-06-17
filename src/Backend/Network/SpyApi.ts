@@ -1,9 +1,9 @@
-import { SpyArena, SpyArenaEntry } from '@darkforest_eth/types';
+import { LiveMatch, LiveMatchEntry } from '@darkforest_eth/types';
 import { competitiveConfig } from '../../Frontend/Utils/constants';
 import { getGraphQLData } from './GraphApi';
 import { getAllTwitters } from './UtilityServerAPI';
 
-export const loadSpyArenas = async (config: string = competitiveConfig): Promise<SpyArena> => {
+export const loadLiveMatches = async (config: string = competitiveConfig): Promise<LiveMatch> => {
   const query = `
     query {
         arenas(first: 1000, where: {configHash: "${config}", gameOver: false, firstMover_not: null}) {
@@ -32,6 +32,6 @@ export const loadSpyArenas = async (config: string = competitiveConfig): Promise
 
   const twitters = await getAllTwitters();
   console.log('arenas:', arenas);
-  arenas.map((a : SpyArenaEntry) => a.twitter = twitters[a.firstMover.address]);
+  arenas.map((a : LiveMatchEntry) => a.twitter = twitters[a.firstMover.address]);
   return {entries: arenas};
 };
