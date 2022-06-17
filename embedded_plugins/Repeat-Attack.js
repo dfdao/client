@@ -100,6 +100,14 @@ class Repeater {
     this.attacks.splice(position, 1);
     this.saveAttacks();
   }
+  stopFiring(planetId) {
+    this.attacks = this.attacks.filter(item => item.srcId !== planetId);
+    this.saveAttacks();
+  }
+  stopBeingFiredAt(planetId) {
+    this.attacks = this.attacks.filter(item => item.targetId !== planetId);
+    this.saveAttacks();
+  }
   coreLoop() {
     if(!this || !this.attacks) return;
     const length = this.attacks.length;
@@ -184,7 +192,7 @@ function Attack({ attack, onDelete }) {
     </div>
   `;
 }
-function AddAttack({ onCreate }) {
+function AddAttack({ onCreate, stopFiring, stopBeingFiredAt }) {
   let [planet, setPlanet] = useState(ui.getSelectedPlanet());
   let [source, setSource] = useState(undefined);
   let [target, setTarget] = useState(undefined);
@@ -230,6 +238,33 @@ function AddAttack({ onCreate }) {
           Start Firing!
         </button>
       </div>
+      <hr
+        style=${{borderColor: 'grey', marginBottom: '10px'}}
+      />
+      <div
+        style=${{fontSize: '90%'}}
+      >
+        <button
+          style=${{...VerticalSpacing, width: 80, marginRight: 5}}
+          onClick=${() => planet && stopFiring(planet.locationId)}
+        >
+          Stop Firing
+        </button>
+        <button
+          style=${{...VerticalSpacing, width: 93}}
+          onClick=${() => planet && stopBeingFiredAt(planet.locationId)}
+        >
+          Stop Being Fired At
+        </button>
+        <span 
+          style=${planet ? { ...Spacing, ...Clickable, marginRight: 'auto' } : {...Spacing, marginRight: 'auto'}} 
+          onClick=${planet ? () => centerPlanet(planet.locationId) : () => {}}
+          >${planet ? getPlanetString(planet.locationId) : '?????'}</span
+        >
+      </div>
+      <hr
+        style=${{borderColor: 'grey', marginBottom: '10px'}}
+      /> 
     </div>
   `;
 }
@@ -267,6 +302,8 @@ function AttackList({ repeater }) {
     </i>
     <${AddAttack}
       onCreate=${(srcId, targetId) => repeater.addAttack(srcId, targetId)}
+      stopFiring=${planetId => repeater.stopFiring(planetId)}
+      stopBeingFiredAt=${planetId => repeater.stopBeingFiredAt(planetId)}
     />
     <h1 style=${{...HalfVerticalSpacing, fontWeight: 'bold'}}>
       Active (${actionsChildren.length})
