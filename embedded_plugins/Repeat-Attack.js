@@ -224,10 +224,10 @@ function AddAttack({ onCreate }) {
       </div>
       <div>
         <button
-          style=${{...VerticalSpacing, width: 93}}
+          style=${{...VerticalSpacing, width: 150}}
           onClick=${() => target && source && onCreate(source.locationId, target.locationId)}
         >
-          start
+          Start Firing!
         </button>
       </div>
     </div>
