@@ -9,7 +9,7 @@ import { Minimap } from '../../Components/Minimap';
 import { Row } from '../../Components/Row';
 import { Smaller, Sub } from '../../Components/Text';
 import { stockConfig } from '../../Utils/StockConfigs';
-import { MinimapConfig } from './MinimapUtils';
+import { generateMinimapConfig, MinimapConfig } from './MinimapUtils';
 import {
   LobbyAction, lobbyConfigInit, LobbyInitializers
 } from './Reducer';
@@ -48,22 +48,6 @@ export function MapSelectPane({
 
   function pickMap(initializers: LobbyInitializers, active: number) {
     updateConfig({ type: 'RESET', value: lobbyConfigInit(initializers) });
-  }
-
-  function generateMinimapConfig(config: LobbyInitializers): MinimapConfig {
-    return {
-      worldRadius: config.WORLD_RADIUS_MIN,
-      key: config.SPACETYPE_KEY,
-      scale: config.PERLIN_LENGTH_SCALE,
-      mirrorX: config.PERLIN_MIRROR_X,
-      mirrorY: config.PERLIN_MIRROR_Y,
-      perlinThreshold1: config.PERLIN_THRESHOLD_1,
-      perlinThreshold2: config.PERLIN_THRESHOLD_2,
-      perlinThreshold3: config.PERLIN_THRESHOLD_3,
-      stagedPlanets: config.ADMIN_PLANETS || [],
-      createdPlanets: lobbyAdminTools?.planets || [],
-      dot: 10,
-    } as MinimapConfig;
   }
 
   interface map {
@@ -108,7 +92,7 @@ export function MapSelectPane({
           <div style={{ flexDirection: 'column' }}>
             <Minimap
               style={{ height: mapSize, width: mapSize }}
-              minimapConfig={generateMinimapConfig(item.initializers)}
+              minimapConfig={generateMinimapConfig(item.initializers, 10, lobbyAdminTools)}
             />
             <div>{item.title}</div>
             <Smaller>{item.description}</Smaller>

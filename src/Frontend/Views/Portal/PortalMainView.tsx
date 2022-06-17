@@ -1,8 +1,10 @@
 import { EthAddress, TooltipName } from '@darkforest_eth/types';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { loadConfig } from '../../../Backend/Network/ConfigApi';
 import { AccountLabel } from '../../Components/Labels/Labels';
 import { Gold } from '../../Components/Text';
+import { LobbyInitializers } from '../../Panes/Lobbies/Reducer';
 import { TooltipTrigger } from '../../Panes/Tooltip';
 import dfstyles from '../../Styles/dfstyles';
 import { useGameover, useUIManager } from '../../Utils/AppHooks';
@@ -10,13 +12,20 @@ import { competitiveConfig } from '../../Utils/constants';
 import { MapInfoView } from './MapInfoView';
 
 export function PortalMainView({ address }: { address: EthAddress }) {
+
+  const [config, setConfig] = useState<LobbyInitializers | undefined>()
+
+  useEffect(() => {
+    loadConfig().then((c) => setConfig(c));
+  }, [])
+
   return (
     <MainContainer>
         <TopBar>
           <Title>Grand Prix</Title>
           <p style = {{fontSize: '1.5em'}}>Race the clock to get the fastest time!</p>
         </TopBar>
-        <MapInfoView config = {competitiveConfig}/>
+        <MapInfoView configHash = {competitiveConfig} config = {config}/>
 
 
     </MainContainer>

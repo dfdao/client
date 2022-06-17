@@ -4,32 +4,38 @@ import React from 'react';
 import styled from 'styled-components';
 import { Btn } from '../../Components/Btn';
 import { AccountLabel } from '../../Components/Labels/Labels';
+import { Minimap } from '../../Components/Minimap';
 import { Gold } from '../../Components/Text';
 import { TextPreview } from '../../Components/TextPreview';
+import { generateMinimapConfig } from '../../Panes/Lobbies/MinimapUtils';
+import { LobbyInitializers } from '../../Panes/Lobbies/Reducer';
 import { TooltipTrigger } from '../../Panes/Tooltip';
 import dfstyles from '../../Styles/dfstyles';
 import { useGameover, useUIManager } from '../../Utils/AppHooks';
 import { competitiveConfig } from '../../Utils/constants';
 import { ArenaLeaderboardDisplay } from '../ArenaLeaderboard';
 
-export function MapInfoView({ config }: { config: string }) {
-  const mapName = getConfigName(config);
+export function MapInfoView({ configHash, config }: { configHash: string, config: LobbyInitializers | undefined  }) {
+
+  const mapName = getConfigName(configHash);
+
+  
   return (
     <MapInfoContainer>
       <OverviewContainer>
         <OverviewContainer style = {{textAlign: 'center'}}>
           {' '}
           <Title>{mapName}</Title>
-          <TextPreview text={config} focusedWidth={'200px'} unFocusedWidth={'200px'} />
+          <TextPreview text={configHash} focusedWidth={'200px'} unFocusedWidth={'200px'} />
         </OverviewContainer>
-
+        {!!config && <Minimap minimapConfig={generateMinimapConfig(config, 4)}/>}
         <Btn variant='portal' size = 'large'>
           <a target='blank' href='https://arena.dfdao.xyz/play'>
             Play Grand Prix
           </a>
         </Btn>
       </OverviewContainer>
-      <ArenaLeaderboardDisplay config = {config}/>
+      <ArenaLeaderboardDisplay config = {configHash}/>
     </MapInfoContainer>
   );
 }
