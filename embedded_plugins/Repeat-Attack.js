@@ -334,7 +334,7 @@ class Plugin {
    */
   async render(container) {
     this.container = container;
-    container.style.width = '350px';
+    container.style.width = '400px';
     this.root = render(html`<${App} repeater=${this.repeater} />`, container);
   }
   /**
