@@ -265,7 +265,9 @@ function AttackList({ repeater }) {
     <i style=${{ ...VerticalSpacing, display: 'block' }}
       >Auto-attack when source planet >75% energy. Will send all planet silver
     </i>
-    <${AddAttack} onCreate=${(source, target) => repeater.addAttack(source, target)} />
+    <${AddAttack}
+      onCreate=${(srcId, targetId) => repeater.addAttack(srcId, targetId)}
+    />
     <h1 style=${{...HalfVerticalSpacing, fontWeight: 'bold'}}>
       Active (${actionsChildren.length})
       <button style=${{ float: 'right' }} onClick=${() => setAttacks([...repeater.attacks])}>
