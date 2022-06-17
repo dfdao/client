@@ -652,8 +652,8 @@ const grandPrixWeek2: LobbyInitializers = {
   CONFIRM_START: true,
   TARGETS_REQUIRED_FOR_VICTORY: 1,
   BLOCKLIST: [],
-  BLOCK_CAPTURE: false,
-  BLOCK_MOVES: false,
+  BLOCK_CAPTURE: true,
+  BLOCK_MOVES: true,
 };
 const competitive: LobbyInitializers = grandPrixWeek2;
 

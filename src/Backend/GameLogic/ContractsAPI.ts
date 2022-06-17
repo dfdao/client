@@ -28,6 +28,7 @@ import {
   ArtifactId,
   ArtifactType,
   AutoGasSetting,
+  BlocklistMap,
   DiagnosticUpdater,
   EthAddress,
   LocationId,
@@ -796,6 +797,22 @@ export class ContractsAPI extends EventEmitter {
   public async getEndTime(): Promise<number | undefined> {
     const endTime = (await this.makeCall(this.contract.getEndTime)).toNumber();
     return endTime == 0 ? undefined : endTime ;
+  }
+
+  public async getBlocklistMap(): Promise<BlocklistMap> {
+    const arrayBlockList = (await this.getConstants()).BLOCKLIST as Array<Array<LocationId>>;
+    const blockMap = new Map<LocationId, Map<LocationId, boolean>>();
+    arrayBlockList.forEach(planetBlockList => {
+      const destId = planetBlockList[0];
+      const planetMap = new Map<LocationId,boolean>();
+      planetBlockList.forEach((locId, idx) => {
+      if(idx != 0) {
+        planetMap.set(locId,true);
+      }});
+      blockMap.set(destId,planetMap);
+    });
+    console.log('BLOCK MAP', blockMap);
+    return blockMap;
   }
 
   public async getRevealedPlanetsCoords(

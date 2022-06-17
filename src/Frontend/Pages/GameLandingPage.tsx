@@ -50,7 +50,7 @@ import UIEmitter, { UIEmitterEvent } from '../Utils/UIEmitter';
 import { GameWindowLayout } from '../Views/GameWindowLayout';
 import { Terminal, TerminalHandle } from '../Views/Terminal';
 import { stockConfig } from '../Utils/StockConfigs';
-import { ContractMethodName, EthAddress, UnconfirmedCreateLobby } from '@darkforest_eth/types';
+import { ContractMethodName, EthAddress, LocationId, UnconfirmedCreateLobby } from '@darkforest_eth/types';
 import { getLobbyCreatedEvent, lobbyPlanetsToInitPlanets } from '../Utils/helpers';
 import _ from 'lodash';
 import { LobbyInitializers } from '../Panes/Lobbies/Reducer';
@@ -1209,18 +1209,26 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
     });
     const playerAddress = ethConnection.getAddress();
 
-    var initializers = config;
-    console.log('INITIALIZERS', initializers);
-    
+    var initializers = config;    
     if (initializers.ADMIN_PLANETS) {
       initializers.INIT_PLANETS = lobbyPlanetsToInitPlanets(
         initializers.ADMIN_PLANETS,
         initializers
       );
     }
+    const spawn = initializers.INIT_PLANETS.filter(p => p.isSpawnPlanet);
+    const target = initializers.INIT_PLANETS.filter(p => p.isTargetPlanet);
+    const blockList: string[][] = [];
+    if(spawn.length > 0 && target.length > 0) {
+      // For testing. Just block first spawn and target
+      blockList.push([target[0].location, spawn[0].location]);
+    }
+    initializers.BLOCKLIST = blockList;
     /* Don't want to submit ADMIN_PLANET as initdata because they aren't used */
     // @ts-expect-error The Operand of a delete must be optional
     delete initializers.ADMIN_PLANETS;
+
+    console.log('INITIALIZERS', initializers);
 
     const initContract = await ethConnection.loadContract<DFArenaInitialize>(
       INIT_ADDRESS,

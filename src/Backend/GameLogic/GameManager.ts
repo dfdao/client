@@ -47,6 +47,7 @@ import {
   ArtifactId,
   ArtifactRarity,
   ArtifactType,
+  BlocklistMap,
   CaptureZone,
   Chunk,
   ClaimedCoords,
@@ -363,6 +364,7 @@ class GameManager extends EventEmitter {
    * running when the game was last closed.
    */
   private safeMode: boolean;
+  public blocklist: BlocklistMap;
 
   public get planetRarity(): number {
     return this.contractConstants.PLANET_RARITY;
@@ -409,7 +411,9 @@ class GameManager extends EventEmitter {
     spectator: boolean,
     startTime: number | undefined,
     endTime: number | undefined,
+    blocklist: BlocklistMap,
     configHashPersistentChunkStore: PersistentChunkStore
+
   ) {
     super();
 
@@ -520,7 +524,8 @@ class GameManager extends EventEmitter {
     this.paused = paused;
     this.startTime = startTime;
     this.endTimeSeconds = endTime;
-
+    this.blocklist = blocklist;
+    
     this.spectator = spectator;
     this.ethConnection = ethConnection;
 
@@ -736,6 +741,7 @@ class GameManager extends EventEmitter {
       spectator,
       initialState.startTime,
       initialState.endTime,
+      initialState.blocklist,
       configHashPersistentChunkStore
     );
 
@@ -2036,6 +2042,10 @@ class GameManager extends EventEmitter {
         throw new Error('you can only capture target planets');
       }
 
+      if (this.blockedFromCapturing(this.account, locationId)) {
+        throw new Error("you can't capture blocked planets");
+      }
+
       if (planet.energy < this.contractConstants.CLAIM_VICTORY_ENERGY_PERCENT) {
         throw new Error(
           `planet energy must be ${this.contractConstants.CLAIM_VICTORY_ENERGY_PERCENT} before claiming victory`
@@ -2946,6 +2956,14 @@ class GameManager extends EventEmitter {
         throw new Error('game has ended');
       }
 
+      if (this.paused) {
+        throw new Error('game is paused');
+      }
+
+      if (this.blockMoves() && this.isBlocked(to,from)) {
+        throw new Error('Cannot move to a blocked planet');
+      }
+      
       const arrivalsToOriginPlanet = this.entityStore.getArrivalIdsForLocation(from);
       const hasIncomingVoyage = arrivalsToOriginPlanet && arrivalsToOriginPlanet.length > 0;
       if (abandoning && hasIncomingVoyage) {
@@ -3724,6 +3742,27 @@ class GameManager extends EventEmitter {
 
   public claimVictoryPercentage() {
     return this.contractConstants.CLAIM_VICTORY_ENERGY_PERCENT;
+  }
+
+  // Return true if move is blocked in blocklist.
+  public isBlocked(destId: LocationId, srcId: LocationId): boolean | undefined{
+    return (this.blocklist.get(destId))?.get(srcId);
+  }
+
+  public blockMoves(): boolean {
+    return this.contractConstants.BLOCK_MOVES;
+  }
+
+  public blockCapture(): boolean {
+    return this.contractConstants.BLOCK_CAPTURE;
+  }
+
+  public blockedFromCapturing(account: EthAddress, targetLocation: LocationId): boolean  {
+    const player = this.getPlayer(account);
+    if(!player) throw new Error("Player not found");
+    const playerHomePlanet = player.homePlanetId;
+    const res = this.isBlocked(targetLocation, playerHomePlanet);
+    return Boolean(res) // if isBlocked is undefined, will return false. 
   }
 
   /**

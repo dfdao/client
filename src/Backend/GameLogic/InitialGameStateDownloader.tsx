@@ -1,6 +1,7 @@
 import {
   Artifact,
   ArtifactId,
+  BlocklistMap,
   ClaimedCoords,
   EthAddress,
   LocationId,
@@ -42,9 +43,10 @@ export interface InitialGameState {
   twitters: AddressTwitterMap;
   paused: boolean;
   startTime: number | undefined;
-  endTime : number | undefined;
+  endTime: number | undefined;
   gameover: boolean;
   winners: EthAddress[];
+  blocklist: BlocklistMap;
 }
 
 export class InitialGameStateDownloader {
@@ -189,6 +191,7 @@ export class InitialGameStateDownloader {
     const winners = contractsAPI.getWinners();
     const startTime = contractsAPI.getStartTime();
     const endTime = contractsAPI.getEndTime();
+    const blockList = contractsAPI.getBlocklistMap();
 
     const initialState: InitialGameState = {
       contractConstants: await contractConstants,
@@ -208,10 +211,11 @@ export class InitialGameStateDownloader {
       arrivals,
       twitters,
       paused: await paused,
-      gameover : await gameover,
-      winners : await winners,
+      gameover: await gameover,
+      winners: await winners,
       startTime: await startTime,
-      endTime : await endTime
+      endTime: await endTime,
+      blocklist: await blockList,
     };
 
     return initialState;
