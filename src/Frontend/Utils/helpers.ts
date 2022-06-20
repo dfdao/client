@@ -55,6 +55,6 @@ export function lobbyPlanetToInitPlanet(planet: LobbyPlanet, initializers: Lobby
   };
 }
 
-export function lobbyPlanetsToInitPlanets(planets: LobbyPlanet[], initializers: LobbyInitializers) {
-  return planets.map(p => lobbyPlanetToInitPlanet(p, initializers));
+export function lobbyPlanetsToInitPlanets(initializers: LobbyInitializers) {
+  initializers.ADMIN_PLANETS.forEach(p => initializers.INIT_PLANETS.push(lobbyPlanetToInitPlanet(p, initializers)));
 }

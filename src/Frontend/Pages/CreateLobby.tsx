@@ -1,12 +1,15 @@
+import { CONTRACT_ADDRESS } from '@darkforest_eth/contracts';
 import { EthConnection } from '@darkforest_eth/network';
 import { address } from '@darkforest_eth/serde';
 import { ArtifactRarity, EthAddress } from '@darkforest_eth/types';
 import React, { useCallback, useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { ContractsAPI, makeContractsAPI } from '../../Backend/GameLogic/ContractsAPI';
+import { loadConfigFromAddress } from '../../Backend/Network/ConfigApi';
 import { InitRenderState, Wrapper } from '../Components/GameLandingPageComponents';
 import { LobbyInitializers } from '../Panes/Lobbies/Reducer';
 import { listenForKeyboardEvents, unlinkKeyboardEvents } from '../Utils/KeyEmitters';
+import { stockConfig } from '../Utils/StockConfigs';
 import { CadetWormhole } from '../Views/CadetWormhole';
 import { LobbyConfigPage } from './LobbyConfigPage';
 import { PortalLandingPage } from './PortalLandingPage';
@@ -21,12 +24,8 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
   const [ownerAddress, setOwnerAddress] = useState<EthAddress | undefined>();
   const [contract, setContract] = useState<ContractsAPI | undefined>();
   const [startingConfig, setStartingConfig] = useState<LobbyInitializers | undefined>();
-  let contractAddress: EthAddress | undefined;
-  try {
-    contractAddress = address(match.params.contract);
-  } catch (err) {
-    console.error('Invalid address', err);
-  }
+  const contractAddress: EthAddress = address(CONTRACT_ADDRESS);
+  const configContractAddress = address(match.params.contract) || contractAddress;
 
   const [errorState, setErrorState] = useState<ErrorState | undefined>(
     contractAddress ? undefined : { type: 'invalidAddress' }
@@ -47,47 +46,34 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
   );
 
   useEffect(() => {
-    if (connection && contractAddress) {
-      makeContractsAPI({ connection, contractAddress })
-        .then((contract) => setContract(contract))
-        .catch((e) => {
-          console.log(e);
-          setErrorState({ type: 'contractLoad' });
-        });
+    if (connection) {
+      if (contractAddress) {
+        makeContractsAPI({ connection, contractAddress })
+          .then((contract) => setContract(contract))
+          .catch((e) => {
+            console.log(e);
+            setErrorState({ type: 'contractLoad' });
+          });
+      }
+      if (configContractAddress) {
+        loadConfigFromAddress(configContractAddress)
+          .then((config) => {
+            console.log(config);
+            if (!config) {
+              setStartingConfig(stockConfig.onePlayerRace);
+            } else {
+              setStartingConfig(config.config);
+            }
+            return;
+
+          })
+          .catch((e) => {
+            console.log(e);
+            setErrorState({ type: 'contractLoad' });
+          });
+      }
     }
   }, [connection, contractAddress]);
-
-  useEffect(() => {
-    if (contract) {
-      contract
-        .getConstants()
-        .then((config) => {
-          setStartingConfig({
-            ...config,
-            WHITELIST_ENABLED: false,
-            START_PAUSED: false,
-            CLAIM_PLANET_COOLDOWN: 0,
-            ADMIN_PLANETS: [],
-            TOKEN_MINT_END_TIMESTAMP: 1682435240778, // Tuesday, April 25, 2023
-            ARTIFACT_POINT_VALUES: [
-              config.ARTIFACT_POINT_VALUES[ArtifactRarity.Unknown],
-              config.ARTIFACT_POINT_VALUES[ArtifactRarity.Common],
-              config.ARTIFACT_POINT_VALUES[ArtifactRarity.Rare],
-              config.ARTIFACT_POINT_VALUES[ArtifactRarity.Epic],
-              config.ARTIFACT_POINT_VALUES[ArtifactRarity.Legendary],
-              config.ARTIFACT_POINT_VALUES[ArtifactRarity.Mythic],
-            ],
-            INIT_PLANETS: [],
-            NO_ADMIN: false,
-            WHITELIST: [],
-          });
-        })
-        .catch((e) => {
-          console.log(e);
-          setErrorState({ type: 'invalidContract' });
-        });
-    }
-  }, [contract]);
 
   if (errorState) {
     switch (errorState.type) {
@@ -110,7 +96,7 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
         connection={connection}
         ownerAddress={ownerAddress}
         startingConfig={startingConfig}
-        root={`/arena/${contractAddress}`}
+        root={`/arena/${configContractAddress}`}
       />
     ) : (
       <PortalLandingPage onReady={onReady} />

@@ -1,6 +1,5 @@
 import { EthAddress, ModalName } from '@darkforest_eth/types';
-import React, { useState } from 'react';
-import { useHistory } from 'react-router';
+import React from 'react';
 import styled from 'styled-components';
 import dfstyles, { PortalButton } from '../../Styles/dfstyles';
 import { Text } from '../../Components/Text';

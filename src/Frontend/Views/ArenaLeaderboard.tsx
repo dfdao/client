@@ -153,8 +153,8 @@ function CountDown() {
   return (
       <tbody style={{ fontSize: '1.25em' }}>
         <tr>
-          {str && <td>{str}</td>}
-          {time && <td>{time}</td>}
+          <td>{str}</td>
+          <td>{time}</td>
         </tr>
       </tbody>
   );

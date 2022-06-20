@@ -1,9 +1,7 @@
 import { EthConnection } from '@darkforest_eth/network';
 import { EthAddress } from '@darkforest_eth/types';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useCallback, useState } from 'react';
 import styled from 'styled-components';
-import { Btn } from '../Components/Btn';
 import { InitRenderState, Wrapper } from '../Components/GameLandingPageComponents';
 import { HideSmall } from '../Components/Text';
 import { PortalMainView } from '../Views/Portal/PortalMainView';
@@ -25,7 +23,7 @@ export function PortalPage() {
 
    
     if(connection && ownerAddress) {
-      return <Portal address={ownerAddress} />
+      return <Portal playerAddress={ownerAddress} />
     } 
     return (
       <Wrapper initRender={InitRenderState.NONE} terminalEnabled={false}>
@@ -34,13 +32,14 @@ export function PortalPage() {
     )
 }
 
-function Portal({ address }: { address: EthAddress }) {
+function Portal({ playerAddress }: { playerAddress: EthAddress }) {
+
   return (
     <>
       <PrettyOverlayGradient />
       <PortalContainer>
         <HideSmall>
-          <PortalSidebarView address={address} />
+          <PortalSidebarView playerAddress={playerAddress} />
         </HideSmall>
         <PortalMainView/>
       </PortalContainer>

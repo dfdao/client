@@ -43,10 +43,7 @@ export function LobbyConfigPage({
   async function createLobby(config: LobbyInitializers) {
     var initializers = { ...startingConfig, ...config };
     if (initializers.ADMIN_PLANETS) {
-      initializers.INIT_PLANETS = lobbyPlanetsToInitPlanets(
-        initializers.ADMIN_PLANETS,
-        initializers
-      );
+      lobbyPlanetsToInitPlanets(initializers);
     }
     /* Don't want to submit ADMIN_PLANET as initdata because they aren't used */
     // @ts-expect-error The Operand of a delete must be optional
