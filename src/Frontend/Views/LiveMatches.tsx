@@ -31,9 +31,6 @@ export function LiveMatches({
       <LeaderboardContainer>
         <LeaderboardBody leaderboard={game} error={error} />
       </LeaderboardContainer>
-      <Subber>
-        Credit: <Link to={'https://twitter.com/bulmenisaurus'}>Bulmenisaurus</Link>
-      </Subber>
     </GenericErrorBoundary>
   );
 }

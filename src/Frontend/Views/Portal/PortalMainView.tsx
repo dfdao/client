@@ -1,32 +1,44 @@
-import { EthAddress, TooltipName } from '@darkforest_eth/types';
-import React, { useEffect, useState } from 'react';
+import { DarkForestTextInput } from '@darkforest_eth/ui';
+import React, { useState } from 'react';
+import { Redirect, Route, Router, Switch, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { loadConfig } from '../../../Backend/Network/ConfigApi';
-import { AccountLabel } from '../../Components/Labels/Labels';
-import { Gold } from '../../Components/Text';
-import { LobbyInitializers } from '../../Panes/Lobbies/Reducer';
-import { TooltipTrigger } from '../../Panes/Tooltip';
+import { Btn } from '../../Components/Btn';
+import { TextInput } from '../../Components/Input';
 import dfstyles from '../../Styles/dfstyles';
-import { useGameover, useUIManager } from '../../Utils/AppHooks';
 import { competitiveConfig } from '../../Utils/constants';
 import { MapInfoView } from './MapInfoView';
 
 export function PortalMainView() {
-  const [config, setConfig] = useState<LobbyInitializers | undefined>();
-
-  useEffect(() => {
-    loadConfig().then((c) => setConfig(c));
-  }, []);
-
+  const history = useHistory();
+  const [input, setInput] = useState<string>();
   return (
     <MainContainer>
       <TopBar>
         <TitleContainer>
           <Title>Grand Prix </Title>
-          <p>Race the clock to get the fastest time!</p>
-        </TitleContainer>
+          </TitleContainer>
+
+          <div>
+          <Btn variant = 'portal' onClick= {() => history.push(`/portal/map/${input}`)}>Enter</Btn>
+          <TextInput
+            value={input}
+            placeholder={'Search for a map config'}
+            onChange={(e: Event & React.ChangeEvent<DarkForestTextInput>) =>
+              setInput(e.target.value)
+            }
+          />{' '}
+          </div>
       </TopBar>
-      <MapInfoView configHash={competitiveConfig} config={config} />
+      <Switch>
+        <Redirect
+          path='/portal/map'
+          to={`/portal/map/${competitiveConfig}`}
+          push={true}
+          exact={true}
+        />
+
+        <Route path={'/portal/map/:configHash'} component={MapInfoView} />
+      </Switch>
     </MainContainer>
   );
 }
@@ -40,7 +52,6 @@ const MainContainer = styled.div`
   overflow: hidden;
   padding-bottom: 3em;
   background: rgba(255, 255, 255, 0.04);
-
 `;
 
 const TopBar = styled.div`
@@ -58,16 +69,13 @@ const TopBar = styled.div`
 const Title = styled.p`
   font-weight: 600;
   font-size: 1.5em;
-`
+`;
 
 const TitleContainer = styled.div`
   display: flex;
   align-items: center;
   overflow: hidden;
-  display: grid;
   width: 100%;
-  grid-template-columns: minmax(100px, min-content) minmax(100px, min-content);
-  white-space: nowrap;
   justify-content: space-between;
 `;
 const TimeContainer = styled.div`

@@ -1,21 +1,29 @@
 import { getConfigName } from '@darkforest_eth/procedural';
-import React, { useState } from 'react';
+import { address } from '@darkforest_eth/serde';
+import { EthAddress } from '@darkforest_eth/types';
+import React, { useEffect, useState } from 'react';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import styled from 'styled-components';
+import { loadConfigFromHash } from '../../../Backend/Network/ConfigApi';
 import { Btn } from '../../Components/Btn';
 import { LoadingSpinner } from '../../Components/LoadingSpinner';
 import { Minimap } from '../../Components/Minimap';
 import { TextPreview } from '../../Components/TextPreview';
 import { generateMinimapConfig } from '../../Panes/Lobbies/MinimapUtils';
 import { LobbyInitializers } from '../../Panes/Lobbies/Reducer';
+import { competitiveConfig } from '../../Utils/constants';
+import { stockConfig } from '../../Utils/StockConfigs';
 
 import { MapDetails } from './MapDetails';
 
 function MapOverview({
   configHash,
   config,
+  lobbyAddress
 }: {
   configHash: string;
   config: LobbyInitializers | undefined;
+  lobbyAddress : EthAddress | undefined;
 }) {
   const [refreshing, setRefreshing] = useState(false);
 
@@ -48,24 +56,41 @@ function MapOverview({
         />
       )}
       <Btn variant='portal' size='large'>
-        <a target='blank' href='https://arena.dfdao.xyz/play'>
-          Play Grand Prix
-        </a>
+        <Link target='blank' to={`/play/${lobbyAddress}?create=true`}>
+          New Game with this Map
+        </Link>
+      </Btn>
+      <Btn variant='portal' size='large' disabled = {!lobbyAddress}>
+        <Link target='blank' to={`arena/${lobbyAddress}`}>
+          Remix this Map
+        </Link>
       </Btn>
     </OverviewContainer>
   );
 }
 
-export function MapInfoView({
-  configHash,
-  config,
-}: {
-  configHash: string;
-  config: LobbyInitializers | undefined;
-}) {
+export function MapInfoView({match} :  RouteComponentProps<{ configHash: string }>) {
+  console.log(`here`)
+  const configHash = match.params.configHash || competitiveConfig;
+  const [config, setConfig] = useState<LobbyInitializers | undefined>();
+  const [lobbyAddress, setLobbyAddress] = useState<EthAddress | undefined>();
+
+  useEffect(() => {
+    loadConfigFromHash(competitiveConfig).then((c) => {
+      if(!c) {
+        setConfig(stockConfig.onePlayerRace)
+        return;
+      }
+      setConfig(c.config);
+      setLobbyAddress(address(c.address));
+    }).catch(e => {
+      console.log(e);
+    });
+  }, [configHash]);
+
   return (
     <MapInfoContainer>
-      <MapOverview configHash={configHash} config={config} />
+      <MapOverview configHash={configHash} config={config} lobbyAddress={lobbyAddress} />
       <MapDetails configHash={configHash} config={config} />
     </MapInfoContainer>
   );
@@ -78,7 +103,7 @@ const MapInfoContainer = styled.div`
   height: 100%;
   width: 100%;
   justify-content: space-evenly;
-  padding-top: 20px;
+  padding: 10px;
 `;
 
 const OverviewContainer = styled.div`

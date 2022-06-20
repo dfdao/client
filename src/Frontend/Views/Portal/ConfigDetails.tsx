@@ -6,10 +6,6 @@ import { LobbyInitializers } from '../../Panes/Lobbies/Reducer';
 import dfstyles from '../../Styles/dfstyles';
 import { Table } from '../Table';
 
-const rowChunkSize = 2;
-
-const rowStyle = { gap: '5px' } as CSSStyleDeclaration & React.CSSProperties;
-
 function configItemName(name: string) {
   if (name == 'START_PAUSED') return 'Start Paused';
   if (name == 'WORLD_RADIUS_LOCKED') return 'Locked world radius';
@@ -56,39 +52,34 @@ function configItemName(name: string) {
   return undefined;
 }
 
-const itemColumns = [
-    (item: any, i: number) => i,
-    (item: any) => item.toString()
-  ];
+const itemColumns = [(item: any, i: number) => i, (item: any) => item.toString()];
 function Tableify(item: any[]) {
-    console.log(item);
-    return (
+  console.log(item);
+  return (
     <Table
-    paginated={false}
-    rows={item}
-    headers={[<Cell key='star'></Cell>, <Cell key='place'></Cell>]}
-    columns={itemColumns}
-    alignments={['l', 'r']}
-  ></Table>
-  )
+      paginated={false}
+      rows={item}
+      headers={[]}
+      columns={itemColumns}
+      alignments={['l', 'r']}
+    ></Table>
+  );
 }
 
 export function ConfigDetails({ config }: { config: LobbyInitializers | undefined }) {
   if (!config) return <>loading...</>;
 
   const columns = [
-    (item: any) => configItemName(item[0].toString()),
-    (item: any) => {
-        if(typeof item[1] == 'object') return Tableify(item[1]);
-        return item[1].toString()
-    },
+    (item: any) => <Cell style = {{fontWeight: 'bold'}}>{configItemName(item[0].toString())}</Cell>,
+    (item: any) => (typeof item[1] == 'object' ? Tableify(item[1]) : item[1].toString()
+    ),
   ];
   return (
     <DetailsContainer>
       <Table
         paginated={false}
-        rows={Object.entries(config).filter(item => !!configItemName(item[0].toString()))}
-        headers={[<Cell key='star'></Cell>, <Cell key='place'></Cell>]}
+        rows={Object.entries(config).filter((item) => !!configItemName(item[0].toString()))}
+        headers={[]}
         columns={columns}
         alignments={['l', 'r']}
       ></Table>
@@ -109,4 +100,7 @@ const Cell = styled.div`
   color: ${dfstyles.colors.text};
   background: transparent;
   // font-size: 1.25em;
+  height: 100%;
+  display: flex;
+  justify-content: flex-start;
 `;
