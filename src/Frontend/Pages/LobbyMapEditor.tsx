@@ -68,7 +68,6 @@ export const LobbyMapEditor: React.FC<{
   const [refreshing, setRefreshing] = useState(false);
   const [selectedPlanetIndex, setSelectedPlanetIndex] = useState<number | undefined>();
   const [selectedPlanet, setSelectedPlanet] = useState<LobbyPlanet | undefined>();
-  const [selectedPlanetTool, setSelectedPlanetTool] = useState<PlanetTypes>('Planet');
   const [mutablePlanet, setMutablePlanet] = useState<LobbyPlanet>(defaultPlanet);
   const [placementMode, setPlacementMode] = useState<boolean>(false);
   const history = useHistory();

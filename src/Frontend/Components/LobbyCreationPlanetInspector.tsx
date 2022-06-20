@@ -14,7 +14,7 @@ export interface LobbyPlanetInspectorProps {
   onDelete: (deletedIndex: number) => void;
 }
 
-// This is the component that lets you edit planet props when editing a custom lobby map.
+// This is the component that lets you edit staged planet params when editing a custom lobby map.
 
 const PLANET_DESCRIPTION = [
   'Planets are the most basic type of celestial body. They can be found in all space types.',
@@ -104,7 +104,26 @@ export const LobbyCreationPlanetInspector: React.FC<LobbyPlanetInspectorProps> =
             }}
           />
         </div>
-        <Button>Save changes</Button>
+        <Button
+          onClick={() => {
+            // Unclear if we can directly edit planets.
+            // first, delete the target planet
+            updateConfig({
+              type: 'ADMIN_PLANETS',
+              value: selectedPlanet,
+              index: selectedIndex,
+            });
+            onDelete(selectedIndex);
+            // then, add the new target planet
+            updateConfig({
+              type: 'ADMIN_PLANETS',
+              value: mutablePlanet,
+              index: selectedIndex,
+            });
+          }}
+        >
+          Save changes
+        </Button>
         <Button
           onClick={() => {
             if (!selectedPlanet) return;
