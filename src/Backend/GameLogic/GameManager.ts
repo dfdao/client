@@ -928,6 +928,9 @@ class GameManager extends EventEmitter {
       })
       .on(ContractsAPIEvent.GameStarted, async (player: EthAddress, startTime: number) => {
         gameManager.startTime = startTime;
+      })
+      .on(ContractsAPIEvent.PlayerReady, async (player: EthAddress, startTime: number) => {
+        console.log(`${player} is ready`)
       });
 
     const unconfirmedTxs = await persistentChunkStore.getUnconfirmedSubmittedEthTxs();

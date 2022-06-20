@@ -61,6 +61,8 @@ export const enum ContractEvent {
   LobbyCreated = 'LobbyCreated',
   Gameover = 'Gameover',
   GameStarted = 'GameStarted',
+  PlayerReady = 'PlayerReady',
+  PlayerNotReady = 'PlayerNotReady',
 }
 
 export const enum ContractsAPIEvent {
@@ -109,6 +111,8 @@ export const enum ContractsAPIEvent {
   LobbyCreated = 'LobbyCreated',
   Gameover = 'Gameover',
   GameStarted = 'GameStarted',
+  PlayerReady = 'PlayerReady',
+  PlayerNotReady = 'PlayerNotReady',
 }
 
 // planet locationID(BigInt), branch number

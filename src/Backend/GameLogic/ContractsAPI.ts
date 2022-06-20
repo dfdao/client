@@ -224,14 +224,17 @@ export class ContractsAPI extends EventEmitter {
           contract.filters.AdminGiveSpaceship(null, null).topics,
           contract.filters.PauseStateChanged(null).topics,
           contract.filters.LobbyCreated(null, null).topics,
-          contract.filters.Gameover(null).topics,
-          contract.filters.GameStarted(null).topics,
+          contract.filters.Gameover(null,null).topics,
+          contract.filters.GameStarted(null,null).topics,
+          contract.filters.PlayerReady(null,null).topics,
+          contract.filters.PlayerNotReady(null,null).topics,
         ].map((topicsOrUndefined) => (topicsOrUndefined || [])[0]),
       ] as Array<string | Array<string>>,
     };
 
     const eventHandlers = {
       [ContractEvent.PauseStateChanged]: (paused: boolean) => {
+        console.log(`paused ${paused}`);
         this.emit(ContractsAPIEvent.PauseStateChanged, paused);
       },
       [ContractEvent.AdminOwnershipChanged]: (location: EthersBN, _newOwner: string) => {
@@ -375,7 +378,16 @@ export class ContractsAPI extends EventEmitter {
         this.emit(ContractsAPIEvent.Gameover);
       },
       [ContractEvent.GameStarted]: (player: string, startTime: EthersBN) => {
+        console.log('GAme started', player);
         this.emit(ContractsAPIEvent.GameStarted, address(player), startTime.toNumber());
+      },
+      [ContractEvent.PlayerReady]: (player: string, time: EthersBN) => {
+        console.log('CONTRACT PLAYER READY', player);
+        this.emit(ContractsAPIEvent.PlayerReady, address(player), time.toNumber());
+      },
+      [ContractEvent.PlayerNotReady]: (player: string, time: EthersBN) => {
+        console.log('CONTRACT PLAYER NOT READY', player);
+        this.emit(ContractsAPIEvent.PlayerNotReady, address(player), time.toNumber());
       },
     };
 
