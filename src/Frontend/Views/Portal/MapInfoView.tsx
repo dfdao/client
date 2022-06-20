@@ -19,11 +19,11 @@ import { MapDetails } from './MapDetails';
 function MapOverview({
   configHash,
   config,
-  lobbyAddress
+  lobbyAddress,
 }: {
   configHash: string;
   config: LobbyInitializers | undefined;
-  lobbyAddress : EthAddress | undefined;
+  lobbyAddress: EthAddress | undefined;
 }) {
   const [refreshing, setRefreshing] = useState(false);
 
@@ -36,7 +36,7 @@ function MapOverview({
         <TextPreview text={configHash} focusedWidth={'200px'} unFocusedWidth={'200px'} />
       </div>
 
-      {!config ?  (
+      {!config ? (
         <div
           style={{
             display: 'flex',
@@ -55,36 +55,38 @@ function MapOverview({
           setRefreshing={setRefreshing}
         />
       )}
-      <Btn variant='portal' size='large'>
-        <Link target='blank' to={`/play/${lobbyAddress}?create=true`}>
+      <Link style = {{minWidth: '250px'}} target='blank' to={`/play/${lobbyAddress}?create=true`}>
+        <Btn variant='portal' size='stretch'>
           New Game with this Map
-        </Link>
-      </Btn>
-      <Btn variant='portal' size='large' disabled = {!lobbyAddress}>
-        <Link target='blank' to={`/arena/${lobbyAddress}`}>
+        </Btn>
+      </Link>
+      <Link style = {{minWidth: '250px'}} target='blank' to={`/arena/${lobbyAddress}`}>
+        <Btn variant='portal' size='stretch' disabled={!lobbyAddress}>
           Remix this Map
-        </Link>
-      </Btn>
+        </Btn>
+      </Link>
     </OverviewContainer>
   );
 }
 
-export function MapInfoView({match} :  RouteComponentProps<{ configHash: string }>) {
+export function MapInfoView({ match }: RouteComponentProps<{ configHash: string }>) {
   const configHash = match.params.configHash || competitiveConfig;
   const [config, setConfig] = useState<LobbyInitializers | undefined>();
   const [lobbyAddress, setLobbyAddress] = useState<EthAddress | undefined>();
 
   useEffect(() => {
-    loadConfigFromHash(competitiveConfig).then((c) => {
-      if(!c) {
-        setConfig(stockConfig.onePlayerRace)
-        return;
-      }
-      setConfig(c.config);
-      setLobbyAddress(address(c.address));
-    }).catch(e => {
-      console.log(e);
-    });
+    loadConfigFromHash(competitiveConfig)
+      .then((c) => {
+        if (!c) {
+          setConfig(stockConfig.onePlayerRace);
+          return;
+        }
+        setConfig(c.config);
+        setLobbyAddress(address(c.address));
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   }, [configHash]);
 
   return (
