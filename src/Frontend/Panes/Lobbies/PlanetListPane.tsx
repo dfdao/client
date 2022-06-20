@@ -10,15 +10,6 @@ import { Green, Red, Sub } from '../../Components/Text';
 import { LobbiesPaneProps, LobbyPlanet, mirrorX, mirrorY, Warning } from './LobbiesUtils';
 import { InvalidConfigError, LobbyConfigAction, LobbyConfigState, toInitializers } from './Reducer';
 
-const defaultPlanet: LobbyPlanet = {
-  x: 0,
-  y: 0,
-  level: 0,
-  planetType: 0,
-  isTargetPlanet: false,
-  isSpawnPlanet: false,
-};
-
 const PLANET_TYPE_NAMES = ['Planet', 'Asteroid Field', 'Foundry', 'Spacetime Rip', 'Quasar'];
 export function PlanetListPane({
   config: config,
@@ -134,25 +125,28 @@ export function PlanetListPane({
               />
             ))}
             <PaginationContainer>
-              <span
+              <PaginationArrowContainer
+                style={{ transform: 'rotate(180deg)' }}
                 onClick={() => {
                   setCurrentPage(Math.max(currentPage - 1, 0));
                 }}
+                disabled={currentPage === 0}
               >
-                &lt;
-              </span>
+                <IconArrowRight />
+              </PaginationArrowContainer>
               <span>
                 Page {currentPage + 1} of {Math.floor(LobbyPlanets.length / maxPlanetsPerPage) + 1}
               </span>
-              <span
+              <PaginationArrowContainer
                 onClick={() => {
                   setCurrentPage(
                     Math.min(currentPage + 1, Math.floor(LobbyPlanets.length / maxPlanetsPerPage))
                   );
                 }}
+                disabled={currentPage === Math.floor(LobbyPlanets.length / maxPlanetsPerPage)}
               >
-                &gt;
-              </span>
+                <IconArrowRight />
+              </PaginationArrowContainer>
             </PaginationContainer>
           </List>
         </Row>
@@ -319,9 +313,18 @@ const CloseButton = styled.div`
 const PaginationContainer = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  width: 100%;
+  // justify-content: space-between;
+  gap: 16px;
   margin-top: 8px;
+`;
+
+const PaginationArrowContainer = styled(CloseButton)<{ disabled: boolean }>`
+  background: transparent;
+  color: ${({ disabled }) => (disabled ? '#bbb' : '#fff')};
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  &:hover {
+    background: ${({ disabled }) => (disabled ? 'transparent' : '#505050')};
+  }
 `;
 
 const CloseIcon = () => {
@@ -351,3 +354,16 @@ const HoverWrapper = styled.div`
   justify-content: center;
   backdrop-filter: blur(8px);
 `;
+
+const IconArrowRight = () => {
+  return (
+    <svg width='15' height='15' viewBox='0 0 15 15' fill='none' xmlns='http://www.w3.org/2000/svg'>
+      <path
+        d='M8.14645 3.14645C8.34171 2.95118 8.65829 2.95118 8.85355 3.14645L12.8536 7.14645C13.0488 7.34171 13.0488 7.65829 12.8536 7.85355L8.85355 11.8536C8.65829 12.0488 8.34171 12.0488 8.14645 11.8536C7.95118 11.6583 7.95118 11.3417 8.14645 11.1464L11.2929 8H2.5C2.22386 8 2 7.77614 2 7.5C2 7.22386 2.22386 7 2.5 7H11.2929L8.14645 3.85355C7.95118 3.65829 7.95118 3.34171 8.14645 3.14645Z'
+        fill='currentColor'
+        fill-rule='evenodd'
+        clip-rule='evenodd'
+      ></path>
+    </svg>
+  );
+};
