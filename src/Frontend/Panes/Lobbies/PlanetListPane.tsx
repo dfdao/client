@@ -1,9 +1,10 @@
+import { BLOCK_EXPLORER_URL } from '@darkforest_eth/constants';
 import _, { chunk } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { CreatedPlanet, LobbyAdminTools } from '../../../Backend/Utils/LobbyAdminTools';
-import { Spacer } from '../../Components/CoreUI';
+import { Link, Spacer } from '../../Components/CoreUI';
 import { Row } from '../../Components/Row';
 import { Green, Red, Sub } from '../../Components/Text';
 import { LobbiesPaneProps, LobbyPlanet, mirrorX, mirrorY, Warning } from './LobbiesUtils';
@@ -163,16 +164,6 @@ export function PlanetListPane({
     );
   }
 
-  //     planet.createTx && (
-  //       <Link to={`${BLOCK_EXPLORER_URL}/${planet.createTx}`} style={{ margin: 'auto' }}>
-  //         <u>({planet.createTx.slice(2, 6)})</u>
-  //       </Link>
-
-  //     planet.revealTx ? (
-  //       <Link to={`${BLOCK_EXPLORER_URL}/${planet.revealTx}`} style={{ margin: 'auto' }}>
-  //         <u>({planet.revealTx.slice(2, 6)})</u>
-  //       </Link>
-
   const CreatedPlanetListItem: React.FC<{ planet: CreatedPlanet; index: number }> = ({
     planet,
     index,
@@ -191,6 +182,20 @@ export function PlanetListPane({
           onPlanetSelect(planet, index);
         }}
       >
+        {hoveringPlanet && (
+          <HoverWrapper>
+            {planet.createTx && (
+              <Link to={`${BLOCK_EXPLORER_URL}/${planet.createTx}`} style={{ margin: 'auto' }}>
+                <u>Create Tx</u>
+              </Link>
+            )}
+            {planet.revealTx && (
+              <Link to={`${BLOCK_EXPLORER_URL}/${planet.revealTx}`} style={{ margin: 'auto' }}>
+                <u>Reveal Tx</u>
+              </Link>
+            )}
+          </HoverWrapper>
+        )}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <StagedPlanetIcon>
             {PLANET_TYPE_NAMES[planet.planetType].charAt(0).toUpperCase()}
@@ -278,6 +283,7 @@ const StagedPlanetListItem = styled.div`
   align-items: center;
   padding: 8px;
   cursor: pointer;
+  position: relative;
   justify-content: space-between;
   transition: all 0.2s ease-in-out;
   &:hover {
@@ -330,3 +336,18 @@ const CloseIcon = () => {
     </svg>
   );
 };
+
+const HoverWrapper = styled.div`
+  z-index: 2;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(8px);
+`;
