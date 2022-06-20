@@ -6,6 +6,7 @@ import styled, { css } from 'styled-components';
 import { getAllTwitters } from '../../Backend/Network/UtilityServerAPI';
 import { LobbyAdminTools } from '../../Backend/Utils/LobbyAdminTools';
 import { Link, Spacer } from '../Components/CoreUI';
+import { LobbyCreationStatus } from '../Components/LobbyCreationStatus';
 import { Sidebar } from '../Components/Sidebar';
 import { MinimapPane } from '../Panes/Lobbies/MinimapPane';
 import { MinimapConfig } from '../Panes/Lobbies/MinimapUtils';
@@ -100,7 +101,17 @@ export function LobbyConfirmPage({
           you can enter the universe!
         </span>
         <Spacer height={24} />
-        <Button primary>Create Universe</Button>
+        {/* <Button primary>Create Universe</Button> */}
+        <LobbyCreationStatus
+          lobbyAdminTools={lobbyAdminTools}
+          config={config}
+          ownerAddress={ownerAddress}
+          updateConfig={updateConfig}
+          lobbyTx={lobbyTx}
+          root={root}
+          createLobby={createLobby}
+          setError={onError}
+        />
         <Spacer height={16} />
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Button onClick={() => history.push(`${root}/edit-map`)}>Edit map</Button>

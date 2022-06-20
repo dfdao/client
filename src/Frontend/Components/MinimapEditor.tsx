@@ -138,8 +138,8 @@ export const MinimapEditor: React.FC<{
     <CanvasLayer
       index={2}
       ref={canvasPlanetLayer}
-      width={parseInt(CANVAS_SIZE.height)}
-      height={parseInt(CANVAS_SIZE.height)}
+      width={parseInt(removeAlphabet(style.width))}
+      height={parseInt(removeAlphabet(style.height))}
       showCrosshair={!disabled}
       onMouseDown={(e) => {
         if (disabled) return;
@@ -151,7 +151,6 @@ export const MinimapEditor: React.FC<{
 
 const CanvasLayer = styled.canvas<{ index: number; showCrosshair: boolean }>`
   z-index: ${(props) => props.index};
-  border: 3px solid red;
   cursor: ${(props) => (props.showCrosshair ? 'crosshair' : 'default')};
   grid-area: 1/1;
   z-index: 2;

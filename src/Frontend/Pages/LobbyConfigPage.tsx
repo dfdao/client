@@ -69,7 +69,6 @@ export function LobbyConfigPage({
     }
   }, [error]);
 
-  const history = useHistory();
   async function createLobby(config: LobbyInitializers) {
     var initializers = { ...startingConfig, ...config };
     if (initializers.ADMIN_PLANETS) {
@@ -115,7 +114,6 @@ export function LobbyConfigPage({
       }
       const lobbyAdminTools = await LobbyAdminTools.create(lobby, connection);
       setLobbyAdminTools(lobbyAdminTools);
-      history.push(`${root}/extras`);
     }
   }
 
@@ -150,8 +148,6 @@ export function LobbyConfigPage({
     config.ADMIN_PLANETS.currentValue,
     lobbyAdminTools,
   ]);
-
-  const lobbyContent: JSX.Element = <div>Temporary Lobby Content</div>;
 
   return (
     <>
@@ -202,15 +198,6 @@ export function LobbyConfigPage({
             lobbyAdminTools={lobbyAdminTools}
             onError={setError}
             ownerAddress={ownerAddress}
-          />
-        </Route>
-        <Route path={`${root}/extras`}>
-          <ExtrasNavPane
-            lobbyAdminTools={lobbyAdminTools}
-            config={config}
-            onUpdate={updateConfig}
-            lobbyContent={lobbyContent}
-            root={root}
           />
         </Route>
       </Switch>

@@ -243,20 +243,6 @@ const MainContentInner = styled.div`
   margin: 0 auto;
 `;
 
-const SidebarButton = styled.div<{ active: boolean }>`
-  width: 100%;
-  display: flex;
-  align-items: center;
-  padding: 8px;
-  cursor: pointer;
-  border-radius: 3px;
-  color: #fff;
-  background: ${(props) => (props.active ? '#252525' : 'transparent')};
-  &:hover {
-    background: #252525;
-  }
-`;
-
 const LobbyButton = styled.button<{ primary?: boolean }>`
   background: #000;
   color: ${({ primary }) => (primary ? '#2ee7ba' : '#fff')};
@@ -274,7 +260,6 @@ const MinimapEditorWrapper = styled.div`
   grid-template: 1fr / 1fr;
   place-items: center;
   margin: 0 auto;
-  border: 3px solid blue;
 `;
 
 const EditorButton = styled.button<{ cancel: boolean }>`
