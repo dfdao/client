@@ -10,7 +10,6 @@ import { Modal } from '../../Components/Modal';
 import { Row } from '../../Components/Row';
 import { ExtrasNavPane } from './ExtrasNavPane';
 import { ConfigDownload, ConfigUpload } from './LobbiesUtils';
-import { MapSelectPane } from './MapSelectPane';
 import {
   InvalidConfigError,
   LobbyAction,
@@ -132,7 +131,7 @@ export function ConfigurationPane({
   return (
     <Modal width='500px' initialX={100} initialY={100} index={modalIndex}>
       <Switch>
-        <Route path={root} exact={true}>
+        {/* <Route path={root} exact={true}>
           <MapSelectPane
             startingConfig={startingConfig}
             updateConfig={updateConfig}
@@ -150,7 +149,7 @@ export function ConfigurationPane({
             lobbyContent={lobbyContent}
             root={root}
           />
-        </Route>
+        </Route> */}
       </Switch>
       <Row>{error}</Row>
 

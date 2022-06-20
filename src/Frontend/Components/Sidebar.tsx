@@ -31,14 +31,13 @@ const SidebarContainer = styled.div`
   position: relative;
   width: 330px;
   height: 100%;
-  max-width: 440px;
-  min-width: 330px;
+  max-width: 340px;
+  min-width: 230px;
   box-sizing: border-box;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
   background: rgba(255, 255, 255, 0.05);
-}
 `;
 
 const SidebarContent = styled.div`

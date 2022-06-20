@@ -24,6 +24,9 @@ import { getLobbyCreatedEvent, lobbyPlanetsToInitPlanets } from '../Utils/helper
 import { LobbyMapSelectPage } from './LobbyMapSelectPage';
 import { LobbyWorldSettingsPage } from './LobbyWorldSettingsPage';
 import { LobbyConfirmPage } from './LobbyConfirmPage';
+import { LobbyMapEditor } from './LobbyMapEditor';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 type Status = 'creating' | 'created' | 'errored' | undefined;
 
@@ -50,6 +53,21 @@ export function LobbyConfigPage({
   const createDisabled = status === 'creating' || status === 'created';
   const creating = status === 'creating' || (status === 'created' && !lobbyAdminTools?.address);
   const created = status === 'created' && lobbyAdminTools?.address;
+
+  useEffect(() => {
+    if (error) {
+      toast.error('error', {
+        position: 'bottom-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'dark',
+      });
+    }
+  }, [error]);
 
   const history = useHistory();
   async function createLobby(config: LobbyInitializers) {
@@ -136,50 +154,66 @@ export function LobbyConfigPage({
   const lobbyContent: JSX.Element = <div>Temporary Lobby Content</div>;
 
   return (
-    <Switch>
-      <Route path={root} exact={true}>
-        <LobbyMapSelectPage
-          startingConfig={startingConfig}
-          updateConfig={updateConfig}
-          lobbyAdminTools={lobbyAdminTools}
-          createDisabled={createDisabled}
-          root={root}
-          setError={setError}
-        />
-      </Route>
-      <Route path={`${root}/confirm`}>
-        <LobbyConfirmPage
-          updateConfig={updateConfig}
-          lobbyAdminTools={lobbyAdminTools}
-          minimapConfig={minimapConfig}
-          config={config}
-          onUpdate={updateConfig}
-          createDisabled={createDisabled}
-          root={root}
-          createLobby={createLobby}
-          ownerAddress={ownerAddress}
-          lobbyTx={lobbyTx}
-        />
-      </Route>
-      <Route path={`${root}/settings`}>
-        <LobbyWorldSettingsPage
-          config={config}
-          onUpdate={updateConfig}
-          createDisabled={createDisabled}
-          root={root}
-          minimapConfig={minimapConfig}
-          lobbyAdminTools={lobbyAdminTools}
-        />
-      </Route>
-      <Route path={`${root}/extras`}>
-        <ExtrasNavPane
-          lobbyAdminTools={lobbyAdminTools}
-          config={config}
-          onUpdate={updateConfig}
-          lobbyContent={lobbyContent}
-          root={root}
-        />
-      </Route>
-    </Switch>
+    <>
+      <ToastContainer />
+      <Switch>
+        <Route path={root} exact={true}>
+          <LobbyMapSelectPage
+            startingConfig={startingConfig}
+            updateConfig={updateConfig}
+            lobbyAdminTools={lobbyAdminTools}
+            createDisabled={createDisabled}
+            root={root}
+            setError={setError}
+          />
+        </Route>
+        <Route path={`${root}/confirm`}>
+          <LobbyConfirmPage
+            updateConfig={updateConfig}
+            lobbyAdminTools={lobbyAdminTools}
+            minimapConfig={minimapConfig}
+            config={config}
+            onUpdate={updateConfig}
+            createDisabled={createDisabled}
+            root={root}
+            createLobby={createLobby}
+            ownerAddress={ownerAddress}
+            lobbyTx={lobbyTx}
+            onError={setError}
+          />
+        </Route>
+        <Route path={`${root}/settings`}>
+          <LobbyWorldSettingsPage
+            config={config}
+            onUpdate={updateConfig}
+            createDisabled={createDisabled}
+            root={root}
+            minimapConfig={minimapConfig}
+            lobbyAdminTools={lobbyAdminTools}
+          />
+        </Route>
+        <Route path={`${root}/edit-map`}>
+          <LobbyMapEditor
+            config={config}
+            updateConfig={updateConfig}
+            createDisabled={createDisabled}
+            root={root}
+            minimapConfig={minimapConfig}
+            lobbyAdminTools={lobbyAdminTools}
+            onError={setError}
+            ownerAddress={ownerAddress}
+          />
+        </Route>
+        <Route path={`${root}/extras`}>
+          <ExtrasNavPane
+            lobbyAdminTools={lobbyAdminTools}
+            config={config}
+            onUpdate={updateConfig}
+            lobbyContent={lobbyContent}
+            root={root}
+          />
+        </Route>
+      </Switch>
+    </>
   );
 }

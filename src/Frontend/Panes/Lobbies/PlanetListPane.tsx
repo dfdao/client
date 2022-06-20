@@ -26,14 +26,16 @@ export function PlanetListPane({
   onPlanetSelect: onPlanetSelect,
   root: root,
   lobbyAdminTools,
+  onError,
   maxPlanetsPerPage = 5,
 }: {
   config: LobbyConfigState;
   onUpdate: (change: LobbyConfigAction) => void;
   onPlanetHover: (planet: LobbyPlanet) => void;
-  onPlanetSelect: (planet: LobbyPlanet) => void;
+  onPlanetSelect: (planet: LobbyPlanet, index: number) => void;
   root: string;
   lobbyAdminTools: LobbyAdminTools | undefined;
+  onError: (msg: string) => void;
   maxPlanetsPerPage?: number;
 }) {
   const [createdPlanets, setCreatedPlanets] = useState<CreatedPlanet[] | undefined>();
@@ -42,6 +44,12 @@ export function PlanetListPane({
   useEffect(() => {
     setCreatedPlanets(lobbyAdminTools?.planets);
   }, [lobbyAdminTools]);
+
+  useEffect(() => {
+    if (config.ADMIN_PLANETS.warning) {
+      onError(config.ADMIN_PLANETS.warning);
+    }
+  }, [config.ADMIN_PLANETS.warning]);
 
   // <div style={{ ...jcFlexEnd, ...rowStyle }}>
   // //       <Btn disabled={!lobbyAdminTools} onClick={async () => await createAndRevealPlanet(i)}>
@@ -65,7 +73,7 @@ export function PlanetListPane({
           setHoveringPlanet(false);
         }}
         onClick={() => {
-          onPlanetSelect(planet);
+          onPlanetSelect(planet, index);
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -180,7 +188,7 @@ export function PlanetListPane({
           setHoveringPlanet(false);
         }}
         onClick={() => {
-          onPlanetSelect(planet);
+          onPlanetSelect(planet, index);
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>

@@ -205,9 +205,9 @@ const SidebarButton = styled.div<{ active: boolean; disabled: boolean }>`
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   border-radius: 3px;
   color: ${({ disabled }) => (disabled ? '#ccc' : '#fff')};
-  background: ${(props) => (props.active ? '#252525' : 'transparent')};
+  background: ${(props) => (props.active ? '#3e3e3e' : 'transparent')};
   &:hover {
-    background: #252525;
+    background: #3e3e3e;
   }
 `;
 
@@ -228,11 +228,9 @@ const MainContentInner = styled.div`
   flex: 1 0 auto;
   flex-direction: column;
   align-items: center;
-  max-width: 1280px;
   width: 100%;
   max-width: 640px;
-  // margin: 0 24px;
-  margin: 0 auto;
+  padding: 0 24px;
 `;
 
 const PaneTitle = styled.span`

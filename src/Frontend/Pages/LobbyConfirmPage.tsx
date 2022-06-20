@@ -28,6 +28,7 @@ export function LobbyConfirmPage({
   createLobby,
   ownerAddress,
   lobbyTx,
+  onError,
 }: {
   updateConfig: React.Dispatch<LobbyAction>;
   config: LobbyConfigState;
@@ -39,6 +40,7 @@ export function LobbyConfirmPage({
   createLobby: (config: LobbyInitializers) => void;
   ownerAddress: EthAddress;
   lobbyTx: string | undefined;
+  onError: (msg: string) => void;
 }) {
   const history = useHistory();
   return (
@@ -52,6 +54,7 @@ export function LobbyConfirmPage({
           onPlanetHover={(planet) => {}}
           onPlanetSelect={(planet) => {}}
           root={root}
+          onError={onError}
           lobbyAdminTools={lobbyAdminTools}
         />
       </Sidebar>
@@ -75,12 +78,23 @@ export function LobbyConfirmPage({
       <MapContainer>
         <Title>Confirm Map</Title>
         <Spacer height={32} />
-        <span>
-          Creating a map for{' '}
-          {config.ADMIN_PLANETS.displayValue?.filter((p) => p?.isSpawnPlanet).length || 0} players.
+        <span style={{ fontSize: '16px' }}>
+          You're about to create a map for{' '}
+          <span style={{ color: '#5CCDF0' }}>
+            {config.ADMIN_PLANETS.displayValue?.filter((p) => p?.isSpawnPlanet).length || 0}{' '}
+            players.{' '}
+          </span>
           There are{' '}
-          {config.ADMIN_PLANETS.displayValue?.filter((p) => p?.isTargetPlanet).length || 0} target
-          planets.
+          <span style={{ color: '#FF44B7' }}>
+            {config.ADMIN_PLANETS.displayValue?.filter((p) => p?.isTargetPlanet).length || 0} target
+            planets
+          </span>{' '}
+          and{' '}
+          <span style={{ color: '#E8E228' }}>
+            {config.ADMIN_PLANETS.displayValue?.filter((p) => p?.isSpawnPlanet).length || 0} spawn
+            planets.
+          </span>
+          <br />
           <br />
           Once your world is created, your custom planets will automatically be created on-chain and
           you can enter the universe!
@@ -151,10 +165,9 @@ const MainContentInner = styled.div`
   flex: 1 0 auto;
   flex-direction: column;
   align-items: center;
-  max-width: 1280px;
   width: 100%;
   max-width: 640px;
-  // margin: 0 24px;
+  padding: 0 24px;
   margin: 0 auto;
 `;
 
