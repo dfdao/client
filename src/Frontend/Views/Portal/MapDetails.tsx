@@ -1,7 +1,9 @@
 import { getConfigName } from '@darkforest_eth/procedural';
-import { Leaderboard } from '@darkforest_eth/types';
+import { Leaderboard, LiveMatch } from '@darkforest_eth/types';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { loadArenaLeaderboard } from '../../../Backend/Network/ArenaLeaderboardApi';
+import { loadLiveMatches } from '../../../Backend/Network/SpyApi';
 import { Link } from '../../Components/CoreUI';
 import { Subber } from '../../Components/Text';
 import { LobbyInitializers } from '../../Panes/Lobbies/Reducer';
@@ -18,8 +20,27 @@ export function MapDetails({
   configHash: string;
   config: LobbyInitializers | undefined;
 }) {
-  const { arenaLeaderboard, arenaError } = useArenaLeaderboard(false, configHash);
-  const { liveMatches, spyError } = useLiveMatches(configHash);
+  const [leaderboard, setLeaderboard] = useState<Leaderboard | undefined>();
+  const [leaderboardError, setLeaderboardError] = useState<Error | undefined>();
+  const [liveMatches, setLiveMatches] = useState<LiveMatch | undefined>();
+  const [liveMatchError, setLiveMatchError] = useState<Error | undefined>();
+
+  useEffect(() => {
+    setLeaderboard(undefined);
+    setLiveMatches(undefined);
+    loadArenaLeaderboard(configHash, false)
+      .then((board) => {
+        setLeaderboardError(undefined);
+        setLeaderboard(board);
+      })
+      .catch((e) => setLeaderboardError(e));
+    loadLiveMatches(configHash)
+      .then((matches) => {
+        setLiveMatchError(undefined);
+        setLiveMatches(matches);
+      })
+      .catch((e) => setLiveMatchError(e));
+  }, [configHash]);
 
   return (
     <TabbedView
@@ -34,14 +55,14 @@ export function MapDetails({
       tabTitles={['Leaderboard', 'Current Games', 'Config Details']}
       tabContents={(i) => {
         if (i === 0) {
-          return <ArenaLeaderboardDisplay leaderboard={arenaLeaderboard} error={arenaError} />;
+          return <ArenaLeaderboardDisplay leaderboard={leaderboard} error={leaderboardError} />;
         }
         if (i === 1) {
           return (
             <>
-              <LiveMatches game={liveMatches} error={spyError} />{' '}
-              <Subber style= {{textAlign: 'end'}}>
-              by <a href={'https://twitter.com/bulmenisaurus'}>Bulmenisaurus</a>
+              <LiveMatches game={liveMatches} error={liveMatchError} />{' '}
+              <Subber style={{ textAlign: 'end' }}>
+                by <a href={'https://twitter.com/bulmenisaurus'}>Bulmenisaurus</a>
               </Subber>
             </>
           );

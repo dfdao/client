@@ -1,7 +1,6 @@
-import { address } from '@darkforest_eth/serde';
 import { DarkForestTextInput } from '@darkforest_eth/ui';
 import React, { useState } from 'react';
-import { Redirect, Route, Router, Switch, useHistory } from 'react-router-dom';
+import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { Btn } from '../../Components/Btn';
 import { TextInput } from '../../Components/Input';
@@ -43,15 +42,16 @@ export function PortalMainView() {
     <MainContainer>
       <TopBar>
         <TitleContainer>
-          <Title>Grand Prix </Title>
+          <Title>Home</Title>
         </TitleContainer>
 
         <TitleContainer>
           <Btn variant='portal' onClick={validateAddress}>
-            Enter
+            Go
           </Btn>
           <TextInput
-            style={{ width: '100%' } as CSSStyleDeclaration & React.CSSProperties}
+            portal={true}
+            style = {inputStyle}
             value={input}
             placeholder={'Search for a map config'}
             onChange={(e: Event & React.ChangeEvent<DarkForestTextInput>) =>
@@ -109,7 +109,7 @@ const TitleContainer = styled.div`
   justify-content: space-between;
   gap: 8px;
 `;
-const TimeContainer = styled.div`
-  font-size: 1em;
-  text-align: center;
-`;
+
+const inputStyle = {
+  width: '100%'
+} as CSSStyleDeclaration & React.CSSProperties;

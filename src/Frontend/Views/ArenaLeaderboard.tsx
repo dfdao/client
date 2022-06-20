@@ -36,7 +36,7 @@ export function ArenaLeaderboardDisplay({
       <LeaderboardContainer>
         <StatsTableContainer>
           <StatsTable>
-              <CountDown />
+              {/* <CountDown /> */}
               <ArenasCreated leaderboard={leaderboard} error={error} />
           </StatsTable>
         </StatsTableContainer>
