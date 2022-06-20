@@ -36,7 +36,7 @@ function MapOverview({
         <TextPreview text={configHash} focusedWidth={'200px'} unFocusedWidth={'200px'} />
       </div>
 
-      {!config ? (
+      {!config ?  (
         <div
           style={{
             display: 'flex',
@@ -61,7 +61,7 @@ function MapOverview({
         </Link>
       </Btn>
       <Btn variant='portal' size='large' disabled = {!lobbyAddress}>
-        <Link target='blank' to={`arena/${lobbyAddress}`}>
+        <Link target='blank' to={`/arena/${lobbyAddress}`}>
           Remix this Map
         </Link>
       </Btn>
@@ -70,7 +70,6 @@ function MapOverview({
 }
 
 export function MapInfoView({match} :  RouteComponentProps<{ configHash: string }>) {
-  console.log(`here`)
   const configHash = match.params.configHash || competitiveConfig;
   const [config, setConfig] = useState<LobbyInitializers | undefined>();
   const [lobbyAddress, setLobbyAddress] = useState<EthAddress | undefined>();

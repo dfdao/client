@@ -32,9 +32,9 @@ function App() {
       <Theme color='dark' scale='medium'>
         <Router>
           <Switch>
-            {/* <Redirect path='/play' to={`/play/${defaultAddress}`} push={true} exact={true} /> */}
-            <Route path='/play/' component={GameLandingPage} exact = {true}/>
+            <Redirect path='/play' to={`/play/${defaultAddress}`} push={true} exact={true} />
             <Route path='/play/:contract' component={GameLandingPage} />
+            <Redirect path='/portal' to={`/portal/map`} push={true} exact={true} />
             <Route path='/portal' component={PortalPage}/>
             <Route path='/events' component={EventsPage} />
             <Route path='/' exact component={LandingPage} />

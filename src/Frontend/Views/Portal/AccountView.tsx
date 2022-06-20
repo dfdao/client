@@ -13,16 +13,10 @@ function Account({ address }: { address: EthAddress }) {
   const [twitter, setTwitter] = useState<string | undefined>();
 
   useEffect(() => {
-    getAllTwitters().then((t) => {
-      console.log(t);
-      console.log(`twitter: for ${address}`, t[address])
-      setTwitter(t[address]);
-    });
+    getAllTwitters().then((t) => setTwitter(t[address]));
   }, []);
 
-  useEffect(() => {
-    console.log(`twitter: ${twitter}`);
-  }, [twitter]);
+  useEffect(() => {}, [twitter]);
   return (
     <NamesContainer>
       <Large>
@@ -37,13 +31,11 @@ function Account({ address }: { address: EthAddress }) {
   );
 }
 
-
 export function AccountView({ address }: { address: EthAddress }) {
   return (
     <PaneContainer>
       <Account address={address} />
-      <Btn variant = {'portal'} size = 'small' onClick={logOut}>Logout</Btn>
-
+      <Btn variant={'portal'} size='small' onClick={logOut}>Logout</Btn>
     </PaneContainer>
   );
 }

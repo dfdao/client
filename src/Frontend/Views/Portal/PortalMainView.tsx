@@ -1,3 +1,4 @@
+import { address } from '@darkforest_eth/serde';
 import { DarkForestTextInput } from '@darkforest_eth/ui';
 import React, { useState } from 'react';
 import { Redirect, Route, Router, Switch, useHistory } from 'react-router-dom';
@@ -10,30 +11,59 @@ import { MapInfoView } from './MapInfoView';
 
 export function PortalMainView() {
   const history = useHistory();
-  const [input, setInput] = useState<string>();
+  const [input, setInput] = useState<string>('');
+
+  function validateAddress() {
+    let lower = input.toLowerCase();
+    if (lower.slice(0, 2) === '0x') {
+      lower = lower.slice(2);
+    }
+    let error = false;
+    if (lower.length !== 64) {
+      console.log('incorrect length');
+      error = true;
+    }
+    for (const c of lower) {
+      if ('0123456789abcdef'.indexOf(c) === -1) {
+        console.log(`bad letter: ${c}`);
+        error = true;
+        alert('invalid map address! Try again with a valid address.');
+        return;
+      }
+    }
+    if (error) {
+      alert('invalid map address! Try again with a valid address.');
+      return;
+    }
+
+    history.push(`/portal/map/${input}`);
+  }
+
   return (
     <MainContainer>
       <TopBar>
         <TitleContainer>
           <Title>Grand Prix </Title>
-          </TitleContainer>
+        </TitleContainer>
 
-          <div>
-          <Btn variant = 'portal' onClick= {() => history.push(`/portal/map/${input}`)}>Enter</Btn>
+        <TitleContainer>
+          <Btn variant='portal' onClick={validateAddress}>
+            Enter
+          </Btn>
           <TextInput
+            style={{ width: '100%' } as CSSStyleDeclaration & React.CSSProperties}
             value={input}
             placeholder={'Search for a map config'}
             onChange={(e: Event & React.ChangeEvent<DarkForestTextInput>) =>
               setInput(e.target.value)
             }
           />{' '}
-          </div>
+        </TitleContainer>
       </TopBar>
       <Switch>
         <Redirect
           path='/portal/map'
           to={`/portal/map/${competitiveConfig}`}
-          push={true}
           exact={true}
         />
 
@@ -77,6 +107,7 @@ const TitleContainer = styled.div`
   overflow: hidden;
   width: 100%;
   justify-content: space-between;
+  gap: 8px;
 `;
 const TimeContainer = styled.div`
   font-size: 1em;

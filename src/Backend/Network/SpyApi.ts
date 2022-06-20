@@ -31,7 +31,6 @@ export const loadLiveMatches = async (config: string = competitiveConfig): Promi
   }
 
   const twitters = await getAllTwitters();
-  console.log('arenas:', arenas);
   arenas.map((a : LiveMatchEntry) => a.twitter = twitters[a.firstMover.address]);
   return {entries: arenas};
 };
