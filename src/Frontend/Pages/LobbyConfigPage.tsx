@@ -22,13 +22,13 @@ import {
 import { getLobbyCreatedEvent, lobbyPlanetsToInitPlanets } from '../Utils/helpers';
 
 export function LobbyConfigPage({
-  contract,
+  contractsAPI,
   connection,
   ownerAddress,
   startingConfig,
   root,
 }: {
-  contract: ContractsAPI;
+  contractsAPI: ContractsAPI;
   connection: EthConnection;
   ownerAddress: EthAddress;
   startingConfig: LobbyInitializers;
@@ -52,7 +52,7 @@ export function LobbyConfigPage({
     // @ts-expect-error The Operand of a delete must be optional
     delete initializers.ADMIN_PLANETS;
 
-    const initContract = await contract.ethConnection.loadContract<DFArenaInitialize>(
+    const initContract = await contractsAPI.ethConnection.loadContract<DFArenaInitialize>(
       INIT_ADDRESS,
       loadInitContract
     );
@@ -70,17 +70,17 @@ export function LobbyConfigPage({
     ]);
     const txIntent: UnconfirmedCreateLobby = {
       methodName: 'createLobby',
-      contract: contract.contract,
+      contract: contractsAPI.contract,
       args: Promise.resolve([initAddress, initFunctionCall]),
     };
 
-    const tx = await contract.submitTransaction(txIntent, {
+    const tx = await contractsAPI.submitTransaction(txIntent, {
       // The createLobby function costs somewhere around 12mil gas
       gasLimit: '15000000',
     });
 
     const lobbyReceipt = await tx.confirmedPromise;
-    const { owner, lobby } = getLobbyCreatedEvent(lobbyReceipt, contract.contract);
+    const { owner, lobby } = getLobbyCreatedEvent(lobbyReceipt, contractsAPI.contract);
     setLobbyTx(tx?.hash);
 
     if (owner === ownerAddress) {

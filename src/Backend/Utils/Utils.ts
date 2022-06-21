@@ -171,17 +171,6 @@ export function getDeterministicArtifact(planet: LocatablePlanet) {
   const perlin = planet.perlin;
   const biome = planet.biome;
 
-  // console.log(`seed hash ${seed.toHexString()}`);
-  // console.log(`seed string ${seed.toString()}`);
-  // console.log('mod', BigNumber.from('0xff').toNumber())
-  // console.log('lastByte', lastByteOfSeed);
-  // console.log('secondLastByte', secondLastByteOfSeed);
-  // console.log(`hex representations: last byte: ${bigLastByte.toHexString()} second last: ${BigNumber.from(secondLastByteOfSeed).toHexString()}`);
-  // console.log('biome', biome);
-
-  // console.log('js artifact seed hex', artifactSeed);
-  // console.log('hash of artifact seed', seedHash);
-
   let artifactType: ArtifactType = ArtifactType.Pyramid;
 
   if (lastByteOfSeed < 39) {

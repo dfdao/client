@@ -101,7 +101,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
   const selectedAddress = params.get('account');
   const isLobby = contractAddress !== address(CONTRACT_ADDRESS);
   const CHUNK_SIZE = 5;
-  const config = stockConfig.competitive;
+  const config = stockConfig.sprint;
   const defaultAddress = address(CONTRACT_ADDRESS);
   const isGrandPrix = !contractAddress;
 
@@ -1222,9 +1222,11 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
     if(spawn.length > 0 && target.length > 0) {
       // For testing. Just block first spawn and target
       blockList.push([target[0].location, spawn[0].location]);
+      blockList.push([target[1].location, spawn[1].location]);
     }
     initializers.BLOCKLIST = blockList;
-    /* Don't want to submit ADMIN_PLANET as initdata because they aren't used */
+    /* Don't want to submit ADMIN_PLANET as initdata because not used */
+    
     // @ts-expect-error The Operand of a delete must be optional
     delete initializers.ADMIN_PLANETS;
 

@@ -412,6 +412,9 @@ export class ContractsAPI extends EventEmitter {
     contract.removeAllListeners(ContractEvent.PlanetInvaded);
     contract.removeAllListeners(ContractEvent.PlanetCaptured);
     contract.removeAllListeners(ContractEvent.Gameover);
+    contract.removeAllListeners(ContractEvent.PauseStateChanged);
+    contract.removeAllListeners(ContractEvent.PlayerReady);
+    contract.removeAllListeners(ContractEvent.PlayerNotReady);
     contract.removeAllListeners(ContractEvent.GameStarted);
   }
 
