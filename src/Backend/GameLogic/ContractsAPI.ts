@@ -416,6 +416,9 @@ export class ContractsAPI extends EventEmitter {
     contract.removeAllListeners(ContractEvent.PlayerReady);
     contract.removeAllListeners(ContractEvent.PlayerNotReady);
     contract.removeAllListeners(ContractEvent.GameStarted);
+    contract.removeAllListeners(ContractEvent.PlayerReady);
+    contract.removeAllListeners(ContractEvent.PlayerNotReady);
+
   }
 
   public getContractAddress(): EthAddress {
