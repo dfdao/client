@@ -9,6 +9,7 @@ import React, { useEffect, useMemo, useReducer, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { ContractsAPI } from '../../Backend/GameLogic/ContractsAPI';
 import { loadInitContract } from '../../Backend/Network/Blockchain';
+import { createAndInitArena } from '../../Backend/Utils/Arena';
 import { LobbyAdminTools } from '../../Backend/Utils/LobbyAdminTools';
 import { ConfigurationPane } from '../Panes/Lobbies/ConfigurationPane';
 import { MinimapPane } from '../Panes/Lobbies/MinimapPane';
@@ -41,47 +42,13 @@ export function LobbyConfigPage({
 
   const history = useHistory();
   async function createLobby(config: LobbyInitializers) {
-    var initializers = { ...startingConfig, ...config };
-    if (initializers.ADMIN_PLANETS) {
-      initializers.INIT_PLANETS = lobbyPlanetsToInitPlanets(
-        initializers.ADMIN_PLANETS,
-        initializers
-      );
-    }
-    /* Don't want to submit ADMIN_PLANET as initdata because they aren't used */
-    // @ts-expect-error The Operand of a delete must be optional
-    delete initializers.ADMIN_PLANETS;
-
-    const initContract = await contractsAPI.ethConnection.loadContract<DFArenaInitialize>(
-      INIT_ADDRESS,
-      loadInitContract
-    );
-    const artifactBaseURI = '';
-    const initInterface = initContract.interface;
-    const initAddress = INIT_ADDRESS;
-    console.log('INITIALIZERS', initializers);
-    const initFunctionCall = initInterface.encodeFunctionData('init', [
-      initializers,
-      {
-        allowListEnabled: initializers.WHITELIST_ENABLED,
-        artifactBaseURI,
-        allowedAddresses: []
-      }
-    ]);
-    const txIntent: UnconfirmedCreateLobby = {
-      methodName: 'createLobby',
-      contract: contractsAPI.contract,
-      args: Promise.resolve([initAddress, initFunctionCall]),
-    };
-
-    const tx = await contractsAPI.submitTransaction(txIntent, {
-      // The createLobby function costs somewhere around 12mil gas
-      gasLimit: '15000000',
-    });
-
-    const lobbyReceipt = await tx.confirmedPromise;
-    const { owner, lobby } = getLobbyCreatedEvent(lobbyReceipt, contractsAPI.contract);
-    setLobbyTx(tx?.hash);
+    
+    const {owner, lobby, startTx} = await createAndInitArena({
+      config,
+      contractsAPI,
+      ethConnection: connection,
+    })
+    setLobbyTx(startTx?.hash);
 
     if (owner === ownerAddress) {
       if (!connection) {

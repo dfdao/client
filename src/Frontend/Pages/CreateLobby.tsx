@@ -107,7 +107,7 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
   const content =
     contract && connection && ownerAddress && startingConfig ? (
       <LobbyConfigPage
-        contract={contract}
+        contractsAPI={contract}
         connection={connection}
         ownerAddress={ownerAddress}
         startingConfig={startingConfig}

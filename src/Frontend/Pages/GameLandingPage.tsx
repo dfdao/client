@@ -54,6 +54,7 @@ import { ContractMethodName, EthAddress, LocationId, UnconfirmedCreateLobby } fr
 import { getLobbyCreatedEvent, lobbyPlanetsToInitPlanets } from '../Utils/helpers';
 import _ from 'lodash';
 import { LobbyInitializers } from '../Panes/Lobbies/Reducer';
+import { createAndInitArena, createPlanets } from '../../Backend/Utils/Arena';
 
 const enum TerminalPromptStep {
   NONE,
@@ -530,7 +531,14 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
       terminal.current?.print('Adding custom planets... ');
 
       try {
-        await createPlanets();
+        if (!ethConnection || !defaultAddress) throw new Error('cannot create arena');
+
+        const contractsAPI = await makeContractsAPI({
+          connection: ethConnection,
+          contractAddress: defaultAddress,
+        });
+ 
+        await createPlanets({ config, contractAPI: contractsAPI, CHUNK_SIZE});
         terminal.current?.println('planets created.', TerminalTextStyle.Green);
         setStep(TerminalPromptStep.PLANETS_CREATED);
       } catch (e) {
@@ -1209,105 +1217,15 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
     });
     const playerAddress = ethConnection.getAddress();
 
-    var initializers = config;    
-    if (initializers.ADMIN_PLANETS) {
-      initializers.INIT_PLANETS = lobbyPlanetsToInitPlanets(
-        initializers.ADMIN_PLANETS,
-        initializers
-      );
-    }
-    const spawn = initializers.INIT_PLANETS.filter(p => p.isSpawnPlanet);
-    const target = initializers.INIT_PLANETS.filter(p => p.isTargetPlanet);
-    const blockList: string[][] = [];
-    if(spawn.length > 0 && target.length > 0) {
-      // For testing. Just block first spawn and target
-      blockList.push([target[0].location, spawn[0].location]);
-      blockList.push([target[1].location, spawn[1].location]);
-    }
-    initializers.BLOCKLIST = blockList;
-    /* Don't want to submit ADMIN_PLANET as initdata because not used */
-    
-    // @ts-expect-error The Operand of a delete must be optional
-    delete initializers.ADMIN_PLANETS;
-
-    console.log('INITIALIZERS', initializers);
-
-    const initContract = await ethConnection.loadContract<DFArenaInitialize>(
-      INIT_ADDRESS,
-      loadInitContract
-    );
-
-    const artifactBaseURI = '';
-    const initInterface = initContract.interface;
-    const initAddress = INIT_ADDRESS;
-    const initFunctionCall = initInterface.encodeFunctionData('init', [
-      initializers,
-      {
-        allowListEnabled: initializers.WHITELIST_ENABLED,
-        artifactBaseURI,
-        allowedAddresses: []
-      }      
-    ]);
-    const txIntent: UnconfirmedCreateLobby = {
-      methodName: 'createLobby',
-      contract: contractsAPI.contract,
-      args: Promise.resolve([initAddress, initFunctionCall]),
-    };
-
-    const tx = await contractsAPI.submitTransaction(txIntent, {
-      // The createLobby function costs somewhere around 12mil gas
-      gasLimit: '15000000',
-    });
-
-    const lobbyReceipt = await tx.confirmedPromise;
-    console.log(`created arena with ${lobbyReceipt.gasUsed} gas`);
-
-    const { owner, lobby } = getLobbyCreatedEvent(lobbyReceipt, contractsAPI.contract);
-
-    const diamond = await ethConnection.loadContract<DarkForest>(
-      lobby,
-      loadDiamondContract
-    );
-
-    const startTx = await diamond.start();
-    const startRct = startTx.wait();
-    console.log(`initialized arena with ${(await startRct).gasUsed} gas`);
-
+    const { owner, lobby } = await createAndInitArena({
+      config,
+      ethConnection,
+      contractsAPI
+    })
     if (owner === playerAddress) {
       history.push({ pathname: `${match.path}${lobby}`, state: { contract: lobby } });
       setContractAddress(lobby);
     }
-  }
-
-  async function createPlanets() {
-    if (!ethConnection || !contractAddress) throw new Error('cannot create planets');
-
-    const contractsAPI = await makeContractsAPI({
-      connection: ethConnection,
-      contractAddress,
-    });
-
-    const createPlanetTxs = _.chunk(config.INIT_PLANETS, CHUNK_SIZE).map(async (chunk) => {
-      const args = Promise.resolve([chunk]);
-      const txIntent = {
-        methodName: 'bulkCreateAndReveal' as ContractMethodName,
-        contract: contractsAPI.contract,
-        args: args,
-      };
-
-      const tx = await contractsAPI.submitTransaction(txIntent, {
-        gasLimit: '15000000',
-      });
-
-      return tx.confirmedPromise;
-    });
-    
-    await Promise.all(createPlanetTxs);
-    console.log(
-      `successfully created planets`,
-      createPlanetTxs.map((i) => i)
-    );
-
   }
 
   useEffect(() => {
