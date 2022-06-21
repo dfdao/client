@@ -17,7 +17,7 @@ export function MapDetails({
   configHash,
   config,
 }: {
-  configHash: string;
+  configHash: string | undefined;
   config: LobbyInitializers | undefined;
 }) {
   const [leaderboard, setLeaderboard] = useState<Leaderboard | undefined>();
@@ -28,6 +28,7 @@ export function MapDetails({
   useEffect(() => {
     setLeaderboard(undefined);
     setLiveMatches(undefined);
+    if(configHash) {
     loadArenaLeaderboard(configHash, false)
       .then((board) => {
         setLeaderboardError(undefined);
@@ -40,6 +41,7 @@ export function MapDetails({
         setLiveMatches(matches);
       })
       .catch((e) => setLiveMatchError(e));
+    }
   }, [configHash]);
 
   return (

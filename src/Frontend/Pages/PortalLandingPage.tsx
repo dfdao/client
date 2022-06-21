@@ -12,6 +12,8 @@ import {
   addAccount,
   setActive,
   getActive,
+  resetActive,
+  logOut,
 } from '../../Backend/Network/AccountManager';
 import { getEthConnection, loadFaucetContract } from '../../Backend/Network/Blockchain';
 import { requestFaucet } from '../../Backend/Network/UtilityServerAPI';
@@ -195,18 +197,20 @@ class PortalPageTerminal {
       const currBalance = weiToEth(await this.ethConnection.loadBalance(address));
       await sendDrip(this.ethConnection, address);
       const newBalance = weiToEth(await this.ethConnection.loadBalance(address));
-      if(newBalance - currBalance > 0) {
-      this.terminal.println(
-        `Dripped XDAI from faucet. Your balance has increased by ${newBalance - currBalance}.`,
-        TerminalTextStyle.Green
-      );
-      await new Promise((r) => setTimeout(r, 1500));
+      if (newBalance - currBalance > 0) {
+        this.terminal.println(
+          `Dripped XDAI from faucet. Your balance has increased by ${newBalance - currBalance}.`,
+          TerminalTextStyle.Green
+        );
+        await new Promise((r) => setTimeout(r, 1500));
       }
 
       this.accountSet(address);
     } catch (e) {
       console.log(e);
-      this.terminal.println('An error occurred in faucet. Try again with an account that has XDAI.');
+      this.terminal.println(
+        'An error occurred in faucet. Try again with an account that has XDAI.'
+      );
     }
   }
 }
@@ -241,13 +245,6 @@ export function PortalLandingPage({ onReady }: { onReady: (connection: EthConnec
     async function getConnection() {
       try {
         const connection = await getEthConnection();
-        const account = getActive();
-        if (!!account) {
-          await connection.setAccount(account.privateKey);
-          await sendDrip(connection, account.address);
-          onReady(connection);
-          return;
-        }
         setConnection(connection);
       } catch (e) {
         alert('error connecting to blockchain');
@@ -259,6 +256,21 @@ export function PortalLandingPage({ onReady }: { onReady: (connection: EthConnec
   }, []);
 
   useEffect(() => {
+    async function setPlayer(ethConnection : EthConnection) {
+      try {
+        const account = getActive();
+        if (!!account) {
+          await ethConnection.setAccount(account.privateKey);
+          await sendDrip(ethConnection, account.address);
+          onReady(ethConnection);
+          return;
+        }
+      } catch (e) {
+        alert('Unable to connect account');
+        logOut();        
+      }
+    }
+
     if (!controller && connection && terminal.current) {
       const newController = new PortalPageTerminal(
         connection,
@@ -272,6 +284,7 @@ export function PortalLandingPage({ onReady }: { onReady: (connection: EthConnec
           }
         }
       );
+      setPlayer(connection);
       newController.chooseAccount();
       setController(newController);
     }

@@ -12,36 +12,42 @@ import { Minimap } from '../../Components/Minimap';
 import { TextPreview } from '../../Components/TextPreview';
 import { generateMinimapConfig, MinimapConfig } from '../../Panes/Lobbies/MinimapUtils';
 import { LobbyInitializers } from '../../Panes/Lobbies/Reducer';
-import { competitiveConfig } from '../../Utils/constants';
 import { stockConfig } from '../../Utils/StockConfigs';
 
 import { MapDetails } from './MapDetails';
 
+const NONE = 'No map found';
 function MapOverview({
   configHash,
   config,
   lobbyAddress,
 }: {
-  configHash: string;
+  configHash: string | undefined;
   config: LobbyInitializers | undefined;
   lobbyAddress: EthAddress | undefined;
 }) {
   const [refreshing, setRefreshing] = useState(false);
   const [minimapConfig, setMinimapConfig] = useState<MinimapConfig | undefined>();
-  const mapName = getConfigName(configHash);
+  const [mapName, setMapName] = useState<string>(configHash ? getConfigName(configHash) : NONE);
 
   const onMapChange = useMemo(() => {
-    setMinimapConfig(undefined);
-    return _.debounce((config: MinimapConfig) => setMinimapConfig(config), 500);
+    return _.debounce((config: MinimapConfig) => configHash && setMinimapConfig(config), 500);
   }, [setMinimapConfig]);
 
   useEffect(() => {
-    if (config) onMapChange(generateMinimapConfig(config, 5));
-  }, [config, onMapChange]);
+    if (config) {
+      const name = configHash ? getConfigName(configHash) : NONE;
+      setMapName(name);
+      onMapChange(generateMinimapConfig(config, 5));
+    } else {
+      setMinimapConfig(undefined);
+      setMapName(NONE);
+    }
+  }, [config, onMapChange, setMapName]);
 
   return (
     <OverviewContainer>
-      <div style = {{textAlign: 'center'}}>
+      <div>
         <Title>{mapName}</Title>
         <TextPreview text={configHash} focusedWidth={'200px'} unFocusedWidth={'200px'} />
       </div>
@@ -70,7 +76,7 @@ function MapOverview({
           New Game with this Map
         </Btn>
       </Link>
-      <Link style={{ minWidth: '250px' }} target='blank' to={`/arena/${lobbyAddress}`}>
+      <Link style={{ minWidth: '250px' }} target='blank' to={`/arena/${lobbyAddress}/settings`}>
         <Btn variant='portal' size='stretch' disabled={!lobbyAddress}>
           Remix this Map
         </Btn>
@@ -80,29 +86,38 @@ function MapOverview({
 }
 
 export function MapInfoView({ match }: RouteComponentProps<{ configHash: string }>) {
-  const configHash = match.params.configHash || competitiveConfig;
+  const configHash = match.params.configHash || undefined;
   const [config, setConfig] = useState<LobbyInitializers | undefined>();
   const [lobbyAddress, setLobbyAddress] = useState<EthAddress | undefined>();
-
+  const [error, setError] = useState<boolean>(false);
   useEffect(() => {
-    loadConfigFromHash(configHash)
-      .then((c) => {
-        if (!c) {
-          setConfig(stockConfig.onePlayerRace);
-          return;
-        }
-        setConfig(c.config);
-        setLobbyAddress(address(c.address));
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+    if (configHash) {
+      loadConfigFromHash(configHash)
+        .then((c) => {
+          if (!c) {
+            setConfig(undefined);
+            return;
+          }
+          setConfig(c.config);
+          setLobbyAddress(address(c.address));
+        })
+        .catch((e) => {
+          setError(true);
+          console.log(e);
+        });
+    }
   }, [configHash]);
 
   return (
     <MapInfoContainer>
-      <MapOverview configHash={configHash} config={config} lobbyAddress={lobbyAddress} />
-      <MapDetails configHash={configHash} config={config} />
+      {error ? (
+        <>Map Not Found</>
+      ) : config && (
+        <>
+          <MapOverview configHash={configHash} config={config} lobbyAddress={lobbyAddress} />
+          <MapDetails configHash={configHash} config={config} />
+        </>
+      )}
     </MapInfoContainer>
   );
 }
@@ -130,6 +145,7 @@ const Title = styled.div`
   text-align: center;
   font-size: 3em;
   white-space: nowrap;
+  justify-content: center;
 `;
 const TimeContainer = styled.div`
   font-size: 1em;

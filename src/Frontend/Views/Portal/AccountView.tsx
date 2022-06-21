@@ -43,7 +43,7 @@ export function AccountView({ address }: { address: EthAddress }) {
 const PaneContainer = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: left;
+  align-items: center;
   border: 1px solid ${dfstyles.colors.border};
   background: rgba(255, 255, 255, 0.04);
   width: 100%;
