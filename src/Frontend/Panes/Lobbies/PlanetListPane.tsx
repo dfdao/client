@@ -44,11 +44,10 @@ export function PlanetListPane({
   }, [config.ADMIN_PLANETS.warning]);
 
   // <div style={{ ...jcFlexEnd, ...rowStyle }}>
-  // //       <Btn disabled={!lobbyAdminTools} onClick={async () => await createAndRevealPlanet(i)}>
-  // //         ✓
-  // //       </Btn>
-  // //       <Btn onClick={() => onUpdate({ type: 'ADMIN_PLANETS', value: planet, index: i })}>X</Btn>
-  // //     </div>
+  //       <Btn disabled={!lobbyAdminTools} onClick={async () => await createAndRevealPlanet(i)}>
+  //         ✓
+  //       </Btn>
+  //     </div>
 
   const StagedPlanetItem: React.FC<{ planet: LobbyPlanet; index: number }> = ({
     planet,
@@ -313,7 +312,6 @@ const CloseButton = styled.div`
 const PaginationContainer = styled.div`
   display: flex;
   align-items: center;
-  // justify-content: space-between;
   gap: 16px;
   margin-top: 8px;
 `;

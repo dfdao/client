@@ -15,10 +15,12 @@ import { ExtrasNavPane } from '../Panes/Lobbies/ExtrasNavPane';
 import { MinimapPane } from '../Panes/Lobbies/MinimapPane';
 import { MinimapConfig } from '../Panes/Lobbies/MinimapUtils';
 import {
+  InvalidConfigError,
   LobbyConfigAction,
   lobbyConfigInit,
   lobbyConfigReducer,
   LobbyInitializers,
+  toInitializers,
 } from '../Panes/Lobbies/Reducer';
 import { getLobbyCreatedEvent, lobbyPlanetsToInitPlanets } from '../Utils/helpers';
 import { LobbyMapSelectPage } from './LobbyMapSelectPage';
@@ -27,8 +29,21 @@ import { LobbyConfirmPage } from './LobbyConfirmPage';
 import { LobbyMapEditor } from './LobbyMapEditor';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { getAllTwitters } from '../../Backend/Network/UtilityServerAPI';
+import { LobbyPlanet } from '../Panes/Lobbies/LobbiesUtils';
 
-type Status = 'creating' | 'created' | 'errored' | undefined;
+type Status = 'waitingForCreate' | 'creating' | 'created' | 'errored' | undefined;
+
+const DEFAULT_PLANET: LobbyPlanet = {
+  x: 0,
+  y: 0,
+  level: 0,
+  planetType: 0,
+  isTargetPlanet: false,
+  isSpawnPlanet: false,
+};
+
+const BULK_CREATE_CHUNK_SIZE = 5;
 
 export function LobbyConfigPage({
   contract,
@@ -49,14 +64,17 @@ export function LobbyConfigPage({
   const [lobbyTx, setLobbyTx] = useState<string | undefined>();
   const [status, setStatus] = useState<Status>(undefined);
   const [error, setError] = useState<string | undefined>();
+  const [playerTwitter, setPlayerTwitter] = useState<string | undefined>();
 
   const createDisabled = status === 'creating' || status === 'created';
   const creating = status === 'creating' || (status === 'created' && !lobbyAdminTools?.address);
   const created = status === 'created' && lobbyAdminTools?.address;
 
+  const history = useHistory();
+
   useEffect(() => {
     if (error) {
-      toast.error('error', {
+      toast.error(error, {
         position: 'bottom-right',
         autoClose: 5000,
         hideProgressBar: false,
@@ -68,6 +86,77 @@ export function LobbyConfigPage({
       });
     }
   }, [error]);
+
+  useEffect(() => {
+    async function doCreateReveal() {
+      await bulkCreateAndRevealPlanets();
+    }
+    if (lobbyAdminTools && !created) {
+      doCreateReveal();
+      setStatus('created');
+    }
+  }, [lobbyAdminTools]);
+
+  useEffect(() => {
+    async function fetchTwitters() {
+      const allTwitters = await getAllTwitters();
+      setPlayerTwitter(allTwitters[ownerAddress]);
+    }
+    fetchTwitters();
+  }, []);
+
+  async function bulkCreateAndRevealPlanets() {
+    console.log('The bulk creatooooor');
+    if (!lobbyAdminTools) {
+      setError("You haven't created a lobby.");
+      throw new Error('No lobby');
+    }
+    if (!config.ADMIN_PLANETS.currentValue) {
+      setError('no planets staged');
+      throw new Error('No planets staged');
+    }
+    let planets = config.ADMIN_PLANETS.currentValue;
+
+    let i = 0;
+    while (i < planets.length) {
+      try {
+        const chunk = planets.slice(i, i + BULK_CREATE_CHUNK_SIZE);
+        await lobbyAdminTools.bulkCreateAndReveal(chunk, toInitializers(config));
+        updateConfig({
+          type: 'ADMIN_PLANETS',
+          value: DEFAULT_PLANET,
+          index: i,
+          number: BULK_CREATE_CHUNK_SIZE,
+        });
+        planets.splice(i, BULK_CREATE_CHUNK_SIZE);
+      } catch (err) {
+        i += BULK_CREATE_CHUNK_SIZE;
+        console.log('ERROR', err);
+        if (err instanceof InvalidConfigError) {
+          setError(`Invalid ${err.key} value ${err.value ?? ''} - ${err.message}`);
+        } else {
+          setError(err?.message || 'Something went wrong. Check your dev console.');
+        }
+      }
+    }
+    setStatus('created');
+  }
+
+  async function validateAndCreateLobby() {
+    try {
+      setStatus('creating');
+      const initializers = toInitializers(config);
+      await createLobby(initializers);
+    } catch (err) {
+      setStatus('errored');
+      console.error(err);
+      if (err instanceof InvalidConfigError) {
+        setError(`Invalid ${err.key} value ${err.value ?? ''} - ${err.message}`);
+      } else {
+        setError(err?.message || 'Something went wrong. Check your dev console.');
+      }
+    }
+  }
 
   async function createLobby(config: LobbyInitializers) {
     var initializers = { ...startingConfig, ...config };
@@ -176,6 +265,10 @@ export function LobbyConfigPage({
             ownerAddress={ownerAddress}
             lobbyTx={lobbyTx}
             onError={setError}
+            created={created}
+            creating={creating}
+            playerTwitter={playerTwitter}
+            validateAndCreateLobby={validateAndCreateLobby}
           />
         </Route>
         <Route path={`${root}/settings`}>

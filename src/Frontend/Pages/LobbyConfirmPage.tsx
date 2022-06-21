@@ -5,8 +5,11 @@ import { useHistory } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { getAllTwitters } from '../../Backend/Network/UtilityServerAPI';
 import { LobbyAdminTools } from '../../Backend/Utils/LobbyAdminTools';
+import { CopyableInput } from '../Components/CopyableInput';
 import { Link, Spacer } from '../Components/CoreUI';
-import { LobbyCreationStatus } from '../Components/LobbyCreationStatus';
+import { MythicLabelText } from '../Components/Labels/MythicLabel';
+import { LoadingSpinner } from '../Components/LoadingSpinner';
+import { Row } from '../Components/Row';
 import { Sidebar } from '../Components/Sidebar';
 import { MinimapPane } from '../Panes/Lobbies/MinimapPane';
 import { MinimapConfig } from '../Panes/Lobbies/MinimapUtils';
@@ -30,6 +33,10 @@ export function LobbyConfirmPage({
   ownerAddress,
   lobbyTx,
   onError,
+  created,
+  creating,
+  playerTwitter,
+  validateAndCreateLobby,
 }: {
   updateConfig: React.Dispatch<LobbyAction>;
   config: LobbyConfigState;
@@ -42,7 +49,48 @@ export function LobbyConfirmPage({
   ownerAddress: EthAddress;
   lobbyTx: string | undefined;
   onError: (msg: string) => void;
+  created: false | EthAddress | undefined;
+  creating: boolean;
+  playerTwitter: string | undefined;
+  validateAndCreateLobby: () => void;
 }) {
+  const blockscoutURL = `https://blockscout.com/poa/xdai/optimism/tx/${lobbyTx}`;
+  const url = `${window.location.origin}/play/${lobbyAdminTools?.address}`;
+
+  const handleEnterUniverse = () => {
+    if (config.ADMIN_PLANETS.displayValue && config.ADMIN_PLANETS.displayValue.length > 0) {
+      const confirmed = confirm(
+        'Warning: Some planets are still staged for creation.\nDo you want to continue?'
+      );
+      if (!confirmed) return;
+    }
+    if (config.WHITELIST.displayValue && config.WHITELIST.displayValue.length > 0) {
+      const confirmed = confirm(
+        'Warning: Some addresses are still staged for allowlist\nDo you want to continue?'
+      );
+      if (!confirmed) return;
+    }
+    if (
+      config.MANUAL_SPAWN.displayValue &&
+      !lobbyAdminTools?.planets.find((p) => p.isSpawnPlanet)
+    ) {
+      const confirmed = confirm(
+        'Warning: Manual spawn is active but no spawn planets have been created. Nobody will be able to spawn into the game!\nDo you want to continue?'
+      );
+      if (!confirmed) return;
+    }
+    if (
+      config.TARGET_PLANETS.displayValue &&
+      !lobbyAdminTools?.planets.find((p) => p.isTargetPlanet)
+    ) {
+      const confirmed = confirm(
+        'Warning: Target planets are active but no target planets have been created.\nDo you want to continue?'
+      );
+      if (!confirmed) return;
+    }
+    window.open(url);
+  };
+
   const history = useHistory();
   return (
     <Container>
@@ -101,22 +149,43 @@ export function LobbyConfirmPage({
           you can enter the universe!
         </span>
         <Spacer height={24} />
-        {/* <Button primary>Create Universe</Button> */}
-        <LobbyCreationStatus
-          lobbyAdminTools={lobbyAdminTools}
-          config={config}
-          ownerAddress={ownerAddress}
-          updateConfig={updateConfig}
-          lobbyTx={lobbyTx}
-          root={root}
-          createLobby={createLobby}
-          setError={onError}
-        />
+        {!created ? (
+          <Button primary onClick={validateAndCreateLobby}>
+            {creating ? <LoadingSpinner initialText={'Creating...'} /> : 'Create World'}
+          </Button>
+        ) : (
+          <>
+            <Row>
+              <Button primary onClick={handleEnterUniverse}>
+                Enter Universe
+              </Button>
+            </Row>
+            <Row>
+              <div>
+                <Link to={blockscoutURL} style={{ textDecoration: 'none' }}>
+                  <MythicLabelText text='Your universe has been created!'></MythicLabelText>
+                </Link>
+              </div>
+            </Row>
+            <Row>
+              <CopyableInput
+                label='Share with your friends'
+                displayValue={url}
+                copyText={`👋 ${
+                  playerTwitter || ownerAddress?.slice(0, 6)
+                } has challenged you to a Dark Forest Arena battle! ☄️😤\n\nClick the link to play:\n⚔️ ${url} ⚔️`}
+                onCopyError={onError}
+              />
+            </Row>
+          </>
+        )}
         <Spacer height={16} />
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Button onClick={() => history.push(`${root}/edit-map`)}>Edit map</Button>
-          <Button onClick={() => history.push(`${root}/settings/game`)}>Game Settings</Button>
-        </div>
+        {!createDisabled && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Button onClick={() => history.push(`${root}/edit-map`)}>Edit map</Button>
+            <Button onClick={() => history.push(`${root}/settings/game`)}>Game Settings</Button>
+          </div>
+        )}
       </MapContainer>
     </Container>
   );
