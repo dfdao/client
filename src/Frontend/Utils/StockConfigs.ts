@@ -655,7 +655,7 @@ const grandPrixWeek2: LobbyInitializers = {
   BLOCK_CAPTURE: true,
   BLOCK_MOVES: true,
 };
-const competitive: LobbyInitializers = grandPrixWeek2;
+const competitive: LobbyInitializers = sprint;
 
 export interface StockConfig {
   onePlayerRace: LobbyInitializers;

@@ -16,7 +16,7 @@ export function getLobbyCreatedEvent(
   const log = lobbyReceipt.logs.find((log) => log.topics[0] === lobbyCreatedHash);
   if (log) {
     return {
-      owner: address(contract.interface.parseLog(log).args.ownerAddress),
+      owner: address(contract.interface.parseLog(log).args.creatorAddress),
       lobby: address(contract.interface.parseLog(log).args.lobbyAddress),
     };
   } else {
