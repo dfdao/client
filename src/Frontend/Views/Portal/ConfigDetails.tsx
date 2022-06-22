@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
 import styled from 'styled-components';
-import { Row } from '../../Components/Row';
 import { LobbyInitializers } from '../../Panes/Lobbies/Reducer';
 import dfstyles from '../../Styles/dfstyles';
 import { Table } from '../Table';
@@ -54,7 +53,6 @@ function configItemName(name: string) {
 
 const itemColumns = [(item: any, i: number) => i, (item: any) => item.toString()];
 function Tableify(item: any[]) {
-  console.log(item);
   return (
     <Table
       paginated={false}

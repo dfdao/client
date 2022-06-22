@@ -1235,7 +1235,6 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
     await fetchConfig();
 
     if (config.ADMIN_PLANETS.length > 0) {
-      console.log('admin planets found');
       lobbyPlanetsToInitPlanets(config);
       setConfig(config);
     }
@@ -1270,7 +1269,6 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
 
     const lobbyReceipt = await tx.confirmedPromise;
     const { owner, lobby } = getLobbyCreatedEvent(lobbyReceipt, contractsAPI.contract);
-    console.log(`created arena with ${lobbyReceipt.gasUsed} gas`);
 
     if (owner === playerAddress) {
       history.push({ pathname: `${lobby}`, state: { contract: lobby } });
@@ -1302,11 +1300,6 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
     });
     
     await Promise.all(createPlanetTxs);
-    console.log(
-      `successfully created planets`,
-      createPlanetTxs.map((i) => i)
-    );
-
   }
 
   useEffect(() => {

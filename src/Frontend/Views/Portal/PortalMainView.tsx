@@ -4,9 +4,9 @@ import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { Btn } from '../../Components/Btn';
 import { TextInput } from '../../Components/Input';
-import { NotFoundPage } from '../../Pages/NotFoundPage';
 import dfstyles from '../../Styles/dfstyles';
 import { competitiveConfig } from '../../Utils/constants';
+import { AccountInfoView } from './AccountInfoView';
 import { MapInfoView } from './MapInfoView';
 
 export function PortalMainView() {
@@ -38,6 +38,8 @@ export function PortalMainView() {
         <Redirect path='/portal/map' to={`/portal/map/${competitiveConfig}`} exact={true} />
 
         <Route path={'/portal/map/:configHash'} component={MapInfoView} />
+        <Route path={'/portal/account/:account'} component={AccountInfoView} />
+
         <Route path = '/portal/*' component = {() => <TitleContainer style = {{justifyContent: 'center'}}>Page Not Found</TitleContainer>} />
       </Switch>
     </MainContainer>

@@ -1,28 +1,7 @@
-import { EMPTY_ADDRESS } from '@darkforest_eth/constants';
-import { address } from '@darkforest_eth/serde';
-import {
-  ExactArray10,
-  ExactArray5,
-  ExactArray8,
-  Tuple6,
-} from '@darkforest_eth/settings/dist/decoder-helpers';
-import {
-  ArenaLeaderboard,
-  ArenaLeaderboardEntry,
-  EthAddress,
-  Leaderboard,
-  LeaderboardEntry,
-} from '@darkforest_eth/types';
+import { EthAddress, GraphArena, GraphPlanet } from '@darkforest_eth/types';
 import { LobbyInitializers } from '../../Frontend/Panes/Lobbies/Reducer';
-import { planetBackground } from '../../Frontend/Styles/Mixins';
-import {
-  roundEndTimestamp,
-  roundStartTimestamp,
-  competitiveConfig,
-  apiUrl,
-} from '../../Frontend/Utils/constants';
+import { apiUrl } from '../../Frontend/Utils/constants';
 import { getGraphQLData } from './GraphApi';
-import { getAllTwitters } from './UtilityServerAPI';
 
 const CONSTANTS = `config{
   # START_PAUSED,
@@ -88,25 +67,35 @@ planets(first: 20) {
   spawnPlanet
 }`;
 
-export async function loadConfigFromHash(config: string): Promise<{
-  config: LobbyInitializers;
-  address: string;
-} | undefined> {
+export async function loadConfigFromHash(config: string): Promise<
+  | {
+      config: LobbyInitializers;
+      address: string;
+    }
+  | undefined
+> {
   const query = `
 query {
     arenas(first:1, where: {configHash: "${config}"}) {
         lobbyAddress,
+        configHash,
+        gameOver,
+        startTime,
         ${CONSTANTS}
       }
 }
 `;
-const rawData = await getGraphQLData(query, apiUrl);
-return await convertData(rawData.data.arenas[0]);}
+  const rawData = await getGraphQLData(query, apiUrl);
+  return await convertGraphConfig(rawData.data.arenas[0]);
+}
 
-export async function loadConfigFromAddress(address: EthAddress): Promise<{
-  config: LobbyInitializers;
-  address: string; }
- | undefined> {
+export async function loadConfigFromAddress(address: EthAddress): Promise<
+  | {
+      config: LobbyInitializers;
+      address: string;
+    }
+  | undefined
+> {
   const query = `
 query {
     arena(id: "${address}") {
@@ -115,86 +104,21 @@ query {
       }
     }
 `;
-const rawData = await getGraphQLData(query, apiUrl);
-console.log(rawData);
-return await convertData(rawData.data.arena);
-
+    try {
+    const rawData : GraphArena = (await getGraphQLData(query, apiUrl)).data.arena;
+    const configData = convertGraphConfig(rawData);
+    return configData;
+    } catch (e) {
+      console.log(e);
+    }
 }
 
-interface rawConfig {
-  lobbyAddress: string;
-  config: {
-    // START_PAUSED,
-    ADMIN_CAN_ADD_PLANETS: boolean;
-    TOKEN_MINT_END_TIMESTAMP: number;
-    WORLD_RADIUS_LOCKED: boolean;
-    WORLD_RADIUS_MIN: number;
-    DISABLE_ZK_CHECKS: boolean;
-    PLANETHASH_KEY: number;
-    SPACETYPE_KEY: number;
-    BIOMEBASE_KEY: number;
-    PERLIN_MIRROR_X: boolean;
-    PERLIN_MIRROR_Y: boolean;
-    PERLIN_LENGTH_SCALE: number;
-    MAX_NATURAL_PLANET_LEVEL: number;
-    TIME_FACTOR_HUNDREDTHS: number;
-    PERLIN_THRESHOLD_1: number;
-    PERLIN_THRESHOLD_2: number;
-    PERLIN_THRESHOLD_3: number;
-    INIT_PERLIN_MAX: number;
-    INIT_PERLIN_MIN: number;
-    BIOME_THRESHOLD_1: number;
-    BIOME_THRESHOLD_2: number;
-    PLANET_LEVEL_THRESHOLDS: ExactArray10<number>;
-    PLANET_RARITY: number;
-    PLANET_TRANSFER_ENABLED: boolean;
-    PHOTOID_ACTIVATION_DELAY: number;
-    SPAWN_RIM_AREA: number;
-    LOCATION_REVEAL_COOLDOWN: number;
-    // # CLAIM_PLANET_COOLDOWN,
-    // # PLANET_TYPE_WEIGHTS,
-    SILVER_SCORE_VALUE: number;
-    ARTIFACT_POINT_VALUES: Tuple6<number>;
-    SPACE_JUNK_ENABLED: boolean;
-    SPACE_JUNK_LIMIT: number;
-    PLANET_LEVEL_JUNK: ExactArray10<number>;
-    ABANDON_SPEED_CHANGE_PERCENT: number;
-    ABANDON_RANGE_CHANGE_PERCENT: number;
-    CAPTURE_ZONES_ENABLED: boolean;
-    CAPTURE_ZONE_COUNT: number;
-    CAPTURE_ZONE_CHANGE_BLOCK_INTERVAL: number;
-    CAPTURE_ZONE_RADIUS: number;
-    CAPTURE_ZONE_PLANET_LEVEL_SCORE: ExactArray10<number>;
-    CAPTURE_ZONE_HOLD_BLOCKS_REQUIRED: number;
-    CAPTURE_ZONES_PER_5000_WORLD_RADIUS: number;
-    MANUAL_SPAWN: boolean;
-    TARGET_PLANETS: boolean;
-    CLAIM_VICTORY_ENERGY_PERCENT: number;
-    MODIFIERS: ExactArray8<number>;
-    SPACESHIPS: ExactArray5<boolean>;
-    // # RANDOM_ARTIFACTS,
-    NO_ADMIN: boolean;
-    // # INIT_PLANETS,
-  };
-  planets: {
-    x: number;
-    y: number;
-    level: number;
-    planetType: number;
-    locationDec: string;
-    perlin: number;
-    targetPlanet: boolean;
-    spawnPlanet: boolean;
-  }[];
-}
-
-async function convertData(
-  config: rawConfig | undefined
-): Promise<{ config: LobbyInitializers; address: string } | undefined> {
-  if(!config) return undefined;
+export function convertGraphConfig(
+  arena: GraphArena
+): { config: LobbyInitializers; address: string } {
   return {
     config: {
-      ...config.config,
+      ...arena.config,
       START_PAUSED: true,
       CLAIM_PLANET_COOLDOWN: 0,
       PLANET_TYPE_WEIGHTS: [
@@ -248,7 +172,7 @@ async function convertData(
         ],
       ],
       RANDOM_ARTIFACTS: false,
-      ADMIN_PLANETS: config.planets.map((planet) => {
+      ADMIN_PLANETS: arena.planets.map((planet: GraphPlanet) => {
         return {
           ...planet,
           x: Number(planet.x),
@@ -262,6 +186,6 @@ async function convertData(
       WHITELIST_ENABLED: false,
       WHITELIST: [],
     },
-    address: config.lobbyAddress,
+    address: arena.lobbyAddress,
   };
 }

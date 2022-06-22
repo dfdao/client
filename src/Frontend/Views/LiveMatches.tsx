@@ -140,7 +140,6 @@ function LeaderboardBody({
     return <Subber>Leaderboard loading...</Subber>;
   }
 
-  console.log('entries', leaderboard.entries);
   leaderboard.entries.sort((a, b) => {
     if (typeof a.startTime !== 'number' && typeof b.startTime !== 'number') {
       return 0;

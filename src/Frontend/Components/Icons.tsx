@@ -71,6 +71,11 @@ export const Star = ({ height, width, color }: AlertIcon & {color: string}) => {
 export const Gnosis = ({ height, width }: AlertIcon) => {
   return <img height={height} width={width} src='/public/icons/gclogo.svg' />;
 };
+
+export const Twitter = ({ height, width }: AlertIcon) => {
+  return <img height={height} width={width} src='/public/icons/twitter.svg' />;
+};
+
 export const FoundSpacetimeRip = ({ height, width }: AlertIcon) => {
   return (
     <img height={height} width={width} src='/public/icons/alerts/planettypes/tradingpost.svg' />

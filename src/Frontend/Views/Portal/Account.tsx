@@ -1,5 +1,5 @@
-import { EthAddress, ModalName, Planet, PlanetType, TooltipName } from '@darkforest_eth/types';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { EthAddress } from '@darkforest_eth/types';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { logOut } from '../../../Backend/Network/AccountManager';
 import { getAllTwitters } from '../../../Backend/Network/UtilityServerAPI';
@@ -7,16 +7,15 @@ import { Btn } from '../../Components/Btn';
 import { TwitterLink } from '../../Components/Labels/Labels';
 import { TextPreview } from '../../Components/TextPreview';
 
-import dfstyles, { PortalButton } from '../../Styles/dfstyles';
+import dfstyles from '../../Styles/dfstyles';
 
-function Account({ address }: { address: EthAddress }) {
+function AccountDetails({ address }: { address: EthAddress }) {
   const [twitter, setTwitter] = useState<string | undefined>();
 
   useEffect(() => {
     getAllTwitters().then((t) => setTwitter(t[address]));
   }, []);
 
-  useEffect(() => {}, [twitter]);
   return (
     <NamesContainer>
       <Large>
@@ -31,10 +30,10 @@ function Account({ address }: { address: EthAddress }) {
   );
 }
 
-export function AccountView({ address }: { address: EthAddress }) {
+export function Account({ address }: { address: EthAddress }) {
   return (
     <PaneContainer>
-      <Account address={address} />
+      <AccountDetails address={address} />
       <Btn variant={'portal'} size='small' onClick={logOut}>Logout</Btn>
     </PaneContainer>
   );

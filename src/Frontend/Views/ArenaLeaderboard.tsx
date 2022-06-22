@@ -1,20 +1,16 @@
-import { ArenaLeaderboard, ArtifactRarity, Leaderboard } from '@darkforest_eth/types';
+import { Leaderboard } from '@darkforest_eth/types';
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { getRank, Rank } from '../../Backend/Utils/Rank';
-import { Spacer } from '../Components/CoreUI';
-import { Gnosis, Star } from '../Components/Icons';
-import { TwitterLink } from '../Components/Labels/Labels';
-import { LoadingSpinner } from '../Components/LoadingSpinner';
+import { Gnosis, Star, Twitter } from '../Components/Icons';
 import { Red, Subber } from '../Components/Text';
 import { TextPreview } from '../Components/TextPreview';
-import { RarityColors } from '../Styles/Colors';
 import dfstyles from '../Styles/dfstyles';
 import { useArenaLeaderboard } from '../Utils/AppHooks';
 import { roundEndTimestamp, roundStartTimestamp } from '../Utils/constants';
 import { formatDuration } from '../Utils/TimeUtils';
 import { GenericErrorBoundary } from './GenericErrorBoundary';
-import { SortableTable } from './SortableTable';
 import { Table } from './Table';
 
 const errorMessage = 'Error Loading Leaderboard';
@@ -36,8 +32,8 @@ export function ArenaLeaderboardDisplay({
       <LeaderboardContainer>
         <StatsTableContainer>
           <StatsTable>
-              {/* <CountDown /> */}
-              <ArenasCreated leaderboard={leaderboard} error={error} />
+            {/* <CountDown /> */}
+            <ArenasCreated leaderboard={leaderboard} error={error} />
           </StatsTable>
         </StatsTableContainer>
         {/* <Spacer height={8} /> */}
@@ -68,25 +64,13 @@ function compPlayerToEntry(
   color: string
 ) {
   return (
-    <span
-      style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '5px' }}
-    >
+    <Link to={`/portal/account/${playerAddress}`} style={{ color: color, textDecoration: 'underline' }}>
       {playerTwitter ? (
-        <TwitterLink twitter={playerTwitter} color={color} />
+        `@${playerTwitter}`
       ) : (
-        <TextPreview text={playerAddress} focusedWidth={'150px'} unFocusedWidth={'150px'} />
+        <TextPreview style = {{textDecoration: 'underline' }} disabled text={playerAddress} focusedWidth={'130px'} unFocusedWidth={'130px'} />
       )}
-
-      <a
-        style={{ display: 'flex', alignItems: 'center' }}
-        target='_blank'
-        href={`https://blockscout.com/xdai/optimism/address/${playerAddress}`}
-      >
-        <GnoButton>
-          <Gnosis height='25px' width='25Fpx' />
-        </GnoButton>
-      </a>
-    </span>
+    </Link>
   );
 }
 
@@ -115,7 +99,11 @@ function getRankStar(rank: number) {
   }
   return <></>;
 }
-type Row = [string, string | undefined, number | undefined];
+interface Row {
+  address: string;
+  twitter: string | undefined;
+  score: number | undefined;
+}
 
 function CountDown() {
   const [time, setTime] = useState<string | undefined>();
@@ -151,12 +139,12 @@ function CountDown() {
   }, []);
 
   return (
-      <tbody style={{ fontSize: '1.25em' }}>
-        <tr>
-          <td>{str}</td>
-          <td>{time}</td>
-        </tr>
-      </tbody>
+    <tbody style={{ fontSize: '1.25em' }}>
+      <tr>
+        <td>{str}</td>
+        <td>{time}</td>
+      </tr>
+    </tbody>
   );
 }
 
@@ -196,25 +184,70 @@ function ArenaLeaderboardTable({ rows }: { rows: Row[] }) {
         alignments={['r', 'r', 'l', 'l', 'r']}
         headers={[
           <Cell key='star'></Cell>,
-          <Cell key='place'></Cell>,
-          <Cell key='player'></Cell>,
-          <Cell key='player'></Cell>,
+          <Cell key='rank'></Cell>,
+          <Cell key='name'></Cell>,
+          <Cell key='twitter'></Cell>,
+          <Cell key='gnosis'></Cell>,
           <Cell key='score'></Cell>,
         ]}
         rows={rows}
         columns={[
-          (row: [string, string | undefined, number | undefined], i) => getRankStar(i),
-          (row: [string, string | undefined, number | undefined], i) => (
-            <Cell style={{ color: getRankColor([i, row[2]]) }}>
-              {row[2] === undefined || row[2] === null ? 'unranked' : i + 1 + '.'}
+          (row: Row, i) => getRankStar(i), //star
+          (
+            row: Row,
+            i //rank
+          ) => (
+            <Cell style={{ color: getRankColor([i, row.score]) }}>
+              {row.score === undefined || row.score === null ? 'unranked' : i + 1 + '.'}
             </Cell>
           ),
-          (row: [string, string | undefined, number | undefined], i) => {
-            const color = getRankColor([i, row[2]]);
-            return <Cell style={{ color }}>{compPlayerToEntry(row[0], row[1], color)}</Cell>;
+          (row: Row, i) => {
+            // name
+            const color = getRankColor([i, row.score]);
+            return (
+              <Cell style={{ color }}>{compPlayerToEntry(row.address, row.twitter, color)}</Cell>
+            );
           },
-          (row: [string, string | undefined, number | undefined], i) => {
-            return <Cell style={{ color: getRankColor([i, row[2]]) }}>{scoreToTime(row[2])}</Cell>;
+          (row: Row, i) => {
+            // twitter
+            const color = getRankColor([i, row.score]);
+            return (
+              <Cell>
+                {row.twitter && (
+                  <a
+                    style={{ display: 'flex', alignItems: 'center' }}
+                    target='_blank'
+                    href={`https://twitter.com/address/${row.twitter}`}
+                  >
+                    <Twitter width= '30px' height= '30px'/>
+                  </a>
+                )}
+              </Cell>
+            );
+          },
+          (row: Row, i) => {
+            // gnosis
+            const color = getRankColor([i, row.score]);
+            return (
+              <Cell>
+                {' '}
+                <a
+                  style={{ display: 'flex', alignItems: 'center' }}
+                  target='_blank'
+                  href={`https://blockscout.com/xdai/optimism/address/${row.address}`}
+                >
+                  <GnoButton>
+                    <Gnosis  width= '30px' height= '30px'/>
+                  </GnoButton>
+                </a>
+              </Cell>
+            );
+          },
+          (row: Row, i) => {
+            // score
+            return (
+              <Cell style={{ color: getRankColor([i, row.score]) }}>{scoreToTime(row.score)}</Cell>
+            );
           },
         ]}
       />
@@ -254,7 +287,7 @@ function ArenaLeaderboardBody({
   });
 
   const arenaRows: Row[] = leaderboard.entries.map((entry) => {
-    return [entry.ethAddress, entry.twitter, entry.score];
+    return { address: entry.ethAddress, twitter: entry.twitter, score: entry.score };
   });
 
   return <ArenaLeaderboardTable rows={arenaRows} />;

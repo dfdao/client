@@ -1,7 +1,7 @@
 import { CONTRACT_ADDRESS } from '@darkforest_eth/contracts';
 import { EthConnection } from '@darkforest_eth/network';
 import { address } from '@darkforest_eth/serde';
-import { ArtifactRarity, EthAddress } from '@darkforest_eth/types';
+import { EthAddress } from '@darkforest_eth/types';
 import React, { useCallback, useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { ContractsAPI, makeContractsAPI } from '../../Backend/GameLogic/ContractsAPI';
@@ -58,7 +58,6 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
       if (configContractAddress) {
         loadConfigFromAddress(configContractAddress)
           .then((config) => {
-            console.log(config);
             if (!config) {
               setStartingConfig(stockConfig.onePlayerRace);
             } else {
