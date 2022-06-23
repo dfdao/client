@@ -21,15 +21,14 @@ export function PortalPage() {
     [setConnection]
   );
 
-   
-    if(connection && ownerAddress) {
-      return <Portal playerAddress={ownerAddress} />
-    } 
-    return (
-      <Wrapper initRender={InitRenderState.NONE} terminalEnabled={false}>
-        <PortalLandingPage onReady={onReady} />
-      </Wrapper>
-    )
+  if (connection && ownerAddress) {
+    return <Portal playerAddress={ownerAddress} />;
+  } 
+  return (
+    <Wrapper initRender={InitRenderState.NONE} terminalEnabled={false}>
+      <PortalLandingPage onReady={onReady} />
+    </Wrapper>
+  );
 }
 
 function Portal({ playerAddress }: { playerAddress: EthAddress }) {

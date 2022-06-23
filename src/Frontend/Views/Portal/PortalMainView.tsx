@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { Btn } from '../../Components/Btn';
+import { SelectFrom } from '../../Components/CoreUI';
 import { TextInput } from '../../Components/Input';
 import dfstyles from '../../Styles/dfstyles';
 import { competitiveConfig } from '../../Utils/constants';
@@ -11,6 +12,7 @@ import { MapInfoView } from './MapInfoView';
 
 export function PortalMainView() {
   const [input, setInput] = useState<string>('');
+  const [type, setType] = useState<string>('Map');
 
   return (
     <MainContainer>
@@ -20,14 +22,23 @@ export function PortalMainView() {
         </TitleContainer>
 
         <TitleContainer>
-          <Btn variant='portal' onClick={() => validateAddress(input)}>
-            Go
+          <Btn variant='portal' onClick={() => validateAddress(input, type)}>
+            go
           </Btn>
+          <SelectFrom
+            portal
+            wide={false}
+            style={{ padding: '6px' }}
+            values={['Account', 'Map']}
+            labels={['Account', 'Map']}
+            value={type}
+            setValue={setType}
+          />
           <TextInput
             portal={true}
             style={inputStyle}
             value={input}
-            placeholder={'Search for a map config'}
+            placeholder={'Search for a map or acct'}
             onChange={(e: Event & React.ChangeEvent<DarkForestTextInput>) =>
               setInput(e.target.value)
             }
@@ -40,14 +51,19 @@ export function PortalMainView() {
         <Route path={'/portal/map/:configHash'} component={MapInfoView} />
         <Route path={'/portal/account/:account'} component={AccountInfoView} />
 
-        <Route path = '/portal/*' component = {() => <TitleContainer style = {{justifyContent: 'center'}}>Page Not Found</TitleContainer>} />
+        <Route
+          path='/portal/*'
+          component={() => (
+            <TitleContainer style={{ justifyContent: 'center' }}>Page Not Found</TitleContainer>
+          )}
+        />
       </Switch>
     </MainContainer>
   );
 }
 
-
-function validateAddress(input: string) {
+function validateAddress(input: string, type: string) {
+  console.log('here')
   const history = useHistory();
 
   let lower = input.toLowerCase();
@@ -55,10 +71,6 @@ function validateAddress(input: string) {
     lower = lower.slice(2);
   }
   let error = false;
-  if (lower.length !== 64) {
-    console.log('incorrect length');
-    error = true;
-  }
   for (const c of lower) {
     if ('0123456789abcdef'.indexOf(c) === -1) {
       console.log(`bad letter: ${c}`);
@@ -67,12 +79,17 @@ function validateAddress(input: string) {
       return;
     }
   }
+  if (type == 'Map' && lower.length !== 64) error = true;
+  else if (lower.length !== 40) error = true;
+
   if (error) {
     alert('invalid map address! Try again with a valid address.');
     return;
   }
 
-  history.push(`/portal/map/${input}`);
+  const link = `/portal/${type == 'Map' ? 'map/' : 'account/'}${input}`
+
+  history.push(link);
 }
 
 const MainContainer = styled.div`

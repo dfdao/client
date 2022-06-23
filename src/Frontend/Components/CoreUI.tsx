@@ -321,6 +321,7 @@ export function SelectFrom({
   labels,
   style,
   wide,
+  portal,
 }: {
   values: string[];
   value: string;
@@ -328,6 +329,7 @@ export function SelectFrom({
   labels: string[];
   style?: React.CSSProperties;
   wide?: boolean;
+  portal?: boolean;
 }) {
   const onChange = useCallback(
     (e: ChangeEvent<HTMLSelectElement>) => {
@@ -344,8 +346,10 @@ export function SelectFrom({
     copyOfValues.push(value);
   }
 
+  const portalStyle = portal ? {  background: dfstyles.colors.subtext, color: dfstyles.colors.backgrounddark} : {};
+
   return (
-    <Select wide={wide} style={style} value={value} onChange={onChange}>
+    <Select wide={wide} style={{...style, ...portalStyle}} value={value} onChange={onChange}>
       {copyOfValues.map((value, i) => {
         return (
           <option key={value} value={value}>
