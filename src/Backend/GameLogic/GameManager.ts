@@ -2963,7 +2963,7 @@ class GameManager extends EventEmitter {
         throw new Error('game is paused');
       }
 
-      if (this.blockMoves() && this.isBlocked(to,from)) {
+      if (this.account && this.blockMoves() && this.blockedFromCapturing(this.account,to)) {
         throw new Error('Cannot move to a blocked planet');
       }
       

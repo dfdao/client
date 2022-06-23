@@ -173,7 +173,7 @@ const onePlayerRace: LobbyInitializers = {
   INIT_PLANETS: [],
   CONFIRM_START: false,
   TARGETS_REQUIRED_FOR_VICTORY: 1,
-  BLOCKLIST: [],
+  INIT_BLOCKLIST: [],
   BLOCK_CAPTURE: false,
   BLOCK_MOVES: false,
 };
@@ -327,7 +327,7 @@ const fourPlayerBattle: LobbyInitializers = {
   WHITELIST: [],
   CONFIRM_START: true,
   TARGETS_REQUIRED_FOR_VICTORY: 2,
-  BLOCKLIST: [],
+  INIT_BLOCKLIST: [],
   BLOCK_CAPTURE: false,
   BLOCK_MOVES: false,
 };
@@ -465,9 +465,9 @@ const sprint: LobbyInitializers = {
   WHITELIST: [],
   CONFIRM_START: true,
   TARGETS_REQUIRED_FOR_VICTORY: 1,
-  BLOCKLIST: [],
-  BLOCK_CAPTURE: false,
-  BLOCK_MOVES: false,
+  INIT_BLOCKLIST: [],
+  BLOCK_CAPTURE: true,
+  BLOCK_MOVES: true,
 };
 
 const grandPrixWeek2: LobbyInitializers = {
@@ -651,7 +651,7 @@ const grandPrixWeek2: LobbyInitializers = {
   WHITELIST: [],
   CONFIRM_START: true,
   TARGETS_REQUIRED_FOR_VICTORY: 1,
-  BLOCKLIST: [],
+  INIT_BLOCKLIST: [],
   BLOCK_CAPTURE: true,
   BLOCK_MOVES: true,
 };
