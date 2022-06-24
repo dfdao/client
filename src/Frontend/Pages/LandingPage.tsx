@@ -270,7 +270,7 @@ function GrandPrix() {
         <Title slot='title'>🏎 Grand Prix Info 🏎</Title>
         <div style={{ maxWidth: '300px', textAlign: 'justify' }}>
           Race in the Grand Prix for a $300 prize and NFT trophies! Here is more{' '}
-          <Link to='https://medium.com/dfdao/grand-prix-week-2-dc3bef0d3913'>rules and info</Link>
+          <Link to='https://medium.com/dfdao/grand-prix-week-4-6b0d9c0174bf'>rules and info</Link>
           .
           <br />
           <br />
