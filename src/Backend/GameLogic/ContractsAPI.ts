@@ -482,9 +482,13 @@ export class ContractsAPI extends EventEmitter {
       BLOCK_CAPTURE,
       BLOCK_MOVES,
       TARGETS_REQUIRED_FOR_VICTORY,
+      TEAMS_ENABLED,
+      NUM_TEAMS,
+      RANKED,
+      START_PAUSED
     } = await this.makeCall(this.contract.getArenaConstants);
 
-    const TOKEN_MINT_END_SECONDS = (
+    const TOKEN_MINT_END_TIMESTAMP = (
       await this.makeCall(this.contract.TOKEN_MINT_END_TIMESTAMP)
     ).toNumber();
 
@@ -522,7 +526,7 @@ export class ContractsAPI extends EventEmitter {
       PERLIN_MIRROR_X,
       PERLIN_MIRROR_Y,
       CLAIM_PLANET_COOLDOWN: 0,
-      TOKEN_MINT_END_SECONDS,
+      TOKEN_MINT_END_TIMESTAMP,
       MAX_NATURAL_PLANET_LEVEL: MAX_NATURAL_PLANET_LEVEL.toNumber(),
       TIME_FACTOR_HUNDREDTHS: TIME_FACTOR_HUNDREDTHS.toNumber(),
       PERLIN_THRESHOLD_1: PERLIN_THRESHOLD_1.toNumber(),
@@ -549,7 +553,6 @@ export class ContractsAPI extends EventEmitter {
       PLANET_TRANSFER_ENABLED,
       PLANET_TYPE_WEIGHTS,
       ARTIFACT_POINT_VALUES,
-
       SPACE_JUNK_ENABLED,
       SPACE_JUNK_LIMIT: SPACE_JUNK_LIMIT.toNumber(),
       PLANET_LEVEL_JUNK: [
@@ -625,6 +628,7 @@ export class ContractsAPI extends EventEmitter {
       INIT_PLANET_HASHES,
       CONFIG_HASH,
       CONFIRM_START,
+      START_PAUSED,
       BLOCK_CAPTURE,
       BLOCK_MOVES,
       INIT_BLOCKLIST: INIT_BLOCKLIST.map(blockItem => {
@@ -634,6 +638,9 @@ export class ContractsAPI extends EventEmitter {
         }
       }),
       TARGETS_REQUIRED_FOR_VICTORY: TARGETS_REQUIRED_FOR_VICTORY.toNumber(),
+      TEAMS_ENABLED,
+      NUM_TEAMS: NUM_TEAMS.toNumber(),
+      RANKED
     };
 
     return constants; 

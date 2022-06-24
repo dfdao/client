@@ -191,7 +191,7 @@ export interface ContractConstants {
   PERLIN_MIRROR_X: boolean;
   PERLIN_MIRROR_Y: boolean;
 
-  TOKEN_MINT_END_SECONDS: number;
+  TOKEN_MINT_END_TIMESTAMP: number;
 
   MAX_NATURAL_PLANET_LEVEL: number;
   TIME_FACTOR_HUNDREDTHS: number;
@@ -350,6 +350,10 @@ export interface ContractConstants {
     srcId: LocationId;
 }[];
   TARGETS_REQUIRED_FOR_VICTORY: number;
+  TEAMS_ENABLED: boolean;
+  NUM_TEAMS: number;
+  RANKED: boolean;
+  START_PAUSED: boolean;
 }
 
 export type ClientMockchainData =

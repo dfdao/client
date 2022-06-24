@@ -2081,7 +2081,6 @@ class GameManager extends EventEmitter {
         throw new Error('game has ended');
       }
 
-      console.log(`join gAMe`);
       let planet: LocatablePlanet;
       if (this.contractConstants.MANUAL_SPAWN) {
         this.terminal.current?.println(``);

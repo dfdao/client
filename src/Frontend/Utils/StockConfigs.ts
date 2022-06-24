@@ -176,6 +176,9 @@ const onePlayerRace: LobbyInitializers = {
   INIT_BLOCKLIST: [],
   BLOCK_CAPTURE: false,
   BLOCK_MOVES: false,
+  TEAMS_ENABLED: false,
+  NUM_TEAMS: 2,
+  RANKED: false
 };
 
 const fourPlayerBattle: LobbyInitializers = {
@@ -329,6 +332,9 @@ const fourPlayerBattle: LobbyInitializers = {
   INIT_BLOCKLIST: [],
   BLOCK_CAPTURE: false,
   BLOCK_MOVES: false,
+  TEAMS_ENABLED: false,
+  NUM_TEAMS: 2,
+  RANKED: false
 };
 
 const sprint: LobbyInitializers = {
@@ -466,6 +472,9 @@ const sprint: LobbyInitializers = {
   INIT_BLOCKLIST: [],
   BLOCK_CAPTURE: true,
   BLOCK_MOVES: true,
+  TEAMS_ENABLED: false,
+  NUM_TEAMS: 2,
+  RANKED: false
 };
 
 const grandPrixWeek2: LobbyInitializers = {
@@ -651,6 +660,9 @@ const grandPrixWeek2: LobbyInitializers = {
   INIT_BLOCKLIST: [],
   BLOCK_CAPTURE: true,
   BLOCK_MOVES: true,
+  TEAMS_ENABLED: false,
+  NUM_TEAMS: 2,
+  RANKED: false
 };
 const competitive: LobbyInitializers = sprint;
 
