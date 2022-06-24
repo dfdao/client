@@ -50,7 +50,12 @@ import UIEmitter, { UIEmitterEvent } from '../Utils/UIEmitter';
 import { GameWindowLayout } from '../Views/GameWindowLayout';
 import { Terminal, TerminalHandle } from '../Views/Terminal';
 import { stockConfig } from '../Utils/StockConfigs';
-import { ContractMethodName, EthAddress, LocationId, UnconfirmedCreateLobby } from '@darkforest_eth/types';
+import {
+  ContractMethodName,
+  EthAddress,
+  LocationId,
+  UnconfirmedCreateLobby,
+} from '@darkforest_eth/types';
 import { getLobbyCreatedEvent, lobbyPlanetsToInitPlanets } from '../Utils/helpers';
 import _ from 'lodash';
 import { LobbyInitializers } from '../Panes/Lobbies/Reducer';
@@ -558,7 +563,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
 
   const advanceStateFromContractSet = useCallback(
     async (terminal: React.MutableRefObject<TerminalHandle | undefined>) => {
-      if(isGrandPrix) {
+      if (isGrandPrix) {
         setStep(TerminalPromptStep.PLAYING);
         return;
       }
@@ -655,11 +660,15 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
         const adminAddress = address(await whitelist.adminAddress());
 
         terminal.current?.println('');
-        terminal.current?.print('Checking if whitelisted... ');
+        terminal.current?.print('Checking if allow listed... ');
 
         // TODO(#2329): isWhitelisted should just check the contractOwner
         if (!isWhitelisted && playerAddress !== adminAddress) {
-          setStep(TerminalPromptStep.ASKING_HAS_WHITELIST_KEY);
+          terminal.current?.print(
+            'You are not allowed to play this game. ',
+            TerminalTextStyle.Red
+          );
+          setStep(TerminalPromptStep.TERMINATED);
           return;
         }
         terminal.current?.println('Player whitelisted.');
@@ -920,7 +929,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
           terminal,
           contractAddress,
           spectator: false,
-          configHash
+          configHash,
         });
       } catch (e) {
         console.error(e);
@@ -1209,21 +1218,21 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
     });
     const playerAddress = ethConnection.getAddress();
 
-    var initializers = config;    
+    var initializers = config;
     if (initializers.ADMIN_PLANETS) {
       initializers.INIT_PLANETS = lobbyPlanetsToInitPlanets(
         initializers.ADMIN_PLANETS,
         initializers
       );
     }
-    const spawn = initializers.INIT_PLANETS.filter(p => p.isSpawnPlanet);
-    const target = initializers.INIT_PLANETS.filter(p => p.isTargetPlanet);
-    if(spawn.length > 0 && target.length > 0) {
+    const spawn = initializers.INIT_PLANETS.filter((p) => p.isSpawnPlanet);
+    const target = initializers.INIT_PLANETS.filter((p) => p.isTargetPlanet);
+    if (spawn.length > 0 && target.length > 0) {
       initializers.INIT_BLOCKLIST = [
         {
           destId: target[0].location,
-          srcId: spawn[0].location
-        }
+          srcId: spawn[0].location,
+        },
       ];
     }
 
@@ -1246,8 +1255,8 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
       {
         allowListEnabled: initializers.WHITELIST_ENABLED,
         artifactBaseURI,
-        allowedAddresses: []
-      }      
+        allowedAddresses: initializers.WHITELIST,
+      },
     ]);
     const txIntent: UnconfirmedCreateLobby = {
       methodName: 'createLobby',
@@ -1265,10 +1274,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
 
     const { owner, lobby } = getLobbyCreatedEvent(lobbyReceipt, contractsAPI.contract);
 
-    const diamond = await ethConnection.loadContract<DarkForest>(
-      lobby,
-      loadDiamondContract
-    );
+    const diamond = await ethConnection.loadContract<DarkForest>(lobby, loadDiamondContract);
 
     const startTx = await diamond.start();
     const startRct = startTx.wait();
@@ -1302,13 +1308,12 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
 
       return tx.confirmedPromise;
     });
-    
+
     await Promise.all(createPlanetTxs);
     console.log(
       `successfully created planets`,
       createPlanetTxs.map((i) => i)
     );
-
   }
 
   useEffect(() => {

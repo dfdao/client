@@ -687,16 +687,16 @@ export function lobbyConfigInit(startingConfig: LobbyInitializers) {
         };
         break;
       }
-      case 'CLAIM_PLANET_COOLDOWN': {
-        const defaultValue = startingConfig[key];
-        state[key] = {
-          currentValue: defaultValue,
-          displayValue: defaultValue,
-          defaultValue,
-          warning: undefined,
-        };
-        break;
-      }
+      // case 'CLAIM_PLANET_COOLDOWN': {
+      //   const defaultValue = startingConfig[key];
+      //   state[key] = {
+      //     currentValue: defaultValue,
+      //     displayValue: defaultValue,
+      //     defaultValue,
+      //     warning: undefined,
+      //   };
+      //   break;
+      // }
       case 'PLANET_TYPE_WEIGHTS': {
         const defaultValue = startingConfig[key];
         state[key] = {

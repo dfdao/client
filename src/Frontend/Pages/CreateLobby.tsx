@@ -67,7 +67,6 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
             WHITELIST_ENABLED: false,
             CONFIRM_START: false,
             START_PAUSED: false,
-            CLAIM_PLANET_COOLDOWN: 0,
             ADMIN_PLANETS: [],
             TOKEN_MINT_END_TIMESTAMP: 1682435240778, // Tuesday, April 25, 2023
             ARTIFACT_POINT_VALUES: [

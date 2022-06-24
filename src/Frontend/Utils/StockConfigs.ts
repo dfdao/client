@@ -1,3 +1,4 @@
+import { address } from '@darkforest_eth/serde';
 import { LobbyInitializers } from '../Panes/Lobbies/Reducer';
 
 const onePlayerRace: LobbyInitializers = {
@@ -11,7 +12,6 @@ const onePlayerRace: LobbyInitializers = {
   PERLIN_LENGTH_SCALE: 512,
   PERLIN_MIRROR_X: false,
   PERLIN_MIRROR_Y: false,
-  CLAIM_PLANET_COOLDOWN: 0,
   MAX_NATURAL_PLANET_LEVEL: 3,
   TIME_FACTOR_HUNDREDTHS: 1000,
   PERLIN_THRESHOLD_1: 11,
@@ -189,7 +189,6 @@ const fourPlayerBattle: LobbyInitializers = {
   PERLIN_LENGTH_SCALE: 2048,
   PERLIN_MIRROR_X: true,
   PERLIN_MIRROR_Y: true,
-  CLAIM_PLANET_COOLDOWN: 0,
   MAX_NATURAL_PLANET_LEVEL: 9,
   TIME_FACTOR_HUNDREDTHS: 1500,
   PERLIN_THRESHOLD_1: 13,
@@ -343,7 +342,6 @@ const sprint: LobbyInitializers = {
   PERLIN_LENGTH_SCALE: 2048,
   PERLIN_MIRROR_X: false,
   PERLIN_MIRROR_Y: true,
-  CLAIM_PLANET_COOLDOWN: 0,
   MAX_NATURAL_PLANET_LEVEL: 4,
   TIME_FACTOR_HUNDREDTHS: 1500,
   PERLIN_THRESHOLD_1: 12,
@@ -430,7 +428,7 @@ const sprint: LobbyInitializers = {
   CLAIM_VICTORY_ENERGY_PERCENT: 50,
   MODIFIERS: [100, 100, 100, 100, 100, 100, 100, 100],
   SPACESHIPS: [true, true, false, true, true],
-  WHITELIST_ENABLED: false,
+  WHITELIST_ENABLED: true,
   START_PAUSED: false,
   RANDOM_ARTIFACTS: true,
   ADMIN_PLANETS: [
@@ -462,7 +460,7 @@ const sprint: LobbyInitializers = {
   TOKEN_MINT_END_TIMESTAMP: 1717258179, // SECONDS!,
   NO_ADMIN: false,
   INIT_PLANETS: [],
-  WHITELIST: [],
+  WHITELIST: [address('0x1c0f0af3262a7213e59be7f1440282279d788335')],
   CONFIRM_START: true,
   TARGETS_REQUIRED_FOR_VICTORY: 1,
   INIT_BLOCKLIST: [],
@@ -481,7 +479,6 @@ const grandPrixWeek2: LobbyInitializers = {
   PERLIN_LENGTH_SCALE: 1024,
   PERLIN_MIRROR_X: false,
   PERLIN_MIRROR_Y: false,
-  CLAIM_PLANET_COOLDOWN: 0,
   MAX_NATURAL_PLANET_LEVEL: 3,
   TIME_FACTOR_HUNDREDTHS: 1600,
   PERLIN_THRESHOLD_1: 15,
