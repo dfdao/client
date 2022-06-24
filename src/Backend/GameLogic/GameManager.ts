@@ -83,6 +83,7 @@ import {
   UnconfirmedInit,
   UnconfirmedInvadePlanet,
   UnconfirmedMove,
+  UnconfirmedNotReady,
   UnconfirmedPlanetTransfer,
   UnconfirmedProspectPlanet,
   UnconfirmedReady,
@@ -930,9 +931,6 @@ class GameManager extends EventEmitter {
       .on(ContractsAPIEvent.GameStarted, async (player: EthAddress, startTime: number) => {
         gameManager.startTime = startTime;
       })
-      .on(ContractsAPIEvent.PlayerReady, async (player: EthAddress, startTime: number) => {
-        console.log(`${player} is ready`)
-      });
 
     const unconfirmedTxs = await persistentChunkStore.getUnconfirmedSubmittedEthTxs();
     const confirmationQueue = new ThrottledConcurrentQueue({
@@ -2938,6 +2936,24 @@ class GameManager extends EventEmitter {
     }
   }
 
+  public async notReady() {
+    try {
+      const txIntent: UnconfirmedNotReady = {
+        methodName: 'notReady',
+        contract: this.contractsAPI.contract,
+        args: Promise.resolve([]),
+      };
+      // Always await the submitTransaction so we can catch rejections
+      const tx = await this.contractsAPI.submitTransaction(txIntent);
+
+      return tx;
+    } catch (e) {
+      this.getNotificationsManager().txInitError('upgradePlanet', e.message);
+      throw e;
+    }
+  }
+
+
   /**
    * Submits a transaction to the blockchain to move the given amount of resources from
    * the given planet to the given planet.
@@ -3585,9 +3601,14 @@ class GameManager extends EventEmitter {
     return this.entityStore.getPlanetMap();
   }
 
-  public getTargetPlanets(): LocationId[] {
+  public getSpawnPlanets(): Planet[] {
+    const spawns = [...this.getPlanetMap()].filter(([, planet]) => planet.isSpawnPlanet);
+    return spawns.map((p) => p[1]);
+  }
+
+  public getTargetPlanets(): Planet[] {
     const targets = [...this.getPlanetMap()].filter(([, planet]) => planet.isTargetPlanet);
-    return targets.map((p) => p[0]);
+    return targets.map((p) => p[1]);
   }
 
   /** Return a reference to the artifact map */

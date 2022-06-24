@@ -384,11 +384,11 @@ export class ContractsAPI extends EventEmitter {
       },
       [ContractEvent.PlayerReady]: (player: string, time: EthersBN) => {
         console.log('CONTRACT PLAYER READY', player);
-        this.emit(ContractsAPIEvent.PlayerReady, address(player), time.toNumber());
+        this.emit(ContractsAPIEvent.PlayerUpdate, address(player));
       },
       [ContractEvent.PlayerNotReady]: (player: string, time: EthersBN) => {
         console.log('CONTRACT PLAYER NOT READY', player);
-        this.emit(ContractsAPIEvent.PlayerNotReady, address(player), time.toNumber());
+        this.emit(ContractsAPIEvent.PlayerUpdate, address(player));
       },
     };
 

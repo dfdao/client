@@ -1341,6 +1341,14 @@ class GameUIManager extends EventEmitter {
     return this.contractConstants.TARGET_PLANETS;
   }
 
+  public getSpawnPlanets(): Planet[] {
+    return this.gameManager.getSpawnPlanets();
+  }
+
+  public getTargetPlanets(): Planet[] {
+    return this.gameManager.getTargetPlanets();
+  }
+
   public potentialCaptureScore(planetLevel: number): number {
     return this.contractConstants.CAPTURE_ZONE_PLANET_LEVEL_SCORE[planetLevel];
   }

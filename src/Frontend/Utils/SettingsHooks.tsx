@@ -55,7 +55,7 @@ const defaultSettings: Record<Setting, string> = {
   [Setting.FoundDeepSpace]: 'false',
   [Setting.FoundSpace]: 'false',
   // prevent the tutorial and help pane popping up in development mode.
-  [Setting.NewPlayer]: onlyInProduction(),
+  [Setting.NewPlayer]: onlyInDevelopment(),
   [Setting.MiningCores]: '1',
   [Setting.IsMining]: 'true',
   [Setting.DisableDefaultShortcuts]: 'false',
