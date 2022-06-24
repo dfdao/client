@@ -123,7 +123,7 @@ export class ContractsAPI extends EventEmitter {
    */
   private getGasFeeForTransaction(tx: Transaction): AutoGasSetting | string {
     if (
-      (tx.intent.methodName === 'initializePlayer' || tx.intent.methodName === 'getSpaceShips') &&
+      (tx.intent.methodName === 'arenaInitializePlayer' || tx.intent.methodName === 'getSpaceShips') &&
       tx.intent.contract.address === this.contract.address
     ) {
       return '50';
@@ -622,7 +622,6 @@ export class ContractsAPI extends EventEmitter {
         MODIFIERS[7].toNumber(),
       ],
       SPACESHIPS: [SPACESHIPS[0], SPACESHIPS[1], SPACESHIPS[2], SPACESHIPS[3], SPACESHIPS[4]],
-
       RANDOM_ARTIFACTS,
       NO_ADMIN,
       INIT_PLANET_HASHES,

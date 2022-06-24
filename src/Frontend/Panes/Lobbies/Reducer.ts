@@ -149,7 +149,15 @@ export type LobbyConfigAction =
       index: number;
       value: EthAddress | undefined;
     }
-  | { type: 'NO_ADMIN'; value: Initializers['NO_ADMIN'] | undefined };
+  | { type: 'NO_ADMIN'; value: Initializers['NO_ADMIN'] | undefined }
+  | {
+      type: 'TEAMS_ENABLED';
+      value: Initializers['TEAMS_ENABLED'] | undefined;
+    }
+  | {
+      type: 'NUM_TEAMS';
+      value: Initializers['NUM_TEAMS'] | undefined;
+    };
 
 // TODO(#2328): WHITELIST_ENABLED should just be on Initializers
 export type LobbyInitializers = Initializers & {
@@ -376,12 +384,13 @@ export function lobbyConfigReducer(state: LobbyConfigState, action: LobbyAction)
       update = ofWhitelist(action, state);
       break;
     }
-    case 'RESET': {
-      // Hard reset all values that were available in the JSON
-      return {
-        ...state,
-        ...action.value,
-      };
+    case 'TEAMS_ENABLED': {
+      update = ofBoolean(action, state);
+      break;
+    }
+    case 'NUM_TEAMS': {
+      update = ofPositiveInteger(action, state);
+      break;
     }
     case 'MODIFIERS': {
       update = ofModifiers(action, state);
@@ -398,6 +407,13 @@ export function lobbyConfigReducer(state: LobbyConfigState, action: LobbyAction)
     case 'NO_ADMIN': {
       update = ofBoolean(action, state);
       break;
+    }
+    case 'RESET': {
+      // Hard reset all values that were available in the JSON
+      return {
+        ...state,
+        ...action.value,
+      };
     }
     default: {
       // https://www.typescriptlang.org/docs/handbook/2/narrowing.html#exhaustiveness-checking
@@ -942,7 +958,22 @@ export function lobbyConfigInit(startingConfig: LobbyInitializers) {
         };
         break;
       }
+<<<<<<< HEAD
       case 'NO_ADMIN': {
+=======
+      case 'TEAMS_ENABLED': {
+        // Default this to false if we don't have it
+        const defaultValue = startingConfig[key] || false;
+        state[key] = {
+          currentValue: defaultValue,
+          displayValue: defaultValue,
+          defaultValue,
+          warning: undefined,
+        };
+        break;
+      }
+      case 'NUM_TEAMS': {
+>>>>>>> origin/teams
         const defaultValue = startingConfig[key];
         state[key] = {
           currentValue: defaultValue,
@@ -2193,7 +2224,10 @@ export function ofWhitelist(
   const displayValue = [...prevDisplayValue];
 
   if (currentValue[index]) {
+<<<<<<< HEAD
     console.log(`deleting ${currentValue[index]}`);
+=======
+>>>>>>> origin/teams
     currentValue.splice(index, 1);
     displayValue.splice(index, 1);
 

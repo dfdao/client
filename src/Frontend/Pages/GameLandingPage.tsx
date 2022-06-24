@@ -1061,6 +1061,27 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
         setStep(TerminalPromptStep.TERMINATED);
         return;
       }
+      const teamsEnabled = gameUIManager.getGameManager().getContractConstants().TEAMS_ENABLED;
+      const numTeams = gameUIManager.getGameManager().getContractConstants().NUM_TEAMS;
+      console.log(`teamsEnabled: ${teamsEnabled}, numTeams: ${numTeams}`)
+      let team = 0;
+      if(teamsEnabled && numTeams !== undefined) {
+        terminal.current?.println('')
+        terminal.current?.println('This is a team game!')
+        for (let i = 1; i <= numTeams; i += 1) {
+          terminal.current?.print(`(${i}): `, TerminalTextStyle.Sub);
+          terminal.current?.println(`Team ${i}`);
+        }
+        terminal.current?.println(``);
+        terminal.current?.println(`Select a team:`, TerminalTextStyle.Text);
+  
+        team = +((await terminal.current?.getInput()) || '');
+        if (isNaN(team) || team > numTeams || team == 0) {
+          terminal.current?.println('Unrecognized input. Please try again.');
+          await advanceStateFromNoHomePlanet(terminal);
+          return;
+        }
+      }
 
       terminal.current?.newline();
 
@@ -1097,7 +1118,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
 
           await terminal.current?.getInput();
           return true;
-        })
+        }, team)
         .catch((error: Error) => {
           terminal.current?.println(
             `[ERROR] ${error.toString().slice(0, 10000)}`,

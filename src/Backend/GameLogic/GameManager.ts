@@ -512,6 +512,7 @@ class GameManager extends EventEmitter {
       persistentChunkStore.allChunks(),
       unprocessedArrivals,
       unprocessedPlanetArrivalIds,
+      this,
       contractConstants,
       worldRadius
     );
@@ -1164,7 +1165,7 @@ class GameManager extends EventEmitter {
    * Dark Forest tokens can only be minted up to a certain time - get this time measured in seconds from epoch.
    */
   public getTokenMintEndTimeSeconds(): number {
-    return this.contractConstants.TOKEN_MINT_END_SECONDS;
+    return this.contractConstants.TOKEN_MINT_END_TIMESTAMP;
   }
 
   /**
@@ -2075,7 +2076,7 @@ class GameManager extends EventEmitter {
   /**
    * Attempts to join the game. Should not be called once you've already joined.
    */
-  public async joinGame(beforeRetry: (e: Error) => Promise<boolean>): Promise<void> {
+  public async joinGame(beforeRetry: (e: Error) => Promise<boolean>, team: number): Promise<void> {
     try {
       if (this.checkGameHasEnded()) {
         throw new Error('game has ended');
@@ -2169,7 +2170,7 @@ class GameManager extends EventEmitter {
           TerminalTextStyle.Sub
         );
         this.terminal.current?.newline();
-        return args;
+        return [...args, team];
       };
 
       const txIntent: UnconfirmedInit = {
@@ -3832,9 +3833,16 @@ class GameManager extends EventEmitter {
     return this.winners;
   }
 
+<<<<<<< HEAD
   public isCompetitive(): boolean {
     return this.contractConstants.CONFIG_HASH == competitiveConfig;
   }
+=======
+  getTeamsEnabled() {
+    return this.contractConstants.TEAMS_ENABLED;
+  }
+  
+>>>>>>> origin/teams
 }
 
 export default GameManager;
