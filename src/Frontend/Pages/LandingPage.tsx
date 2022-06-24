@@ -103,11 +103,11 @@ export default function LandingPage() {
             <ButtonWrapper>
               <Btn
                 size='large'
-                // disabled={!isRoundOngoing()}
+                disabled={!isRoundOngoing()}
                 style={{ borderColor: 'red', color: 'red' } as CSSStyleDeclaration & CSSProperties}
                 onClick={() => history.push(`/play/`)}
               >
-                Practice Grand Prix #2
+                Race Grand Prix
               </Btn>
               <Btn size='large' onClick={() => history.push(`/arena/${defaultAddress}`)}>
                 Create Custom Arena
@@ -281,7 +281,7 @@ function GrandPrix() {
           , courtesy of <Link to='https://twitter.com/moongate_io'>Moongate Guild</Link>.
           <br />
           <br />
-          If you enjoy the game, consider donating to our{' '}
+          Or read community member ClassicJordon's beginners strategy guide!
           <Link to='https://gitcoin.co/grants/4875/dfdao-dark-forest-gaming-collective'>
             Gitcoin GR14 grant!
           </Link>
