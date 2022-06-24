@@ -59,6 +59,7 @@ import {
 import { getLobbyCreatedEvent, lobbyPlanetsToInitPlanets } from '../Utils/helpers';
 import _ from 'lodash';
 import { LobbyInitializers } from '../Panes/Lobbies/Reducer';
+import { createAndInitArena, createPlanets } from '../../Backend/Utils/Arena';
 
 const enum TerminalPromptStep {
   NONE,
@@ -106,7 +107,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
   const selectedAddress = params.get('account');
   const isLobby = contractAddress !== address(CONTRACT_ADDRESS);
   const CHUNK_SIZE = 5;
-  const config = stockConfig.competitive;
+  const config = stockConfig.sprint;
   const defaultAddress = address(CONTRACT_ADDRESS);
   const isGrandPrix = !contractAddress;
 
@@ -535,7 +536,14 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
       terminal.current?.print('Adding custom planets... ');
 
       try {
-        await createPlanets();
+        if (!ethConnection || !defaultAddress) throw new Error('cannot create arena');
+
+        const contractsAPI = await makeContractsAPI({
+          connection: ethConnection,
+          contractAddress: defaultAddress,
+        });
+ 
+        await createPlanets({ config, contractAPI: contractsAPI, CHUNK_SIZE});
         terminal.current?.println('planets created.', TerminalTextStyle.Green);
         setStep(TerminalPromptStep.PLANETS_CREATED);
       } catch (e) {
@@ -1301,11 +1309,13 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
     const startRct = startTx.wait();
     console.log(`initialized arena with ${(await startRct).gasUsed} gas`);
 
+
     if (owner === playerAddress) {
       history.push({ pathname: `${match.path}${lobby}`, state: { contract: lobby } });
       setContractAddress(lobby);
     }
   }
+
 
   async function createPlanets() {
     if (!ethConnection || !contractAddress) throw new Error('cannot create planets');
