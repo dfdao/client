@@ -30,13 +30,14 @@ export async function createAndInitArena({
   const spawn = initializers.INIT_PLANETS.filter((p) => p.isSpawnPlanet);
   const target = initializers.INIT_PLANETS.filter((p) => p.isTargetPlanet);
 
-  const blockList: string[][] = [];
   if (spawn.length > 0 && target.length > 0) {
     // For testing. Just block first spawn and target
-    blockList.push([target[0].location, spawn[0].location]);
-    blockList.push([target[1].location, spawn[1].location]);
+    initializers.INIT_BLOCKLIST = [{
+      destId: target[0].location,
+      srcId: spawn[0].location
+    }]
   }
-  initializers.BLOCKLIST = blockList;
+
   /* Don't want to submit ADMIN_PLANET as initdata because not used */
 
   // @ts-expect-error The Operand of a delete must be optional

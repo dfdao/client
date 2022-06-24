@@ -543,7 +543,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
           contractAddress: defaultAddress,
         });
  
-        await createPlanets({ config, contractAPI: contractsAPI, CHUNK_SIZE});
+        await createPlanets();
         terminal.current?.println('planets created.', TerminalTextStyle.Green);
         setStep(TerminalPromptStep.PLANETS_CREATED);
       } catch (e) {

@@ -470,9 +470,9 @@ const sprint: LobbyInitializers = {
   CONFIRM_START: true,
   TARGETS_REQUIRED_FOR_VICTORY: 1,
   INIT_BLOCKLIST: [],
-  BLOCK_CAPTURE: true,
-  BLOCK_MOVES: true,
-  TEAMS_ENABLED: false,
+  BLOCK_CAPTURE: false,
+  BLOCK_MOVES: false,
+  TEAMS_ENABLED: true,
   NUM_TEAMS: 2,
   RANKED: false
 };
