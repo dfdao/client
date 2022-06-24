@@ -1,6 +1,5 @@
 import { getActivatedArtifact, isActivated } from '@darkforest_eth/gamelogic';
 import {
-  ArenaLeaderboard,
   Artifact,
   ArtifactId,
   EthAddress,
@@ -19,6 +18,7 @@ import { loadLeaderboard } from '../../Backend/Network/LeaderboardApi';
 import { loadLiveMatches } from '../../Backend/Network/SpyApi';
 import { Wrapper } from '../../Backend/Utils/Wrapper';
 import { ContractsAPIEvent } from '../../_types/darkforest/api/ContractsAPITypes';
+import { AddressTwitterMap } from '../../_types/darkforest/api/UtilityServerAPITypes';
 import { ModalHandle } from '../Views/ModalPane';
 import { createDefinedContext } from './createDefinedContext';
 import { useEmitterSubscribe, useEmitterValue, useWrappedEmitter } from './EmitterHooks';
@@ -29,6 +29,9 @@ export const { useDefinedContext: useUIManager, provider: UIManagerProvider } =
 
 export const { useDefinedContext: useTopLevelDiv, provider: TopLevelDivProvider } =
   createDefinedContext<HTMLDivElement>();
+
+export const { useDefinedContext: useTwitters, provider: TwitterProvider } =
+  createDefinedContext<AddressTwitterMap>();
 
 export function useOverlayContainer(): HTMLDivElement | null {
   return useUIManager()?.getOverlayContainer() ?? null;

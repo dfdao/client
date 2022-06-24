@@ -8,6 +8,7 @@ import styled from 'styled-components';
 import { loadAccountData } from '../../../Backend/Network/AccountApi';
 import { TextPreview } from '../../Components/TextPreview';
 import { LobbyInitializers } from '../../Panes/Lobbies/Reducer';
+import { useTwitters } from '../../Utils/AppHooks';
 import { ArenaDisplay } from './ArenaDisplay';
 
 const NONE = 'No map found';
@@ -26,17 +27,23 @@ function PlayerOverview({
   playerAddress: EthAddress | undefined;
   playerData: RawAccount | undefined;
 }) {
+  const twitters = useTwitters();
+
   return (
     <OverviewContainer>
-      {playerData && (
+      {playerData && playerAddress && (
         <>
-          <div>
-            <Title>0xhank</Title>
-            <TextPreview text={playerAddress} focusedWidth={'200px'} unFocusedWidth={'200px'} />
-            <Subber>
-              {playerData.matches} Matches {playerData.wins} Wins
-            </Subber>
-          </div>
+          <Title>
+            {twitters[playerAddress] ? (
+              twitters[playerAddress]
+            ) : (
+              <TextPreview text={playerAddress} focusedWidth={'250px'} unFocusedWidth={'250px'} />
+            )}
+          </Title>
+          <TextPreview text={playerAddress} focusedWidth={'200px'} unFocusedWidth={'200px'} />
+          <Subber>
+            {playerData.matches} Matches {playerData.wins} Wins
+          </Subber>
           <ArenaDisplay arenas={playerData.arenaPlayers} />
         </>
       )}
@@ -98,6 +105,7 @@ const OverviewContainer = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 10px;
+  overflow: hidden;
 `;
 
 const Title = styled.div`

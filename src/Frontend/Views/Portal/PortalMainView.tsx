@@ -1,4 +1,5 @@
 import { DarkForestTextInput } from '@darkforest_eth/ui';
+import { validate } from 'email-validator';
 import React, { useState } from 'react';
 import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
@@ -6,13 +7,53 @@ import { Btn } from '../../Components/Btn';
 import { SelectFrom } from '../../Components/CoreUI';
 import { TextInput } from '../../Components/Input';
 import dfstyles from '../../Styles/dfstyles';
+import { useTwitters } from '../../Utils/AppHooks';
 import { competitiveConfig } from '../../Utils/constants';
 import { AccountInfoView } from './AccountInfoView';
 import { MapInfoView } from './MapInfoView';
 
 export function PortalMainView() {
+
   const [input, setInput] = useState<string>('');
-  const [type, setType] = useState<string>('Map');
+  const [type, setType] = useState<string>('Account');
+  const history = useHistory();
+  const twitters = useTwitters() as Object;
+  function validateAddress() {
+  
+    let output :string | undefined = undefined;
+    let lower = input.toLowerCase();
+    if (lower.slice(0, 2) === '0x') {
+      lower = lower.slice(2);
+    }
+    let error = false;
+    // for (const c of lower) {
+    //   if ('0123456789abcdef'.indexOf(c) === -1) {
+    //     console.log(`bad letter: ${c}`);
+    //     error = true;
+    //     alert(`invalid ${type == 'Account'? 'account address' : 'config hash'}! Please try again.`);
+    //     return;
+    //   }
+    // }
+
+    if (type == 'Map' && lower.length !== 64) error = true;
+
+    else if (lower.length !== 40) {
+      const foundTwitter = Object.entries(twitters).find(t => t[1] == input)
+      if(!foundTwitter) error = true;
+      else(output = foundTwitter[0]);
+    }
+
+    console.log('output:', output)
+  
+    if (error) {
+      alert(`invalid ${type == 'Account'? 'account address' : 'config hash'}! Please try again.`);
+      return;
+    }
+  
+    const link = `/portal/${type == 'Map' ? 'map/' : 'account/'}${output ? output : input}`
+  
+    history.push(link);
+  }
 
   return (
     <MainContainer>
@@ -22,7 +63,7 @@ export function PortalMainView() {
         </TitleContainer>
 
         <TitleContainer>
-          <Btn variant='portal' onClick={() => validateAddress(input, type)}>
+          <Btn variant='portal' onClick={() => validateAddress()}>
             go
           </Btn>
           <SelectFrom
@@ -38,7 +79,7 @@ export function PortalMainView() {
             portal={true}
             style={inputStyle}
             value={input}
-            placeholder={'Search for a map or acct'}
+            placeholder={'Search for a map, twitter, or acct'}
             onChange={(e: Event & React.ChangeEvent<DarkForestTextInput>) =>
               setInput(e.target.value)
             }
@@ -49,7 +90,7 @@ export function PortalMainView() {
         <Redirect path='/portal/map' to={`/portal/map/${competitiveConfig}`} exact={true} />
 
         <Route path={'/portal/map/:configHash'} component={MapInfoView} />
-        <Route path={'/portal/account/:account'} component={AccountInfoView} />
+        <Route path={'/portal/account/:account'} component ={AccountInfoView} />
 
         <Route
           path='/portal/*'
@@ -60,36 +101,6 @@ export function PortalMainView() {
       </Switch>
     </MainContainer>
   );
-}
-
-function validateAddress(input: string, type: string) {
-  console.log('here')
-  const history = useHistory();
-
-  let lower = input.toLowerCase();
-  if (lower.slice(0, 2) === '0x') {
-    lower = lower.slice(2);
-  }
-  let error = false;
-  for (const c of lower) {
-    if ('0123456789abcdef'.indexOf(c) === -1) {
-      console.log(`bad letter: ${c}`);
-      error = true;
-      alert('invalid map address! Try again with a valid address.');
-      return;
-    }
-  }
-  if (type == 'Map' && lower.length !== 64) error = true;
-  else if (lower.length !== 40) error = true;
-
-  if (error) {
-    alert('invalid map address! Try again with a valid address.');
-    return;
-  }
-
-  const link = `/portal/${type == 'Map' ? 'map/' : 'account/'}${input}`
-
-  history.push(link);
 }
 
 const MainContainer = styled.div`
@@ -124,11 +135,11 @@ const TitleContainer = styled.div`
   display: flex;
   align-items: center;
   overflow: hidden;
-  width: 100%;
+  // width: 100%;
   justify-content: space-between;
   gap: 8px;
 `;
 
 const inputStyle = {
-  width: '100%',
+  minWidth: '350px',
 } as CSSStyleDeclaration & React.CSSProperties;

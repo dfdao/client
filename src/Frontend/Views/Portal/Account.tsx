@@ -8,19 +8,15 @@ import { TwitterLink } from '../../Components/Labels/Labels';
 import { TextPreview } from '../../Components/TextPreview';
 
 import dfstyles from '../../Styles/dfstyles';
+import { useTwitters } from '../../Utils/AppHooks';
 
 function AccountDetails({ address }: { address: EthAddress }) {
-  const [twitter, setTwitter] = useState<string | undefined>();
-
-  useEffect(() => {
-    getAllTwitters().then((t) => setTwitter(t[address]));
-  }, []);
-
+  const twitters = useTwitters();
   return (
     <NamesContainer>
       <Large>
-        {twitter ? (
-          <TwitterLink twitter={twitter} />
+        {twitters[address] ? (
+          <TwitterLink twitter={twitters[address]} />
         ) : (
           <TextPreview text={address} focusedWidth={'200px'} unFocusedWidth={'150px'} />
         )}

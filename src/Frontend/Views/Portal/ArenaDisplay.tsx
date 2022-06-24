@@ -29,6 +29,9 @@ function convertGraphArena(arena: GraphArena): ArenaData {
 const mapSize = '125px';
 
 function ArenaCard({ arena }: { arena: ArenaData }) {
+  const lastPlayed = new Date(arena.startTime * 1000);
+  const formattedDate = `${lastPlayed.getMonth()}/${lastPlayed.getDate()}/${lastPlayed.getFullYear()}`;
+
   return (
     <Link
       to={`/portal/map/${arena.configHash}`}
@@ -40,7 +43,7 @@ function ArenaCard({ arena }: { arena: ArenaData }) {
         minWidth: '50%',
         background: 'rgba(255, 255, 255, 0.04)',
         padding: '5px',
-        gap: '5px'
+        gap: '5px',
       }}
     >
       <Minimap
@@ -49,8 +52,9 @@ function ArenaCard({ arena }: { arena: ArenaData }) {
       />
       <DetailsContainer>
         <div style={{ fontSize: '1.5em' }}>{getConfigName(arena.configHash)}</div>
-        <TextPreview text={arena.configHash} />
-        <span>Games Played: {arena.count}</span>
+        <TextPreview text={arena.configHash} unFocusedWidth={'100px'} focusedWidth='150px' />
+        <span>Games: {arena.count}</span>
+        <span>Last played: {formattedDate}</span>
       </DetailsContainer>
     </Link>
   );
@@ -64,11 +68,14 @@ export function ArenaDisplay({ arenas }: { arenas: { arena: GraphArena }[] | und
     if (found) found.count++;
     else if (!!arena.arena.config) uniqueArenas.push(convertGraphArena(arena.arena));
   }
+  uniqueArenas.sort((a, b) => b.count - a.count);
 
   return (
     <MapInfoContainer>
       {uniqueArenas.map((arena) => (
-        <ArenaCard arena={arena} />
+        <>
+          <ArenaCard arena={arena} key={`arena-${arena.startTime}`} />
+        </>
       ))}
     </MapInfoContainer>
   );
@@ -80,9 +87,10 @@ const MapInfoContainer = styled.div`
   flex-direction: column;
   height: 100%;
   width: 100%;
-  justify-content: space-evenly;
   align-items: center;
   padding: 10px;
+  gap: 10px;
+  overflow: scroll;
 `;
 
 const ArenaCardContainer = {

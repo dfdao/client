@@ -346,7 +346,7 @@ export function SelectFrom({
     copyOfValues.push(value);
   }
 
-  const portalStyle = portal ? {  background: dfstyles.colors.subtext, color: dfstyles.colors.backgrounddark} : {};
+  const portalStyle = portal ? {  background: dfstyles.colors.textLight, color: dfstyles.colors.backgrounddark} : {};
 
   return (
     <Select wide={wide} style={{...style, ...portalStyle}} value={value} onChange={onChange}>
