@@ -269,7 +269,7 @@ function GrandPrix() {
       <Modal contain={['top', 'left', 'right']} initialX={50} initialY={50}>
         <Title slot='title'>🏎 Grand Prix Info 🏎</Title>
         <div style={{ maxWidth: '300px', textAlign: 'justify' }}>
-          Race in the Grand Prix for a $100 prize and NFT trophies! Here is more{' '}
+          Race in the Grand Prix for a $300 prize and NFT trophies! Here is more{' '}
           <Link to='https://medium.com/dfdao/grand-prix-week-2-dc3bef0d3913'>rules and info</Link>
           .
           <br />
