@@ -958,9 +958,17 @@ export function lobbyConfigInit(startingConfig: LobbyInitializers) {
         };
         break;
       }
-<<<<<<< HEAD
       case 'NO_ADMIN': {
-=======
+        // Default this to false if we don't have it
+        const defaultValue = startingConfig[key] || false;
+        state[key] = {
+          currentValue: defaultValue,
+          displayValue: defaultValue,
+          defaultValue,
+          warning: undefined,
+        };
+        break;
+      }
       case 'TEAMS_ENABLED': {
         // Default this to false if we don't have it
         const defaultValue = startingConfig[key] || false;
@@ -973,7 +981,6 @@ export function lobbyConfigInit(startingConfig: LobbyInitializers) {
         break;
       }
       case 'NUM_TEAMS': {
->>>>>>> origin/teams
         const defaultValue = startingConfig[key];
         state[key] = {
           currentValue: defaultValue,
@@ -2224,10 +2231,6 @@ export function ofWhitelist(
   const displayValue = [...prevDisplayValue];
 
   if (currentValue[index]) {
-<<<<<<< HEAD
-    console.log(`deleting ${currentValue[index]}`);
-=======
->>>>>>> origin/teams
     currentValue.splice(index, 1);
     displayValue.splice(index, 1);
 

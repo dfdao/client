@@ -10,11 +10,7 @@ import { EmailCTA, EmailCTAMode } from '../Components/Email';
 import { Modal } from '../Components/Modal';
 import { Red, White, Text, HideSmall } from '../Components/Text';
 import dfstyles from '../Styles/dfstyles';
-<<<<<<< HEAD
 import { ArenaLeaderboardDisplay } from '../Views/ArenaLeaderboard';
-=======
-import { ArenaLeaderboardElt } from '../Views/ArenaLeaderboard';
->>>>>>> origin/teams
 import { LandingPageRoundArt } from '../Views/LandingPageRoundArt';
 
 export const enum LandingPageZIndex {

@@ -3833,16 +3833,13 @@ class GameManager extends EventEmitter {
     return this.winners;
   }
 
-<<<<<<< HEAD
   public isCompetitive(): boolean {
     return this.contractConstants.CONFIG_HASH == competitiveConfig;
   }
-=======
   getTeamsEnabled() {
     return this.contractConstants.TEAMS_ENABLED;
   }
   
->>>>>>> origin/teams
 }
 
 export default GameManager;
