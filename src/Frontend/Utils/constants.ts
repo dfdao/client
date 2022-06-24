@@ -30,9 +30,12 @@ const silverTime = 3600; // 1 hour in seconds
 
 const goldTime = 1800; // 30 minutes in seconds
 
+const OPTIMISM_GAS_LIMIT = 15000000
+
 export {
   MIN_CHUNK_SIZE,
   MAX_CHUNK_SIZE,
+  OPTIMISM_GAS_LIMIT,
   LOCATION_ID_UB,
   roundEndTimestamp,
   roundStartTimestamp,

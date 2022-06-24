@@ -31,7 +31,7 @@ export function TargetPlanetButton({
   const isTargetPlanet = planet?.isTargetPlanet;
   const gameOver = gameManager.isRoundOver();
   const isBlocked =
-    account && planet ? gameManager.blockedFromCapturing(account, planet.locationId) : false;
+    account && planet ? gameManager.playerBlocked(account, planet.locationId) : false;
 
   const shouldShow = useMemo(() => owned && isTargetPlanet, [owned, planet]);
 

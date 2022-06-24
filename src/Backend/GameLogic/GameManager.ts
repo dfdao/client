@@ -2046,7 +2046,7 @@ class GameManager extends EventEmitter {
         throw new Error('you can only capture target planets');
       }
 
-      if (this.blockedFromCapturing(this.account, locationId)) {
+      if (this.playerBlocked(this.account, locationId)) {
         throw new Error("you can't capture blocked planets");
       }
 
@@ -2964,6 +2964,7 @@ class GameManager extends EventEmitter {
       }
 
       if (this.account && this.blockMoves() && this.blockedFromCapturing(this.account,to)) {
+
         throw new Error('Cannot move to a blocked planet');
       }
       
@@ -3497,7 +3498,6 @@ class GameManager extends EventEmitter {
    * Overwrites all the saved plugins to equal the given array of plugins.
    */
   public async savePlugins(savedPlugins: SerializedPlugin[]): Promise<void> {
-    console.log('saving plugins');
     await this.persistentChunkStore.savePlugins(savedPlugins);
     await this.configHashPersistentChunkStore.savePlugins(savedPlugins);
   }
@@ -3760,7 +3760,7 @@ class GameManager extends EventEmitter {
     return this.contractConstants.BLOCK_CAPTURE;
   }
 
-  public blockedFromCapturing(account: EthAddress, targetLocation: LocationId): boolean  {
+  public playerBlocked(account: EthAddress, targetLocation: LocationId): boolean  {
     const player = this.getPlayer(account);
     if(!player) throw new Error("Player not found");
     const playerHomePlanet = player.homePlanetId;
@@ -3833,16 +3833,14 @@ class GameManager extends EventEmitter {
     return this.winners;
   }
 
-<<<<<<< HEAD
   public isCompetitive(): boolean {
     return this.contractConstants.CONFIG_HASH == competitiveConfig;
   }
-=======
+
   getTeamsEnabled() {
     return this.contractConstants.TEAMS_ENABLED;
   }
   
->>>>>>> origin/teams
 }
 
 export default GameManager;
