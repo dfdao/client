@@ -65,7 +65,10 @@ export function ArenaDisplay({ arenas }: { arenas: { arena: GraphArena }[] | und
   const uniqueArenas: ArenaData[] = [];
   for (const arena of arenas) {
     const found = uniqueArenas.find((a) => a.configHash == arena.arena.configHash);
-    if (found) found.count++;
+    if (found){
+      found.count++
+      if(found.startTime < arena.arena.startTime) found.startTime = arena.arena.startTime;
+    }
     else if (!!arena.arena.config) uniqueArenas.push(convertGraphArena(arena.arena));
   }
   uniqueArenas.sort((a, b) => b.count - a.count);
@@ -74,7 +77,7 @@ export function ArenaDisplay({ arenas }: { arenas: { arena: GraphArena }[] | und
     <MapInfoContainer>
       {uniqueArenas.map((arena) => (
         <>
-          <ArenaCard arena={arena} key={`arena-${arena.startTime}`} />
+          <ArenaCard arena={arena} key={`arena-${arena.startTime}-${arena.configHash}`} />
         </>
       ))}
     </MapInfoContainer>
