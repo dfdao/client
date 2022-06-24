@@ -281,9 +281,9 @@ function GrandPrix() {
           , courtesy of <Link to='https://twitter.com/moongate_io'>Moongate Guild</Link>.
           <br />
           <br />
-          Or read community member ClassicJordon's beginners strategy guide!
-          <Link to='https://gitcoin.co/grants/4875/dfdao-dark-forest-gaming-collective'>
-            Gitcoin GR14 grant!
+          Or read community member ClassicJordon's
+          <Link to='https://medium.com/@classicjdf/classicjs-dark-forest-101-strategy-guide-part-1-energy-1b80923fee69'>
+            beginners strategy guide!
           </Link>
           <br />
           <br />
