@@ -1,9 +1,9 @@
 import { PlanetTypeNames } from '@darkforest_eth/types';
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { LobbyPlanet } from '../Panes/Lobbies/LobbiesUtils';
 import { LobbyAction, LobbyConfigState } from '../Panes/Lobbies/Reducer';
-import Button from './Button';
 import { Checkbox } from './Input';
 
 export interface LobbyPlanetInspectorProps {
@@ -12,6 +12,8 @@ export interface LobbyPlanetInspectorProps {
   config: LobbyConfigState;
   updateConfig: React.Dispatch<LobbyAction>;
   onDelete: (deletedIndex: number) => void;
+  onClose: () => void;
+  root: string;
 }
 
 // This is the component that lets you edit staged planet params when editing a custom lobby map.
@@ -30,8 +32,11 @@ export const LobbyCreationPlanetInspector: React.FC<LobbyPlanetInspectorProps> =
   updateConfig,
   config,
   onDelete,
+  onClose,
+  root,
 }) => {
   const [mutablePlanet, setMutablePlanet] = useState<LobbyPlanet>(selectedPlanet);
+  const history = useHistory();
   return (
     <Inspector>
       <InspectorInner>
@@ -83,47 +88,48 @@ export const LobbyCreationPlanetInspector: React.FC<LobbyPlanetInspectorProps> =
         </LabeledInput>
         <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '24px' }}>
           <InspectorTitle>Special</InspectorTitle>
-          <Checkbox
-            label='Spawn planet'
-            checked={mutablePlanet.isSpawnPlanet}
-            onChange={() => {
-              setMutablePlanet({
-                ...mutablePlanet,
-                isSpawnPlanet: !mutablePlanet.isSpawnPlanet,
-              });
-            }}
-          />
-          <Checkbox
-            label='Target planet'
-            checked={mutablePlanet.isTargetPlanet}
-            onChange={() => {
-              setMutablePlanet({
-                ...mutablePlanet,
-                isTargetPlanet: !mutablePlanet.isTargetPlanet,
-              });
-            }}
-          />
+          {config.TARGET_PLANETS.displayValue ? (
+            <Checkbox
+              label='Target Planet'
+              checked={mutablePlanet.isTargetPlanet}
+              onChange={() => {
+                setMutablePlanet({
+                  ...mutablePlanet,
+                  isTargetPlanet: !mutablePlanet.isTargetPlanet,
+                });
+              }}
+            />
+          ) : (
+            <span onClick={() => history.push(`${root}/settings/arena`)}>
+              Enable Target Planets
+            </span>
+          )}
+          {config.MANUAL_SPAWN.displayValue ? (
+            <Checkbox
+              label='Spawn Planet'
+              checked={mutablePlanet.isSpawnPlanet}
+              onChange={() => {
+                setMutablePlanet({ ...mutablePlanet, isSpawnPlanet: !mutablePlanet.isSpawnPlanet });
+              }}
+            />
+          ) : (
+            <span onClick={() => history.push(`${root}/settings/spawn`)}>Enable Spawn Planets</span>
+          )}
         </div>
-        <Button
-          onClick={() => {
-            // Unclear if we can directly edit planets.
-            // first, delete the target planet
-            updateConfig({
-              type: 'ADMIN_PLANETS',
-              value: selectedPlanet,
-              index: selectedIndex,
-            });
-            onDelete(selectedIndex);
-            // then, add the new target planet
-            updateConfig({
-              type: 'ADMIN_PLANETS',
-              value: mutablePlanet,
-              index: selectedIndex,
-            });
-          }}
-        >
-          Save changes
-        </Button>
+        {mutablePlanet !== selectedPlanet && (
+          <Button
+            primary
+            onClick={() => {
+              updateConfig({
+                type: 'ADMIN_PLANETS',
+                value: mutablePlanet,
+                index: selectedIndex,
+              });
+            }}
+          >
+            Save changes
+          </Button>
+        )}
         <Button
           onClick={() => {
             if (!selectedPlanet) return;
@@ -188,4 +194,23 @@ const InspectorTitle = styled.span`
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: #fff;
+`;
+
+const Button = styled.button<{ primary?: boolean }>`
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border: ${({ primary }) => (primary ? '2px solid #2EE7BA' : '1px solid #5F5F5F')};
+  color: ${({ primary }) => (primary ? '#2EE7BA' : '#fff')};
+  background: ${({ primary }) => (primary ? '#09352B' : '#252525')};
+  padding: 16px;
+  border-radius: 4px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background 80ms ease 0s, border-color;
+  &:hover {
+    background: ${({ primary }) => (primary ? '#0E5141' : '#3D3D3D')};
+    border-color: ${({ primary }) => (primary ? '#30FFCD' : '#797979')};
+  }
 `;

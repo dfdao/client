@@ -131,7 +131,7 @@ export function LobbyConfirmPage({
           You're about to create a map for{' '}
           <span style={{ color: '#5CCDF0' }}>
             {config.ADMIN_PLANETS.displayValue?.filter((p) => p?.isSpawnPlanet).length || 0}{' '}
-            players.{' '}
+            players.
           </span>
           There are{' '}
           <span style={{ color: '#FF44B7' }}>

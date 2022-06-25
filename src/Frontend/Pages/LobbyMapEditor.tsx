@@ -1,5 +1,6 @@
 import { EthAddress, WorldCoords } from '@darkforest_eth/types';
-import React, { useMemo, useState } from 'react';
+import { DarkForestShortcutButton } from '@darkforest_eth/ui';
+import React, { useMemo, useState, CSSProperties } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { LobbyAdminTools } from '../../Backend/Utils/LobbyAdminTools';
@@ -15,17 +16,10 @@ import { LoadingSpinner } from '../Components/LoadingSpinner';
 import { LobbyCreationPlanetInspector } from '../Components/LobbyCreationPlanetInspector';
 import { Minimap } from '../Components/Minimap';
 import { MinimapEditor } from '../Components/MinimapEditor';
+import { Row } from '../Components/Row';
 import { Sidebar } from '../Components/Sidebar';
-import {
-  AsteroidIcon,
-  ConfigDownload,
-  FoundryIcon,
-  LobbyPlanet,
-  PlanetIcon,
-  QuasarIcon,
-  SpacetimeIcon,
-} from '../Panes/Lobbies/LobbiesUtils';
-import { KEY_ITEMS } from '../Panes/Lobbies/MinimapPane';
+import { ConfigDownload, DEFAULT_PLANET, LobbyPlanet } from '../Panes/Lobbies/LobbiesUtils';
+import { KEY_ITEMS, MinimapKeys } from '../Panes/Lobbies/MinimapPane';
 import { MinimapConfig } from '../Panes/Lobbies/MinimapUtils';
 import { PlanetListPane } from '../Panes/Lobbies/PlanetListPane';
 import {
@@ -36,15 +30,6 @@ import {
 } from '../Panes/Lobbies/Reducer';
 
 type PlanetTypes = 'Planet' | 'Asteroid Field' | 'Foundry' | 'Spacetime Rip' | 'Quasar';
-
-const defaultPlanet: LobbyPlanet = {
-  x: 0,
-  y: 0,
-  level: 0,
-  planetType: 0,
-  isTargetPlanet: false,
-  isSpawnPlanet: false,
-};
 
 export const LobbyMapEditor: React.FC<{
   updateConfig: React.Dispatch<LobbyAction>;
@@ -68,8 +53,8 @@ export const LobbyMapEditor: React.FC<{
   const [refreshing, setRefreshing] = useState(false);
   const [selectedPlanetIndex, setSelectedPlanetIndex] = useState<number | undefined>();
   const [selectedPlanet, setSelectedPlanet] = useState<LobbyPlanet | undefined>();
-  const [mutablePlanet, setMutablePlanet] = useState<LobbyPlanet>(defaultPlanet);
-  const [placementMode, setPlacementMode] = useState<boolean>(false);
+  const [mutablePlanet, setMutablePlanet] = useState<LobbyPlanet>(DEFAULT_PLANET);
+  const [isPlacementMode, setIsPlacementMode] = useState<boolean>(false);
   const history = useHistory();
 
   const planetTypeNames = ['Planet', 'Asteroid Field', 'Foundry', 'Spacetime Rip', 'Quasar'];
@@ -83,6 +68,16 @@ export const LobbyMapEditor: React.FC<{
   };
 
   const stagePlanet = (planetCoord: WorldCoords) => {
+    // if (createdPlanets?.find((p) => planet.x == p.x && planet.y == p.y)) {
+    //   setError('planet with identical coords created');
+    //   return;
+    // }
+    if (
+      config.ADMIN_PLANETS.displayValue?.find((p) => planetCoord.x == p?.x && planetCoord.y == p?.y)
+    ) {
+      onError('Planet with identical coords staged');
+      return;
+    }
     const newPlanetToStage: LobbyPlanet = {
       x: planetCoord.x,
       y: planetCoord.y,
@@ -114,30 +109,50 @@ export const LobbyMapEditor: React.FC<{
               setMutablePlanet({ ...mutablePlanet, planetType: planetTypeNames.indexOf(value) })
             }
           />
-          <NumberInput
-            format='integer'
-            placeholder='Level'
-            value={mutablePlanet.level}
-            onChange={(e: Event & React.ChangeEvent<DarkForestNumberInput>) => {
-              setMutablePlanet({ ...mutablePlanet, level: e.target.value as number });
-            }}
-          />
-          <span>Target?</span>
-          <Checkbox
-            checked={mutablePlanet.isTargetPlanet}
-            onChange={(e: Event & React.ChangeEvent<DarkForestCheckbox>) => {
-              setMutablePlanet({ ...mutablePlanet, isTargetPlanet: e.target.checked });
-            }}
-          />
-          <span>Spawn?</span>
-          <Checkbox
-            checked={mutablePlanet.isSpawnPlanet}
-            onChange={(e: Event & React.ChangeEvent<DarkForestCheckbox>) => {
-              setMutablePlanet({ ...mutablePlanet, isSpawnPlanet: e.target.checked });
-            }}
-          />
-          <EditorButton cancel={placementMode} onClick={() => setPlacementMode(!placementMode)}>
-            {placementMode ? 'Cancel (ESC)' : 'Set coordinates on map (S)'}
+          <Row>
+            <span>Level</span>
+            <NumberInput
+              format='integer'
+              placeholder='Level'
+              value={mutablePlanet.level}
+              onChange={(e: Event & React.ChangeEvent<DarkForestNumberInput>) => {
+                setMutablePlanet({ ...mutablePlanet, level: e.target.value as number });
+              }}
+            />
+          </Row>
+          <Row>
+            <Checkbox label='Mirror X' />
+            <Checkbox label='Mirror Y' />
+          </Row>
+          {config.TARGET_PLANETS.displayValue ? (
+            <Checkbox
+              label='Target?'
+              checked={mutablePlanet.isTargetPlanet}
+              onChange={(e: Event & React.ChangeEvent<DarkForestCheckbox>) => {
+                setMutablePlanet({ ...mutablePlanet, isTargetPlanet: e.target.checked });
+              }}
+            />
+          ) : (
+            <span onClick={() => history.push(`${root}/settings/arena`)}>
+              Enable Target Planets
+            </span>
+          )}
+          {config.MANUAL_SPAWN.displayValue ? (
+            <Checkbox
+              label='Spawn?'
+              checked={mutablePlanet.isSpawnPlanet}
+              onChange={(e: Event & React.ChangeEvent<DarkForestCheckbox>) => {
+                setMutablePlanet({ ...mutablePlanet, isSpawnPlanet: e.target.checked });
+              }}
+            />
+          ) : (
+            <span onClick={() => history.push(`${root}/settings/spawn`)}>Enable Spawn Planets</span>
+          )}
+          <EditorButton
+            cancel={isPlacementMode}
+            onClick={() => setIsPlacementMode(!isPlacementMode)}
+          >
+            {isPlacementMode ? 'Cancel (ESC)' : 'Set coordinates on map (S)'}
           </EditorButton>
         </div>
         <Spacer height={32} />
@@ -163,10 +178,10 @@ export const LobbyMapEditor: React.FC<{
               onError={onError}
               onClick={(coords: WorldCoords) => {
                 stagePlanet(coords);
-                setPlacementMode(false);
+                setIsPlacementMode(false);
               }}
               minimapConfig={minimapConfig}
-              disabled={!placementMode}
+              disabled={!isPlacementMode}
             />
             <Minimap
               style={{ width: '400px', height: '400px' }}
@@ -174,6 +189,7 @@ export const LobbyMapEditor: React.FC<{
               setRefreshing={setRefreshing}
             />
           </MinimapEditorWrapper>
+          <MinimapKeys keyItems={KEY_ITEMS} />
           <div style={{ textAlign: 'center', height: '24px' }}>
             {refreshing ? <LoadingSpinner initialText='Refreshing...' /> : null}
           </div>
@@ -184,11 +200,19 @@ export const LobbyMapEditor: React.FC<{
           >
             Randomize Map
           </LobbyButton>
+          <Spacer height={24} />
           <LobbyButton primary onClick={() => history.push(`${root}/confirm`)}>
             Save Changes
           </LobbyButton>
+          <Spacer height={24} />
           <ConfigDownload
-            renderer={() => (!createDisabled ? <span>Save custom map (JSON)</span> : <></>)}
+            renderer={() =>
+              !createDisabled ? (
+                <span style={{ cursor: 'pointer', fontSize: '16px' }}>Download map (JSON)</span>
+              ) : (
+                <></>
+              )
+            }
             disabled={createDisabled}
             address={ownerAddress}
             onError={onError}
@@ -203,6 +227,11 @@ export const LobbyMapEditor: React.FC<{
           config={config}
           updateConfig={updateConfig}
           onDelete={() => setSelectedPlanetIndex(undefined)}
+          onClose={() => {
+            setSelectedPlanetIndex(undefined);
+            setSelectedPlanet(undefined);
+          }}
+          root={root}
         />
       )}
     </Container>
@@ -239,20 +268,26 @@ const MainContentInner = styled.div`
   max-width: 1280px;
   width: 100%;
   max-width: 640px;
-  // margin: 0 24px;
   margin: 0 auto;
 `;
 
 const LobbyButton = styled.button<{ primary?: boolean }>`
-  background: #000;
-  color: ${({ primary }) => (primary ? '#2ee7ba' : '#fff')};
-  border: ${({ primary }) => (primary ? '2px solid #2ee7ba' : '2px solid #fff')};
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border: ${({ primary }) => (primary ? '2px solid #2EE7BA' : '1px solid #5F5F5F')};
+  color: ${({ primary }) => (primary ? '#2EE7BA' : '#fff')};
+  background: ${({ primary }) => (primary ? '#09352B' : '#252525')};
+  padding: 16px;
   border-radius: 4px;
-  padding: 8px 16px;
-  font-size: 16px;
+  width: 100%;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  transition: background 80ms ease 0s, border-color;
+  &:hover {
+    background: ${({ primary }) => (primary ? '#0E5141' : '#3D3D3D')};
+    border-color: ${({ primary }) => (primary ? '#30FFCD' : '#797979')};
+  }
 `;
 
 const MinimapEditorWrapper = styled.div`

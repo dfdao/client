@@ -5,7 +5,7 @@ import { EthConnection } from '@darkforest_eth/network';
 import { ContractMethodName, EthAddress, UnconfirmedCreateLobby } from '@darkforest_eth/types';
 import { Contract } from 'ethers';
 import _, { initial } from 'lodash';
-import React, { useEffect, useMemo, useReducer, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useReducer, useState } from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
 import { ContractsAPI } from '../../Backend/GameLogic/ContractsAPI';
 import { loadInitContract } from '../../Backend/Network/Blockchain';
@@ -27,10 +27,10 @@ import { LobbyMapSelectPage } from './LobbyMapSelectPage';
 import { LobbyWorldSettingsPage } from './LobbyWorldSettingsPage';
 import { LobbyConfirmPage } from './LobbyConfirmPage';
 import { LobbyMapEditor } from './LobbyMapEditor';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { getAllTwitters } from '../../Backend/Network/UtilityServerAPI';
 import { LobbyPlanet } from '../Panes/Lobbies/LobbiesUtils';
+import { createContext } from 'preact';
+import { Toast } from '../Components/Toast';
 
 type Status = 'waitingForCreate' | 'creating' | 'created' | 'errored' | undefined;
 
@@ -70,22 +70,10 @@ export function LobbyConfigPage({
   const creating = status === 'creating' || (status === 'created' && !lobbyAdminTools?.address);
   const created = status === 'created' && lobbyAdminTools?.address;
 
+  const LobbyCreationContext = createContext({
+    root: root,
+  });
   const history = useHistory();
-
-  useEffect(() => {
-    if (error) {
-      toast.error(error, {
-        position: 'bottom-right',
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: 'dark',
-      });
-    }
-  }, [error]);
 
   useEffect(() => {
     async function doCreateReveal() {
@@ -240,7 +228,7 @@ export function LobbyConfigPage({
 
   return (
     <>
-      <ToastContainer />
+      <Toast open={!!error} title='Error' description={error} />
       <Switch>
         <Route path={root} exact={true}>
           <LobbyMapSelectPage
