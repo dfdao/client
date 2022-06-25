@@ -51,6 +51,7 @@ const sendSilverStatusesIcon = ['-', 'U', '$'];
 const UPGRADE_FIRST = 1;
 const SEND_ALL_SILVER = 2;
 const INITIAL_SILVER_STATUS = UPGRADE_FIRST;
+const toggleSilverStatus = val => (val + 1) % 3;  // 3 way toggle
 
 const getPlanetString = (locationId) => {
   const planet = df.getPlanetWithId(locationId);
@@ -125,6 +126,10 @@ class Repeater {
     this.attacks = newAttacks;
     this.saveAttacks();
   }
+  toggleSilver(position) {
+    this.attacks[position].sendSilverStatus = toggleSilverStatus(this.attacks[position].sendSilverStatus);
+    this.saveAttacks();
+  }
   removeAttack(position) {
     this.attacks.splice(position, 1);
     this.saveAttacks();
@@ -192,7 +197,7 @@ function centerPlanet(id) {
 function planetShort(locationId) {
   return locationId.substring(4, 9);
 }
-function Attack({ attack, onDelete }) {
+function Attack({ attack, onToggleSilver, onDelete }) {
   const srcString = getPlanetString(attack.srcId);
   const targetString = getPlanetString(attack.targetId);
   const finalSrc = srcString.length > MAX_CHARS ? srcString.slice(0, MAX_CHARS - 3).concat('...') : srcString;
@@ -208,8 +213,10 @@ function Attack({ attack, onDelete }) {
           >${finalTarget}</span
         ></span
       >
-      ${`${attack.pcTrigger}% -> ${attack.pcRemain}% ${sendSilverStatusesIcon[attack.sendSilverStatus]}`}
-      <button style=${{backgroundColor: 'black'}} onClick=${onDelete}>X</button>
+      ${`${attack.pcTrigger}% -> ${attack.pcRemain}% `}
+      <button onClick=${onToggleSilver}>${`${sendSilverStatusesIcon[attack.sendSilverStatus]}`}</button>
+      ${` `}
+      <button onClick=${onDelete}>X</button>
     </div>
   `;
 }
@@ -268,7 +275,7 @@ function AddAttack({ startFiring, stopFiring, stopBeingFiredAt }) {
       <div style=${{marginBottom: 10}}>
         Choose when to send silver: <button
           style=${{width: 150, height: 23, fontSize: '90%'}}
-          onClick=${() => setSendSilverStatus((sendSilverStatus + 1) % 3)}
+          onClick=${() => setSendSilverStatus(toggleSilverStatus(sendSilverStatus))}
         >
           ${sendSilverStatuses[sendSilverStatus]}
         </button>
@@ -339,9 +346,8 @@ function AttackList({ repeater }) {
     return html`
       <${Attack}
         attack=${action}
-        onDelete=${() => {
-          repeater.removeAttack(index);
-        }}
+        onToggleSilver=${() => repeater.toggleSilver(index)}
+        onDelete=${() => repeater.removeAttack(index)}
       />
     `;
   });
