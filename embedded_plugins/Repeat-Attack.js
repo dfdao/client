@@ -329,8 +329,8 @@ function AttackList({ repeater }) {
     `;
   });
   return html`
-    <i style=${{ ...VerticalSpacing, display: 'block' }}
-      >Auto-attack when source planet >75% energy. Will send all planet silver
+    <i style=${{ ...VerticalSpacing, display: 'block' }}>
+      Auto-attack when source planet has enough energy!
     </i>
     <${AddAttack}
       startFiring=${attack => repeater.addAttack(attack)}
