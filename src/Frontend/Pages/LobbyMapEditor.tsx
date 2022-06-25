@@ -1,8 +1,8 @@
 import { EthAddress, WorldCoords } from '@darkforest_eth/types';
-import { DarkForestShortcutButton } from '@darkforest_eth/ui';
+import { colors } from '@darkforest_eth/ui';
 import React, { useMemo, useState, CSSProperties, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { LobbyAdminTools } from '../../Backend/Utils/LobbyAdminTools';
 import Button from '../Components/Button';
 import { SelectFrom, Spacer } from '../Components/CoreUI';
@@ -130,7 +130,11 @@ export const LobbyMapEditor: React.FC<{
           >
             {isPlacementMode ? 'Cancel' : 'Set coordinates on map'}
           </EditorButton>
-          <div>Or hold S to place planets</div>
+          <div style={{ display: 'flex', alignItems: 'center', marginTop: '8px' }}>
+            Or {placementModeShortcut ? 'release' : 'hold'}{' '}
+            <Key active={placementModeShortcut}>S</Key> to{' '}
+            {placementModeShortcut ? 'cancel' : 'place planets'}
+          </div>
         </div>
         <Spacer height={32} />
         <PlanetListPane
@@ -286,4 +290,58 @@ const EditorButton = styled.button<{ cancel: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
+`;
+
+// copied from { DarkForestShortcutButton } from '@darkforest_eth/ui';
+const Key = styled.kbd<{ active: boolean }>`
+  font-size: 0.7rem;
+  line-height: 1.4;
+  padding: 0.1rem 0.45rem;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  border: 1px solid ${colors.border};
+  border-radius: 0.25rem;
+  display: inline-block;
+  font-weight: 400;
+  text-align: left;
+  transform: translateZ(5px);
+  transform-style: preserve-3d;
+  transition: all 0.25s cubic-bezier(0.2, 1, 0.2, 1);
+  box-shadow: 0 0 #6b6b6b, 0 0 #6b6b6b, 0 1px #6d6d6d, 0 2px #6d6d6d, 2px 1px 4px #adb5bd,
+    0 -1px 1px #adb5bd;
+  background-color: #343a40;
+  color: ${colors.text};
+  flex: 0;
+  height: fit-content;
+  margin: 1px 5px 5px;
+  &:after {
+    border-radius: 0.375rem;
+    border-width: 0.0625rem;
+    bottom: -6px;
+    left: -0.25rem;
+    right: -0.25rem;
+    top: -2px;
+    transform: translateZ(-2px);
+    border-style: solid;
+    box-sizing: content-box;
+    content: '';
+    display: block;
+    position: absolute;
+    transform-style: preserve-3d;
+    transition: all 0.25s cubic-bezier(0.2, 1, 0.2, 1);
+    border-color: ${colors.borderDarker};
+    background: ${colors.background};
+  }
+  ${({ active }) =>
+    active &&
+    css`
+      transform: translate3d(0, 2px, 0);
+      box-shadow: 0 0 1px 1px #929292;
+      background-color: ${colors.text};
+      color: ${colors.background};
+      &:after {
+        transform: translate3d(0, -2px, 0);
+        background: transparent;
+      }
+    `}
 `;
