@@ -247,6 +247,9 @@ function AddAttack({ startFiring, stopFiring, stopBeingFiredAt }) {
           >${target ? getPlanetString(target.locationId) : '?????'}</span
         >
       </div>
+      <div style=${{marginBottom: 5}}>
+        Send Silver? <input type='checkbox' checked=${sendSilver} onChange=${() => setSendSilver(!sendSilver)}/>
+      </div>
       <div>
         <button
           style=${{...VerticalSpacing, width: 150}}
@@ -254,7 +257,7 @@ function AddAttack({ startFiring, stopFiring, stopBeingFiredAt }) {
             srcId: source.locationId,
             targetId: target.locationId,
             pcTrigger,
-            pcRemain,
+            pcRemain: ((pcTrigger <= pcRemain) ? parseInt(pcTrigger / 2) : pcRemain),
             sendSilver
           })}
         >
