@@ -90,16 +90,18 @@ class Repeater {
     }
     this.attacks = [];
     this.account = df.getAccount();
-    if (localStorage.getItem(`repeatAttacks-${this.account}`)) {
-      // @ts-ignore
-      this.attacks = JSON.parse(localStorage.getItem(`repeatAttacks-${this.account}`));
-    }
+    this.loadAttacks();
     this.intervalId = window.setInterval(this.coreLoop.bind(this), 1000);
     //@ts-ignore
     window.__CORELOOP__.push(this.intervalId);
   }
   saveAttacks() {
     localStorage.setItem(`repeatAttacks-${this.account}`, JSON.stringify(this.attacks));
+  }
+  loadAttacks() {
+    const attacksJSON = localStorage.getItem(`repeatAttacks-${this.account}`);
+    // @ts-ignore
+    if (attacksJSON) this.attacks = JSON.parse(attacksJSON);
   }
   addAttack(srcId, targetId, pcTrigger, pcRemain, sendSilver) {
     let newAttacks = this.attacks.filter(item => item.srcId !== srcId);
