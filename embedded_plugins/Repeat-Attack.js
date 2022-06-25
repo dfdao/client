@@ -32,6 +32,10 @@ let DEFAULT_PERCENTAGE_REMAIN = 25;   // How much energy will remain after sendi
 // Stagger all the different attacks by this number of seconds, don't send all at once
 let STAGGER_S = 15;  // Over what number of seconds will all repeat attacks happen once?
 
+// UI controls
+let MAX_CHARS = 14;  // How many letters of planet name to display?
+let WIDTH_PX = 430;  // What is the width of plugin window?
+
 // ----------------------------
 
 
@@ -179,8 +183,8 @@ function planetShort(locationId) {
 function Attack({ attack, onDelete }) {
   const srcString = getPlanetString(attack.srcId);
   const targetString = getPlanetString(attack.targetId);
-  const finalSrc = srcString.length > 16 ? srcString.slice(0, 13).concat('...') : srcString;
-  const finalTarget = targetString.length > 16 ? targetString.slice(0, 13).concat('...') : targetString;
+  const finalSrc = srcString.length > MAX_CHARS ? srcString.slice(0, MAX_CHARS - 3).concat('...') : srcString;
+  const finalTarget = targetString.length > MAX_CHARS ? targetString.slice(0, MAX_CHARS - 3).concat('...') : targetString;
   return html`
     <div style=${ActionEntry}>
       <span>
@@ -192,6 +196,7 @@ function Attack({ attack, onDelete }) {
           >${finalTarget}</span
         ></span
       >
+      ${`${attack.pcTrigger}% -> ${attack.pcRemain}% ${attack.sendSilver?'$':'-'}`}
       <button onClick=${onDelete}>X</button>
     </div>
   `;
@@ -352,7 +357,7 @@ class Plugin {
    */
   async render(container) {
     this.container = container;
-    container.style.width = '400px';
+    container.style.width = `${WIDTH_PX}px`;
     this.root = render(html`<${App} repeater=${this.repeater} />`, container);
   }
   /**
