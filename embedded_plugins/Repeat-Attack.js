@@ -19,7 +19,21 @@ import {
 
 import { getPlanetName } from 'https://cdn.skypack.dev/@darkforest_eth/procedural';
 
+
+// ----------------------------
+
+// USER CONFIGURABLE PARAMETERS
+
+// Stagger all the different attacks by this number of seconds, don't send all at once
 const STAGGER = 15;
+
+// Energy control – `let` is used here to sidestep any weird execution env problems
+let PERCENTAGE_TRIGGER = 75;  // What percentage energy will trigger a send?
+let PERCENTAGE_SEND = 50;     // How much energy will be sent? Ought to be less than PERCENTAGE_TRIGGER
+
+// ----------------------------
+
+
 const getPlanetString = (locationId) => {
   const planet = df.getPlanetWithId(locationId);
   if(!planet) return '?????'
@@ -61,9 +75,6 @@ function planetCurrentPercentEnergy(planet) {
   const estimatedEnergy = Math.floor(planet.energy - departures);
   return Math.floor((estimatedEnergy / planet.energyCap) * 100);
 }
-// I use `let` here to sidestep any weird execution env problems
-let PERCENTAGE_TRIGGER = 75;
-let PERCENTAGE_SEND = 50;
 class Repeater {
   constructor() {
     //@ts-ignore
