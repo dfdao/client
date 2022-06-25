@@ -29,7 +29,7 @@ const STAGGER = 15;
 
 // Energy control – `let` is used here to sidestep any weird execution env problems
 let PERCENTAGE_TRIGGER = 75;  // What percentage energy will trigger a send?
-let PERCENTAGE_SEND = 50;     // How much energy will be sent? Ought to be less than PERCENTAGE_TRIGGER
+let PERCENTAGE_REMAIN = 25;   // How much energy will remain after sending?
 
 // ----------------------------
 
@@ -143,7 +143,7 @@ const ExecuteAttack = (srcId, targetId) => {
   const FUZZY_ENERGY = Math.floor(srcPlanet.energy - departingForces); //Best estimate of how much energy is ready to send
   if (FUZZY_ENERGY > TRIGGER_AMOUNT) {
     const overflow_send =
-      planetCurrentPercentEnergy(srcPlanet) - (PERCENTAGE_TRIGGER - PERCENTAGE_SEND);
+      planetCurrentPercentEnergy(srcPlanet) - PERCENTAGE_REMAIN;
     const FORCES = Math.floor((srcPlanet.energyCap * overflow_send) / 100);
     let silver = 0;
     if (isFullRank(srcPlanet)) {
