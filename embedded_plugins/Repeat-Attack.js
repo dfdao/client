@@ -46,7 +46,6 @@ const getPlanetString = (locationId) => {
 };
 
 const getPlanetMaxRank = (planet) => {
-
   if (!planet) return 0;
   if(planet.planetType != PlanetType.PLANET) return 0;
   if (planet.spaceType === SpaceType.NEBULA) return 3;
@@ -131,21 +130,13 @@ class Repeater {
       if(i % STAGGER == Math.floor(Date.now() / 1000) % STAGGER) {
         const a = this.attacks[i];
         ExecuteAttack(a.srcId, a.targetId);
-
       }
     }
-    
-    // this?.attacks?.forEach((a) => {
-    //   ExecuteAttack(a.srcId, a.targetId);
-    // });
   }
 }
 const ExecuteAttack = (srcId, targetId) => {
   let srcPlanet = df.getPlanetWithId(srcId);
-  if (!srcPlanet) {
-    // Well shit
-    return;
-  }
+  if (!srcPlanet) return;
   // Needs updated check getUnconfirmedDepartingForces
   const departingForces = unconfirmedDepartures(srcPlanet);
   const TRIGGER_AMOUNT = Math.floor((srcPlanet.energyCap * PERCENTAGE_TRIGGER) / 100);
