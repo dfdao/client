@@ -36,8 +36,21 @@ let STAGGER_S = 15;  // Over what number of seconds will all repeat attacks happ
 let MAX_CHARS = 14;  // How many letters of planet name to display?
 let WIDTH_PX = 430;  // What is the width of plugin window?
 
+// Other controls
+let SILVER_SEND_PERCENT = 99;  // Sends this proportion of silver from the source planet
+
 // ----------------------------
 
+
+const sendSilverStatuses = [
+  'Do not send', // 0
+  'Upgrade first', // 1
+  'Send all' // 2
+];
+const sendSilverStatusesIcon = ['-', 'U', '$'];
+const UPGRADE_FIRST = 1;
+const SEND_ALL_SILVER = 2;
+const INITIAL_SILVER_STATUS = UPGRADE_FIRST;
 
 const getPlanetString = (locationId) => {
   const planet = df.getPlanetWithId(locationId);
@@ -49,7 +62,6 @@ const getPlanetString = (locationId) => {
   else if (planet.planetType == PlanetType.SILVER_BANK) type = 'Q'
   return `L${planet.planetLevel}-${type} ${getPlanetName(planet)}`;
 };
-
 const getPlanetMaxRank = (planet) => {
   if (!planet) return 0;
   if(planet.planetType != PlanetType.PLANET) return 0;
@@ -136,7 +148,7 @@ class Repeater {
     });
   }
 }
-const ExecuteAttack = ({srcId, targetId, pcTrigger, pcRemain, sendSilver}) => {
+const ExecuteAttack = ({srcId, targetId, pcTrigger, pcRemain, sendSilverStatus}) => {
   let srcPlanet = df.getPlanetWithId(srcId);
   if (!srcPlanet) return;
   // Needs updated check getUnconfirmedDepartingForces
@@ -148,8 +160,8 @@ const ExecuteAttack = ({srcId, targetId, pcTrigger, pcRemain, sendSilver}) => {
       planetCurrentPercentEnergy(srcPlanet) - pcRemain;
     const FORCES = Math.floor((srcPlanet.energyCap * overflow_send) / 100);
     let silver = 0;
-    if (sendSilver && isFullRank(srcPlanet)) {
-      silver = Math.round(srcPlanet.silver * .95);
+    if ( sendSilverStatus === SEND_ALL_SILVER || (sendSilverStatus === UPGRADE_FIRST && isFullRank(srcPlanet))) {
+      silver = Math.round(srcPlanet.silver * (SILVER_SEND_PERCENT / 100));
     }
     df.move(srcId, targetId, FORCES, silver);
   }
@@ -196,8 +208,8 @@ function Attack({ attack, onDelete }) {
           >${finalTarget}</span
         ></span
       >
-      ${`${attack.pcTrigger}% -> ${attack.pcRemain}% ${attack.sendSilver?'$':'-'}`}
-      <button onClick=${onDelete}>X</button>
+      ${`${attack.pcTrigger}% -> ${attack.pcRemain}% ${sendSilverStatusesIcon[attack.sendSilverStatus]}`}
+      <button style=${{backgroundColor: 'black'}} onClick=${onDelete}>X</button>
     </div>
   `;
 }
@@ -207,7 +219,7 @@ function AddAttack({ startFiring, stopFiring, stopBeingFiredAt }) {
   let [target, setTarget] = useState(undefined);
   let [pcTrigger, setPcTrigger] = useState(DEFAULT_PERCENTAGE_TRIGGER);
   let [pcRemain, setPcRemain] = useState(DEFAULT_PERCENTAGE_REMAIN);
-  let [sendSilver, setSendSilver] = useState(true);
+  let [sendSilverStatus, setSendSilverStatus] = useState(INITIAL_SILVER_STATUS);
   useLayoutEffect(() => {
     let onClick = () => {
       setPlanet(ui.getSelectedPlanet());
@@ -219,7 +231,7 @@ function AddAttack({ startFiring, stopFiring, stopBeingFiredAt }) {
   }, []);
 
   // Note: an attack is an object with this format:
-  // { srcId, targetId, pcTrigger, pcRemain, sendSilver }
+  // { srcId, targetId, pcTrigger, pcRemain, sendSilverStatus }
   // Each of the five items is used to control different aspects of the attack
 
   return html`
@@ -247,14 +259,19 @@ function AddAttack({ startFiring, stopFiring, stopBeingFiredAt }) {
           >${target ? getPlanetString(target.locationId) : '?????'}</span
         >
       </div>
-      <div>
-        Send Silver after upgrading? <input type='checkbox' checked=${sendSilver} onChange=${() => setSendSilver(!sendSilver)}/>
-      </div>
-      <div>
+      <div style=${{marginBottom: 3}}>
         Trigger firing at this energy: <input type='range' min=2 max=98 step=2 defaultValue=${pcTrigger} onChange=${e => setPcTrigger(parseInt(e.target.value))}/> ${pcTrigger}%
       </div>
-      <div style=${{marginBottom: 10}}>
+      <div style=${{marginBottom: 3}}>
         Remaining energy after firing: <input type='range' min=2 max=98 step=2 defaultValue=${pcRemain} onChange=${e => setPcRemain(parseInt(e.target.value))}/> ${pcRemain}%
+      </div>
+      <div style=${{marginBottom: 10}}>
+        Choose when to send silver: <button
+          style=${{width: 150, height: 23, fontSize: '90%'}}
+          onClick=${() => setSendSilverStatus((sendSilverStatus + 1) % 3)}
+        >
+          ${sendSilverStatuses[sendSilverStatus]}
+        </button>
       </div>
       <div>
         <button
@@ -264,7 +281,7 @@ function AddAttack({ startFiring, stopFiring, stopBeingFiredAt }) {
             targetId: target.locationId,
             pcTrigger,
             pcRemain: ((pcTrigger <= pcRemain) ? parseInt(pcTrigger / 2) : pcRemain),
-            sendSilver
+            sendSilverStatus
           })}
         >
           Start Firing!
