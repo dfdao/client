@@ -1,6 +1,6 @@
 import { EthAddress, WorldCoords } from '@darkforest_eth/types';
 import { DarkForestShortcutButton } from '@darkforest_eth/ui';
-import React, { useMemo, useState, CSSProperties } from 'react';
+import React, { useMemo, useState, CSSProperties, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { LobbyAdminTools } from '../../Backend/Utils/LobbyAdminTools';
@@ -29,6 +29,7 @@ import {
   LobbyConfigState,
   LobbyInitializers,
 } from '../Panes/Lobbies/Reducer';
+import { useIsDown } from '../Utils/KeyEmitters';
 
 export const LobbyMapEditor: React.FC<{
   updateConfig: React.Dispatch<LobbyAction>;
@@ -55,6 +56,15 @@ export const LobbyMapEditor: React.FC<{
   const [mirrorAxes, setMirrorAxes] = useState<{ x: boolean; y: boolean }>({ x: false, y: false });
   const [isPlacementMode, setIsPlacementMode] = useState<boolean>(false);
   const history = useHistory();
+  const placementModeShortcut = useIsDown('s');
+
+  useEffect(() => {
+    if (placementModeShortcut) {
+      setIsPlacementMode(true);
+    } else {
+      setIsPlacementMode(false);
+    }
+  }, [placementModeShortcut]);
 
   const selectedPlanet = useMemo(() => {
     if (selectedPlanetIndex !== undefined && config.ADMIN_PLANETS.displayValue) {
@@ -118,8 +128,9 @@ export const LobbyMapEditor: React.FC<{
             cancel={isPlacementMode}
             onClick={() => setIsPlacementMode(!isPlacementMode)}
           >
-            {isPlacementMode ? 'Cancel (ESC)' : 'Set coordinates on map (S)'}
+            {isPlacementMode ? 'Cancel' : 'Set coordinates on map'}
           </EditorButton>
+          <div>Or hold S to place planets</div>
         </div>
         <Spacer height={32} />
         <PlanetListPane
@@ -144,7 +155,9 @@ export const LobbyMapEditor: React.FC<{
               onClick={(coords: WorldCoords) => {
                 console.log('Staging...', coords);
                 stagePlanet(coords);
-                setIsPlacementMode(false);
+                if (!placementModeShortcut) {
+                  setIsPlacementMode(false);
+                }
               }}
               minimapConfig={minimapConfig}
               disabled={!isPlacementMode}

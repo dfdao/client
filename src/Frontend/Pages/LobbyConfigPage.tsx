@@ -222,7 +222,14 @@ export function LobbyConfigPage({
 
   return (
     <>
-      <Toast open={!!error} title='Error' description={error} onClose={() => setError(undefined)} />
+      <Toast
+        open={!!error}
+        title='Error'
+        description={error}
+        onClose={() => {
+          setError(undefined);
+        }}
+      />
       <Switch>
         <Route path={root} exact={true}>
           <LobbyMapSelectPage

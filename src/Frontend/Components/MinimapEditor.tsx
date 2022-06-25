@@ -129,7 +129,8 @@ export const MinimapEditor: React.FC<{
           }
         });
         if (nearest) {
-          ctx.fillRect(nearest.x, nearest.y, dot, dot);
+          // for debugging:
+          // ctx.fillRect(nearest.x, nearest.y, dot, dot);
           const normalizedPlanetCoords: WorldCoords = {
             x: (nearest.x - parseInt(CANVAS_SIZE.width) / 2) * scaleFactor,
             y: (nearest.y - parseInt(CANVAS_SIZE.height) / 2) * -scaleFactor,
