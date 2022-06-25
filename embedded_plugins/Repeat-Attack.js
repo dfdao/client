@@ -247,8 +247,14 @@ function AddAttack({ startFiring, stopFiring, stopBeingFiredAt }) {
           >${target ? getPlanetString(target.locationId) : '?????'}</span
         >
       </div>
-      <div style=${{marginBottom: 5}}>
-        Send Silver? <input type='checkbox' checked=${sendSilver} onChange=${() => setSendSilver(!sendSilver)}/>
+      <div>
+        Send Silver after upgrading? <input type='checkbox' checked=${sendSilver} onChange=${() => setSendSilver(!sendSilver)}/>
+      </div>
+      <div>
+        Trigger firing at this energy: <input type='range' min=2 max=98 step=2 defaultValue=${pcTrigger} onChange=${e => setPcTrigger(parseInt(e.target.value))}/> ${pcTrigger}%
+      </div>
+      <div style=${{marginBottom: 10}}>
+        Remaining energy after firing: <input type='range' min=2 max=98 step=2 defaultValue=${pcRemain} onChange=${e => setPcRemain(parseInt(e.target.value))}/> ${pcRemain}%
       </div>
       <div>
         <button
