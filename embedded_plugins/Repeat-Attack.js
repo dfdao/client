@@ -23,13 +23,14 @@ import { getPlanetName } from 'https://cdn.skypack.dev/@darkforest_eth/procedura
 // ----------------------------
 
 // USER CONFIGURABLE PARAMETERS
+// `let` is used here to sidestep any weird execution env problems
+
+// Control how much energy gets sent, and when
+let DEFAULT_PERCENTAGE_TRIGGER = 75;  // What percentage energy will trigger a send?
+let DEFAULT_PERCENTAGE_REMAIN = 25;   // How much energy will remain after sending?
 
 // Stagger all the different attacks by this number of seconds, don't send all at once
-const STAGGER = 15;
-
-// Energy control – `let` is used here to sidestep any weird execution env problems
-let PERCENTAGE_TRIGGER = 75;  // What percentage energy will trigger a send?
-let PERCENTAGE_REMAIN = 25;   // How much energy will remain after sending?
+let STAGGER_S = 15;  // Over what number of seconds will all repeat attacks happen once?
 
 // ----------------------------
 
@@ -100,9 +101,9 @@ class Repeater {
   saveAttacks() {
     localStorage.setItem(`repeatAttacks-${this.account}`, JSON.stringify(this.attacks));
   }
-  addAttack(srcId, targetId) {
+  addAttack(srcId, targetId, pcTrigger, pcRemain, sendSilver) {
     let newAttacks = this.attacks.filter(item => item.srcId !== srcId);
-    newAttacks = [{ srcId, targetId }, ...newAttacks];
+    newAttacks = [{ srcId, targetId, pcTrigger, pcRemain, sendSilver }, ...newAttacks];
     this.attacks = newAttacks;
     this.saveAttacks();
   }
@@ -124,29 +125,24 @@ class Repeater {
   }
   coreLoop() {
     if(!this || !this.attacks) return;
-    const length = this.attacks.length;
-
-    for(let i = 0; i < length; i++){
-      if(i % STAGGER == Math.floor(Date.now() / 1000) % STAGGER) {
-        const a = this.attacks[i];
-        ExecuteAttack(a.srcId, a.targetId);
-      }
-    }
+    this.attacks.forEach( (attack, idx) => {
+      if(idx % STAGGER_S == Math.floor(Date.now() / 1000) % STAGGER_S) ExecuteAttack(attack);
+    });
   }
 }
-const ExecuteAttack = (srcId, targetId) => {
+const ExecuteAttack = ({srcId, targetId, pcTrigger, pcRemain, sendSilver}) => {
   let srcPlanet = df.getPlanetWithId(srcId);
   if (!srcPlanet) return;
   // Needs updated check getUnconfirmedDepartingForces
   const departingForces = unconfirmedDepartures(srcPlanet);
-  const TRIGGER_AMOUNT = Math.floor((srcPlanet.energyCap * PERCENTAGE_TRIGGER) / 100);
+  const TRIGGER_AMOUNT = Math.floor((srcPlanet.energyCap * pcTrigger) / 100);
   const FUZZY_ENERGY = Math.floor(srcPlanet.energy - departingForces); //Best estimate of how much energy is ready to send
   if (FUZZY_ENERGY > TRIGGER_AMOUNT) {
     const overflow_send =
-      planetCurrentPercentEnergy(srcPlanet) - PERCENTAGE_REMAIN;
+      planetCurrentPercentEnergy(srcPlanet) - pcRemain;
     const FORCES = Math.floor((srcPlanet.energyCap * overflow_send) / 100);
     let silver = 0;
-    if (isFullRank(srcPlanet)) {
+    if (sendSilver && isFullRank(srcPlanet)) {
       silver = Math.round(srcPlanet.silver * .95);
     }
     df.move(srcId, targetId, FORCES, silver);
@@ -202,6 +198,9 @@ function AddAttack({ onCreate, stopFiring, stopBeingFiredAt }) {
   let [planet, setPlanet] = useState(ui.getSelectedPlanet());
   let [source, setSource] = useState(undefined);
   let [target, setTarget] = useState(undefined);
+  let [pcTrigger, setPcTrigger] = useState(DEFAULT_PERCENTAGE_TRIGGER);
+  let [pcRemain, setPcRemain] = useState(DEFAULT_PERCENTAGE_REMAIN);
+  let [sendSilver, setSendSilver] = useState(true);
   useLayoutEffect(() => {
     let onClick = () => {
       setPlanet(ui.getSelectedPlanet());
@@ -239,7 +238,7 @@ function AddAttack({ onCreate, stopFiring, stopBeingFiredAt }) {
       <div>
         <button
           style=${{...VerticalSpacing, width: 150}}
-          onClick=${() => target && source && onCreate(source.locationId, target.locationId)}
+          onClick=${() => target && source && onCreate(source.locationId, target.locationId, pcTrigger, pcRemain, sendSilver)}
         >
           Start Firing!
         </button>
@@ -307,7 +306,7 @@ function AttackList({ repeater }) {
       >Auto-attack when source planet >75% energy. Will send all planet silver
     </i>
     <${AddAttack}
-      onCreate=${(srcId, targetId) => repeater.addAttack(srcId, targetId)}
+      onCreate=${(srcId, targetId, pcTrigger, pcRemain, sendSilver) => repeater.addAttack(srcId, targetId, pcTrigger, pcRemain, sendSilver)}
       stopFiring=${planetId => repeater.stopFiring(planetId)}
       stopBeingFiredAt=${planetId => repeater.stopBeingFiredAt(planetId)}
     />
