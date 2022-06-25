@@ -10,12 +10,16 @@ export const MinimapEditor: React.FC<{
   onError: (msg: string) => void;
   onClick: (clickedCoords: WorldCoords) => void;
   minimapConfig: MinimapConfig | undefined;
+  mirrorX: boolean;
+  mirrorY: boolean;
   disabled: boolean;
 }> = ({
   style = { width: '400px', height: '400px' },
   onError,
   onClick,
   minimapConfig,
+  mirrorX,
+  mirrorY,
   disabled,
 }) => {
   const [minimapCoords, setMinimapCoords] = useState<WorldCoords[]>([]);
@@ -94,7 +98,9 @@ export const MinimapEditor: React.FC<{
 
   const handleMouseClick = (
     canvas: React.MutableRefObject<HTMLCanvasElement | null>,
-    e: React.MouseEvent<HTMLCanvasElement, MouseEvent>
+    e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
+    mirrorX: boolean,
+    mirrorY: boolean
   ) => {
     const ctx = canvasPlanetLayer.current!.getContext('2d');
     if (!ctx) return;
@@ -128,6 +134,20 @@ export const MinimapEditor: React.FC<{
             x: (nearest.x - parseInt(CANVAS_SIZE.width) / 2) * scaleFactor,
             y: (nearest.y - parseInt(CANVAS_SIZE.height) / 2) * -scaleFactor,
           };
+          if (mirrorX) {
+            const mirroredX = normalizedPlanetCoords.x * -1;
+            onClick({
+              x: mirroredX,
+              y: normalizedPlanetCoords.y,
+            });
+          }
+          if (mirrorY) {
+            const mirroredY = normalizedPlanetCoords.y * -1;
+            onClick({
+              x: normalizedPlanetCoords.x,
+              y: mirroredY,
+            });
+          }
           onClick(normalizedPlanetCoords);
         }
       }
@@ -143,7 +163,7 @@ export const MinimapEditor: React.FC<{
       showCrosshair={!disabled}
       onMouseDown={(e) => {
         if (disabled) return;
-        handleMouseClick(canvasPlanetLayer!, e);
+        handleMouseClick(canvasPlanetLayer!, e, mirrorX, mirrorY);
       }}
     />
   );

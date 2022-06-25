@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 import * as ToastPrimitive from '@radix-ui/react-toast';
+import { CloseButton, CloseIcon } from '../Panes/Lobbies/LobbiesUtils';
 
 export interface ToastProps {
   open: boolean;
   title: string;
+  onClose: () => void;
   description?: string;
   viewportPadding?: [number, number];
   direction?: 'left' | 'right';
@@ -13,17 +15,30 @@ export interface ToastProps {
 export const Toast: React.FC<ToastProps> = ({
   open,
   title,
+  onClose,
   description,
   viewportPadding = [8, 8],
   direction = 'right',
 }) => {
+  const [hovering, setHovering] = useState<boolean>(false);
   return (
-    <ToastPrimitive.Provider duration={5000}>
-      <Container data-state={open ? 'open' : 'closed'} open={open} forceMount asChild>
-        <TextContent>
-          <ToastText>{title}</ToastText>
-          {description && <ToastDescription>{description}</ToastDescription>}
-        </TextContent>
+    <ToastPrimitive.Provider>
+      <Container
+        open={open}
+        forceMount
+        asChild
+        onMouseEnter={() => setHovering(true)}
+        onMouseLeave={() => setHovering(false)}
+      >
+        <div>
+          <CloseButtonStyle onClick={onClose} hovering={hovering}>
+            <CloseIcon />
+          </CloseButtonStyle>
+          <TextContent>
+            <ToastText>{title}</ToastText>
+            {description && <ToastDescription>{description}</ToastDescription>}
+          </TextContent>
+        </div>
       </Container>
       <ToastViewport viewportPadding={viewportPadding} direction={direction} />
     </ToastPrimitive.Provider>
@@ -67,6 +82,7 @@ const Container = styled(ToastPrimitive.Root)<{ open: boolean }>`
   box-shadow: 0px -1px 10px rgba(0, 0, 0, 0.04), 0px 3px 10px rgba(0, 0, 0, 0.05),
     0px 12px 16px rgba(0, 0, 0, 0.14);
   background: #434343;
+  position: relative;
   color: rgba(255, 255, 255, 1);
   ${({ open }) =>
     open
@@ -81,7 +97,7 @@ const Container = styled(ToastPrimitive.Root)<{ open: boolean }>`
   @keyframes fadeIn {
     from {
       opacity: 0;
-      transform: translateY(10px);
+      transform: translateY(100px);
     }
     to {
       opacity: 1;
@@ -95,7 +111,7 @@ const Container = styled(ToastPrimitive.Root)<{ open: boolean }>`
     }
     to {
       opacity: 0;
-      transform: translateY(10px);
+      transform: translateY(100px);
     }
   }
 `;
@@ -106,4 +122,29 @@ const TextContent = styled.div`
   align-items: flex-start;
   width: 100%;
   gap: 4px;
+`;
+export const CloseButtonStyle = styled.div<{ hovering: boolean }>`
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  opacity: ${({ hovering }) => (hovering ? 1 : 0)};
+  transform: translate(-35%, -35%);
+  width: 24px;
+  height: 24px;
+  padding: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 4px;
+  background: #777777;
+  box-shadow: 0px 0px 1px #2f2f2f, 0px 4px 8px rgba(66, 71, 76, 0.06),
+    0px 8px 48px rgba(87, 87, 87, 0.08);
+  transition: 0.2s ease-in-out;
+  &:hover {
+    background-color: #505050;
+  }
 `;

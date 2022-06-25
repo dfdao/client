@@ -235,7 +235,7 @@ export const removeAlphabet = (str: string) => str.replace(/[^0-9]/g, '');
 
 export const CloseButton: React.FC<{ onClick: () => void }> = ({ onClick }) => {
   return (
-    <CloseButtonStyle onClick={() => {}}>
+    <CloseButtonStyle onClick={onClick}>
       <CloseIcon />
     </CloseButtonStyle>
   );
@@ -277,3 +277,5 @@ export const DEFAULT_PLANET: LobbyPlanet = {
   isTargetPlanet: false,
   isSpawnPlanet: false,
 };
+
+export const PLANET_TYPE_NAMES = ['Planet', 'Asteroid Field', 'Foundry', 'Spacetime Rip', 'Quasar'];

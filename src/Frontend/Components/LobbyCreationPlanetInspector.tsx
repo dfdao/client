@@ -2,9 +2,10 @@ import { PlanetTypeNames } from '@darkforest_eth/types';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { LobbyPlanet } from '../Panes/Lobbies/LobbiesUtils';
+import { CloseButton, LobbyPlanet } from '../Panes/Lobbies/LobbiesUtils';
 import { LobbyAction, LobbyConfigState } from '../Panes/Lobbies/Reducer';
 import { Checkbox } from './Input';
+import { PlanetPropEditor } from './LobbyPlanetPropEditor';
 
 export interface LobbyPlanetInspectorProps {
   selectedPlanet: LobbyPlanet;
@@ -36,86 +37,27 @@ export const LobbyCreationPlanetInspector: React.FC<LobbyPlanetInspectorProps> =
   root,
 }) => {
   const [mutablePlanet, setMutablePlanet] = useState<LobbyPlanet>(selectedPlanet);
-  const history = useHistory();
+
+  useEffect(() => {
+    setMutablePlanet(selectedPlanet);
+  }, [selectedPlanet]);
+
   return (
     <Inspector>
       <InspectorInner>
-        <InspectorTitle>{PlanetTypeNames[selectedPlanet.planetType]}</InspectorTitle>
+        <HeaderRow>
+          <InspectorTitle>{PlanetTypeNames[selectedPlanet.planetType]}</InspectorTitle>
+          <CloseButton onClick={onClose} />
+        </HeaderRow>
         <span style={{ maxWidth: '320px' }}>{PLANET_DESCRIPTION[selectedPlanet.planetType]}</span>
-        <InspectorTitle>Position</InspectorTitle>
-        <LabeledInput>
-          <span style={{ marginRight: '4px' }}>X</span>
-          <InspectorInput
-            value={mutablePlanet.x}
-            onChange={(e) => {
-              const newXValue = parseInt(e.target.value);
-              if (Number.isNaN(newXValue)) return;
-              setMutablePlanet({
-                ...mutablePlanet,
-                x: newXValue,
-              });
-            }}
-          />
-        </LabeledInput>
-        <LabeledInput>
-          <span style={{ marginRight: '4px' }}>Y</span>
-          <InspectorInput
-            value={mutablePlanet.y}
-            onChange={(e) => {
-              const newYValue = parseInt(e.target.value);
-              if (Number.isNaN(newYValue)) return;
-              setMutablePlanet({
-                ...mutablePlanet,
-                y: newYValue,
-              });
-            }}
-          />
-        </LabeledInput>
-        <InspectorTitle>Level</InspectorTitle>
-        <LabeledInput>
-          <span>Level</span>
-          <InspectorInput
-            value={mutablePlanet.level}
-            onChange={(e) => {
-              const newLevelValue = parseInt(e.target.value);
-              if (Number.isNaN(newLevelValue)) return;
-              setMutablePlanet({
-                ...mutablePlanet,
-                level: newLevelValue,
-              });
-            }}
-          />
-        </LabeledInput>
-        <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '24px' }}>
-          <InspectorTitle>Special</InspectorTitle>
-          {config.TARGET_PLANETS.displayValue ? (
-            <Checkbox
-              label='Target Planet'
-              checked={mutablePlanet.isTargetPlanet}
-              onChange={() => {
-                setMutablePlanet({
-                  ...mutablePlanet,
-                  isTargetPlanet: !mutablePlanet.isTargetPlanet,
-                });
-              }}
-            />
-          ) : (
-            <span onClick={() => history.push(`${root}/settings/arena`)}>
-              Enable Target Planets
-            </span>
-          )}
-          {config.MANUAL_SPAWN.displayValue ? (
-            <Checkbox
-              label='Spawn Planet'
-              checked={mutablePlanet.isSpawnPlanet}
-              onChange={() => {
-                setMutablePlanet({ ...mutablePlanet, isSpawnPlanet: !mutablePlanet.isSpawnPlanet });
-              }}
-            />
-          ) : (
-            <span onClick={() => history.push(`${root}/settings/spawn`)}>Enable Spawn Planets</span>
-          )}
-        </div>
+        <PlanetPropEditor
+          selectedPlanet={mutablePlanet}
+          canAddPlanets={config.ADMIN_CAN_ADD_PLANETS.displayValue ?? false}
+          spawnPlanetsEnabled={config.MANUAL_SPAWN.displayValue ?? false}
+          targetPlanetsEnabled={config.TARGET_PLANETS.displayValue ?? false}
+          root={root}
+          onChange={(planet) => setMutablePlanet(planet)}
+        />
         {mutablePlanet !== selectedPlanet && (
           <Button
             primary
@@ -166,30 +108,6 @@ const InspectorInner = styled.div`
   gap: 24px;
 `;
 
-const LabeledInput = styled.div`
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const InspectorInput = styled.input`
-  border-radius: 2px;
-  cursor: default;
-  box-sizing: border-box;
-  background-clip: padding-box;
-  background-color: transparent;
-  width: 100%;
-  padding: 0 0 0 7px;
-  height: 28px;
-  border: 1px solid transparent;
-  transition: 0.2s ease-in-out;
-  min-width: 0;
-  &:hover {
-    border-color: gray;
-  }
-`;
-
 const InspectorTitle = styled.span`
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -213,4 +131,10 @@ const Button = styled.button<{ primary?: boolean }>`
     background: ${({ primary }) => (primary ? '#0E5141' : '#3D3D3D')};
     border-color: ${({ primary }) => (primary ? '#30FFCD' : '#797979')};
   }
+`;
+
+const HeaderRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;

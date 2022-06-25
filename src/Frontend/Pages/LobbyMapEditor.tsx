@@ -16,6 +16,7 @@ import { LoadingSpinner } from '../Components/LoadingSpinner';
 import { LobbyCreationPlanetInspector } from '../Components/LobbyCreationPlanetInspector';
 import { Minimap } from '../Components/Minimap';
 import { MinimapEditor } from '../Components/MinimapEditor';
+import { PlanetPropEditor } from '../Components/LobbyPlanetPropEditor';
 import { Row } from '../Components/Row';
 import { Sidebar } from '../Components/Sidebar';
 import { ConfigDownload, DEFAULT_PLANET, LobbyPlanet } from '../Panes/Lobbies/LobbiesUtils';
@@ -28,8 +29,6 @@ import {
   LobbyConfigState,
   LobbyInitializers,
 } from '../Panes/Lobbies/Reducer';
-
-type PlanetTypes = 'Planet' | 'Asteroid Field' | 'Foundry' | 'Spacetime Rip' | 'Quasar';
 
 export const LobbyMapEditor: React.FC<{
   updateConfig: React.Dispatch<LobbyAction>;
@@ -52,12 +51,18 @@ export const LobbyMapEditor: React.FC<{
 }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [selectedPlanetIndex, setSelectedPlanetIndex] = useState<number | undefined>();
-  const [selectedPlanet, setSelectedPlanet] = useState<LobbyPlanet | undefined>();
   const [mutablePlanet, setMutablePlanet] = useState<LobbyPlanet>(DEFAULT_PLANET);
+  const [mirrorAxes, setMirrorAxes] = useState<{ x: boolean; y: boolean }>({ x: false, y: false });
   const [isPlacementMode, setIsPlacementMode] = useState<boolean>(false);
   const history = useHistory();
 
-  const planetTypeNames = ['Planet', 'Asteroid Field', 'Foundry', 'Spacetime Rip', 'Quasar'];
+  const selectedPlanet = useMemo(() => {
+    if (selectedPlanetIndex !== undefined && config.ADMIN_PLANETS.displayValue) {
+      return config.ADMIN_PLANETS.displayValue[selectedPlanetIndex];
+    } else {
+      return undefined;
+    }
+  }, [selectedPlanetIndex, config.ADMIN_PLANETS]);
 
   const randomizeMap = () => {
     console.log('randomizing!!!');
@@ -67,7 +72,7 @@ export const LobbyMapEditor: React.FC<{
     updateConfig({ type: 'BIOMEBASE_KEY', value: seed + 2 });
   };
 
-  const stagePlanet = (planetCoord: WorldCoords) => {
+  function stagePlanet(planetCoord: WorldCoords) {
     // if (createdPlanets?.find((p) => planet.x == p.x && planet.y == p.y)) {
     //   setError('planet with identical coords created');
     //   return;
@@ -92,62 +97,23 @@ export const LobbyMapEditor: React.FC<{
       value: newPlanetToStage,
       index: config.ADMIN_PLANETS.displayValue?.length || 0,
     });
-  };
+  }
 
   return (
     <Container>
       <Sidebar previousPath={`${root}/confirm`} title={'← Confirm map'}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <span>Add a planet</span>
-          <SelectFrom
-            wide={false}
-            style={{ padding: '5px' }}
-            values={planetTypeNames}
-            labels={planetTypeNames}
-            value={planetTypeNames[mutablePlanet.planetType]}
-            setValue={(value) =>
-              setMutablePlanet({ ...mutablePlanet, planetType: planetTypeNames.indexOf(value) })
-            }
+          <PlanetPropEditor
+            selectedPlanet={mutablePlanet}
+            canAddPlanets={config.ADMIN_CAN_ADD_PLANETS.displayValue ?? false}
+            spawnPlanetsEnabled={config.MANUAL_SPAWN.displayValue ?? false}
+            targetPlanetsEnabled={config.TARGET_PLANETS.displayValue ?? false}
+            excludePlanetTypes={['x', 'y']}
+            includeTypes={['Mirror X', 'Mirror Y']}
+            onChange={(planet) => setMutablePlanet(planet)}
+            root={root}
           />
-          <Row>
-            <span>Level</span>
-            <NumberInput
-              format='integer'
-              placeholder='Level'
-              value={mutablePlanet.level}
-              onChange={(e: Event & React.ChangeEvent<DarkForestNumberInput>) => {
-                setMutablePlanet({ ...mutablePlanet, level: e.target.value as number });
-              }}
-            />
-          </Row>
-          <Row>
-            <Checkbox label='Mirror X' />
-            <Checkbox label='Mirror Y' />
-          </Row>
-          {config.TARGET_PLANETS.displayValue ? (
-            <Checkbox
-              label='Target?'
-              checked={mutablePlanet.isTargetPlanet}
-              onChange={(e: Event & React.ChangeEvent<DarkForestCheckbox>) => {
-                setMutablePlanet({ ...mutablePlanet, isTargetPlanet: e.target.checked });
-              }}
-            />
-          ) : (
-            <span onClick={() => history.push(`${root}/settings/arena`)}>
-              Enable Target Planets
-            </span>
-          )}
-          {config.MANUAL_SPAWN.displayValue ? (
-            <Checkbox
-              label='Spawn?'
-              checked={mutablePlanet.isSpawnPlanet}
-              onChange={(e: Event & React.ChangeEvent<DarkForestCheckbox>) => {
-                setMutablePlanet({ ...mutablePlanet, isSpawnPlanet: e.target.checked });
-              }}
-            />
-          ) : (
-            <span onClick={() => history.push(`${root}/settings/spawn`)}>Enable Spawn Planets</span>
-          )}
           <EditorButton
             cancel={isPlacementMode}
             onClick={() => setIsPlacementMode(!isPlacementMode)}
@@ -162,8 +128,7 @@ export const LobbyMapEditor: React.FC<{
           lobbyAdminTools={lobbyAdminTools}
           onPlanetHover={(planet) => {}}
           onError={onError}
-          onPlanetSelect={(planet: LobbyPlanet, index: number) => {
-            setSelectedPlanet(planet);
+          onPlanetSelect={(index: number) => {
             setSelectedPlanetIndex(index);
           }}
           root={root}
@@ -177,11 +142,14 @@ export const LobbyMapEditor: React.FC<{
               style={{ width: '400px', height: '400px' }}
               onError={onError}
               onClick={(coords: WorldCoords) => {
+                console.log('Staging...', coords);
                 stagePlanet(coords);
                 setIsPlacementMode(false);
               }}
               minimapConfig={minimapConfig}
               disabled={!isPlacementMode}
+              mirrorX={mirrorAxes.x}
+              mirrorY={mirrorAxes.y}
             />
             <Minimap
               style={{ width: '400px', height: '400px' }}
@@ -229,7 +197,6 @@ export const LobbyMapEditor: React.FC<{
           onDelete={() => setSelectedPlanetIndex(undefined)}
           onClose={() => {
             setSelectedPlanetIndex(undefined);
-            setSelectedPlanet(undefined);
           }}
           root={root}
         />

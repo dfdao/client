@@ -63,17 +63,12 @@ export function LobbyConfigPage({
   const [lobbyAdminTools, setLobbyAdminTools] = useState<LobbyAdminTools>();
   const [lobbyTx, setLobbyTx] = useState<string | undefined>();
   const [status, setStatus] = useState<Status>(undefined);
-  const [error, setError] = useState<string | undefined>();
+  const [error, setError] = useState<string | undefined>(undefined);
   const [playerTwitter, setPlayerTwitter] = useState<string | undefined>();
 
   const createDisabled = status === 'creating' || status === 'created';
   const creating = status === 'creating' || (status === 'created' && !lobbyAdminTools?.address);
   const created = status === 'created' && lobbyAdminTools?.address;
-
-  const LobbyCreationContext = createContext({
-    root: root,
-  });
-  const history = useHistory();
 
   useEffect(() => {
     async function doCreateReveal() {
@@ -94,7 +89,6 @@ export function LobbyConfigPage({
   }, []);
 
   async function bulkCreateAndRevealPlanets() {
-    console.log('The bulk creatooooor');
     if (!lobbyAdminTools) {
       setError("You haven't created a lobby.");
       throw new Error('No lobby');
@@ -228,7 +222,7 @@ export function LobbyConfigPage({
 
   return (
     <>
-      <Toast open={!!error} title='Error' description={error} />
+      <Toast open={!!error} title='Error' description={error} onClose={() => setError(undefined)} />
       <Switch>
         <Route path={root} exact={true}>
           <LobbyMapSelectPage

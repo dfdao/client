@@ -1,6 +1,6 @@
 import { BLOCK_EXPLORER_URL } from '@darkforest_eth/constants';
 import _, { chunk } from 'lodash';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { CreatedPlanet, LobbyAdminTools } from '../../../Backend/Utils/LobbyAdminTools';
@@ -32,7 +32,7 @@ export function PlanetListPane({
   config: LobbyConfigState;
   onUpdate: (change: LobbyConfigAction) => void;
   onPlanetHover: (planet: LobbyPlanet) => void;
-  onPlanetSelect: (planet: LobbyPlanet, index: number) => void;
+  onPlanetSelect: (index: number) => void;
   root: string;
   lobbyAdminTools: LobbyAdminTools | undefined;
   onError: (msg: string) => void;
@@ -65,14 +65,13 @@ export function PlanetListPane({
     return (
       <StagedPlanetListItem
         onMouseEnter={() => {
-          // onPlanetHover(planet);
           setHoveringPlanet(true);
         }}
         onMouseLeave={() => {
           setHoveringPlanet(false);
         }}
         onClick={() => {
-          onPlanetSelect(planet, index);
+          onPlanetSelect(index);
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -101,7 +100,10 @@ export function PlanetListPane({
         <div>
           {hoveringPlanet && (
             <CloseButton
-              onClick={() => onUpdate({ type: 'ADMIN_PLANETS', value: planet, index: index })}
+              onClick={() => {
+                onUpdate({ type: 'ADMIN_PLANETS', value: planet, index: index });
+                console.log('NEW PLANETS', config.ADMIN_PLANETS);
+              }}
             />
           )}
         </div>
@@ -110,7 +112,10 @@ export function PlanetListPane({
   };
 
   function StagedPlanets({ config }: LobbiesPaneProps) {
-    const LobbyPlanets = config.ADMIN_PLANETS.currentValue;
+    const LobbyPlanets = useMemo(() => {
+      return config.ADMIN_PLANETS.currentValue ?? [];
+    }, [config.ADMIN_PLANETS]);
+
     const [currentPage, setCurrentPage] = useState<number>(0);
     return LobbyPlanets && LobbyPlanets.length > 0 ? (
       <>
@@ -176,7 +181,7 @@ export function PlanetListPane({
           setHoveringPlanet(false);
         }}
         onClick={() => {
-          onPlanetSelect(planet, index);
+          onPlanetSelect(index);
         }}
       >
         {hoveringPlanet && (
