@@ -103,9 +103,9 @@ class Repeater {
     // @ts-ignore
     if (attacksJSON) this.attacks = JSON.parse(attacksJSON);
   }
-  addAttack(srcId, targetId, pcTrigger, pcRemain, sendSilver) {
-    let newAttacks = this.attacks.filter(item => item.srcId !== srcId);
-    newAttacks = [{ srcId, targetId, pcTrigger, pcRemain, sendSilver }, ...newAttacks];
+  addAttack(attack) {
+    let newAttacks = this.attacks.filter(a => a.srcId !== attack.srcId);
+    newAttacks = [attack, ...newAttacks];
     this.attacks = newAttacks;
     this.saveAttacks();
   }
@@ -118,11 +118,11 @@ class Repeater {
     this.saveAttacks();
   }
   stopFiring(planetId) {
-    this.attacks = this.attacks.filter(item => item.srcId !== planetId);
+    this.attacks = this.attacks.filter(a => a.srcId !== planetId);
     this.saveAttacks();
   }
   stopBeingFiredAt(planetId) {
-    this.attacks = this.attacks.filter(item => item.targetId !== planetId);
+    this.attacks = this.attacks.filter(a => a.targetId !== planetId);
     this.saveAttacks();
   }
   coreLoop() {
@@ -196,7 +196,7 @@ function Attack({ attack, onDelete }) {
     </div>
   `;
 }
-function AddAttack({ onCreate, stopFiring, stopBeingFiredAt }) {
+function AddAttack({ startFiring, stopFiring, stopBeingFiredAt }) {
   let [planet, setPlanet] = useState(ui.getSelectedPlanet());
   let [source, setSource] = useState(undefined);
   let [target, setTarget] = useState(undefined);
@@ -212,6 +212,11 @@ function AddAttack({ onCreate, stopFiring, stopBeingFiredAt }) {
       window.removeEventListener('click', onClick);
     };
   }, []);
+
+  // Note: an attack is an object with this format:
+  // { srcId, targetId, pcTrigger, pcRemain, sendSilver }
+  // Each of the five items is used to control different aspects of the attack
+
   return html`
     <div style=${{ display: 'flex', flexDirection: 'column' }}>
       <div style=${{ display: 'flex' }}>
@@ -240,7 +245,13 @@ function AddAttack({ onCreate, stopFiring, stopBeingFiredAt }) {
       <div>
         <button
           style=${{...VerticalSpacing, width: 150}}
-          onClick=${() => target && source && onCreate(source.locationId, target.locationId, pcTrigger, pcRemain, sendSilver)}
+          onClick=${() => target && source && startFiring({
+            srcId: source.locationId,
+            targetId: target.locationId,
+            pcTrigger,
+            pcRemain,
+            sendSilver
+          })}
         >
           Start Firing!
         </button>
@@ -308,7 +319,7 @@ function AttackList({ repeater }) {
       >Auto-attack when source planet >75% energy. Will send all planet silver
     </i>
     <${AddAttack}
-      onCreate=${(srcId, targetId, pcTrigger, pcRemain, sendSilver) => repeater.addAttack(srcId, targetId, pcTrigger, pcRemain, sendSilver)}
+      startFiring=${attack => repeater.addAttack(attack)}
       stopFiring=${planetId => repeater.stopFiring(planetId)}
       stopBeingFiredAt=${planetId => repeater.stopBeingFiredAt(planetId)}
     />
@@ -328,9 +339,6 @@ function App({ repeater }) {
   return html`<${AttackList} repeater=${repeater} />`;
 }
 class Plugin {
-  // localStorage.setItem("names", JSON.stringify(names));
-  // //...
-  // var storedNames = JSON.parse(localStorage.getItem("names"));
   constructor() {
     this.repeater = new Repeater();
     this.root = undefined;
