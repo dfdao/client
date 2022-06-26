@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
 import * as ToastPrimitive from '@radix-ui/react-toast';
-import { CloseButton, CloseIcon } from '../Panes/Lobbies/LobbiesUtils';
+import { CloseIcon } from '../Panes/Lobbies/LobbiesUtils';
 
 export interface ToastProps {
   open: boolean;
@@ -10,6 +10,7 @@ export interface ToastProps {
   description?: string;
   viewportPadding?: [number, number];
   direction?: 'left' | 'right';
+  flash?: boolean;
 }
 
 export const Toast: React.FC<ToastProps> = ({
@@ -19,13 +20,13 @@ export const Toast: React.FC<ToastProps> = ({
   description,
   viewportPadding = [8, 8],
   direction = 'right',
+  flash,
 }) => {
   const [hovering, setHovering] = useState<boolean>(false);
   return (
     <ToastPrimitive.Provider>
       <Container
         open={open}
-        forceMount
         asChild
         onMouseEnter={() => setHovering(true)}
         onMouseLeave={() => setHovering(false)}
@@ -35,7 +36,7 @@ export const Toast: React.FC<ToastProps> = ({
             <CloseIcon />
           </CloseButtonStyle>
           <TextContent>
-            <ToastText>{title}</ToastText>
+            <ToastText flash={flash ?? false}>{title}</ToastText>
             {description && <ToastDescription>{description}</ToastDescription>}
           </TextContent>
         </div>
@@ -45,8 +46,25 @@ export const Toast: React.FC<ToastProps> = ({
   );
 };
 
-const ToastText = styled(ToastPrimitive.Title)`
+const ToastText = styled(ToastPrimitive.Title)<{ flash: boolean }>`
   font-weight: 510;
+  ${({ flash }) =>
+    flash &&
+    css`
+      animation-name: flash;
+      animation-iteration-count: infinite;
+      animation-direction: alternate;
+      animation-duration: 1s;
+      animation-timing-function: cubic-bezier(0.455, 0.03, 0.515, 0.955);
+    `}
+  @keyframes flash {
+    0% {
+      opacity: 0.5;
+    }
+    100% {
+      opacity: 1;
+    }
+  } ;
 `;
 const ToastDescription = styled(ToastPrimitive.Description)`
   opacity: 0.6;

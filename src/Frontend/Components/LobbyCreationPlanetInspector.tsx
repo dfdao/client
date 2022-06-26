@@ -40,16 +40,16 @@ export const LobbyCreationPlanetInspector: React.FC<LobbyPlanetInspectorProps> =
 
   useEffect(() => {
     setMutablePlanet(selectedPlanet);
-  }, [selectedPlanet]);
+  }, [selectedPlanet, selectedIndex]);
 
   return (
     <Inspector>
       <InspectorInner>
         <HeaderRow>
-          <InspectorTitle>{PlanetTypeNames[selectedPlanet.planetType]}</InspectorTitle>
+          <InspectorTitle>{PlanetTypeNames[mutablePlanet.planetType]}</InspectorTitle>
           <CloseButton onClick={onClose} />
         </HeaderRow>
-        <span style={{ maxWidth: '320px' }}>{PLANET_DESCRIPTION[selectedPlanet.planetType]}</span>
+        <span style={{ maxWidth: '320px' }}>{PLANET_DESCRIPTION[mutablePlanet.planetType]}</span>
         <PlanetPropEditor
           selectedPlanet={mutablePlanet}
           canAddPlanets={config.ADMIN_CAN_ADD_PLANETS.displayValue ?? false}

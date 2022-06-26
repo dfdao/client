@@ -1,23 +1,15 @@
 import { EthAddress, WorldCoords } from '@darkforest_eth/types';
 import { colors } from '@darkforest_eth/ui';
-import React, { useMemo, useState, CSSProperties, useEffect } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { LobbyAdminTools } from '../../Backend/Utils/LobbyAdminTools';
-import Button from '../Components/Button';
-import { SelectFrom, Spacer } from '../Components/CoreUI';
-import {
-  Checkbox,
-  DarkForestCheckbox,
-  DarkForestNumberInput,
-  NumberInput,
-} from '../Components/Input';
+import { Spacer } from '../Components/CoreUI';
 import { LoadingSpinner } from '../Components/LoadingSpinner';
 import { LobbyCreationPlanetInspector } from '../Components/LobbyCreationPlanetInspector';
 import { Minimap } from '../Components/Minimap';
 import { MinimapEditor } from '../Components/MinimapEditor';
-import { PlanetPropEditor } from '../Components/LobbyPlanetPropEditor';
-import { Row } from '../Components/Row';
+import { InputRow, LabeledInput, PlanetPropEditor } from '../Components/LobbyPlanetPropEditor';
 import { Sidebar } from '../Components/Sidebar';
 import { ConfigDownload, DEFAULT_PLANET, LobbyPlanet } from '../Panes/Lobbies/LobbiesUtils';
 import { KEY_ITEMS, MinimapKeys } from '../Panes/Lobbies/MinimapPane';
@@ -30,6 +22,8 @@ import {
   LobbyInitializers,
 } from '../Panes/Lobbies/Reducer';
 import { useIsDown } from '../Utils/KeyEmitters';
+import { Checkbox } from '../Components/Input';
+import { Toast } from '../Components/Toast';
 
 export const LobbyMapEditor: React.FC<{
   updateConfig: React.Dispatch<LobbyAction>;
@@ -53,6 +47,7 @@ export const LobbyMapEditor: React.FC<{
   const [refreshing, setRefreshing] = useState(false);
   const [selectedPlanetIndex, setSelectedPlanetIndex] = useState<number | undefined>();
   const [mutablePlanet, setMutablePlanet] = useState<LobbyPlanet>(DEFAULT_PLANET);
+  const [hoverCoords, setHoverCoords] = useState<WorldCoords | undefined>();
   const [mirrorAxes, setMirrorAxes] = useState<{ x: boolean; y: boolean }>({ x: false, y: false });
   const [isPlacementMode, setIsPlacementMode] = useState<boolean>(false);
   const history = useHistory();
@@ -82,35 +77,49 @@ export const LobbyMapEditor: React.FC<{
     updateConfig({ type: 'BIOMEBASE_KEY', value: seed + 2 });
   };
 
-  function stagePlanet(planetCoord: WorldCoords) {
+  function stagePlanet(planetCoords: Set<string>) {
     // if (createdPlanets?.find((p) => planet.x == p.x && planet.y == p.y)) {
     //   setError('planet with identical coords created');
     //   return;
     // }
-    if (
-      config.ADMIN_PLANETS.displayValue?.find((p) => planetCoord.x == p?.x && planetCoord.y == p?.y)
-    ) {
-      onError('Planet with identical coords staged');
-      return;
-    }
-    const newPlanetToStage: LobbyPlanet = {
-      x: planetCoord.x,
-      y: planetCoord.y,
-      level: mutablePlanet.level,
-      planetType: mutablePlanet.planetType,
-      isTargetPlanet: mutablePlanet.isTargetPlanet,
-      isSpawnPlanet: mutablePlanet.isSpawnPlanet,
-    };
+    [...planetCoords].forEach((pc: string, index: number) => {
+      const planetCoord = JSON.parse(pc);
+      if (
+        config.ADMIN_PLANETS.displayValue?.find(
+          (p) => planetCoord.x == p?.x && planetCoord.y == p?.y
+        )
+      ) {
+        onError('Planet with identical coords staged');
+        return;
+      }
+      const newPlanetToStage: LobbyPlanet = {
+        x: planetCoord.x,
+        y: planetCoord.y,
+        level: mutablePlanet.level,
+        planetType: mutablePlanet.planetType,
+        isTargetPlanet: mutablePlanet.isTargetPlanet,
+        isSpawnPlanet: mutablePlanet.isSpawnPlanet,
+      };
 
-    updateConfig({
-      type: 'ADMIN_PLANETS',
-      value: newPlanetToStage,
-      index: config.ADMIN_PLANETS.displayValue?.length || 0,
+      updateConfig({
+        type: 'ADMIN_PLANETS',
+        value: newPlanetToStage,
+        index: config.ADMIN_PLANETS.displayValue?.length ?? 0,
+      });
     });
   }
 
   return (
     <Container>
+      <Toast
+        open={isPlacementMode}
+        title='Click on map to place planet'
+        description={`Coordinates (${hoverCoords ? hoverCoords.x : 'Invalid'}, ${
+          hoverCoords ? hoverCoords.y : 'Invalid'
+        })`}
+        flash
+        onClose={() => {}}
+      />
       <Sidebar previousPath={`${root}/confirm`} title={'← Confirm map'}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <span>Add a planet</span>
@@ -120,17 +129,41 @@ export const LobbyMapEditor: React.FC<{
             spawnPlanetsEnabled={config.MANUAL_SPAWN.displayValue ?? false}
             targetPlanetsEnabled={config.TARGET_PLANETS.displayValue ?? false}
             excludePlanetTypes={['x', 'y']}
-            includeTypes={['Mirror X', 'Mirror Y']}
             onChange={(planet) => setMutablePlanet(planet)}
             root={root}
           />
+          <InputRow>
+            <LabeledInput>Mirror X</LabeledInput>
+            <Checkbox
+              checked={mirrorAxes.x}
+              onChange={() => {
+                setMirrorAxes({ ...mirrorAxes, x: !mirrorAxes.x });
+              }}
+            />
+          </InputRow>
+          <InputRow>
+            <LabeledInput>Mirror Y</LabeledInput>
+            <Checkbox
+              checked={mirrorAxes.y}
+              onChange={() => {
+                setMirrorAxes({ ...mirrorAxes, y: !mirrorAxes.y });
+              }}
+            />
+          </InputRow>
           <EditorButton
             cancel={isPlacementMode}
             onClick={() => setIsPlacementMode(!isPlacementMode)}
           >
             {isPlacementMode ? 'Cancel' : 'Set coordinates on map'}
           </EditorButton>
-          <div style={{ display: 'flex', alignItems: 'center', marginTop: '8px' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginTop: '8px',
+            }}
+          >
             Or {placementModeShortcut ? 'release' : 'hold'}{' '}
             <Key active={placementModeShortcut}>S</Key> to{' '}
             {placementModeShortcut ? 'cancel' : 'place planets'}
@@ -156,17 +189,18 @@ export const LobbyMapEditor: React.FC<{
             <MinimapEditor
               style={{ width: '400px', height: '400px' }}
               onError={onError}
-              onClick={(coords: WorldCoords) => {
-                console.log('Staging...', coords);
+              onClick={(coords: Set<string>) => {
                 stagePlanet(coords);
                 if (!placementModeShortcut) {
                   setIsPlacementMode(false);
                 }
               }}
+              onHover={(coords: WorldCoords) => {
+                setHoverCoords(coords);
+              }}
               minimapConfig={minimapConfig}
               disabled={!isPlacementMode}
-              mirrorX={mirrorAxes.x}
-              mirrorY={mirrorAxes.y}
+              mirrorAxes={mirrorAxes}
             />
             <Minimap
               style={{ width: '400px', height: '400px' }}
@@ -292,7 +326,7 @@ const EditorButton = styled.button<{ cancel: boolean }>`
   justify-content: center;
 `;
 
-// copied from { DarkForestShortcutButton } from '@darkforest_eth/ui';
+// styles copied from { DarkForestShortcutButton } from '@darkforest_eth/ui';
 const Key = styled.kbd<{ active: boolean }>`
   font-size: 0.7rem;
   line-height: 1.4;

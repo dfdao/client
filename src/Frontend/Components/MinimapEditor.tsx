@@ -1,4 +1,5 @@
 import { WorldCoords } from '@darkforest_eth/types';
+import { debounce } from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { removeAlphabet } from '../Panes/Lobbies/LobbiesUtils';
@@ -8,18 +9,18 @@ import { CANVAS_SIZE } from './Minimap';
 export const MinimapEditor: React.FC<{
   style?: { width: string; height: string };
   onError: (msg: string) => void;
-  onClick: (clickedCoords: WorldCoords) => void;
+  onClick: (clickedCoords: Set<string>) => void;
+  onHover?: (hoveredCoords: WorldCoords) => void;
   minimapConfig: MinimapConfig | undefined;
-  mirrorX: boolean;
-  mirrorY: boolean;
+  mirrorAxes: { x: boolean; y: boolean };
   disabled: boolean;
 }> = ({
   style = { width: '400px', height: '400px' },
   onError,
+  onHover,
   onClick,
   minimapConfig,
-  mirrorX,
-  mirrorY,
+  mirrorAxes,
   disabled,
 }) => {
   const [minimapCoords, setMinimapCoords] = useState<WorldCoords[]>([]);
@@ -99,16 +100,15 @@ export const MinimapEditor: React.FC<{
   const handleMouseClick = (
     canvas: React.MutableRefObject<HTMLCanvasElement | null>,
     e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
-    mirrorX: boolean,
-    mirrorY: boolean
+    mirror: { x: boolean; y: boolean }
   ) => {
     const ctx = canvasPlanetLayer.current!.getContext('2d');
     if (!ctx) return;
     const adjustedPointer = getAdjustedPointer(canvas!, e.clientX, e.clientY);
-    console.log('adjustedPointer', adjustedPointer);
     if (!adjustedPointer) return;
     // check if the click overlaps with anything in minimapCoords
     const dot = minimapConfig.dot * 1.2;
+    const toStage: Set<string> = new Set();
     minimapCoords.forEach((coord, idx) => {
       if (
         adjustedPointer.x > coord.x - dot &&
@@ -116,7 +116,8 @@ export const MinimapEditor: React.FC<{
         adjustedPointer.y > coord.y - dot &&
         adjustedPointer.y < coord.y + dot
       ) {
-        ctx.fillStyle = 'aquamarine';
+        // for debugging
+        // ctx.fillStyle = 'aquamarine';
         let nearest: WorldCoords | undefined;
         let nearestDist = Infinity;
         minimapCoords.forEach((coord) => {
@@ -135,21 +136,19 @@ export const MinimapEditor: React.FC<{
             x: (nearest.x - parseInt(CANVAS_SIZE.width) / 2) * scaleFactor,
             y: (nearest.y - parseInt(CANVAS_SIZE.height) / 2) * -scaleFactor,
           };
-          if (mirrorX) {
-            const mirroredX = normalizedPlanetCoords.x * -1;
-            onClick({
-              x: mirroredX,
-              y: normalizedPlanetCoords.y,
-            });
+          let mirroredCoords: undefined | WorldCoords;
+          if (mirror.x || mirror.y) {
+            mirroredCoords = {
+              x: mirror.x ? normalizedPlanetCoords.x * -1 : normalizedPlanetCoords.x,
+              y: mirror.y ? normalizedPlanetCoords.y * -1 : normalizedPlanetCoords.y,
+            };
           }
-          if (mirrorY) {
-            const mirroredY = normalizedPlanetCoords.y * -1;
-            onClick({
-              x: normalizedPlanetCoords.x,
-              y: mirroredY,
-            });
+          if (mirroredCoords) {
+            toStage.add(JSON.stringify(mirroredCoords));
           }
-          onClick(normalizedPlanetCoords);
+          toStage.add(JSON.stringify(normalizedPlanetCoords));
+          onClick(toStage);
+          return;
         }
       }
     });
@@ -162,9 +161,21 @@ export const MinimapEditor: React.FC<{
       width={parseInt(removeAlphabet(style.width))}
       height={parseInt(removeAlphabet(style.height))}
       showCrosshair={!disabled}
+      onMouseMove={(e) => {
+        if (disabled) return;
+        if (!onHover) return;
+        const adjustedPointer = getAdjustedPointer(canvasPlanetLayer, e.clientX, e.clientY);
+        if (adjustedPointer) {
+          const normalizedPointer = {
+            x: (adjustedPointer.x - parseInt(CANVAS_SIZE.width) / 2) * scaleFactor,
+            y: (adjustedPointer.y - parseInt(CANVAS_SIZE.height) / 2) * -scaleFactor,
+          };
+          onHover(normalizedPointer);
+        }
+      }}
       onMouseDown={(e) => {
         if (disabled) return;
-        handleMouseClick(canvasPlanetLayer!, e, mirrorX, mirrorY);
+        handleMouseClick(canvasPlanetLayer!, e, mirrorAxes);
       }}
     />
   );

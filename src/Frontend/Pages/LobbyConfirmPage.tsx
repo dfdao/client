@@ -127,27 +127,46 @@ export function LobbyConfirmPage({
       <MapContainer>
         <Title>Confirm Map</Title>
         <Spacer height={32} />
-        <span style={{ fontSize: '16px' }}>
-          You're about to create a map for{' '}
-          <span style={{ color: '#5CCDF0' }}>
-            {config.ADMIN_PLANETS.displayValue?.filter((p) => p?.isSpawnPlanet).length || 0}{' '}
-            players.
+        {created ? (
+          <span style={{ fontSize: '16px' }}>
+            You created a map for{' '}
+            <span style={{ color: '#5CCDF0' }}>
+              {lobbyAdminTools?.planets.filter((p) => p?.isSpawnPlanet).length || 0} players.
+            </span>
+            There are{' '}
+            <span style={{ color: '#FF44B7' }}>
+              {lobbyAdminTools?.planets?.filter((p) => p?.isTargetPlanet).length || 0} target
+              planets
+            </span>{' '}
+            and{' '}
+            <span style={{ color: '#E8E228' }}>
+              {lobbyAdminTools?.planets.filter((p) => p?.isSpawnPlanet).length || 0} spawn planets.
+            </span>
           </span>
-          There are{' '}
-          <span style={{ color: '#FF44B7' }}>
-            {config.ADMIN_PLANETS.displayValue?.filter((p) => p?.isTargetPlanet).length || 0} target
-            planets
-          </span>{' '}
-          and{' '}
-          <span style={{ color: '#E8E228' }}>
-            {config.ADMIN_PLANETS.displayValue?.filter((p) => p?.isSpawnPlanet).length || 0} spawn
-            planets.
+        ) : (
+          <span style={{ fontSize: '16px' }}>
+            You're about to create a map for{' '}
+            <span style={{ color: '#5CCDF0' }}>
+              {config.ADMIN_PLANETS.displayValue?.filter((p) => p?.isSpawnPlanet).length || 0}{' '}
+              players
+            </span>{' '}
+            ({config.ADMIN_PLANETS.displayValue?.length ?? 0} planets total). There are{' '}
+            <span style={{ color: '#FF44B7' }}>
+              {config.ADMIN_PLANETS.displayValue?.filter((p) => p?.isTargetPlanet).length || 0}{' '}
+              target planets
+            </span>{' '}
+            and{' '}
+            <span style={{ color: '#E8E228' }}>
+              {config.ADMIN_PLANETS.displayValue?.filter((p) => p?.isSpawnPlanet).length || 0} spawn
+              planets.
+            </span>
+            <br />
+            <br />
+            Once your world is created, your custom planets will automatically be created on-chain
+            and you can enter the universe!
           </span>
-          <br />
-          <br />
-          Once your world is created, your custom planets will automatically be created on-chain and
-          you can enter the universe!
-        </span>
+        )}
+
         <Spacer height={24} />
         {!created ? (
           <Button primary onClick={validateAndCreateLobby}>

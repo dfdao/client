@@ -12,7 +12,6 @@ export interface PlanetPropEditorProps {
   spawnPlanetsEnabled: boolean;
   root: string;
   excludePlanetTypes?: planetInputType[];
-  includeTypes?: string[];
   onChange: (planet: LobbyPlanet) => void;
 }
 
@@ -31,12 +30,15 @@ export const PlanetPropEditor: React.FC<PlanetPropEditorProps> = ({
   targetPlanetsEnabled,
   spawnPlanetsEnabled,
   excludePlanetTypes,
-  includeTypes,
   root,
   onChange,
 }) => {
   const [mutablePlanet, setMutablePlanet] = useState<LobbyPlanet>(selectedPlanet);
   const history = useHistory();
+
+  useEffect(() => {
+    setMutablePlanet(selectedPlanet);
+  }, [selectedPlanet]);
 
   useEffect(() => {
     onChange(mutablePlanet);
@@ -138,12 +140,12 @@ export const PlanetPropEditor: React.FC<PlanetPropEditorProps> = ({
   );
 };
 
-const InputRow = styled.div`
+export const InputRow = styled.div`
   display: flex;
   align-items: center;
 `;
 
-const LabeledInput = styled.div`
+export const LabeledInput = styled.div`
   display: flex;
   width: 100%;
   justify-content: space-between;
