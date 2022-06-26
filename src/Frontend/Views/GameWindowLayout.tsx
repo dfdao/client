@@ -45,6 +45,7 @@ export function GameWindowLayout({
   setTerminalVisible: (visible: boolean) => void;
 }) {
   const uiManager = useUIManager();
+  const gameManager = uiManager.getGameManager();
   const modalManager = uiManager.getModalManager();
   const modalPositions = modalManager.getModalPositions();
 
@@ -90,9 +91,9 @@ export function GameWindowLayout({
     setModalsContainer(node);
   }, []);
 
-  const [waitingRoomVisible, setWaitingRoomVisible] = useBooleanSetting(uiManager, Setting.NewPlayer);
+  const [waitingRoomVisible, setWaitingRoomVisible] = useState(!uiManager.getGameStarted());
 
-  const [onboardingVisible, setOnboardingVisible] = useBooleanSetting(uiManager, Setting.NewPlayer);
+  // const [onboardingVisible, setOnboardingVisible] = useBooleanSetting(uiManager, Setting.NewPlayer);
   const [tutorialVisible, setTutorialVisible] = useBooleanSetting(uiManager, Setting.TutorialOpen);
   const selected = useSelectedPlanet(uiManager).value;
   const [selectedPlanetVisible, setSelectedPlanetVisible] = useState<boolean>(!!selected);
@@ -120,6 +121,8 @@ export function GameWindowLayout({
   }, [userTerminalVisibleSetting, setTerminalVisibleSetting, terminalVisible]);
 
   useEffect(() => setSelectedPlanetVisible(!!selected), [selected, setSelectedPlanetVisible]);
+
+  useEffect(() => setWaitingRoomVisible(!uiManager.getGameStarted())), [uiManager.getGameStarted()];
 
   useOnUp(
     TOGGLE_DIAGNOSTICS_PANE,
@@ -179,14 +182,14 @@ export function GameWindowLayout({
         )}
       </div>
 
-      <OnboardingPane
+      {/* <OnboardingPane
         isCompetitive={uiManager.getGameManager().isCompetitive()}
         visible={onboardingVisible}
         onClose={(openTutorial: boolean) => {
           setOnboardingVisible(false);
           openTutorial && setTutorialVisible(true);
         }}
-      />
+      /> */}
 
       <WaitingRoomPane
         visible = {waitingRoomVisible}

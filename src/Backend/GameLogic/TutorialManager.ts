@@ -10,6 +10,8 @@ export const enum TutorialManagerEvent {
 
 export const enum TutorialState {
   None,
+  Security,
+  HomePlanet,
   SendFleet,
   SpaceJunk,
   Spaceship,

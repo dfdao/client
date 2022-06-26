@@ -237,7 +237,7 @@ export function TopBar({ twitterVerifyHook }: { twitterVerifyHook: Hook<boolean>
       <NetworkHealth />
       <Gameover/>
       <Paused />
-      <Play />
+      {/* <Play /> */}
     </TopBarContainer>
   );
 }
