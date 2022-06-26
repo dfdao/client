@@ -91,6 +91,18 @@ export function LobbyConfirmPage({
     window.open(url);
   };
 
+  const numStagedSpawnPlanets =
+    config.ADMIN_PLANETS.displayValue?.filter((p) => p?.isSpawnPlanet).length ?? 0;
+
+  const numStagedTargetPlanets =
+    config.ADMIN_PLANETS.displayValue?.filter((p) => p?.isTargetPlanet).length ?? 0;
+
+  const totalStagedPlanets = config.ADMIN_PLANETS.displayValue?.length ?? 0;
+
+  const numCreatedSpawnPlanets =
+    lobbyAdminTools?.planets.filter((p) => p.isSpawnPlanet).length ?? 0;
+  const numCreatedTargetPlanets =
+    lobbyAdminTools?.planets.filter((p) => p.isTargetPlanet).length ?? 0;
   const history = useHistory();
   return (
     <Container>
@@ -131,34 +143,31 @@ export function LobbyConfirmPage({
           <span style={{ fontSize: '16px' }}>
             You created a map for{' '}
             <span style={{ color: '#5CCDF0' }}>
-              {lobbyAdminTools?.planets.filter((p) => p?.isSpawnPlanet).length || 0} players.
+              {numCreatedSpawnPlanets} player{numCreatedTargetPlanets == 1 ? '' : 's'}.
             </span>
-            There are{' '}
+            There {numCreatedTargetPlanets == 1 ? 'is ' : 'are '}
             <span style={{ color: '#FF44B7' }}>
-              {lobbyAdminTools?.planets?.filter((p) => p?.isTargetPlanet).length || 0} target
-              planets
+              {numCreatedTargetPlanets} target planet{numCreatedTargetPlanets == 1 ? '' : 's'}.
             </span>{' '}
             and{' '}
             <span style={{ color: '#E8E228' }}>
-              {lobbyAdminTools?.planets.filter((p) => p?.isSpawnPlanet).length || 0} spawn planets.
+              {numCreatedSpawnPlanets} spawn planet{numCreatedSpawnPlanets == 1 ? '' : 's'}.
             </span>
           </span>
         ) : (
           <span style={{ fontSize: '16px' }}>
             You're about to create a map for{' '}
             <span style={{ color: '#5CCDF0' }}>
-              {config.ADMIN_PLANETS.displayValue?.filter((p) => p?.isSpawnPlanet).length || 0}{' '}
-              players
+              {numStagedSpawnPlanets} player{numStagedSpawnPlanets == 1 ? '' : 's'}
             </span>{' '}
-            ({config.ADMIN_PLANETS.displayValue?.length ?? 0} planets total). There are{' '}
+            ({totalStagedPlanets} planet{totalStagedPlanets == 1 ? '' : 's'} total). There{' '}
+            {numStagedTargetPlanets == 1 ? 'is ' : 'are '}
             <span style={{ color: '#FF44B7' }}>
-              {config.ADMIN_PLANETS.displayValue?.filter((p) => p?.isTargetPlanet).length || 0}{' '}
-              target planets
+              {numStagedTargetPlanets} target planet{numStagedTargetPlanets == 1 ? '' : 's'}
             </span>{' '}
             and{' '}
             <span style={{ color: '#E8E228' }}>
-              {config.ADMIN_PLANETS.displayValue?.filter((p) => p?.isSpawnPlanet).length || 0} spawn
-              planets.
+              {numStagedSpawnPlanets} spawn planet{numStagedSpawnPlanets == 1 ? '' : 's'}.
             </span>
             <br />
             <br />
