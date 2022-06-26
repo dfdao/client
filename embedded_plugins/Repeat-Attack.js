@@ -62,8 +62,12 @@ const SEND_ALL_SILVER = 2;
 const INITIAL_SILVER_STATUS = UPGRADE_FIRST;
 const toggleSilverStatus = val => (val + 1) % 3;  // 3 way toggle
 
+const viewport = ui.getViewport();
+const PI_2 = 6.2831853;  // 2 * pi, the number of radians in a complete circle
+const [DESYNC_X, DESYNC_Y] = [101, 103];  // Desynchronises pulsing of separate planets using prime numbers multiplied by canvas coord components
+
 const PLANET_UNKNOWN = '?????';
-const getPlanetString = (locationId) => {
+const getPlanetString = locationId => {
   const planet = df.getPlanetWithId(locationId);
   if(!planet) return PLANET_UNKNOWN;
   let type = 'P';
@@ -115,6 +119,7 @@ class Repeater {
       //@ts-ignore
       window.__CORELOOP__.forEach((id) => window.clearInterval(id));
     }
+    this.uiSelectedPlanet = null;
     this.attacks = [];
     this.account = df.getAccount();
     this.loadAttacks();
@@ -243,7 +248,7 @@ function Attack({ attack, onToggleActive, onToggleSilver, onDelete }) {
     </div>
   `;
 }
-function AddAttack({ startFiring, stopFiring, stopBeingFiredAt }) {
+function AddAttack({ repeater, startFiring, stopFiring, stopBeingFiredAt }) {
   let [planet, setPlanet] = useState(ui.getSelectedPlanet());
   let [source, setSource] = useState(undefined);
   let [target, setTarget] = useState(undefined);
@@ -253,7 +258,9 @@ function AddAttack({ startFiring, stopFiring, stopBeingFiredAt }) {
   let [sendSilverStatus, setSendSilverStatus] = useState(INITIAL_SILVER_STATUS);
   useLayoutEffect(() => {
     let onClick = () => {
-      setPlanet(ui.getSelectedPlanet());
+      const planet = ui.getSelectedPlanet();
+      setPlanet(planet);
+      repeater.uiSelectedPlanet = planet;
     };
     window.addEventListener('click', onClick);
     return () => {
@@ -385,6 +392,7 @@ function AttackList({ repeater }) {
       Auto-attack when source planet has enough energy!
     </i>
     <${AddAttack}
+      repeater=${repeater}
       startFiring=${attack => repeater.addAttack(attack)}
       stopFiring=${planetId => repeater.stopFiring(planetId)}
       stopBeingFiredAt=${planetId => repeater.stopBeingFiredAt(planetId)}
@@ -404,9 +412,57 @@ function AttackList({ repeater }) {
 function App({ repeater }) {
   return html`<${AttackList} repeater=${repeater} />`;
 }
+
+const drawHighlights = plugin => {
+  const ctx = plugin.ctx;
+  const timeMs = plugin.dateNow;
+  const planet = plugin.repeater.uiSelectedPlanet;
+  if (!planet || !planet.location) return;
+  const selectedPlanetId = planet.locationId;
+  const attacks = plugin.repeater.attacks;
+  const attacksSelectedIsSource = attacks.filter(a => a.srcId === selectedPlanetId);
+  const attacksSelectedIsTarget = attacks.filter(a => a.targetId === selectedPlanetId);
+  if (!attacksSelectedIsSource.length && !attacksSelectedIsTarget.length) return;
+  const getSawWave01 = (periodMs, planet) => {
+    const coords = planet.location.coords;
+    const adjustedTimeMs = timeMs + DESYNC_X * coords.x + DESYNC_Y * coords.y;  // Large number of seconds from 1970 (approx)
+    return (adjustedTimeMs % periodMs) / periodMs;  // Sawtooth Wave, position in cycle, between 0 and 1
+  }
+  const getTriWave01 = (periodMs, planet) => {
+    const sawWave01 = getSawWave01(periodMs, planet);
+    return 2 * Math.min(sawWave01, 1 - sawWave01);  // Triangle Wave, between 0 and 1
+  }
+  const drawHighlight = (planetId, rgba, periodMs, lineWidth, arcFraction) => {
+    const thePlanet = ui.getPlanetWithId(planetId);
+    const theCoords = thePlanet.location.coords;
+    ctx.strokeStyle = rgba;
+    ctx.setLineDash([12, 8]);
+    ctx.lineWidth = lineWidth;
+    ctx.beginPath();
+    const cX = viewport.worldToCanvasX(theCoords.x);
+    const cY = viewport.worldToCanvasY(theCoords.y);
+    const cR = 10 + viewport.worldToCanvasDist(1.4 * ui.getRadiusOfPlanetLevel(thePlanet.planetLevel));
+    const START_RADIANS = PI_2 * getSawWave01(periodMs, thePlanet);
+    ctx.arc(cX, cY, cR, START_RADIANS, START_RADIANS + PI_2 * arcFraction);  
+    ctx.stroke();
+    ctx.closePath();
+  }
+  attacksSelectedIsSource.forEach(a => a.active
+    ? drawHighlight(a.targetId, `rgba(255, 80, 80, 0.6)`, 23000, 8, 0.55)
+    : drawHighlight(a.targetId, `rgba(180, 140, 40, 0.6)`, 23000, 6, 0.3)
+  );
+  drawHighlight(selectedPlanetId, `rgba(80, 80, 255, 0.7)`, -12000, 6, 0.7);
+  attacksSelectedIsTarget.forEach(a => a.active
+    ? drawHighlight(a.srcId, `rgba(80, 255, 80, 0.5)`, 7000, 4, 0.8)
+    : drawHighlight(a.srcId, `rgba(140, 180, 40, 0.5)`, 7000, 3, 0.4)
+  );
+}
+
 class Plugin {
   constructor() {
     this.repeater = new Repeater();
+    this.ctx = null;
+    this.dateNow = Date.now();
     this.root = undefined;
   }
   stop() {
@@ -420,6 +476,16 @@ class Plugin {
     this.container = container;
     container.style.width = `${WIDTH_PX}px`;
     this.root = render(html`<${App} repeater=${this.repeater} />`, container);
+  }
+  /**
+   * Used to highlight source, selected, and target planets.
+   */
+  draw(ctx) {
+    ctx.save();
+    this.ctx = ctx;
+    this.dateNow = Date.now();
+    drawHighlights(this);
+    ctx.restore();
   }
   /**
    * Called when plugin modal is closed.
