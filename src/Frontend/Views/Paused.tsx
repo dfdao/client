@@ -2,13 +2,14 @@ import { TooltipName } from '@darkforest_eth/types';
 import React from 'react';
 import styled from 'styled-components';
 import { TooltipTrigger } from '../Panes/Tooltip';
-import { useGameover, usePaused } from '../Utils/AppHooks';
+import { useGameover, usePaused, useUIManager } from '../Utils/AppHooks';
 
 export function Paused() {
   const paused = usePaused();
   const gameover = useGameover();
+  const started = useUIManager().getGameStarted();
 
-  if (!paused || gameover) {
+  if (!paused || gameover || !started) {
     return <></>;
   }
 

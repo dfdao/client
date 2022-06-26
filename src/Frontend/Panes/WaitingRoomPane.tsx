@@ -34,7 +34,7 @@ const StyledOnboardingContent = styled.div`
 const ReadyContainer = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   width: 100%;
   margin-top: 4px;
@@ -75,35 +75,32 @@ const TableContainer = styled.div`
   overflow-y: scroll;
 `;
 
-function HelpContent() {
-  return (
-    <div>
-      <p>These are all the planets you currently own.</p>
-      <Spacer height={8} />
-      <p>
-        The table is interactive, and allows you to sort the planets by clicking each column's
-        header. You can also navigate to a planet that you own by clicking on its name. The planet
-        you click will be centered at the spot on the screen where the current planet you have
-        selected is located.
-      </p>
-    </div>
-  );
-}
-
 export function WaitingRoomPane({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   const uiManager = useUIManager();
   const spawnPlanets = uiManager.getSpawnPlanets();
-  const ready = uiManager.getPlayer();
+  const player = uiManager.getPlayer();
   const [planets, setPlanets] = useState<Planet[]>(spawnPlanets);
 
   // update planet list on open / close
   useEffect(() => {
     if (!uiManager) return;
-    const myAddr = uiManager.getAccount();
-    if (!myAddr) return;
     const planets = uiManager.getSpawnPlanets();
     setPlanets(planets);
   }, [visible, uiManager]);
+
+  function HelpContent() {
+    return (
+      <div>
+        <p>This is the waiting room.</p>
+        <Spacer height={8} />
+        {uiManager.getGameManager().getContractConstants().CONFIRM_START ? (
+          <p>Once all players initialize and press READY, the game will begin.</p>
+        ) : (
+          <p>Once a player makes a move, the game will begin.</p>
+        )}
+      </div>
+    );
+  }
 
   const headers = ['', 'Planet', 'Owner', 'Ready'];
   const alignments: Array<'r' | 'c' | 'l'> = ['l', 'l', 'l', 'r'];
@@ -125,6 +122,7 @@ export function WaitingRoomPane({ visible, onClose }: { visible: boolean; onClos
           : uiManager.getTwitter(planet.owner) || (
               <TextPreview text={planet.owner} unFocusedWidth='100px' focusedWidth='100px' />
             )}
+        {planet.owner == player?.address && '(you)'}
       </Sub>
     ),
     //ready
@@ -135,7 +133,9 @@ export function WaitingRoomPane({ visible, onClose }: { visible: boolean; onClos
     },
   ];
   let content;
-
+  if(!player) {
+    return <></>
+  }
   if (planets.length === 0) {
     content = (
       <CenterBackgroundSubtext width={RECOMMENDED_MODAL_WIDTH} height='100px'>
@@ -143,21 +143,17 @@ export function WaitingRoomPane({ visible, onClose }: { visible: boolean; onClos
       </CenterBackgroundSubtext>
     );
   } else {
+    const ready = player.ready;
     content = (
       <StyledOnboardingContent>
-        <Row>
-          Welcome to Dark Forest Arena! Once everyone presses READY, the game will
-          begin!
-        </Row>
+        <Row>Welcome to Dark Forest Arena! Once everyone is ready, the game will begin.</Row>
         <ReadyContainer style={{ fontSize: '2em' } as CSSProperties & CSSStyleDeclaration}>
-          <span>You are {!ready && 'not '} ready</span>
           <Btn
-            size='large'
             onClick={() =>
               ready ? uiManager.getGameManager().notReady() : uiManager.getGameManager().ready()
             }
           >
-            {ready ? 'Not Ready' : 'Ready'}
+            I'm {ready ? 'not ready' : 'ready'}
           </Btn>
         </ReadyContainer>
         <TableContainer>
@@ -171,7 +167,7 @@ export function WaitingRoomPane({ visible, onClose }: { visible: boolean; onClos
     <ModalPane
       visible={visible}
       onClose={onClose}
-      //   hideClose
+      hideClose
       id={ModalName.WaitingRoom}
       title='Waiting Room'
       helpContent={HelpContent}
