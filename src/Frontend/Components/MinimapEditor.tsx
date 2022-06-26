@@ -4,7 +4,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { removeAlphabet } from '../Panes/Lobbies/LobbiesUtils';
 import { MinimapConfig } from '../Panes/Lobbies/MinimapUtils';
-import { CANVAS_SIZE } from './Minimap';
 
 export const MinimapEditor: React.FC<{
   style?: { width: string; height: string };
@@ -35,7 +34,7 @@ export const MinimapEditor: React.FC<{
 
   if (!minimapConfig) return <div>Loading...</div>;
 
-  const scaleFactor = minimapConfig.worldRadius / (parseInt(CANVAS_SIZE.height) / 2);
+  const scaleFactor = minimapConfig.worldRadius / (parseInt(removeAlphabet(style.height)) / 2);
 
   const checkBounds = (a: number, b: number, x: number, y: number, r: number) => {
     const dist = (a - x) * (a - x) + (b - y) * (b - y);
@@ -106,52 +105,26 @@ export const MinimapEditor: React.FC<{
     if (!ctx) return;
     const adjustedPointer = getAdjustedPointer(canvas!, e.clientX, e.clientY);
     if (!adjustedPointer) return;
-    // check if the click overlaps with anything in minimapCoords
-    const dot = minimapConfig.dot * 1.2;
-    const toStage: Set<string> = new Set();
-    minimapCoords.forEach((coord, idx) => {
-      if (
-        adjustedPointer.x > coord.x - dot &&
-        adjustedPointer.x < coord.x + dot &&
-        adjustedPointer.y > coord.y - dot &&
-        adjustedPointer.y < coord.y + dot
-      ) {
-        // for debugging
-        // ctx.fillStyle = 'aquamarine';
-        let nearest: WorldCoords | undefined;
-        let nearestDist = Infinity;
-        minimapCoords.forEach((coord) => {
-          const dist =
-            (coord.x - adjustedPointer.x) * (coord.x - adjustedPointer.x) +
-            (coord.y - adjustedPointer.y) * (coord.y - adjustedPointer.y);
-          if (dist < nearestDist) {
-            nearestDist = dist;
-            nearest = coord;
-          }
-        });
-        if (nearest) {
-          // for debugging:
-          // ctx.fillRect(nearest.x, nearest.y, dot, dot);
-          const normalizedPlanetCoords: WorldCoords = {
-            x: (nearest.x - parseInt(CANVAS_SIZE.width) / 2) * scaleFactor,
-            y: (nearest.y - parseInt(CANVAS_SIZE.height) / 2) * -scaleFactor,
-          };
-          let mirroredCoords: undefined | WorldCoords;
-          if (mirror.x || mirror.y) {
-            mirroredCoords = {
-              x: mirror.x ? normalizedPlanetCoords.x * -1 : normalizedPlanetCoords.x,
-              y: mirror.y ? normalizedPlanetCoords.y * -1 : normalizedPlanetCoords.y,
-            };
-          }
-          if (mirroredCoords) {
-            toStage.add(JSON.stringify(mirroredCoords));
-          }
-          toStage.add(JSON.stringify(normalizedPlanetCoords));
-          onClick(toStage);
-          return;
-        }
-      }
-    });
+    let toStage: Set<string> = new Set();
+    const normalizedPlanetCoords: WorldCoords = {
+      x: Math.floor((adjustedPointer.x - parseInt(removeAlphabet(style.width)) / 2) * scaleFactor),
+      y: Math.floor(
+        (adjustedPointer.y - parseInt(removeAlphabet(style.height)) / 2) * -scaleFactor
+      ),
+    };
+    let mirroredCoords: undefined | WorldCoords;
+    if (mirror.x || mirror.y) {
+      mirroredCoords = {
+        x: mirror.x ? normalizedPlanetCoords.x * -1 : normalizedPlanetCoords.x,
+        y: mirror.y ? normalizedPlanetCoords.y * -1 : normalizedPlanetCoords.y,
+      };
+    }
+    if (mirroredCoords) {
+      toStage.add(JSON.stringify(mirroredCoords));
+    }
+    toStage.add(JSON.stringify(normalizedPlanetCoords));
+    onClick(toStage);
+    return;
   };
 
   return (
@@ -167,8 +140,12 @@ export const MinimapEditor: React.FC<{
         const adjustedPointer = getAdjustedPointer(canvasPlanetLayer, e.clientX, e.clientY);
         if (adjustedPointer) {
           const normalizedPointer = {
-            x: (adjustedPointer.x - parseInt(CANVAS_SIZE.width) / 2) * scaleFactor,
-            y: (adjustedPointer.y - parseInt(CANVAS_SIZE.height) / 2) * -scaleFactor,
+            x: Math.floor(
+              (adjustedPointer.x - parseInt(removeAlphabet(style.width)) / 2) * scaleFactor
+            ),
+            y: Math.floor(
+              (adjustedPointer.y - parseInt(removeAlphabet(style.height)) / 2) * -scaleFactor
+            ),
           };
           onHover(normalizedPointer);
         }

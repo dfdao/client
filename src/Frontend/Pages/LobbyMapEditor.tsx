@@ -114,8 +114,8 @@ export const LobbyMapEditor: React.FC<{
       <Toast
         open={isPlacementMode}
         title='Click on map to place planet'
-        description={`Coordinates (${hoverCoords ? hoverCoords.x : 'Invalid'}, ${
-          hoverCoords ? hoverCoords.y : 'Invalid'
+        description={`Coordinates (${hoverCoords ? hoverCoords.x : '¯\\_(ツ)_/¯'}, ${
+          hoverCoords ? hoverCoords.y : '¯\\_(ツ)_/¯'
         })`}
         flash
         onClose={() => {}}
@@ -187,7 +187,7 @@ export const LobbyMapEditor: React.FC<{
           <Spacer height={64} />
           <MinimapEditorWrapper>
             <MinimapEditor
-              style={{ width: '400px', height: '400px' }}
+              style={{ width: '600px', height: '600px' }}
               onError={onError}
               onClick={(coords: Set<string>) => {
                 stagePlanet(coords);
@@ -203,7 +203,7 @@ export const LobbyMapEditor: React.FC<{
               mirrorAxes={mirrorAxes}
             />
             <Minimap
-              style={{ width: '400px', height: '400px' }}
+              style={{ width: '600px', height: '600px' }}
               minimapConfig={minimapConfig}
               setRefreshing={setRefreshing}
             />
