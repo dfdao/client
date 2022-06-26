@@ -62,9 +62,10 @@ const SEND_ALL_SILVER = 2;
 const INITIAL_SILVER_STATUS = UPGRADE_FIRST;
 const toggleSilverStatus = val => (val + 1) % 3;  // 3 way toggle
 
+const PLANET_UNKNOWN = '?????';
 const getPlanetString = (locationId) => {
   const planet = df.getPlanetWithId(locationId);
-  if(!planet) return '?????'
+  if(!planet) return PLANET_UNKNOWN;
   let type = 'P';
   if( planet.planetType == PlanetType.SILVER_MINE) type = 'A'
   else if (planet.planetType == PlanetType.RUINS) type = 'F'
@@ -185,14 +186,18 @@ const ExecuteAttack = ({srcId, targetId, active, pcTrigger, pcRemain, sendSilver
     df.move(srcId, targetId, FORCES, silver);
   }
 };
-let Spacing = {
+let Margin_3L_3R = {
+  marginLeft: '3px',
+  marginRight: '3px',
+};
+let Margin_12L_12R = {
   marginLeft: '12px',
   marginRight: '12px',
 };
-let VerticalSpacing = {
+let Margin_12B = {
   marginBottom: '12px',
 };
-let HalfVerticalSpacing = {
+let Margin_6B = {
   marginBottom: '6px',
 };
 let Clickable = {
@@ -220,18 +225,20 @@ function Attack({ attack, onToggleActive, onToggleSilver, onDelete }) {
     <div style=${ActionEntry}>
       <button style=${{border: 'none', margin: 'none'}} onClick=${onToggleActive}>${attack.active?'▶️':'⏸️'}</button>
       <span>
-        <span style=${{ marginLeft: 5, marginRight: 5 }}>
+        <span style=${{ ...Margin_3L_3R }}>
           <span style=${{ ...Clickable }} onClick=${() => centerPlanet(attack.srcId)}>${finalSrc}</span>
-          <span style=${{ marginLeft: 3, marginRight: 3 }}>-></span>
+          <span style=${{ ...Margin_3L_3R }}>-></span>
           <span style=${{ ...Clickable }} onClick=${() => centerPlanet(attack.targetId)}>${finalTarget}</span>
         </span>
-        <span style=${{ marginLeft: 5, marginRight: 5 }}>
+        <span style=${{ ...Margin_3L_3R }}>
           <span>${`${attack.pcTrigger}%`}</span>
-          <span style=${{ marginLeft: 3, marginRight: 3 }}>-></span>
+          <span style=${{ ...Margin_3L_3R }}>-></span>
           <span>${`${attack.pcRemain}%`}</span>
         </span>
       </span>
-      <button onClick=${onToggleSilver}>${`${sendSilverStatusesIcon[attack.sendSilverStatus]}`}</button>
+      <span style=${{ ...Margin_3L_3R }}>
+        <button onClick=${onToggleSilver}>${`${sendSilverStatusesIcon[attack.sendSilverStatus]}`}</button>
+      </span>
       <button onClick=${onDelete}>X</button>
     </div>
   `;
@@ -262,7 +269,7 @@ function AddAttack({ startFiring, stopFiring, stopBeingFiredAt }) {
     <div style=${{ display: 'flex', flexDirection: 'column' }}>
       <div style=${{ display: 'flex' }}>
         <button
-          style=${VerticalSpacing}
+          style=${Margin_12B}
           onClick=${() => {
             setSource(planet);
           }}
@@ -270,18 +277,20 @@ function AddAttack({ startFiring, stopFiring, stopBeingFiredAt }) {
           Set Source
         </button>
         <span 
-          style=${source ? { ...Spacing, ...Clickable, marginRight: 'auto' } : {...Spacing, marginRight: 'auto'}} 
+          style=${source ? { ...Margin_12L_12R, ...Clickable, marginRight: 'auto' } : {...Margin_12L_12R, marginRight: 'auto'}} 
           onClick=${source? () => centerPlanet(source.locationId) : () => {}}
-          >${source ? getPlanetString(source.locationId) : '?????'}</span
         >
+          ${source ? getPlanetString(source.locationId) : PLANET_UNKNOWN}
+        </span>
       </div>
       <div style=${{ display: 'flex' }}>
-        <button style=${VerticalSpacing} onClick=${() => setTarget(planet)}>Set Target</button>
+        <button style=${Margin_12B} onClick=${() => setTarget(planet)}>Set Target</button>
         <span 
-        style=${target ? { ...Spacing, ...Clickable, marginRight: 'auto' } : {...Spacing, marginRight: 'auto'}} 
-        onClick=${target? () => centerPlanet(target.locationId) : () => {}}
-          >${target ? getPlanetString(target.locationId) : '?????'}</span
+          style=${target ? { ...Margin_12L_12R, ...Clickable, marginRight: 'auto' } : {...Margin_12L_12R, marginRight: 'auto'}} 
+          onClick=${target? () => centerPlanet(target.locationId) : () => {}}
         >
+          ${target ? getPlanetString(target.locationId) : PLANET_UNKNOWN}
+        </span>
       </div>
       <div style=${{marginBottom: 3}}>
         Trigger firing at this energy: <input type='range' min=${MIN_V} max=${MAX_V} step=${STEP_V} defaultValue=${pcTrigger} onChange=${e => setPcTrigger(parseInt(e.target.value))}/> ${pcTrigger}%
@@ -299,7 +308,7 @@ function AddAttack({ startFiring, stopFiring, stopBeingFiredAt }) {
       </div>
       <div>
         <button
-          style=${{...VerticalSpacing, width: 150}}
+          style=${{...Margin_12B, width: 150}}
           onClick=${() => target && source && startFiring({
             srcId: source.locationId,
             targetId: target.locationId,
@@ -319,22 +328,23 @@ function AddAttack({ startFiring, stopFiring, stopBeingFiredAt }) {
         style=${{fontSize: '90%'}}
       >
         <button
-          style=${{...VerticalSpacing, width: 80, marginRight: 10}}
+          style=${{...Margin_12B, width: 80, marginRight: 10}}
           onClick=${() => planet && stopFiring(planet.locationId)}
         >
           Stop Firing
         </button>
         <button
-          style=${{...VerticalSpacing, width: 93}}
+          style=${{...Margin_12B, width: 93}}
           onClick=${() => planet && stopBeingFiredAt(planet.locationId)}
         >
           Stop Being Fired At
         </button>
         <span 
-          style=${planet ? { ...Spacing, ...Clickable, marginRight: 'auto' } : {...Spacing, marginRight: 'auto'}} 
+          style=${planet ? { ...Margin_12L_12R, ...Clickable, marginRight: 'auto' } : {...Margin_12L_12R, marginRight: 'auto'}} 
           onClick=${planet ? () => centerPlanet(planet.locationId) : () => {}}
-          >${planet ? getPlanetString(planet.locationId) : '?????'}</span
         >
+          ${planet ? getPlanetString(planet.locationId) : PLANET_UNKNOWN}
+        </span>
       </div>
       <hr
         style=${{borderColor: 'grey', marginBottom: '10px'}}
@@ -371,7 +381,7 @@ function AttackList({ repeater }) {
     `;
   });
   return html`
-    <i style=${{ ...VerticalSpacing, display: 'block' }}>
+    <i style=${{ ...Margin_12B, display: 'block' }}>
       Auto-attack when source planet has enough energy!
     </i>
     <${AddAttack}
@@ -379,7 +389,7 @@ function AttackList({ repeater }) {
       stopFiring=${planetId => repeater.stopFiring(planetId)}
       stopBeingFiredAt=${planetId => repeater.stopBeingFiredAt(planetId)}
     />
-    <h1 style=${{...HalfVerticalSpacing, fontWeight: 'bold'}}>
+    <h1 style=${{...Margin_6B, fontWeight: 'bold'}}>
       Active (${attacks.reduce((acc, atk) => acc + (atk.active ? 1 : 0), 0)} / ${attacks.length})
       <button style=${{ float: 'right', marginLeft: 10 }} onClick=${() => {repeater.removeAllAttacks(); setAttacks([])}}>
         Clear All
