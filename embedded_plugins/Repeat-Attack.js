@@ -33,8 +33,11 @@ let DEFAULT_PERCENTAGE_REMAIN = 25;   // How much energy will remain after sendi
 let STAGGER_S = 15;  // Over what number of seconds will all repeat attacks happen once?
 
 // UI controls
-let MAX_CHARS = 14;  // How many letters of planet name to display?
+let MAX_CHARS = 15;  // How many letters of planet name to display?
 let WIDTH_PX = 430;  // What is the width of plugin window?
+let MIN_V = 10; // Set minimum values for sliders
+let MAX_V = 90; // Set maximum values for sliders
+let STEP_V = 5; // Set step size for sliders
 
 // Other controls
 let SILVER_SEND_PERCENT = 99;  // Sends this proportion of silver from the source planet
@@ -126,6 +129,10 @@ class Repeater {
     this.attacks = newAttacks;
     this.saveAttacks();
   }
+  toggleActive(position) {
+    this.attacks[position].active = !this.attacks[position].active;
+    this.saveAttacks();
+  }
   toggleSilver(position) {
     this.attacks[position].sendSilverStatus = toggleSilverStatus(this.attacks[position].sendSilverStatus);
     this.saveAttacks();
@@ -153,9 +160,10 @@ class Repeater {
     });
   }
 }
-const ExecuteAttack = ({srcId, targetId, pcTrigger, pcRemain, sendSilverStatus}) => {
+const ExecuteAttack = ({srcId, targetId, active, pcTrigger, pcRemain, sendSilverStatus}) => {
   let srcPlanet = df.getPlanetWithId(srcId);
   if (!srcPlanet) return;
+  if (!active) return;
   // Needs updated check getUnconfirmedDepartingForces
   const departingForces = unconfirmedDepartures(srcPlanet);
   const TRIGGER_AMOUNT = Math.floor((srcPlanet.energyCap * pcTrigger) / 100);
@@ -197,25 +205,27 @@ function centerPlanet(id) {
 function planetShort(locationId) {
   return locationId.substring(4, 9);
 }
-function Attack({ attack, onToggleSilver, onDelete }) {
+function Attack({ attack, onToggleActive, onToggleSilver, onDelete }) {
   const srcString = getPlanetString(attack.srcId);
   const targetString = getPlanetString(attack.targetId);
   const finalSrc = srcString.length > MAX_CHARS ? srcString.slice(0, MAX_CHARS - 3).concat('...') : srcString;
   const finalTarget = targetString.length > MAX_CHARS ? targetString.slice(0, MAX_CHARS - 3).concat('...') : targetString;
   return html`
     <div style=${ActionEntry}>
+      <button style=${{border: 'none', margin: 'none'}} onClick=${onToggleActive}>${attack.active?'▶️':'⏸️'}</button>
       <span>
-        <span style=${{ ...Spacing, ...Clickable }} onClick=${() => centerPlanet(attack.srcId)}
-          >${finalSrc}</span
-        >
-        =>
-        <span style=${{ ...Spacing, ...Clickable }} onClick=${() => centerPlanet(attack.targetId)}
-          >${finalTarget}</span
-        ></span
-      >
-      ${`${attack.pcTrigger}% -> ${attack.pcRemain}% `}
+        <span style=${{ marginLeft: 5, marginRight: 5 }}>
+          <span style=${{ ...Clickable }} onClick=${() => centerPlanet(attack.srcId)}>${finalSrc}</span>
+          <span style=${{ marginLeft: 3, marginRight: 3 }}>-></span>
+          <span style=${{ ...Clickable }} onClick=${() => centerPlanet(attack.targetId)}>${finalTarget}</span>
+        </span>
+        <span style=${{ marginLeft: 5, marginRight: 5 }}>
+          <span>${`${attack.pcTrigger}%`}</span>
+          <span style=${{ marginLeft: 3, marginRight: 3 }}>-></span>
+          <span>${`${attack.pcRemain}%`}</span>
+        </span>
+      </span>
       <button onClick=${onToggleSilver}>${`${sendSilverStatusesIcon[attack.sendSilverStatus]}`}</button>
-      ${` `}
       <button onClick=${onDelete}>X</button>
     </div>
   `;
@@ -224,6 +234,7 @@ function AddAttack({ startFiring, stopFiring, stopBeingFiredAt }) {
   let [planet, setPlanet] = useState(ui.getSelectedPlanet());
   let [source, setSource] = useState(undefined);
   let [target, setTarget] = useState(undefined);
+  let [active, setActive] = useState(true);
   let [pcTrigger, setPcTrigger] = useState(DEFAULT_PERCENTAGE_TRIGGER);
   let [pcRemain, setPcRemain] = useState(DEFAULT_PERCENTAGE_REMAIN);
   let [sendSilverStatus, setSendSilverStatus] = useState(INITIAL_SILVER_STATUS);
@@ -238,8 +249,8 @@ function AddAttack({ startFiring, stopFiring, stopBeingFiredAt }) {
   }, []);
 
   // Note: an attack is an object with this format:
-  // { srcId, targetId, pcTrigger, pcRemain, sendSilverStatus }
-  // Each of the five items is used to control different aspects of the attack
+  // { srcId, targetId, active, pcTrigger, pcRemain, sendSilverStatus }
+  // Each item is used to control a different aspect of the attack
 
   return html`
     <div style=${{ display: 'flex', flexDirection: 'column' }}>
@@ -267,10 +278,10 @@ function AddAttack({ startFiring, stopFiring, stopBeingFiredAt }) {
         >
       </div>
       <div style=${{marginBottom: 3}}>
-        Trigger firing at this energy: <input type='range' min=2 max=98 step=2 defaultValue=${pcTrigger} onChange=${e => setPcTrigger(parseInt(e.target.value))}/> ${pcTrigger}%
+        Trigger firing at this energy: <input type='range' min=${MIN_V} max=${MAX_V} step=${STEP_V} defaultValue=${pcTrigger} onChange=${e => setPcTrigger(parseInt(e.target.value))}/> ${pcTrigger}%
       </div>
       <div style=${{marginBottom: 3}}>
-        Remaining energy after firing: <input type='range' min=2 max=98 step=2 defaultValue=${pcRemain} onChange=${e => setPcRemain(parseInt(e.target.value))}/> ${pcRemain}%
+        Remaining energy after firing: <input type='range' min=${MIN_V} max=${MAX_V} step=${STEP_V} defaultValue=${pcRemain} onChange=${e => setPcRemain(parseInt(e.target.value))}/> ${pcRemain}%
       </div>
       <div style=${{marginBottom: 10}}>
         Choose when to send silver: <button
@@ -286,6 +297,7 @@ function AddAttack({ startFiring, stopFiring, stopBeingFiredAt }) {
           onClick=${() => target && source && startFiring({
             srcId: source.locationId,
             targetId: target.locationId,
+            active,
             pcTrigger,
             pcRemain: ((pcTrigger <= pcRemain) ? parseInt(pcTrigger / 2) : pcRemain),
             sendSilverStatus
@@ -346,6 +358,7 @@ function AttackList({ repeater }) {
     return html`
       <${Attack}
         attack=${action}
+        onToggleActive=${() => repeater.toggleActive(index)}
         onToggleSilver=${() => repeater.toggleSilver(index)}
         onDelete=${() => repeater.removeAttack(index)}
       />
@@ -361,7 +374,7 @@ function AttackList({ repeater }) {
       stopBeingFiredAt=${planetId => repeater.stopBeingFiredAt(planetId)}
     />
     <h1 style=${{...HalfVerticalSpacing, fontWeight: 'bold'}}>
-      Active (${actionsChildren.length})
+      Active (${attacks.reduce((acc, atk) => acc + (atk.active ? 1 : 0), 0)} / ${attacks.length})
       <button style=${{ float: 'right', marginLeft: 10 }} onClick=${() => {repeater.removeAllAttacks(); setAttacks([])}}>
         Clear All
       </button>
