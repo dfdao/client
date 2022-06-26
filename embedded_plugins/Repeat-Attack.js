@@ -44,6 +44,10 @@ let MIN_V = 10; // Set minimum values for sliders
 let MAX_V = 90; // Set maximum values for sliders
 let STEP_V = 5; // Set step size for sliders
 
+// Keyboard shortcuts
+const KEY_SET_SOURCE = 'v';
+const KEY_SET_TARGET = 'b';
+
 // Other controls
 let SILVER_SEND_PERCENT = 99;  // Sends this proportion of silver from the source planet
 
@@ -191,6 +195,10 @@ const ExecuteAttack = ({srcId, targetId, active, pcTrigger, pcRemain, sendSilver
     df.move(srcId, targetId, FORCES, silver);
   }
 };
+let Keyboard_Shortcut = {
+  fontSize: '85%',
+  color: 'rgba(220, 180, 128, 1)'
+};
 let Margin_3L_3R = {
   marginLeft: '3px',
   marginRight: '3px',
@@ -267,6 +275,22 @@ function AddAttack({ repeater, startFiring, stopFiring, stopBeingFiredAt }) {
       window.removeEventListener('click', onClick);
     };
   }, []);
+  useLayoutEffect(() => {
+    let onKeyUp = e => {
+      switch (e.key) {
+        case KEY_SET_SOURCE:
+          setSource(ui.getSelectedPlanet());
+          break;
+        case KEY_SET_TARGET:
+          setTarget(ui.getSelectedPlanet());
+          break;
+      }
+    };
+    window.addEventListener('keyup', onKeyUp);
+    return () => {
+      window.removeEventListener('keyup', onKeyUp);
+    };
+  }, []);
 
   // Note: an attack is an object with this format:
   // { srcId, targetId, active, pcTrigger, pcRemain, sendSilverStatus }
@@ -281,7 +305,7 @@ function AddAttack({ repeater, startFiring, stopFiring, stopBeingFiredAt }) {
             setSource(planet);
           }}
         >
-          Set Source
+          Set Source <span style=${Keyboard_Shortcut}>[${KEY_SET_SOURCE}]</span>
         </button>
         <span 
           style=${source ? { ...Margin_12L_12R, ...Clickable, marginRight: 'auto' } : {...Margin_12L_12R, marginRight: 'auto'}} 
@@ -291,7 +315,9 @@ function AddAttack({ repeater, startFiring, stopFiring, stopBeingFiredAt }) {
         </span>
       </div>
       <div style=${{ display: 'flex' }}>
-        <button style=${Margin_12B} onClick=${() => setTarget(planet)}>Set Target</button>
+        <button style=${Margin_12B} onClick=${() => setTarget(planet)}>
+          Set Target <span style=${Keyboard_Shortcut}>[${KEY_SET_TARGET}]</span>
+        </button>
         <span 
           style=${target ? { ...Margin_12L_12R, ...Clickable, marginRight: 'auto' } : {...Margin_12L_12R, marginRight: 'auto'}} 
           onClick=${target? () => centerPlanet(target.locationId) : () => {}}
