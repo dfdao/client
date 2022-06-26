@@ -1,3 +1,10 @@
+// Repeat Attack
+//
+// Auto-attack when source planet has enough energy!
+//
+// original author: TBC
+// enhancements in 2022: https://twitter.com/davidryan59
+
 //@ts-ignore
 import {
   PlanetType,
@@ -20,10 +27,8 @@ import {
 import { getPlanetName } from 'https://cdn.skypack.dev/@darkforest_eth/procedural';
 
 
-// ----------------------------
-
-// USER CONFIGURABLE PARAMETERS
-// `let` is used here to sidestep any weird execution env problems
+// ----------------------------------------
+// User Configurable Options
 
 // Control how much energy gets sent, and when
 let DEFAULT_PERCENTAGE_TRIGGER = 75;  // What percentage energy will trigger a send?
@@ -42,7 +47,8 @@ let STEP_V = 5; // Set step size for sliders
 // Other controls
 let SILVER_SEND_PERCENT = 99;  // Sends this proportion of silver from the source planet
 
-// ----------------------------
+// Note - `let` is used in this plugin to sidestep any weird execution env problems
+// ----------------------------------------
 
 
 const sendSilverStatuses = [
