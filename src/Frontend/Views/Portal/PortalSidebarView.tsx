@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import dfstyles from '../../Styles/dfstyles';
 import { Text } from '../../Components/Text';
 import { Account } from './Account';
-import { Btn } from '../../Components/Btn';
 import { Link } from 'react-router-dom';
 import { ArenaPortalButton } from './PortalHomeView';
 

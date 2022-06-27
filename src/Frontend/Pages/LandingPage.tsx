@@ -101,10 +101,9 @@ export default function LandingPage() {
 
             <Spacer height={16} />
             <ButtonWrapper>
-            
-                <Btn size='large' onClick={() => history.push('/portal')}>
-                  <p style={button}>Enter</p>
-                </Btn>
+              <Btn size='large' onClick={() => history.push('/portal/home')}>
+                <p style={button}>Enter</p>
+              </Btn>
             </ButtonWrapper>
           </Header>
 

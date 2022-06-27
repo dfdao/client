@@ -83,7 +83,8 @@ export function PortalMainView() {
         </TitleContainer>
       </TopBar>
       <Switch>
-        <Redirect path='/portal/map' to={`/portal/map/${competitiveConfig}`} exact={true} />
+        {/* <Redirect path='/portal/map' to={`/portal/map/${competitiveConfig}`} exact={true} /> */}
+        <Redirect path='/portal/map' to={`/portal/home`} exact={true} />
 
         <Route path={'/portal/home'} exact={true} component={PortalHomeView} />
         <Route path={'/portal/map/:configHash'} component={MapInfoView} />
