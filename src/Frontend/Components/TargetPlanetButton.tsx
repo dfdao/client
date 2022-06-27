@@ -62,7 +62,7 @@ export function TargetPlanetButton({
 
   const claimVictory = () => {
     if (!planet || gameOver) return;
-    gameManager.claimVictory(planet.locationId);
+    gameManager.claimVictory();
   };
 
   return (

@@ -903,7 +903,6 @@ class GameManager extends EventEmitter {
         } else if (isUnconfirmedClaimVictoryTx(tx)) {
           await Promise.all([
             gameManager.hardRefreshPlayer(gameManager.getAccount()),
-            gameManager.hardRefreshPlanet(tx.intent.locationId),
           ]);
         }
 
@@ -2012,61 +2011,50 @@ class GameManager extends EventEmitter {
     }
   }
 
-  public async claimVictory(locationId: LocationId) {
+  public checkVictoryCondition() :boolean {
+    const targetPlanets = this.getTargetPlanets();
+
+    let captured: number = 0;
+
+    const constants = this.getContractConstants();
+    for(const planet of targetPlanets) {
+      if(planet.owner !== this.account ||
+        (planet.energy * 100 / planet.energyCap) < constants.CLAIM_VICTORY_ENERGY_PERCENT ||
+        (constants.BLOCK_CAPTURE && this.playerBlocked(this.account, planet.locationId))
+        ) continue;
+        captured ++;
+        if (captured >= this.targetsRequired) return true;
+
+    }
+    return false;
+ 
+
+  }
+  public async claimVictory() {
     try {
-      const planet = this.entityStore.getPlanetWithId(locationId);
 
       if (this.gameover) {
         throw new Error('game is over');
       }
-
+  
       if (this.paused) {
         throw new Error('game is paused');
       }
-
-      if (!planet) {
-        throw new Error('planet is not loaded');
+      
+      if(!this.checkVictoryCondition()){
+        throw new Error('victory condition not met');
       }
-
-      if (planet.destroyed) {
-        throw new Error("you can't capture destroyed planets");
-      }
-
-      if (planet.capturer !== EMPTY_ADDRESS) {
-        throw new Error("you can't claim victory on planets that have already been claimed");
-      }
-
-      if (planet.owner !== this.account) {
-        throw new Error('you can only capture planets you own');
-      }
-
-      if (!planet.isTargetPlanet) {
-        throw new Error('you can only capture target planets');
-      }
-
-      if (this.playerBlocked(this.account, locationId)) {
-        throw new Error("you can't capture blocked planets");
-      }
-
-      if (planet.energy < this.contractConstants.CLAIM_VICTORY_ENERGY_PERCENT) {
-        throw new Error(
-          `planet energy must be ${this.contractConstants.CLAIM_VICTORY_ENERGY_PERCENT} before claiming victory`
-        );
-      }
-
-      localStorage.setItem(`${this.getAccount()?.toLowerCase()}-claimVictory`, locationId);
 
       const txIntent: UnconfirmedClaimVictory = {
-        methodName: 'claimTargetPlanetVictory',
+        methodName: 'claimVictory',
         contract: this.contractsAPI.contract,
-        locationId,
-        args: Promise.resolve([locationIdToDecStr(locationId)]),
+        args: Promise.resolve([])
       };
 
       const tx = await this.contractsAPI.submitTransaction(txIntent);
       return tx;
     } catch (e) {
-      this.getNotificationsManager().txInitError('claimTargetPlanetVictory', e.message);
+      this.getNotificationsManager().txInitError('claimVictory', e.message);
       throw e;
     }
   }
@@ -3788,6 +3776,16 @@ class GameManager extends EventEmitter {
     const res = this.isBlocked(targetLocation, playerHomePlanet);
     return Boolean(res) // if isBlocked is undefined, will return false. 
   }
+
+  public getTargetsHeld(address?: EthAddress) : Planet[] {
+    address = address || this.account;
+    return this.getTargetPlanets().filter(planet => planet.owner == address);
+  }
+
+  get targetsRequired() : number {
+    return this.getContractConstants().TARGETS_REQUIRED_FOR_VICTORY
+  }
+
 
   /**
    * Right now the only buffs supported in this way are

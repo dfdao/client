@@ -704,8 +704,20 @@ class GameUIManager extends EventEmitter {
     return this.gameManager.getTeamsEnabled();
   }
 
+  public checkVictoryCondition() : boolean {
+    return this.gameManager.checkVictoryCondition();
+  }
+
   public isRoundOver(): boolean {
     return this.gameManager.isRoundOver();
+  }
+
+  public getTargetsHeld(address?: EthAddress) : Planet[] {
+    return this.gameManager.getTargetsHeld(address);
+  }
+
+  public getTargetsRequired() : number {
+    return this.gameManager.targetsRequired;
   }
 
   public getUpgrade(branch: UpgradeBranchName, level: number): Upgrade {

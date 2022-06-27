@@ -225,7 +225,7 @@ export class ContractsAPI extends EventEmitter {
           contract.filters.AdminGiveSpaceship(null, null).topics,
           contract.filters.PauseStateChanged(null).topics,
           contract.filters.LobbyCreated(null, null).topics,
-          contract.filters.Gameover(null,null).topics,
+          contract.filters.Gameover(null).topics,
           contract.filters.GameStarted(null,null).topics,
           contract.filters.PlayerReady(null,null).topics,
           contract.filters.PlayerNotReady(null,null).topics,
@@ -374,8 +374,8 @@ export class ContractsAPI extends EventEmitter {
       [ContractEvent.LobbyCreated]: (ownerAddr: string, lobbyAddr: string) => {
         this.emit(ContractsAPIEvent.LobbyCreated, address(ownerAddr), address(lobbyAddr));
       },
-      [ContractEvent.Gameover]: (location: EthersBN) => {
-        this.emit(ContractsAPIEvent.PlanetUpdate, locationIdFromEthersBN(location));
+      [ContractEvent.Gameover]: (player: string) => {
+        this.emit(ContractsAPIEvent.PlayerUpdate, address(player));
         this.emit(ContractsAPIEvent.Gameover);
       },
       [ContractEvent.GameStarted]: (player: string, startTime: EthersBN) => {
