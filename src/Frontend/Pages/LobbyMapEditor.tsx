@@ -77,35 +77,30 @@ export const LobbyMapEditor: React.FC<{
     updateConfig({ type: 'BIOMEBASE_KEY', value: seed + 2 });
   };
 
-  function stagePlanet(planetCoords: Set<string>) {
+  function stagePlanet(planetCoord: WorldCoords) {
     // if (createdPlanets?.find((p) => planet.x == p.x && planet.y == p.y)) {
     //   setError('planet with identical coords created');
     //   return;
     // }
-    [...planetCoords].forEach((pc: string, index: number) => {
-      const planetCoord = JSON.parse(pc);
-      if (
-        config.ADMIN_PLANETS.displayValue?.find(
-          (p) => planetCoord.x == p?.x && planetCoord.y == p?.y
-        )
-      ) {
-        onError('Planet with identical coords staged');
-        return;
-      }
-      const newPlanetToStage: LobbyPlanet = {
-        x: planetCoord.x,
-        y: planetCoord.y,
-        level: mutablePlanet.level,
-        planetType: mutablePlanet.planetType,
-        isTargetPlanet: mutablePlanet.isTargetPlanet,
-        isSpawnPlanet: mutablePlanet.isSpawnPlanet,
-      };
+    if (
+      config.ADMIN_PLANETS.displayValue?.find((p) => planetCoord.x == p?.x && planetCoord.y == p?.y)
+    ) {
+      onError('Planet with identical coords staged');
+      return;
+    }
+    const newPlanetToStage: LobbyPlanet = {
+      x: planetCoord.x,
+      y: planetCoord.y,
+      level: mutablePlanet.level,
+      planetType: mutablePlanet.planetType,
+      isTargetPlanet: mutablePlanet.isTargetPlanet,
+      isSpawnPlanet: mutablePlanet.isSpawnPlanet,
+    };
 
-      updateConfig({
-        type: 'ADMIN_PLANETS',
-        value: newPlanetToStage,
-        index: config.ADMIN_PLANETS.displayValue?.length ?? 0,
-      });
+    updateConfig({
+      type: 'ADMIN_PLANETS',
+      value: newPlanetToStage,
+      index: config.ADMIN_PLANETS.displayValue?.length ?? 0,
     });
   }
 
@@ -189,7 +184,7 @@ export const LobbyMapEditor: React.FC<{
             <MinimapEditor
               style={{ width: '600px', height: '600px' }}
               onError={onError}
-              onClick={(coords: Set<string>) => {
+              onClick={(coords: WorldCoords) => {
                 stagePlanet(coords);
                 if (!placementModeShortcut) {
                   setIsPlacementMode(false);

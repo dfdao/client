@@ -1,12 +1,11 @@
 import { BLOCK_EXPLORER_URL } from '@darkforest_eth/constants';
 import _, { chunk } from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { CreatedPlanet, LobbyAdminTools } from '../../../Backend/Utils/LobbyAdminTools';
 import { Link, Spacer } from '../../Components/CoreUI';
 import { Row } from '../../Components/Row';
-import { Green, Red, Sub } from '../../Components/Text';
+import { Sub } from '../../Components/Text';
 import {
   CloseButton,
   CloseButtonStyle,
@@ -14,7 +13,6 @@ import {
   LobbyPlanet,
   mirrorX,
   mirrorY,
-  Warning,
 } from './LobbiesUtils';
 import { InvalidConfigError, LobbyConfigAction, LobbyConfigState, toInitializers } from './Reducer';
 

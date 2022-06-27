@@ -8,7 +8,7 @@ import { MinimapConfig } from '../Panes/Lobbies/MinimapUtils';
 export const MinimapEditor: React.FC<{
   style?: { width: string; height: string };
   onError: (msg: string) => void;
-  onClick: (clickedCoords: Set<string>) => void;
+  onClick: (clickedCoords: WorldCoords) => void;
   onHover?: (hoveredCoords: WorldCoords) => void;
   minimapConfig: MinimapConfig | undefined;
   mirrorAxes: { x: boolean; y: boolean };
@@ -22,14 +22,12 @@ export const MinimapEditor: React.FC<{
   mirrorAxes,
   disabled,
 }) => {
-  const [minimapCoords, setMinimapCoords] = useState<WorldCoords[]>([]);
   const canvasPlanetLayer = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
     if (!minimapConfig) return;
     const x = generateMinimapCoords(minimapConfig);
     const y = normalizeGenerated(x, minimapConfig.worldRadius);
-    setMinimapCoords(y);
   }, [minimapConfig]);
 
   if (!minimapConfig) return <div>Loading...</div>;
@@ -105,25 +103,19 @@ export const MinimapEditor: React.FC<{
     if (!ctx) return;
     const adjustedPointer = getAdjustedPointer(canvas!, e.clientX, e.clientY);
     if (!adjustedPointer) return;
-    let toStage: Set<string> = new Set();
-    const normalizedPlanetCoords: WorldCoords = {
+    let normalizedPlanetCoords: WorldCoords = {
       x: Math.floor((adjustedPointer.x - parseInt(removeAlphabet(style.width)) / 2) * scaleFactor),
       y: Math.floor(
         (adjustedPointer.y - parseInt(removeAlphabet(style.height)) / 2) * -scaleFactor
       ),
     };
-    let mirroredCoords: undefined | WorldCoords;
     if (mirror.x || mirror.y) {
-      mirroredCoords = {
+      normalizedPlanetCoords = {
         x: mirror.x ? normalizedPlanetCoords.x * -1 : normalizedPlanetCoords.x,
         y: mirror.y ? normalizedPlanetCoords.y * -1 : normalizedPlanetCoords.y,
       };
     }
-    if (mirroredCoords) {
-      toStage.add(JSON.stringify(mirroredCoords));
-    }
-    toStage.add(JSON.stringify(normalizedPlanetCoords));
-    onClick(toStage);
+    onClick(normalizedPlanetCoords);
     return;
   };
 
