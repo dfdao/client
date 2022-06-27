@@ -54,13 +54,13 @@ function drawOnCanvas(canvas: HTMLCanvasElement | null, msg: DrawMessage) {
 }
 
 export function Minimap({
-  style = {width: "400px", height: "400px"},
+  style = { width: '400px', height: '400px' },
   minimapConfig,
-  setRefreshing = (b: boolean) => {}
+  setRefreshing = (b: boolean) => {},
 }: {
   style?: { width: string; height: string };
   minimapConfig: MinimapConfig | undefined;
-  setRefreshing? : (refreshing : boolean) => void;
+  setRefreshing?: (refreshing: boolean) => void;
 }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const worker = useMemo(getWorker, []);
@@ -85,5 +85,5 @@ export function Minimap({
     return () => worker.removeEventListener('message', onMessage);
   }, [worker, setRefreshing]);
 
-  return <canvas ref={canvasRef} style={{...style, margin: '0 auto'}} width='400' height='400' />;
+  return <canvas ref={canvasRef} style={{ ...style, margin: '0 auto' }} width='400' height='400' />;
 }

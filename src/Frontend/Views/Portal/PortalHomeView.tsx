@@ -30,7 +30,7 @@ export const MapDetails: React.FC<{ configHash: string }> = ({ configHash }) => 
 
   useEffect(() => {
     if (config) {
-      onMapChange(generateMinimapConfig(config, 5));
+      onMapChange(generateMinimapConfig(config, 20));
     } else {
       setMinimapConfig(undefined);
     }
@@ -167,7 +167,7 @@ export const PortalHomeView: React.FC<{}> = () => {
       <OfficialGameBanner />
       <Spacer height={24} />
       <MoreMapsContainer>
-        <span style={{ fontSize: '1rem' }}>Community Maps</span>
+        <span style={{ fontSize: '1rem' }}>Latest Community Maps</span>
         <MoreGrid>
           {configHashes.map((c, i) => (
             <MapDetails configHash={c} key={i} />
