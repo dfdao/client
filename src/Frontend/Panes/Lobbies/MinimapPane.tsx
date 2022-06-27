@@ -20,7 +20,6 @@ export const KEY_ITEMS: KeyItem[] = [
 ];
 
 export interface MinimapDisplayConfig {
-  randomizeButton?: boolean;
   keys?: boolean;
   size?: { width: string; height: string };
 }
@@ -72,14 +71,6 @@ export function MinimapPane({
 }) {
   const [refreshing, setRefreshing] = useState(false);
 
-  const randomize = () => {
-    console.log('randomizing!!!');
-    const seed = Math.floor(Math.random() * 10000);
-    onUpdate({ type: 'PLANETHASH_KEY', value: seed });
-    onUpdate({ type: 'SPACETYPE_KEY', value: seed + 1 });
-    onUpdate({ type: 'BIOMEBASE_KEY', value: seed + 2 });
-  };
-
   return (
     <div>
       <Minimap
@@ -96,11 +87,6 @@ export function MinimapPane({
       </div>
       {displayConfig && displayConfig.keys && <MinimapKeys keyItems={KEY_ITEMS} />}
       <Spacer height={5} />
-      {displayConfig && displayConfig.randomizeButton && (
-        <Btn size='stretch' onClick={randomize} disabled={refreshing || created}>
-          Randomize Map
-        </Btn>
-      )}
     </div>
   );
 }
@@ -120,7 +106,8 @@ const MapKeyIcon = styled.div<{ color: string }>`
 const MetaRow = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 24px;
 `;
 
 const Column = styled.div`

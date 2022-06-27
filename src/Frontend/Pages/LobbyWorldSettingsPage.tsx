@@ -157,8 +157,10 @@ export function LobbyWorldSettingsPage({
           <MainContent>
             <MainContentInner>
               <Spacer height={64} />
-              <PaneTitle>{title}</PaneTitle>
-              <Pane config={config} onUpdate={onUpdate} />
+              <div style={{ maxWidth: '800px' }}>
+                <PaneTitle>{title}</PaneTitle>
+                <Pane config={config} onUpdate={onUpdate} />
+              </div>
             </MainContentInner>
           </MainContent>
           <MapContainer>
@@ -229,7 +231,6 @@ const MainContentInner = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  max-width: 640px;
   padding: 0 24px;
 `;
 
