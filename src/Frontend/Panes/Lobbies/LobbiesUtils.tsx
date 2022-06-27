@@ -233,7 +233,7 @@ export function ConfigUpload({
 
 export const removeAlphabet = (str: string) => str.replace(/[^0-9]/g, '');
 
-export const CloseButton: React.FC<{ onClick: () => void }> = ({ onClick }) => {
+export const CloseButton: React.FC<{ onClick: (e?: any) => void }> = ({ onClick }) => {
   return (
     <CloseButtonStyle onClick={onClick}>
       <CloseIcon />

@@ -22,9 +22,9 @@ const PLANET_TYPE_NAMES = ['Planet', 'Asteroid Field', 'Foundry', 'Spacetime Rip
 export function PlanetListPane({
   config: config,
   onUpdate: onUpdate,
-  onPlanetHover: onPlanetHover,
+  onPlanetHover,
   onPlanetSelect: onPlanetSelect,
-  root: root,
+  root,
   lobbyAdminTools,
   onError,
   maxPlanetsPerPage = 5,
@@ -39,17 +39,10 @@ export function PlanetListPane({
   maxPlanetsPerPage?: number;
 }) {
   const [createdPlanets, setCreatedPlanets] = useState<CreatedPlanet[] | undefined>();
-  const [error, setError] = useState<string | undefined>();
 
   useEffect(() => {
     setCreatedPlanets(lobbyAdminTools?.planets);
   }, [lobbyAdminTools]);
-
-  useEffect(() => {
-    if (config.ADMIN_PLANETS.warning) {
-      onError(config.ADMIN_PLANETS.warning);
-    }
-  }, [config.ADMIN_PLANETS.warning]);
 
   // <div style={{ ...jcFlexEnd, ...rowStyle }}>
   //       <Btn disabled={!lobbyAdminTools} onClick={async () => await createAndRevealPlanet(i)}>
@@ -100,9 +93,10 @@ export function PlanetListPane({
         <div>
           {hoveringPlanet && (
             <CloseButton
-              onClick={() => {
+              onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+                e.stopPropagation();
+                e.nativeEvent.stopImmediatePropagation();
                 onUpdate({ type: 'ADMIN_PLANETS', value: planet, index: index });
-                console.log('NEW PLANETS', config.ADMIN_PLANETS);
               }}
             />
           )}
@@ -258,9 +252,6 @@ export function PlanetListPane({
           {config.NO_ADMIN.displayValue && lobbyAdminTools && (
             <Sub>You cannot stage planets after universe creation if admin disabled.</Sub>
           )}
-          <Row>
-            <Warning>{error}</Warning>
-          </Row>
           <StagedPlanets config={config} onUpdate={onUpdate} />
           <Spacer height={24} />
           <CreatedPlanets planets={createdPlanets} />

@@ -88,6 +88,12 @@ export function LobbyConfigPage({
     fetchTwitters();
   }, []);
 
+  useEffect(() => {
+    if (config.ADMIN_PLANETS.warning) {
+      setError(config.ADMIN_PLANETS.warning);
+    }
+  }, [config.ADMIN_PLANETS.warning]);
+
   async function bulkCreateAndRevealPlanets() {
     if (!lobbyAdminTools) {
       setError("You haven't created a lobby.");
@@ -228,6 +234,9 @@ export function LobbyConfigPage({
         description={error}
         onClose={() => {
           setError(undefined);
+          // if (config.ADMIN_PLANETS.warning) {
+          //   // remove warning
+          // }
         }}
       />
       <Switch>

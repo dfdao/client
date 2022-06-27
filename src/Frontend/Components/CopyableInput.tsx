@@ -38,7 +38,7 @@ export const CopyableInput: React.FC<{
       <InputContainer>
         <Input value={displayValue ?? copyText} />
         <CopyButton onClick={() => onCopy(copyText, handleCopySuccess, onCopyError)}>
-          {copied ? 'Copied!' : 'Copy'}
+          {copied ? '✓ Copied' : 'Copy'}
         </CopyButton>
       </InputContainer>
     </Container>
@@ -67,12 +67,13 @@ const CopyButton = styled.button`
   right: 8px;
   height: calc(49px - 16px);
   border-radius 4px;
-  background: #fff;
-	color: #111;
+  background: #252525;
+  border: 1px solid #5F5F5F;
+  color: #bbb;
 	padding: 0 8px;
 	transition: .2s ease-in-out;
 	&:hover {
-		background: #DEDEDE;
+		background: #3D3D3D;
 	}
 `;
 

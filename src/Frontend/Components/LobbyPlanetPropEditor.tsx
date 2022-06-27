@@ -46,7 +46,7 @@ export const PlanetPropEditor: React.FC<PlanetPropEditorProps> = ({
 
   function planetInput(value: planetInputType, index: number) {
     let content = null;
-    if (value == 'x' || value == 'y' || value == 'level') {
+    if (value == 'x' || value == 'y') {
       content = (
         <NumberInput
           format='integer'
@@ -54,6 +54,17 @@ export const PlanetPropEditor: React.FC<PlanetPropEditorProps> = ({
           onChange={(e: Event & React.ChangeEvent<DarkForestNumberInput>) => {
             setMutablePlanet({ ...mutablePlanet, [value]: e.target.value });
           }}
+        />
+      );
+    } else if (value == 'level') {
+      content = (
+        <SelectFrom
+          wide={false}
+          style={{ padding: '5px' }}
+          values={[...Array(10).keys()].map((i) => i.toString())}
+          labels={[...Array(10).keys()].map((i) => i.toString())}
+          value={mutablePlanet.level.toString()}
+          setValue={(value) => setMutablePlanet({ ...mutablePlanet, level: parseInt(value) })}
         />
       );
     } else if (value == 'planetType') {
