@@ -1,21 +1,20 @@
 import { EthAddress, ModalName } from '@darkforest_eth/types';
 import React from 'react';
 import styled from 'styled-components';
-import dfstyles, { PortalButton } from '../../Styles/dfstyles';
+import dfstyles from '../../Styles/dfstyles';
 import { Text } from '../../Components/Text';
 import { Account } from './Account';
 import { Btn } from '../../Components/Btn';
 import { Link } from 'react-router-dom';
+import { ArenaPortalButton } from './PortalHomeView';
 
 export function PortalSidebarView({ playerAddress }: { playerAddress: EthAddress }) {
   return (
     <SidebarContainer>
-      <Text style={{ fontSize: '1.5em' }}>Dark Forest Arena</Text>
+      <Text style={{ fontSize: '1.5em', textTransform: 'uppercase' }}>Dark Forest Arena</Text>
       <Account address={playerAddress} />
       <Link style={{ width: '100%' }} to={`/arena/`} target='blank'>
-        <Btn variant='portal' size='stretch'>
-          Design an Arena
-        </Btn>
+        <ArenaPortalButton secondary>New Arena</ArenaPortalButton>
       </Link>
     </SidebarContainer>
   );

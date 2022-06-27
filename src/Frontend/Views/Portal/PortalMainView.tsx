@@ -11,16 +11,15 @@ import { useTwitters } from '../../Utils/AppHooks';
 import { competitiveConfig } from '../../Utils/constants';
 import { AccountInfoView } from './AccountInfoView';
 import { MapInfoView } from './MapInfoView';
+import { PortalHomeView } from './PortalHomeView';
 
 export function PortalMainView() {
-
   const [input, setInput] = useState<string>('');
   const [type, setType] = useState<string>('Account');
   const history = useHistory();
   const twitters = useTwitters() as Object;
   function validateAddress() {
-  
-    let output :string | undefined = undefined;
+    let output: string | undefined = undefined;
     let lower = input.toLowerCase();
     if (lower.slice(0, 2) === '0x') {
       lower = lower.slice(2);
@@ -36,22 +35,21 @@ export function PortalMainView() {
     // }
 
     if (type == 'Map' && lower.length !== 64) error = true;
-
     else if (lower.length !== 40) {
-      const foundTwitter = Object.entries(twitters).find(t => t[1] == input)
-      if(!foundTwitter) error = true;
-      else(output = foundTwitter[0]);
+      const foundTwitter = Object.entries(twitters).find((t) => t[1] == input);
+      if (!foundTwitter) error = true;
+      else output = foundTwitter[0];
     }
 
-    console.log('output:', output)
-  
+    console.log('output:', output);
+
     if (error) {
-      alert(`invalid ${type == 'Account'? 'account address' : 'config hash'}! Please try again.`);
+      alert(`invalid ${type == 'Account' ? 'account address' : 'config hash'}! Please try again.`);
       return;
     }
-  
-    const link = `/portal/${type == 'Map' ? 'map/' : 'account/'}${output ? output : input}`
-  
+
+    const link = `/portal/${type == 'Map' ? 'map/' : 'account/'}${output ? output : input}`;
+
     history.push(link);
   }
 
@@ -59,13 +57,10 @@ export function PortalMainView() {
     <MainContainer>
       <TopBar>
         <TitleContainer>
-          <Title>Home</Title>
+          <Title onClick={() => history.push('/portal/home')}>Home</Title>
         </TitleContainer>
 
         <TitleContainer>
-          <Btn variant='portal' onClick={() => validateAddress()}>
-            go
-          </Btn>
           <SelectFrom
             portal
             wide={false}
@@ -84,13 +79,17 @@ export function PortalMainView() {
               setInput(e.target.value)
             }
           />{' '}
+          <Btn variant='portal' onClick={() => validateAddress()}>
+            go
+          </Btn>
         </TitleContainer>
       </TopBar>
       <Switch>
         <Redirect path='/portal/map' to={`/portal/map/${competitiveConfig}`} exact={true} />
 
+        <Route path={'/portal/home'} exact={true} component={PortalHomeView} />
         <Route path={'/portal/map/:configHash'} component={MapInfoView} />
-        <Route path={'/portal/account/:account'} component ={AccountInfoView} />
+        <Route path={'/portal/account/:account'} component={AccountInfoView} />
 
         <Route
           path='/portal/*'
@@ -110,7 +109,7 @@ const MainContainer = styled.div`
   border-left: 1px solid ${dfstyles.colors.border};
   height: 100vh;
   overflow: hidden;
-  padding-bottom: 3em;
+  // padding-bottom: 3em;
   background: rgba(255, 255, 255, 0.04);
 `;
 
@@ -129,6 +128,7 @@ const TopBar = styled.div`
 const Title = styled.p`
   font-weight: 600;
   font-size: 1.5em;
+  cursor: pointer;
 `;
 
 const TitleContainer = styled.div`

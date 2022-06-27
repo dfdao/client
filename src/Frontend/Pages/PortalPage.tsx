@@ -27,7 +27,7 @@ export function PortalPage() {
 
   if (connection && ownerAddress) {
     return <Portal playerAddress={ownerAddress} />;
-  } 
+  }
   return (
     <Wrapper initRender={InitRenderState.NONE} terminalEnabled={false}>
       <PortalLandingPage onReady={onReady} />
@@ -36,26 +36,26 @@ export function PortalPage() {
 }
 
 function Portal({ playerAddress }: { playerAddress: EthAddress }) {
-  const [twitters, setTwitters] = useState<AddressTwitterMap | undefined>()
+  const [twitters, setTwitters] = useState<AddressTwitterMap | undefined>();
 
   useEffect(() => {
     getAllTwitters().then((t) => setTwitters(t));
   }, []);
   return (
-    
     <>
-    {twitters ? (
-      <TwitterProvider value={twitters}>
-
-      <PrettyOverlayGradient />
-      <PortalContainer>
-        <HideSmall>
-          <PortalSidebarView playerAddress={playerAddress} />
-        </HideSmall>
-        <PortalMainView/>
-      </PortalContainer>
-      </TwitterProvider>
-     ) : <LoadingPage/>}
+      {twitters ? (
+        <TwitterProvider value={twitters}>
+          <Background />
+          <PortalContainer>
+            <HideSmall>
+              <PortalSidebarView playerAddress={playerAddress} />
+            </HideSmall>
+            <PortalMainView />
+          </PortalContainer>
+        </TwitterProvider>
+      ) : (
+        <LoadingPage />
+      )}
     </>
   );
 }
@@ -65,7 +65,12 @@ const PortalContainer = styled.div`
   display: grid;
   margin: 0 auto;
   grid-template-columns: 245px 800px;
+  // grid-template-columns: 2fr 6fr;
   min-height: 100vh;
   justify-content: center;
+`;
 
+const Background = styled(PrettyOverlayGradient)`
+  // background: linear-gradient(112.68deg, #3a366d 0%, #1f2436 63.54%, #071826 100%);
+  background: #111;
 `;

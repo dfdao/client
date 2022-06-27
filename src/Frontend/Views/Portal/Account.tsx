@@ -16,12 +16,14 @@ function AccountDetails({ address }: { address: EthAddress }) {
     <NamesContainer>
       <Large>
         {twitters[address] ? (
-          <TwitterLink twitter={twitters[address]} />
+          <>
+            <TwitterLink twitter={twitters[address]} />
+            <TextPreview text={address} focusedWidth={'200px'} unFocusedWidth={'120px'} />
+          </>
         ) : (
           <TextPreview text={address} focusedWidth={'200px'} unFocusedWidth={'150px'} />
         )}
       </Large>
-      <TextPreview text={address} focusedWidth={'200px'} unFocusedWidth={'120px'} />
     </NamesContainer>
   );
 }
@@ -30,7 +32,9 @@ export function Account({ address }: { address: EthAddress }) {
   return (
     <PaneContainer>
       <AccountDetails address={address} />
-      <Btn variant={'portal'} size='small' onClick={logOut}>Logout</Btn>
+      <Btn variant={'portal'} size='small' onClick={logOut}>
+        Logout
+      </Btn>
     </PaneContainer>
   );
 }
