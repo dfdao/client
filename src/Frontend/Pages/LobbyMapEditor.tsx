@@ -179,7 +179,7 @@ export const LobbyMapEditor: React.FC<{
           onPlanetSelect={(index: number) => {
             setSelectedPlanetIndex(index);
           }}
-          root={root}
+          selectedIndex={selectedPlanetIndex}
         />
       </Sidebar>
       <MainContent>

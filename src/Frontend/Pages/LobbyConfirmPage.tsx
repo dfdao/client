@@ -114,7 +114,6 @@ export function LobbyConfirmPage({
           onUpdate={onUpdate}
           onPlanetHover={(planet) => {}}
           onPlanetSelect={(planet) => {}}
-          root={root}
           onError={onError}
           lobbyAdminTools={lobbyAdminTools}
         />

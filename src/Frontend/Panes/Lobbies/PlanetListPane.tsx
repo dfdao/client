@@ -20,23 +20,23 @@ import { InvalidConfigError, LobbyConfigAction, LobbyConfigState, toInitializers
 
 const PLANET_TYPE_NAMES = ['Planet', 'Asteroid Field', 'Foundry', 'Spacetime Rip', 'Quasar'];
 export function PlanetListPane({
-  config: config,
-  onUpdate: onUpdate,
+  config,
+  onUpdate,
   onPlanetHover,
   onPlanetSelect: onPlanetSelect,
-  root,
   lobbyAdminTools,
   onError,
   maxPlanetsPerPage = 5,
+  selectedIndex,
 }: {
   config: LobbyConfigState;
   onUpdate: (change: LobbyConfigAction) => void;
   onPlanetHover: (planet: LobbyPlanet) => void;
   onPlanetSelect: (index: number) => void;
-  root: string;
   lobbyAdminTools: LobbyAdminTools | undefined;
   onError: (msg: string) => void;
   maxPlanetsPerPage?: number;
+  selectedIndex?: number;
 }) {
   const [createdPlanets, setCreatedPlanets] = useState<CreatedPlanet[] | undefined>();
 
@@ -66,6 +66,7 @@ export function PlanetListPane({
         onClick={() => {
           onPlanetSelect(index);
         }}
+        isSelected={index === selectedIndex}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <StagedPlanetIcon>
@@ -174,9 +175,7 @@ export function PlanetListPane({
         onMouseLeave={() => {
           setHoveringPlanet(false);
         }}
-        onClick={() => {
-          onPlanetSelect(index);
-        }}
+        isSelected={index === selectedIndex}
       >
         {hoveringPlanet && (
           <HoverWrapper>
@@ -270,13 +269,14 @@ const List = styled.div`
   width: 100%;
 `;
 
-const StagedPlanetListItem = styled.div`
+const StagedPlanetListItem = styled.div<{ isSelected: boolean }>`
   display: flex;
   align-items: center;
   padding: 8px;
   cursor: pointer;
   position: relative;
   justify-content: space-between;
+  background: ${({ isSelected }) => (isSelected ? '#252525' : 'transparent')};
   transition: all 0.2s ease-in-out;
   &:hover {
     background: #252525;
