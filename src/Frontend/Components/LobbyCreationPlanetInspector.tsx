@@ -1,10 +1,8 @@
 import { PlanetTypeNames } from '@darkforest_eth/types';
 import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { CloseButton, LobbyPlanet } from '../Panes/Lobbies/LobbiesUtils';
 import { LobbyAction, LobbyConfigState } from '../Panes/Lobbies/Reducer';
-import { Checkbox } from './Input';
 import { PlanetPropEditor } from './LobbyPlanetPropEditor';
 
 export interface LobbyPlanetInspectorProps {
@@ -19,6 +17,7 @@ export interface LobbyPlanetInspectorProps {
 
 // This is the component that lets you edit staged planet params when editing a custom lobby map.
 
+// From https://dfwiki.net/wiki/Celestial_bodies
 const PLANET_DESCRIPTION = [
   'Planets are the most basic type of celestial body. They can be found in all space types.',
   'Asteroid fields have half the defense of a same-level planet, making them cheap to take over while still maintaining the same energy growth and general functionality with silver production added on. This makes asteroid fields ideal for early expansion.',

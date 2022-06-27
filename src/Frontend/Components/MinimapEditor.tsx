@@ -1,13 +1,11 @@
 import { WorldCoords } from '@darkforest_eth/types';
-import { debounce } from 'lodash';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { removeAlphabet } from '../Panes/Lobbies/LobbiesUtils';
 import { MinimapConfig } from '../Panes/Lobbies/MinimapUtils';
 
 export const MinimapEditor: React.FC<{
   style?: { width: string; height: string };
-  onError: (msg: string) => void;
   onClick: (clickedCoords: WorldCoords) => void;
   onHover?: (hoveredCoords: WorldCoords) => void;
   minimapConfig: MinimapConfig | undefined;
@@ -15,7 +13,6 @@ export const MinimapEditor: React.FC<{
   disabled: boolean;
 }> = ({
   style = { width: '400px', height: '400px' },
-  onError,
   onHover,
   onClick,
   minimapConfig,
@@ -24,57 +21,9 @@ export const MinimapEditor: React.FC<{
 }) => {
   const canvasPlanetLayer = useRef<HTMLCanvasElement | null>(null);
 
-  useEffect(() => {
-    if (!minimapConfig) return;
-    const x = generateMinimapCoords(minimapConfig);
-    const y = normalizeGenerated(x, minimapConfig.worldRadius);
-  }, [minimapConfig]);
-
   if (!minimapConfig) return <div>Loading...</div>;
 
   const scaleFactor = minimapConfig.worldRadius / (parseInt(removeAlphabet(style.height)) / 2);
-
-  const checkBounds = (a: number, b: number, x: number, y: number, r: number) => {
-    const dist = (a - x) * (a - x) + (b - y) * (b - y);
-    r *= r;
-    if (dist < r) {
-      return true;
-    }
-    return false;
-  };
-
-  const generateMinimapCoords = (config: MinimapConfig) => {
-    let data: WorldCoords[] = [];
-    let step = (config.worldRadius * config.dot) / 100;
-    const radius = config.worldRadius;
-
-    for (let i = radius * -1; i < radius; i += step) {
-      for (let j = radius * -1; j < radius; j += step) {
-        if (!checkBounds(0, 0, i, j, radius)) {
-          continue;
-        }
-        data.push({
-          x: i,
-          y: j,
-        });
-      }
-    }
-    return data;
-  };
-
-  const normalizeGenerated = (data: WorldCoords[], radius: number) => {
-    const sizeFactor = 380;
-    const normalize = (val: number) => {
-      return Math.floor(((val + radius) * sizeFactor) / (radius * 2));
-    };
-    const normalized: WorldCoords[] = data.map((coord) => {
-      return {
-        x: normalize(coord.x) + 10,
-        y: normalize(coord.y * -1) + 10,
-      };
-    });
-    return normalized;
-  };
 
   const getAdjustedPointer = (
     canvas: React.MutableRefObject<HTMLCanvasElement | null>,

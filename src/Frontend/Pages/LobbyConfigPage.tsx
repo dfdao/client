@@ -5,12 +5,11 @@ import { EthConnection } from '@darkforest_eth/network';
 import { ContractMethodName, EthAddress, UnconfirmedCreateLobby } from '@darkforest_eth/types';
 import { Contract } from 'ethers';
 import _, { initial } from 'lodash';
-import React, { useContext, useEffect, useMemo, useReducer, useState } from 'react';
+import React, { useEffect, useMemo, useReducer, useState } from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
 import { ContractsAPI } from '../../Backend/GameLogic/ContractsAPI';
 import { loadInitContract } from '../../Backend/Network/Blockchain';
 import { LobbyAdminTools } from '../../Backend/Utils/LobbyAdminTools';
-import { ConfigurationPane } from '../Panes/Lobbies/ConfigurationPane';
 import { ExtrasNavPane } from '../Panes/Lobbies/ExtrasNavPane';
 import { MinimapPane } from '../Panes/Lobbies/MinimapPane';
 import { MinimapConfig } from '../Panes/Lobbies/MinimapUtils';
@@ -28,20 +27,10 @@ import { LobbyWorldSettingsPage } from './LobbyWorldSettingsPage';
 import { LobbyConfirmPage } from './LobbyConfirmPage';
 import { LobbyMapEditor } from './LobbyMapEditor';
 import { getAllTwitters } from '../../Backend/Network/UtilityServerAPI';
-import { LobbyPlanet } from '../Panes/Lobbies/LobbiesUtils';
-import { createContext } from 'preact';
+import { DEFAULT_PLANET } from '../Panes/Lobbies/LobbiesUtils';
 import { Toast } from '../Components/Toast';
 
 type Status = 'waitingForCreate' | 'creating' | 'created' | 'errored' | undefined;
-
-const DEFAULT_PLANET: LobbyPlanet = {
-  x: 0,
-  y: 0,
-  level: 0,
-  planetType: 0,
-  isTargetPlanet: false,
-  isSpawnPlanet: false,
-};
 
 const BULK_CREATE_CHUNK_SIZE = 5;
 
@@ -119,7 +108,7 @@ export function LobbyConfigPage({
         planets.splice(i, BULK_CREATE_CHUNK_SIZE);
       } catch (err) {
         i += BULK_CREATE_CHUNK_SIZE;
-        console.log('ERROR', err);
+        console.error('Error creating and revealing planets:', err);
         if (err instanceof InvalidConfigError) {
           setError(`Invalid ${err.key} value ${err.value ?? ''} - ${err.message}`);
         } else {
@@ -234,9 +223,6 @@ export function LobbyConfigPage({
         description={error}
         onClose={() => {
           setError(undefined);
-          // if (config.ADMIN_PLANETS.warning) {
-          //   // remove warning
-          // }
         }}
       />
       <Switch>
@@ -252,14 +238,12 @@ export function LobbyConfigPage({
         </Route>
         <Route path={`${root}/confirm`}>
           <LobbyConfirmPage
-            updateConfig={updateConfig}
             lobbyAdminTools={lobbyAdminTools}
             minimapConfig={minimapConfig}
             config={config}
             onUpdate={updateConfig}
             createDisabled={createDisabled}
             root={root}
-            createLobby={createLobby}
             ownerAddress={ownerAddress}
             lobbyTx={lobbyTx}
             onError={setError}

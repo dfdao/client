@@ -58,6 +58,7 @@ export const PlanetPropEditor: React.FC<PlanetPropEditorProps> = ({
       );
     } else if (value == 'level') {
       content = (
+        // if we use a Select instead of an Input, we can enforce a max + min level value client-side
         <SelectFrom
           wide={false}
           style={{ padding: '5px' }}

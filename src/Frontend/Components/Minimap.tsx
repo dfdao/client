@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useRef } from 'react';
-import { removeAlphabet } from '../Panes/Lobbies/LobbiesUtils';
 import { DrawMessage, MinimapColors, MinimapConfig } from '../Panes/Lobbies/MinimapUtils';
 
 function getWorker() {
@@ -54,13 +53,14 @@ function drawOnCanvas(canvas: HTMLCanvasElement | null, msg: DrawMessage) {
   ctx.stroke();
 }
 
+// The minimap canvas will always be drawn at CANVAS_SIZE.
+// if the size of the style prop in the parent component is different,
+// the canvas will be scaled to fit
+
 export const CANVAS_SIZE = {
   width: '400',
   height: '400',
 };
-// The minimap canvas will always be drawn at CANVAS_SIZE.
-// if the size of the style prop in the parent component is different,
-// the canvas will be scaled to fit
 
 export function Minimap({
   style = { width: '400px', height: '400px' },

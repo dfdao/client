@@ -169,8 +169,6 @@ export const LobbyMapEditor: React.FC<{
           config={config}
           onUpdate={updateConfig}
           lobbyAdminTools={lobbyAdminTools}
-          onPlanetHover={(planet) => {}}
-          onError={onError}
           onPlanetSelect={(index: number) => {
             setSelectedPlanetIndex(index);
           }}
@@ -183,7 +181,6 @@ export const LobbyMapEditor: React.FC<{
           <MinimapEditorWrapper>
             <MinimapEditor
               style={{ width: '600px', height: '600px' }}
-              onError={onError}
               onClick={(coords: WorldCoords) => {
                 stagePlanet(coords);
                 if (!placementModeShortcut) {

@@ -20,19 +20,15 @@ const PLANET_TYPE_NAMES = ['Planet', 'Asteroid Field', 'Foundry', 'Spacetime Rip
 export function PlanetListPane({
   config,
   onUpdate,
-  onPlanetHover,
   onPlanetSelect: onPlanetSelect,
   lobbyAdminTools,
-  onError,
   maxPlanetsPerPage = 5,
   selectedIndex,
 }: {
   config: LobbyConfigState;
   onUpdate: (change: LobbyConfigAction) => void;
-  onPlanetHover: (planet: LobbyPlanet) => void;
   onPlanetSelect: (index: number) => void;
   lobbyAdminTools: LobbyAdminTools | undefined;
-  onError: (msg: string) => void;
   maxPlanetsPerPage?: number;
   selectedIndex?: number;
 }) {
@@ -178,7 +174,6 @@ export function PlanetListPane({
     return (
       <StagedPlanetListItem
         onMouseEnter={() => {
-          // onPlanetHover(planet);
           setHoveringPlanet(true);
         }}
         onMouseLeave={() => {

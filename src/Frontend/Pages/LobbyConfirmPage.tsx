@@ -1,9 +1,8 @@
 import { EthAddress } from '@darkforest_eth/types';
 import _ from 'lodash';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
-import styled, { css } from 'styled-components';
-import { getAllTwitters } from '../../Backend/Network/UtilityServerAPI';
+import styled from 'styled-components';
 import { LobbyAdminTools } from '../../Backend/Utils/LobbyAdminTools';
 import { CopyableInput } from '../Components/CopyableInput';
 import { Link, Spacer } from '../Components/CoreUI';
@@ -14,22 +13,15 @@ import { Sidebar } from '../Components/Sidebar';
 import { MinimapPane } from '../Panes/Lobbies/MinimapPane';
 import { MinimapConfig } from '../Panes/Lobbies/MinimapUtils';
 import { PlanetListPane } from '../Panes/Lobbies/PlanetListPane';
-import {
-  LobbyAction,
-  LobbyConfigAction,
-  LobbyConfigState,
-  LobbyInitializers,
-} from '../Panes/Lobbies/Reducer';
+import { LobbyConfigAction, LobbyConfigState } from '../Panes/Lobbies/Reducer';
 
 export function LobbyConfirmPage({
-  updateConfig,
   lobbyAdminTools,
   minimapConfig,
   config,
   onUpdate,
   createDisabled,
   root,
-  createLobby,
   ownerAddress,
   lobbyTx,
   onError,
@@ -38,14 +30,12 @@ export function LobbyConfirmPage({
   playerTwitter,
   validateAndCreateLobby,
 }: {
-  updateConfig: React.Dispatch<LobbyAction>;
   config: LobbyConfigState;
   lobbyAdminTools: LobbyAdminTools | undefined;
   createDisabled: boolean;
   root: string;
   minimapConfig: MinimapConfig | undefined;
   onUpdate: (action: LobbyConfigAction) => void;
-  createLobby: (config: LobbyInitializers) => void;
   ownerAddress: EthAddress;
   lobbyTx: string | undefined;
   onError: (msg: string) => void;
@@ -112,9 +102,7 @@ export function LobbyConfirmPage({
         <PlanetListPane
           config={config}
           onUpdate={onUpdate}
-          onPlanetHover={(planet) => {}}
           onPlanetSelect={(planet) => {}}
-          onError={onError}
           lobbyAdminTools={lobbyAdminTools}
         />
       </Sidebar>
