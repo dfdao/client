@@ -7,6 +7,7 @@ import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { loadArenaLeaderboard } from '../../../Backend/Network/ArenaLeaderboardApi';
 import { loadConfigFromHash } from '../../../Backend/Network/ConfigApi';
+import { loadMaps } from '../../../Backend/Network/MapsApi';
 import { Btn } from '../../Components/Btn';
 import { Spacer } from '../../Components/CoreUI';
 import { LoadingSpinner } from '../../Components/LoadingSpinner';
@@ -146,20 +147,29 @@ const OfficialGameBanner: React.FC<{}> = ({}) => {
 };
 
 export const PortalHomeView: React.FC<{}> = () => {
-  const placeholderHash = [competitiveConfig, competitiveConfig, competitiveConfig];
-  const placeholderHashes = [...placeholderHash]
-    .concat(placeholderHash)
-    .concat(placeholderHash)
-    .concat(placeholderHash);
+  const [configHashes, setConfigHashes] = useState<string[]>([]);
+
+  useEffect(() => {
+    loadMaps(1000)
+      .then((maps) => {
+        if (!maps) return;
+        const configHashes = maps.map((m) => m.configHash);
+        const uniqueHashes = new Set(configHashes);
+        setConfigHashes([...uniqueHashes]);
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  }, []);
 
   return (
     <Container>
       <OfficialGameBanner />
       <Spacer height={24} />
       <MoreMapsContainer>
-        <span>More Maps</span>
+        <span style={{ fontSize: '1rem' }}>Community Maps</span>
         <MoreGrid>
-          {placeholderHashes.map((c, i) => (
+          {configHashes.map((c, i) => (
             <MapDetails configHash={c} key={i} />
           ))}
         </MoreGrid>
@@ -223,8 +233,9 @@ export const ArenaPortalButton = styled.button<{ secondary?: boolean }>`
 
 const MoreGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   grid-gap: 10px;
+  margin-top: 16px;
 `;
 
 const DetailContainer = styled.div`

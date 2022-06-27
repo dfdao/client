@@ -62,15 +62,15 @@ function Portal({ playerAddress }: { playerAddress: EthAddress }) {
 
 const PortalContainer = styled.div`
   vertical-align: baseline;
-  display: grid;
+  // display: grid;
+  display: flex;
   margin: 0 auto;
-  grid-template-columns: 245px 800px;
+  // grid-template-columns: 245px 800px;
   // grid-template-columns: 2fr 6fr;
   min-height: 100vh;
   justify-content: center;
 `;
 
 const Background = styled(PrettyOverlayGradient)`
-  // background: linear-gradient(112.68deg, #3a366d 0%, #1f2436 63.54%, #071826 100%);
   background: #111;
 `;

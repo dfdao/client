@@ -9,6 +9,7 @@ import { TextPreview } from '../../Components/TextPreview';
 
 import dfstyles from '../../Styles/dfstyles';
 import { useTwitters } from '../../Utils/AppHooks';
+import { MinimalButton } from './PortalMainView';
 
 function AccountDetails({ address }: { address: EthAddress }) {
   const twitters = useTwitters();
@@ -32,22 +33,24 @@ export function Account({ address }: { address: EthAddress }) {
   return (
     <PaneContainer>
       <AccountDetails address={address} />
-      <Btn variant={'portal'} size='small' onClick={logOut}>
-        Logout
-      </Btn>
+      <ButtonContainer>
+        <MinimalButton onClick={logOut}>Log out</MinimalButton>
+      </ButtonContainer>
     </PaneContainer>
   );
 }
 
 const PaneContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border: 1px solid ${dfstyles.colors.border};
-  background: rgba(255, 255, 255, 0.04);
-  width: 100%;
   padding: 1em;
-  border-radius: 10px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid ${dfstyles.colors.border};
+  width: 100%;
+  border-radius: 6px;
+  gap: 8px;
 `;
 
 const NamesContainer = styled.div`
@@ -58,4 +61,10 @@ const NamesContainer = styled.div`
 
 const Large = styled.div`
   font-size: 1.25em;
+`;
+
+const ButtonContainer = styled.div`
+  position: absolute;
+  right: 8px;
+  height: calc(49px - 16px);
 `;

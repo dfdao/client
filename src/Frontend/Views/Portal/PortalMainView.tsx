@@ -79,9 +79,7 @@ export function PortalMainView() {
               setInput(e.target.value)
             }
           />{' '}
-          <Btn variant='portal' onClick={() => validateAddress()}>
-            go
-          </Btn>
+          <MinimalButton onClick={() => validateAddress()}>Search</MinimalButton>
         </TitleContainer>
       </TopBar>
       <Switch>
@@ -106,7 +104,7 @@ const MainContainer = styled.div`
   display: flex;
   flex: 1 1;
   flex-direction: column;
-  border-left: 1px solid ${dfstyles.colors.border};
+  // border-left: 1px solid ${dfstyles.colors.border};
   height: 100vh;
   overflow: hidden;
   // padding-bottom: 3em;
@@ -114,13 +112,13 @@ const MainContainer = styled.div`
 `;
 
 const TopBar = styled.div`
-  border-bottom: 1px solid ${dfstyles.colors.border};
+  // border-bottom: 1px solid ${dfstyles.colors.border};
 
   height: 56px;
   max-height: 56px;
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   width: 100%;
   padding: 16px;
 `;
@@ -142,4 +140,14 @@ const TitleContainer = styled.div`
 
 const inputStyle = {
   minWidth: '350px',
+  background: '#252525',
+  color: '#fff',
 } as CSSStyleDeclaration & React.CSSProperties;
+
+export const MinimalButton = styled.button`
+  border-radius: 3px;
+  padding: 8px;
+  background: #252525;
+  color: #fff;
+  text-transform: uppercase;
+`;
