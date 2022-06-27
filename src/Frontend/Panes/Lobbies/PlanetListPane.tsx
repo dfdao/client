@@ -112,7 +112,15 @@ export function PlanetListPane({
     }, [config.ADMIN_PLANETS]);
 
     const [currentPage, setCurrentPage] = useState<number>(0);
-    return LobbyPlanets && LobbyPlanets.length > 0 ? (
+
+    const visiblePlanets = useMemo(() => {
+      return LobbyPlanets.slice(
+        currentPage * maxPlanetsPerPage,
+        currentPage * maxPlanetsPerPage + maxPlanetsPerPage
+      );
+    }, [currentPage, LobbyPlanets]);
+
+    return LobbyPlanets.length > 0 ? (
       <>
         <Row>
           <span>Staged Planets</span>
@@ -120,37 +128,40 @@ export function PlanetListPane({
 
         <Row>
           <List>
-            {chunk(LobbyPlanets, maxPlanetsPerPage)[currentPage].map((planet, j) => (
+            {visiblePlanets.map((planet, j) => (
               <StagedPlanetItem
                 key={`${currentPage}-${j}`}
                 planet={planet}
                 index={currentPage * maxPlanetsPerPage + j}
               />
             ))}
-            <PaginationContainer>
-              <PaginationArrowContainer
-                style={{ transform: 'rotate(180deg)' }}
-                onClick={() => {
-                  setCurrentPage(Math.max(currentPage - 1, 0));
-                }}
-                disabled={currentPage === 0}
-              >
-                <IconArrowRight />
-              </PaginationArrowContainer>
-              <span>
-                Page {currentPage + 1} of {Math.floor(LobbyPlanets.length / maxPlanetsPerPage) + 1}
-              </span>
-              <PaginationArrowContainer
-                onClick={() => {
-                  setCurrentPage(
-                    Math.min(currentPage + 1, Math.floor(LobbyPlanets.length / maxPlanetsPerPage))
-                  );
-                }}
-                disabled={currentPage === Math.floor(LobbyPlanets.length / maxPlanetsPerPage)}
-              >
-                <IconArrowRight />
-              </PaginationArrowContainer>
-            </PaginationContainer>
+            {LobbyPlanets.length > maxPlanetsPerPage && (
+              <PaginationContainer>
+                <PaginationArrowContainer
+                  style={{ transform: 'rotate(180deg)' }}
+                  onClick={() => {
+                    setCurrentPage(Math.max(currentPage - 1, 0));
+                  }}
+                  disabled={currentPage === 0}
+                >
+                  <IconArrowRight />
+                </PaginationArrowContainer>
+                <span>
+                  Page {currentPage + 1} of{' '}
+                  {Math.floor(LobbyPlanets.length / maxPlanetsPerPage) + 1}
+                </span>
+                <PaginationArrowContainer
+                  onClick={() => {
+                    setCurrentPage(
+                      Math.min(currentPage + 1, Math.floor(LobbyPlanets.length / maxPlanetsPerPage))
+                    );
+                  }}
+                  disabled={currentPage === Math.floor(LobbyPlanets.length / maxPlanetsPerPage)}
+                >
+                  <IconArrowRight />
+                </PaginationArrowContainer>
+              </PaginationContainer>
+            )}
           </List>
         </Row>
       </>
