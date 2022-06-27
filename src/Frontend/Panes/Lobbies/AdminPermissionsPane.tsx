@@ -42,6 +42,31 @@ export function AdminPermissionsPane({ config, onUpdate }: LobbiesPaneProps) {
       <Row>
         <Warning>{config.WHITELIST_ENABLED.warning}</Warning>
       </Row>
+      <Row>
+        <Checkbox
+          label='Ranked'
+          checked={config.RANKED.displayValue}
+          onChange={(e: Event & React.ChangeEvent<DarkForestCheckbox>) =>
+            onUpdate({ type: 'RANKED', value: e.target.checked })
+          }
+        />
+      </Row>
+      <Row>
+        <Warning>{config.RANKED.warning}</Warning>
+      </Row>
+      <Row>
+        <Checkbox
+          label='Confirm Start'
+          checked={config.CONFIRM_START.displayValue}
+          onChange={(e: Event & React.ChangeEvent<DarkForestCheckbox>) =>
+            onUpdate({ type: 'CONFIRM_START', value: e.target.checked })
+          }
+        />
+      </Row>
+      <Row>
+        <Warning>{config.CONFIRM_START.warning}</Warning>
+      </Row>
+
     </>
   );
 }
