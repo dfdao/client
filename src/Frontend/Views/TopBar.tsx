@@ -18,11 +18,13 @@ import { Paused } from './Paused';
 import { Gameover } from './Gameover';
 import { Timer } from './Timer';
 import { Play } from './Play';
+import { TargetPlanetVictory } from './TargetPlanetVictory';
 
 const TopBarContainer = styled.div`
   z-index: ${DFZIndex.MenuBar};
   padding: 0 2px;
   width: 530px;
+  gap: 5px;
 `;
 
 const Numbers = styled.div`
@@ -233,6 +235,7 @@ export function TopBar({ twitterVerifyHook }: { twitterVerifyHook: Hook<boolean>
             <SpaceJunk account={account} />
           </>
         )}
+        <TargetPlanetVictory />
       </AlignCenterHorizontally>
       <NetworkHealth />
       <Gameover/>
