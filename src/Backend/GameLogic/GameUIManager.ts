@@ -1361,6 +1361,14 @@ class GameUIManager extends EventEmitter {
     return this.gameManager.getTargetPlanets();
   }
 
+  public blockMovesEnabled() :boolean {
+    return this.gameManager.blockMoves();
+  }
+
+  public playerBlocked(player: EthAddress, planet: LocationId) : boolean {
+    return this.gameManager.playerBlocked(player, planet);
+  }
+
   public potentialCaptureScore(planetLevel: number): number {
     return this.contractConstants.CAPTURE_ZONE_PLANET_LEVEL_SCORE[planetLevel];
   }

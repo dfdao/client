@@ -2011,24 +2011,33 @@ class GameManager extends EventEmitter {
     }
   }
 
-  public checkVictoryCondition() :boolean {
+  private isTargetHeld(planet: Planet): boolean {
+    const constants = this.getContractConstants();
+    if (!this.account) return false;
+    if (!planet.isTargetPlanet) return false;
+    if (constants.TEAMS_ENABLED) {
+      const owner = this.getPlayer(planet.owner);
+      const me = this.getPlayer();
+      if (!owner || !me || owner.team !== me.team) return false;
+    } else if (planet.owner != this.account) return false;
+    if ((planet.energy * 100) / planet.energyCap < constants.CLAIM_VICTORY_ENERGY_PERCENT)
+      return false;
+    if (constants.BLOCK_CAPTURE && this.playerBlocked(this.account, planet.locationId))
+      return false;
+    return true;
+  }
     const targetPlanets = this.getTargetPlanets();
 
     let captured: number = 0;
 
     const constants = this.getContractConstants();
-    for(const planet of targetPlanets) {
-      if(planet.owner !== this.account ||
-        (planet.energy * 100 / planet.energyCap) < constants.CLAIM_VICTORY_ENERGY_PERCENT ||
-        (constants.BLOCK_CAPTURE && this.playerBlocked(this.account, planet.locationId))
-        ) continue;
-        captured ++;
-        if (captured >= this.targetsRequired) return true;
+    for (const planet of targetPlanets) {
+      if (!this.isTargetHeld(planet)) continue;
 
+      captured++;
+      if (captured >= this.targetsRequired) return true;
     }
     return false;
- 
-
   }
   public async claimVictory() {
     try {
@@ -3757,8 +3766,12 @@ class GameManager extends EventEmitter {
   }
 
   // Return true if move is blocked in blocklist.
-  public isBlocked(destId: LocationId, srcId: LocationId): boolean | undefined{
-    return (this.blocklist.get(destId))?.get(srcId);
+  public isBlocked(destId: LocationId, srcId: LocationId): boolean  {
+    return !!this.blocklist.get(destId)?.get(srcId);
+  }
+
+  public getBlocklist() : BlocklistMap {
+    return this.blocklist;
   }
 
   public blockMoves(): boolean {
@@ -3779,7 +3792,7 @@ class GameManager extends EventEmitter {
 
   public getTargetsHeld(address?: EthAddress) : Planet[] {
     address = address || this.account;
-    return this.getTargetPlanets().filter(planet => planet.owner == address);
+    return this.getTargetPlanets().filter((planet) => this.isTargetHeld(planet));
   }
 
   get targetsRequired() : number {

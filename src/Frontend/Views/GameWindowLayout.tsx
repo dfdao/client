@@ -45,7 +45,6 @@ export function GameWindowLayout({
   setTerminalVisible: (visible: boolean) => void;
 }) {
   const uiManager = useUIManager();
-  const gameManager = uiManager.getGameManager();
   const modalManager = uiManager.getModalManager();
   const modalPositions = modalManager.getModalPositions();
 
@@ -122,7 +121,7 @@ export function GameWindowLayout({
 
   useEffect(() => setSelectedPlanetVisible(!!selected), [selected, setSelectedPlanetVisible]);
 
-  useEffect(() => setWaitingRoomVisible(!uiManager.getGameStarted())), [uiManager.getGameStarted()];
+  // useEffect(() => setWaitingRoomVisible(!uiManager.getGameStarted())), [uiManager.getGameStarted()];
 
   useOnUp(
     TOGGLE_DIAGNOSTICS_PANE,

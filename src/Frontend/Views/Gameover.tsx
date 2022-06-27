@@ -1,8 +1,9 @@
-import { TooltipName } from '@darkforest_eth/types';
+import { EthAddress, TooltipName } from '@darkforest_eth/types';
 import React from 'react';
 import styled from 'styled-components';
 import { AccountLabel } from '../Components/Labels/Labels';
 import { Gold } from '../Components/Text';
+import { TextPreview } from '../Components/TextPreview';
 import { TooltipTrigger } from '../Panes/Tooltip';
 import { useGameover, useUIManager } from '../Utils/AppHooks';
 
@@ -40,7 +41,7 @@ export function Gameover() {
         >
           <Gold>GAMEOVER!</Gold>
           <br />
-          The winner is {' '} {teamsEnabled ? `Team ${winningTeam}` : winners[0]}
+          Winner: {' '} {teamsEnabled ? `Team ${winningTeam}` : <AccountLabel ethAddress={winners[0] as EthAddress}/>}
           {/* {winners.map((winner, idx) => (
             <AccountLabel
               key={idx}
