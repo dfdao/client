@@ -2057,16 +2057,16 @@ class GameManager extends EventEmitter {
       localStorage.setItem(`${this.getAccount()?.toLowerCase()}-claimVictory`, locationId);
 
       const txIntent: UnconfirmedClaimVictory = {
-        methodName: 'claimTargetPlanetVictory',
+        methodName: 'claimVictory',
         contract: this.contractsAPI.contract,
         locationId,
-        args: Promise.resolve([locationIdToDecStr(locationId)]),
+        args: Promise.resolve([]),
       };
 
       const tx = await this.contractsAPI.submitTransaction(txIntent);
       return tx;
     } catch (e) {
-      this.getNotificationsManager().txInitError('claimTargetPlanetVictory', e.message);
+      this.getNotificationsManager().txInitError('claimVictory', e.message);
       throw e;
     }
   }
