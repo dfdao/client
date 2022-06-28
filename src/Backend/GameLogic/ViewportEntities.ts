@@ -128,7 +128,7 @@ export class ViewportEntities {
       const newPlanetInfo: PlanetRenderInfo = {
         planet: planet,
         radii: radii.get(planet.planetLevel) as Radii,
-        blocked: this.gameManager.playerBlocked(player, planet.locationId)
+        blocked: this.gameManager.playerMoveBlocked(player, planet.locationId)
       };
 
       if (!planet.emojiBobAnimation) {

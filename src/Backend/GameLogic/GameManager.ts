@@ -2012,7 +2012,7 @@ class GameManager extends EventEmitter {
     }
   }
 
-  private isTargetHeld(planet: Planet): boolean {
+  public isTargetHeld(planet: Planet): boolean {
     const constants = this.getContractConstants();
     if (!this.account) return false;
     if (!planet.isTargetPlanet) return false;
@@ -2023,7 +2023,7 @@ class GameManager extends EventEmitter {
     } else if (planet.owner != this.account) return false;
     if ((planet.energy * 100) / planet.energyCap < constants.CLAIM_VICTORY_ENERGY_PERCENT)
       return false;
-    if (constants.BLOCK_CAPTURE && this.playerBlocked(this.account, planet.locationId))
+    if (this.playerCaptureBlocked(this.account, planet.locationId))
       return false;
     return true;
   }
@@ -2978,7 +2978,7 @@ class GameManager extends EventEmitter {
         throw new Error('game is paused');
       }
 
-      if (this.account && this.blockMoves() && this.playerBlocked(this.account, to)) {
+      if (this.account && this.playerMoveBlocked(this.account, to)) {
         throw new Error('Cannot move to a blocked planet');
       }
 
@@ -3767,8 +3767,12 @@ class GameManager extends EventEmitter {
   }
 
   // Return true if move is blocked in blocklist.
-  public isBlocked(destId: LocationId, srcId: LocationId): boolean  {
-    return !!this.blocklist.get(destId)?.get(srcId);
+  public isMoveBlocked(destId: LocationId, srcId: LocationId): boolean  {
+    return this.contractConstants.BLOCK_MOVES && !!this.blocklist.get(destId)?.get(srcId);
+  }
+
+  public isCaptureBlocked(destId: LocationId, srcId: LocationId): boolean  {
+    return this.contractConstants.BLOCK_CAPTURE && !!this.blocklist.get(destId)?.get(srcId);
   }
 
   public getBlocklist() : BlocklistMap {
@@ -3783,12 +3787,16 @@ class GameManager extends EventEmitter {
     return this.contractConstants.BLOCK_CAPTURE;
   }
 
-  public playerBlocked(account: EthAddress, targetLocation: LocationId): boolean {
+  public playerMoveBlocked(account: EthAddress, targetLocation: LocationId): boolean {
     const player = this.getPlayer(account);
     if (!player) throw new Error('Player not found');
-    const playerHomePlanet = player.homePlanetId;
-    const res = this.isBlocked(targetLocation, playerHomePlanet);
-    return Boolean(res); // if isBlocked is undefined, will return false.
+    return this.isMoveBlocked(targetLocation, player.homePlanetId);
+  }
+
+  public playerCaptureBlocked(account: EthAddress, targetLocation: LocationId): boolean {
+    const player = this.getPlayer(account);
+    if (!player) throw new Error('Player not found');
+    return this.isCaptureBlocked(targetLocation, player.homePlanetId);
   }
 
   public getTargetsHeld(address?: EthAddress): Planet[] {

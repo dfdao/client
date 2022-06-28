@@ -89,7 +89,7 @@ export function PlanetIcons({ planet }: { planet: Planet | undefined }) {
     <StyledPlanetIcons>
       {account &&
         uiManager.blockMovesEnabled() &&
-        uiManager.playerBlocked(account, planet.locationId) && (
+        uiManager.playerMoveBlocked(account, planet.locationId) && (
           <TooltipTrigger name={TooltipName.Blocked}>
             <Icon type={IconType.Blocked} />
           </TooltipTrigger>

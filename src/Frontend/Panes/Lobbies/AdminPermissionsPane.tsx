@@ -4,6 +4,9 @@ import { Row } from '../../Components/Row';
 import { LobbiesPaneProps, Warning } from './LobbiesUtils';
 
 export function AdminPermissionsPane({ config, onUpdate }: LobbiesPaneProps) {
+  const checkboxes = [
+    
+  ]
   return (
     <>
       <Row>
@@ -30,21 +33,21 @@ export function AdminPermissionsPane({ config, onUpdate }: LobbiesPaneProps) {
       <Row>
         <Warning>{config.ADMIN_CAN_ADD_PLANETS.warning}</Warning>
       </Row>
-      <Row>
+      {/* <Row>
         <Checkbox
-          label='Is allowlist enabled?'
+          label='Allowlist enabled?'
           checked={config.WHITELIST_ENABLED.displayValue}
           onChange={(e: Event & React.ChangeEvent<DarkForestCheckbox>) =>
             onUpdate({ type: 'WHITELIST_ENABLED', value: e.target.checked })
           }
         />
-      </Row>
+      </Row> */}
       <Row>
         <Warning>{config.WHITELIST_ENABLED.warning}</Warning>
       </Row>
       <Row>
         <Checkbox
-          label='Ranked'
+          label='Ranked match?'
           checked={config.RANKED.displayValue}
           onChange={(e: Event & React.ChangeEvent<DarkForestCheckbox>) =>
             onUpdate({ type: 'RANKED', value: e.target.checked })
@@ -56,7 +59,7 @@ export function AdminPermissionsPane({ config, onUpdate }: LobbiesPaneProps) {
       </Row>
       <Row>
         <Checkbox
-          label='Confirm Start'
+          label='Players confirm ready before start?'
           checked={config.CONFIRM_START.displayValue}
           onChange={(e: Event & React.ChangeEvent<DarkForestCheckbox>) =>
             onUpdate({ type: 'CONFIRM_START', value: e.target.checked })
