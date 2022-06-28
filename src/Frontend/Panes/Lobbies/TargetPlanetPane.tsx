@@ -1,5 +1,10 @@
 import React from 'react';
-import { Checkbox, DarkForestCheckbox, DarkForestNumberInput, NumberInput } from '../../Components/Input';
+import {
+  Checkbox,
+  DarkForestCheckbox,
+  DarkForestNumberInput,
+  NumberInput,
+} from '../../Components/Input';
 import { Row } from '../../Components/Row';
 import { DarkForestSlider, Slider } from '../../Components/Slider';
 import { LobbiesPaneProps } from './LobbiesUtils';
@@ -34,14 +39,14 @@ export function TargetPlanetPane({ config: config, onUpdate: onUpdate }: Lobbies
       )}
       {config.TARGET_PLANETS.displayValue && (
         <Row>
-        <span>Number targets required for victory:</span>
-        <NumberInput
-          value={config.TARGETS_REQUIRED_FOR_VICTORY.displayValue}
-          onChange={(e: Event & React.ChangeEvent<DarkForestNumberInput>) => {
-            onUpdate({ type: 'TARGETS_REQUIRED_FOR_VICTORY', value: e.target.value });
-          }}
-        />
-      </Row>
+          <span>Number of targets required for victory:</span>
+          <NumberInput
+            value={config.TARGETS_REQUIRED_FOR_VICTORY.displayValue}
+            onChange={(e: Event & React.ChangeEvent<DarkForestNumberInput>) => {
+              onUpdate({ type: 'TARGETS_REQUIRED_FOR_VICTORY', value: e.target.value });
+            }}
+          />
+        </Row>
       )}
     </>
   );

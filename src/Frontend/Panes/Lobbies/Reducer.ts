@@ -150,9 +150,17 @@ export type LobbyConfigAction =
       value: EthAddress | undefined;
     }
   | { type: 'NO_ADMIN'; value: Initializers['NO_ADMIN'] | undefined }
+  | { type: 'RANKED'; value: Initializers['RANKED'] | undefined }
+  | { type: 'CONFIRM_START'; value: Initializers['CONFIRM_START'] | undefined }
+  | { type: 'BLOCK_MOVES'; value: Initializers['BLOCK_MOVES'] | undefined }
+  | { type: 'BLOCK_CAPTURE'; value: Initializers['BLOCK_CAPTURE'] | undefined }
   | {
       type: 'TEAMS_ENABLED';
       value: Initializers['TEAMS_ENABLED'] | undefined;
+    }
+    | {
+      type: 'TARGETS_REQUIRED_FOR_VICTORY';
+      value: Initializers['TARGETS_REQUIRED_FOR_VICTORY'] | undefined;
     }
   | {
       type: 'NUM_TEAMS';
@@ -392,6 +400,10 @@ export function lobbyConfigReducer(state: LobbyConfigState, action: LobbyAction)
       update = ofPositiveInteger(action, state);
       break;
     }
+    case 'TARGETS_REQUIRED_FOR_VICTORY': {
+      update = ofPositiveInteger(action, state);
+      break;
+    }
     case 'MODIFIERS': {
       update = ofModifiers(action, state);
       break;
@@ -405,6 +417,22 @@ export function lobbyConfigReducer(state: LobbyConfigState, action: LobbyAction)
       break;
     }
     case 'NO_ADMIN': {
+      update = ofBoolean(action, state);
+      break;
+    }
+    case 'CONFIRM_START': {
+      update = ofBoolean(action, state);
+      break;
+    }
+    case 'BLOCK_MOVES': {
+      update = ofBoolean(action, state);
+      break;
+    }
+    case 'BLOCK_CAPTURE': {
+      update = ofBoolean(action, state);
+      break;
+    }
+    case 'RANKED': {
       update = ofBoolean(action, state);
       break;
     }
@@ -969,6 +997,50 @@ export function lobbyConfigInit(startingConfig: LobbyInitializers) {
         };
         break;
       }
+      case 'CONFIRM_START': {
+        // Default this to false if we don't have it
+        const defaultValue = startingConfig[key] || false;
+        state[key] = {
+          currentValue: defaultValue,
+          displayValue: defaultValue,
+          defaultValue,
+          warning: undefined,
+        };
+        break;
+      }
+      case 'RANKED': {
+        // Default this to false if we don't have it
+        const defaultValue = startingConfig[key] || false;
+        state[key] = {
+          currentValue: defaultValue,
+          displayValue: defaultValue,
+          defaultValue,
+          warning: undefined,
+        };
+        break;
+      }
+      case 'BLOCK_MOVES': {
+        // Default this to false if we don't have it
+        const defaultValue = startingConfig[key] || false;
+        state[key] = {
+          currentValue: defaultValue,
+          displayValue: defaultValue,
+          defaultValue,
+          warning: undefined,
+        };
+        break;
+      }
+      case 'BLOCK_CAPTURE': {
+        // Default this to false if we don't have it
+        const defaultValue = startingConfig[key] || false;
+        state[key] = {
+          currentValue: defaultValue,
+          displayValue: defaultValue,
+          defaultValue,
+          warning: undefined,
+        };
+        break;
+      }
       case 'TEAMS_ENABLED': {
         // Default this to false if we don't have it
         const defaultValue = startingConfig[key] || false;
@@ -981,6 +1053,16 @@ export function lobbyConfigInit(startingConfig: LobbyInitializers) {
         break;
       }
       case 'NUM_TEAMS': {
+        const defaultValue = startingConfig[key];
+        state[key] = {
+          currentValue: defaultValue,
+          displayValue: defaultValue,
+          defaultValue,
+          warning: undefined,
+        };
+        break;
+      }
+      case 'TARGETS_REQUIRED_FOR_VICTORY': {
         const defaultValue = startingConfig[key];
         state[key] = {
           currentValue: defaultValue,
