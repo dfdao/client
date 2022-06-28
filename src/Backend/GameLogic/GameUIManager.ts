@@ -1477,8 +1477,12 @@ class GameUIManager extends EventEmitter {
     return this.gameManager.getPaused$();
   }
 
-  getGameStarted(): boolean {
+  get gameStarted(): boolean {
     return this.gameManager.getGameStarted();
+  }
+
+  getGameStarted$(): Monomitter<boolean> {
+    return this.gameManager.getGameStarted$();
   }
 
   getGameover(): boolean {

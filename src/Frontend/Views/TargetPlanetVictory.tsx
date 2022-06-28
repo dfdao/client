@@ -32,7 +32,7 @@ export function TargetPlanetVictory() {
           name={TooltipName.Empty}
           style = {{gap: '5px'}}
         >
-          <span>
+          <span style = {{marginInline: '5px'}}>
             Targets: {gameManager.getTargetsHeld().length}/{requiredPlanets}
           </span>
           <Btn

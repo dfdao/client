@@ -90,7 +90,7 @@ export function GameWindowLayout({
     setModalsContainer(node);
   }, []);
 
-  const [waitingRoomVisible, setWaitingRoomVisible] = useState(!uiManager.getGameStarted());
+  const [waitingRoomVisible, setWaitingRoomVisible] = useState(!uiManager.gameStarted);
 
   // const [onboardingVisible, setOnboardingVisible] = useBooleanSetting(uiManager, Setting.NewPlayer);
   const [tutorialVisible, setTutorialVisible] = useBooleanSetting(uiManager, Setting.TutorialOpen);

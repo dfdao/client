@@ -228,7 +228,7 @@ export function TopBar({ twitterVerifyHook }: { twitterVerifyHook: Hook<boolean>
         {/* <BoardPlacement account={account} /> */}
         <Timer/>
       </AlignCenterHorizontally>
-      <AlignCenterHorizontally style={{ justifyContent: 'space-around', width: '100%' }}>
+      <AlignCenterHorizontally style={{ justifyContent: 'space-around', width: '100%', marginTop: '10px' }}>
         {captureZones}
         {uiManager.getSpaceJunkEnabled() && (
           <>

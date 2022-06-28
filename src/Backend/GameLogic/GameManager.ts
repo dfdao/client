@@ -349,6 +349,8 @@ class GameManager extends EventEmitter {
 
   public paused$: Monomitter<boolean>;
 
+  public gameStarted$: Monomitter<boolean>;
+
   /**
    * Diagnostic information about the game.
    */
@@ -414,7 +416,6 @@ class GameManager extends EventEmitter {
     endTime: number | undefined,
     blocklist: BlocklistMap,
     configHashPersistentChunkStore: PersistentChunkStore
-
   ) {
     super();
 
@@ -439,6 +440,7 @@ class GameManager extends EventEmitter {
     this.worldRadius = worldRadius;
     this.networkHealth$ = monomitter(true);
     this.paused$ = monomitter(true);
+    this.gameStarted$ = monomitter(this.getGameStarted());
     this.playersUpdated$ = monomitter();
     this.gameover = gameover;
     this.winners = winners;
@@ -527,7 +529,6 @@ class GameManager extends EventEmitter {
     this.startTime = startTime;
     this.endTimeSeconds = endTime;
     this.blocklist = blocklist;
-    
     this.spectator = spectator;
     this.ethConnection = ethConnection;
 
@@ -901,9 +902,7 @@ class GameManager extends EventEmitter {
             gameManager.hardRefreshPlanet(tx.intent.locationId),
           ]);
         } else if (isUnconfirmedClaimVictoryTx(tx)) {
-          await Promise.all([
-            gameManager.hardRefreshPlayer(gameManager.getAccount()),
-          ]);
+          await Promise.all([gameManager.hardRefreshPlayer(gameManager.getAccount())]);
         }
 
         gameManager.entityStore.clearUnconfirmedTxIntent(tx);
@@ -929,7 +928,9 @@ class GameManager extends EventEmitter {
       })
       .on(ContractsAPIEvent.GameStarted, async (player: EthAddress, startTime: number) => {
         gameManager.startTime = startTime;
-      })
+        gameManager.gameStarted$.publish(true);
+
+      });
 
     const unconfirmedTxs = await persistentChunkStore.getUnconfirmedSubmittedEthTxs();
     const confirmationQueue = new ThrottledConcurrentQueue({
@@ -2026,6 +2027,8 @@ class GameManager extends EventEmitter {
       return false;
     return true;
   }
+
+  public checkVictoryCondition(): boolean {
     const targetPlanets = this.getTargetPlanets();
 
     let captured: number = 0;
@@ -2039,25 +2042,25 @@ class GameManager extends EventEmitter {
     }
     return false;
   }
+
   public async claimVictory() {
     try {
-
       if (this.gameover) {
         throw new Error('game is over');
       }
-  
+
       if (this.paused) {
         throw new Error('game is paused');
       }
-      
-      if(!this.checkVictoryCondition()){
+
+      if (!this.checkVictoryCondition()) {
         throw new Error('victory condition not met');
       }
 
       const txIntent: UnconfirmedClaimVictory = {
         methodName: 'claimVictory',
         contract: this.contractsAPI.contract,
-        args: Promise.resolve([])
+        args: Promise.resolve([]),
       };
 
       const tx = await this.contractsAPI.submitTransaction(txIntent);
@@ -2950,7 +2953,6 @@ class GameManager extends EventEmitter {
     }
   }
 
-
   /**
    * Submits a transaction to the blockchain to move the given amount of resources from
    * the given planet to the given planet.
@@ -2976,11 +2978,10 @@ class GameManager extends EventEmitter {
         throw new Error('game is paused');
       }
 
-      if (this.account && this.blockMoves() && this.playerBlocked(this.account,to)) {
-
+      if (this.account && this.blockMoves() && this.playerBlocked(this.account, to)) {
         throw new Error('Cannot move to a blocked planet');
       }
-      
+
       const arrivalsToOriginPlanet = this.entityStore.getArrivalIdsForLocation(from);
       const hasIncomingVoyage = arrivalsToOriginPlanet && arrivalsToOriginPlanet.length > 0;
       if (abandoning && hasIncomingVoyage) {
@@ -3782,23 +3783,22 @@ class GameManager extends EventEmitter {
     return this.contractConstants.BLOCK_CAPTURE;
   }
 
-  public playerBlocked(account: EthAddress, targetLocation: LocationId): boolean  {
+  public playerBlocked(account: EthAddress, targetLocation: LocationId): boolean {
     const player = this.getPlayer(account);
-    if(!player) throw new Error("Player not found");
+    if (!player) throw new Error('Player not found');
     const playerHomePlanet = player.homePlanetId;
     const res = this.isBlocked(targetLocation, playerHomePlanet);
-    return Boolean(res) // if isBlocked is undefined, will return false. 
+    return Boolean(res); // if isBlocked is undefined, will return false.
   }
 
-  public getTargetsHeld(address?: EthAddress) : Planet[] {
+  public getTargetsHeld(address?: EthAddress): Planet[] {
     address = address || this.account;
     return this.getTargetPlanets().filter((planet) => this.isTargetHeld(planet));
   }
 
-  get targetsRequired() : number {
-    return this.getContractConstants().TARGETS_REQUIRED_FOR_VICTORY
+  get targetsRequired(): number {
+    return this.getContractConstants().TARGETS_REQUIRED_FOR_VICTORY;
   }
-
 
   /**
    * Right now the only buffs supported in this way are
@@ -3853,6 +3853,10 @@ class GameManager extends EventEmitter {
     return false;
   }
 
+  public getGameStarted$(): Monomitter<boolean> {
+    return this.gameStarted$;
+  }
+  
   public getGameover(): boolean {
     return this.gameover;
   }
@@ -3871,7 +3875,6 @@ class GameManager extends EventEmitter {
   getTeamsEnabled() {
     return this.contractConstants.TEAMS_ENABLED;
   }
-  
 }
 
 export default GameManager;

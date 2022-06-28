@@ -4,11 +4,12 @@ import {
   getPlanetClass,
   getPlanetCosmetic,
   getPlanetName,
+  getPlayerColor,
   rgbStr,
 } from '@darkforest_eth/procedural';
 import { engineConsts } from '@darkforest_eth/renderer';
-import { ModalName, Planet, PlanetType, RGBVec } from '@darkforest_eth/types';
-import React, { useEffect, useState } from 'react';
+import { ModalName, Planet, PlanetType, Player, RGBVec } from '@darkforest_eth/types';
+import React, { useEffect, useState, useMemo } from 'react';
 import styled, { CSSProperties } from 'styled-components';
 import { getPlanetRank } from '../../Backend/Utils/Utils';
 import { Btn } from '../Components/Btn';
@@ -18,7 +19,7 @@ import { Row } from '../Components/Row';
 import { Green, Red, Sub } from '../Components/Text';
 import { TextPreview } from '../Components/TextPreview';
 import dfstyles from '../Styles/dfstyles';
-import { useUIManager } from '../Utils/AppHooks';
+import { useGameStarted, useUIManager } from '../Utils/AppHooks';
 import { ModalPane } from '../Views/ModalPane';
 import { PlanetLink } from '../Views/PlanetLink';
 import { SortableTable } from '../Views/SortableTable';
@@ -77,16 +78,29 @@ const TableContainer = styled.div`
 
 export function WaitingRoomPane({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   const uiManager = useUIManager();
+  const started = useGameStarted();
   const spawnPlanets = uiManager.getSpawnPlanets();
   const player = uiManager.getPlayer();
-  const [planets, setPlanets] = useState<Planet[]>(spawnPlanets);
+  const constants = uiManager.getGameManager().getContractConstants();
+  const [players, setPlayers] = useState<Array<Player | undefined>>([]);
 
-  // update planet list on open / close
+  // refresh players every 10 seconds
   useEffect(() => {
     if (!uiManager) return;
-    const planets = uiManager.getSpawnPlanets();
-    setPlanets(planets);
-  }, [visible, uiManager]);
+    if (!visible) return;
+    const refreshPlayers = () => {
+      if (!uiManager) return;
+      const ps: Array<Player | undefined> = [];
+      spawnPlanets.forEach((planet) => ps.push(uiManager.getPlayer(planet.owner)));
+      setPlayers(ps);
+    };
+
+    const intervalId = setInterval(refreshPlayers, 5000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [uiManager]);
 
   function HelpContent() {
     return (
@@ -126,17 +140,17 @@ export function WaitingRoomPane({ visible, onClose }: { visible: boolean; onClos
       </Sub>
     ),
     //ready
-    (planet: Planet) => {
-      const player = uiManager.getPlayer(planet.owner);
+    (planet: Planet, i: number) => {
+      const player = players[i];
       if (!player || !player.ready) return <Red>N</Red>;
       return <Green>Y</Green>;
     },
   ];
   let content;
-  if(!player) {
-    return <></>
+  if (!player) {
+    return <></>;
   }
-  if (planets.length === 0) {
+  if (spawnPlanets.length === 0) {
     content = (
       <CenterBackgroundSubtext width={RECOMMENDED_MODAL_WIDTH} height='100px'>
         Loading...
@@ -146,18 +160,28 @@ export function WaitingRoomPane({ visible, onClose }: { visible: boolean; onClos
     const ready = player.ready;
     content = (
       <StyledOnboardingContent>
-        <Row>Welcome to Dark Forest Arena! Once everyone is ready, the game will begin.</Row>
-        <ReadyContainer style={{ fontSize: '2em' } as CSSProperties & CSSStyleDeclaration}>
-          <Btn
-            onClick={() =>
-              ready ? uiManager.getGameManager().notReady() : uiManager.getGameManager().ready()
-            }
-          >
-            I'm {ready ? 'not ready' : 'ready'}
-          </Btn>
-        </ReadyContainer>
+        {started ? (
+          <Row>
+            <Green>The game has started! </Green>
+          </Row>
+        ) : (
+          <>
+            <Row>Welcome to Dark Forest Arena! Once everyone is ready, the game will begin.</Row>{' '}
+            <ReadyContainer>
+              <Btn
+                size='stretch'
+                onClick={() =>
+                  ready ? uiManager.getGameManager().notReady() : uiManager.getGameManager().ready()
+                }
+              >
+                I'm {ready ? 'not ready' : 'ready'}
+              </Btn>
+            </ReadyContainer>
+          </>
+        )}
+
         <TableContainer>
-          <Table rows={planets} headers={headers} columns={columns} alignments={alignments} />
+          <Table rows={spawnPlanets} headers={headers} columns={columns} alignments={alignments} />
         </TableContainer>
       </StyledOnboardingContent>
     );
@@ -167,7 +191,7 @@ export function WaitingRoomPane({ visible, onClose }: { visible: boolean; onClos
     <ModalPane
       visible={visible}
       onClose={onClose}
-      hideClose
+      hideClose={!uiManager.gameStarted || !constants.CONFIRM_START}
       id={ModalName.WaitingRoom}
       title='Waiting Room'
       helpContent={HelpContent}

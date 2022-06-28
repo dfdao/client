@@ -7,7 +7,7 @@ import { useGameover, usePaused, useUIManager } from '../Utils/AppHooks';
 export function Paused() {
   const paused = usePaused();
   const gameover = useGameover();
-  const started = useUIManager().getGameStarted();
+  const started = useUIManager().gameStarted;
 
   if (!paused || gameover || !started) {
     return <></>;
