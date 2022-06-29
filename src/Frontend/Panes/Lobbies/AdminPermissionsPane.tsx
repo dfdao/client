@@ -23,16 +23,28 @@ export function AdminPermissionsPane({ config, onUpdate }: LobbiesPaneProps) {
       </Row>
       <Row>
         <Checkbox
+          label='Planet block enabled?'
+          checked={config.BLOCK_MOVES.displayValue}
+          onChange={(e: Event & React.ChangeEvent<DarkForestCheckbox>) =>
+            onUpdate({ type: 'BLOCK_MOVES', value: e.target.checked })
+          }
+        />
+      </Row>
+        <Row>
+        <Warning>{config.NO_ADMIN.warning}</Warning>
+      </Row>
+      {/* <Row>
+        <Checkbox
           label='Admin can add planets?'
           checked={config.ADMIN_CAN_ADD_PLANETS.displayValue}
           onChange={(e: Event & React.ChangeEvent<DarkForestCheckbox>) =>
             onUpdate({ type: 'ADMIN_CAN_ADD_PLANETS', value: e.target.checked })
           }
         />
-      </Row>
-      <Row>
+      </Row> */}
+      {/* <Row>
         <Warning>{config.ADMIN_CAN_ADD_PLANETS.warning}</Warning>
-      </Row>
+      </Row> */}
       {/* <Row>
         <Checkbox
           label='Allowlist enabled?'
@@ -42,9 +54,9 @@ export function AdminPermissionsPane({ config, onUpdate }: LobbiesPaneProps) {
           }
         />
       </Row> */}
-      <Row>
+      {/* <Row>
         <Warning>{config.WHITELIST_ENABLED.warning}</Warning>
-      </Row>
+      </Row> */}
       <Row>
         <Checkbox
           label='Ranked match?'

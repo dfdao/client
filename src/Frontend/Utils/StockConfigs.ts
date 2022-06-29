@@ -110,7 +110,7 @@ const onePlayerRace: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: true,
-      blockedPlanetIds: [],
+      blockedPlanetLocs: [],
     },
     {
       x: -320,
@@ -119,7 +119,7 @@ const onePlayerRace: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
-      blockedPlanetIds: [],
+      blockedPlanetLocs: [],
     },
     {
       x: 2005,
@@ -128,7 +128,7 @@ const onePlayerRace: LobbyInitializers = {
       planetType: 4,
       isTargetPlanet: true,
       isSpawnPlanet: false,
-      blockedPlanetIds: [],
+      blockedPlanetLocs: [],
     },
     {
       x: -1222,
@@ -137,7 +137,7 @@ const onePlayerRace: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
-      blockedPlanetIds: [],
+      blockedPlanetLocs: [],
     },
     {
       x: -263,
@@ -146,7 +146,7 @@ const onePlayerRace: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
-      blockedPlanetIds: [],
+      blockedPlanetLocs: [],
     },
     {
       x: -53,
@@ -155,7 +155,7 @@ const onePlayerRace: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
-      blockedPlanetIds: [],
+      blockedPlanetLocs: [],
     },
     {
       x: 717,
@@ -164,7 +164,7 @@ const onePlayerRace: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
-      blockedPlanetIds: [],
+      blockedPlanetLocs: [],
     },
     {
       x: 2054,
@@ -173,7 +173,7 @@ const onePlayerRace: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
-      blockedPlanetIds: [],
+      blockedPlanetLocs: [],
     },
   ],
   TOKEN_MINT_END_TIMESTAMP: 1717258179,
@@ -296,7 +296,7 @@ const fourPlayerBattle: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: true,
-      blockedPlanetIds: [],
+      blockedPlanetLocs: [],
     },
     {
       x: 5500,
@@ -305,7 +305,7 @@ const fourPlayerBattle: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: true,
       isSpawnPlanet: true,
-      blockedPlanetIds: [],
+      blockedPlanetLocs: [],
     },
     {
       x: 0,
@@ -314,7 +314,7 @@ const fourPlayerBattle: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: true,
-      blockedPlanetIds: [],
+      blockedPlanetLocs: [],
     },
     {
       x: 0,
@@ -323,7 +323,7 @@ const fourPlayerBattle: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: true,
-      blockedPlanetIds: [],
+      blockedPlanetLocs: [],
     },
     {
       x: 0,
@@ -332,7 +332,7 @@ const fourPlayerBattle: LobbyInitializers = {
       planetType: 4,
       isTargetPlanet: true,
       isSpawnPlanet: false,
-      blockedPlanetIds: [],
+      blockedPlanetLocs: [],
     },
   ],
   TOKEN_MINT_END_TIMESTAMP: 1717258179, // SECONDS!,
@@ -456,7 +456,7 @@ const sprint: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: true,
-      blockedPlanetIds: [],
+      blockedPlanetLocs: [],
     },
     {
       x: 1000,
@@ -465,7 +465,7 @@ const sprint: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: true,
-      blockedPlanetIds: [],
+      blockedPlanetLocs: [],
     },
     {
       x: 0,
@@ -474,7 +474,7 @@ const sprint: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: true,
       isSpawnPlanet: false,
-      blockedPlanetIds: [],
+      blockedPlanetLocs: [],
     },
   ],
   TOKEN_MINT_END_TIMESTAMP: 1717258179, // SECONDS!,
@@ -599,7 +599,7 @@ const grandPrixWeek2: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: true,
-      blockedPlanetIds: [],
+      blockedPlanetLocs: [],
     },
     {
       x: 3500,
@@ -608,7 +608,7 @@ const grandPrixWeek2: LobbyInitializers = {
       planetType: 4,
       isTargetPlanet: true,
       isSpawnPlanet: false,
-      blockedPlanetIds: [],
+      blockedPlanetLocs: [],
     },
     {
       x: 400,
@@ -617,7 +617,7 @@ const grandPrixWeek2: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
-      blockedPlanetIds: [],
+      blockedPlanetLocs: [],
     },
     {
       x: -2800,
@@ -626,7 +626,7 @@ const grandPrixWeek2: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
-      blockedPlanetIds: [],
+      blockedPlanetLocs: [],
     },
     {
       x: 2000,
@@ -635,7 +635,7 @@ const grandPrixWeek2: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
-      blockedPlanetIds: [],
+      blockedPlanetLocs: [],
     },
     {
       x: 0,
@@ -644,7 +644,7 @@ const grandPrixWeek2: LobbyInitializers = {
       planetType: 1,
       isTargetPlanet: false,
       isSpawnPlanet: false,
-      blockedPlanetIds: [],
+      blockedPlanetLocs: [],
     },
     {
       x: 3000,
@@ -653,7 +653,7 @@ const grandPrixWeek2: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
-      blockedPlanetIds: [],
+      blockedPlanetLocs: [],
     },
     {
       x: -2300,
@@ -662,7 +662,7 @@ const grandPrixWeek2: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
-      blockedPlanetIds: [],
+      blockedPlanetLocs: [],
     },
     {
       x: 5000,
@@ -671,7 +671,7 @@ const grandPrixWeek2: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
-      blockedPlanetIds: [],
+      blockedPlanetLocs: [],
     },
   ],
   TOKEN_MINT_END_TIMESTAMP: 1682435240778,

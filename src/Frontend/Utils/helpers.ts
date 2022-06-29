@@ -25,9 +25,9 @@ export function getLobbyCreatedEvent(
 }
 
 export function lobbyPlanetToInitPlanet(planet: LobbyPlanet, initializers: LobbyInitializers) {
-  const location = initializers.DISABLE_ZK_CHECKS
-    ? fakeHash(initializers.PLANET_RARITY)(planet.x, planet.y).toString()
-    : mimcHash(initializers.PLANETHASH_KEY)(planet.x, planet.y).toString();
+  const locationFunc = initializers.DISABLE_ZK_CHECKS ? fakeHash : mimcHash;
+
+  const location = locationFunc(initializers.PLANET_RARITY)(planet.x, planet.y).toString();
 
   const planetCoords = {
     x: planet.x,
@@ -52,10 +52,12 @@ export function lobbyPlanetToInitPlanet(planet: LobbyPlanet, initializers: Lobby
     requireValidLocationId: false,
     isTargetPlanet: planet.isTargetPlanet,
     isSpawnPlanet: planet.isSpawnPlanet,
-    blockedPlanetIds: planet.blockedPlanetIds
+    blockedPlanetIds: planet.blockedPlanetLocs.map((p) =>
+      locationFunc(initializers.PLANET_RARITY)(p.x, p.y).toString()
+    ),
   };
 }
 
 export function lobbyPlanetsToInitPlanets(planets: LobbyPlanet[], initializers: LobbyInitializers) {
-  return planets.map(p => lobbyPlanetToInitPlanet(p, initializers));
+  return planets.map((p) => lobbyPlanetToInitPlanet(p, initializers));
 }

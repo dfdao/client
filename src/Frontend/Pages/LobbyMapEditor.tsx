@@ -95,7 +95,7 @@ export const LobbyMapEditor: React.FC<{
       planetType: mutablePlanet.planetType,
       isTargetPlanet: mutablePlanet.isTargetPlanet,
       isSpawnPlanet: mutablePlanet.isSpawnPlanet,
-      blockedPlanetIds: []
+      blockedPlanetLocs: []
     };
 
     updateConfig({
@@ -124,11 +124,13 @@ export const LobbyMapEditor: React.FC<{
             canAddPlanets={config.ADMIN_CAN_ADD_PLANETS.displayValue ?? false}
             spawnPlanetsEnabled={config.MANUAL_SPAWN.displayValue ?? false}
             targetPlanetsEnabled={config.TARGET_PLANETS.displayValue ?? false}
-            excludePlanetTypes={['x', 'y']}
+            blockEnabled = {(config.BLOCK_CAPTURE.displayValue ?? false) || (config.BLOCK_MOVES.displayValue ?? false)}
+            stagedPlanets = {config.ADMIN_PLANETS.currentValue ?? []}
+            excludePlanetTypes={['x', 'y',]}
             onChange={(planet) => setMutablePlanet(planet)}
             root={root}
           />
-          <InputRow>
+          {/* <InputRow>
             <LabeledInput>Mirror X</LabeledInput>
             <Checkbox
               checked={mirrorAxes.x}
@@ -145,7 +147,7 @@ export const LobbyMapEditor: React.FC<{
                 setMirrorAxes({ ...mirrorAxes, y: !mirrorAxes.y });
               }}
             />
-          </InputRow>
+          </InputRow> */}
           <EditorButton
             cancel={isPlacementMode}
             onClick={() => setIsPlacementMode(!isPlacementMode)}
