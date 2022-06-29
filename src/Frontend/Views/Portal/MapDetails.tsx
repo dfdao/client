@@ -1,17 +1,15 @@
 import { getConfigName } from '@darkforest_eth/procedural';
 import { Leaderboard, LiveMatch } from '@darkforest_eth/types';
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
 import { loadArenaLeaderboard } from '../../../Backend/Network/ArenaLeaderboardApi';
 import { loadLiveMatches } from '../../../Backend/Network/SpyApi';
-import { Link } from '../../Components/CoreUI';
 import { Subber } from '../../Components/Text';
 import { LobbyInitializers } from '../../Panes/Lobbies/Reducer';
-import { useArenaLeaderboard, useLiveMatches } from '../../Utils/AppHooks';
 import { ArenaLeaderboardDisplay } from '../ArenaLeaderboard';
 import { LiveMatches } from '../LiveMatches';
 import { TabbedView } from '../TabbedView';
 import { ConfigDetails } from './ConfigDetails';
+import { FindMatch } from './FindMatch';
 
 export function MapDetails({
   configHash,
@@ -44,6 +42,8 @@ export function MapDetails({
     }
   }, [configHash]);
 
+  const numSpawnPlanets = config?.ADMIN_PLANETS.filter((p) => p.isSpawnPlanet).length ?? 0;
+
   return (
     <TabbedView
       style={{
@@ -59,17 +59,35 @@ export function MapDetails({
       tabTitles={['Leaderboard', 'Current Games', 'Config Details']}
       tabContents={(i) => {
         if (i === 0) {
-          return <ArenaLeaderboardDisplay leaderboard={leaderboard} error={leaderboardError} />;
+          if (numSpawnPlanets > 1) {
+            return (
+              <div>
+                <span>Multiplayer mode: ELO leaderboard goes here</span>
+                <ArenaLeaderboardDisplay leaderboard={leaderboard} error={leaderboardError} />
+              </div>
+            );
+          } else {
+            return <ArenaLeaderboardDisplay leaderboard={leaderboard} error={leaderboardError} />;
+          }
         }
         if (i === 1) {
-          return (
-            <>
-              <LiveMatches game={liveMatches} error={liveMatchError} />{' '}
-              <Subber style={{ textAlign: 'end' }}>
-                by <a href={'https://twitter.com/bulmenisaurus'}>Bulmenisaurus</a>
-              </Subber>
-            </>
-          );
+          if (numSpawnPlanets > 1) {
+            return (
+              <div>
+                <span>Multiplayer mode: Matchmaking goes here</span>
+                <FindMatch game={liveMatches} error={liveMatchError} nPlayers={numSpawnPlanets} />
+              </div>
+            );
+          } else {
+            return (
+              <>
+                <LiveMatches game={liveMatches} error={liveMatchError} />{' '}
+                <Subber style={{ textAlign: 'end' }}>
+                  by <a href={'https://twitter.com/bulmenisaurus'}>Bulmenisaurus</a>
+                </Subber>
+              </>
+            );
+          }
         }
         return <ConfigDetails config={config} />;
       }}

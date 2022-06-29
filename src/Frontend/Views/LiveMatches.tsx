@@ -55,7 +55,7 @@ function playerToEntry(playerAddress: string, playerTwitter: string | undefined)
         href={`https://blockscout.com/xdai/optimism/address/${playerAddress}`}
       >
         <GnoButton>
-          <Gnosis height='25px' width='25Fpx' />
+          <Gnosis height='25px' width='25px' />
         </GnoButton>
       </a>
     </span>
