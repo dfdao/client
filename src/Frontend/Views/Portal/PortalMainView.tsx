@@ -1,56 +1,60 @@
-import { DarkForestTextInput } from '@darkforest_eth/ui';
-import { validate } from 'email-validator';
-import React, { useState } from 'react';
+import { EthAddress } from '@darkforest_eth/types';
+import React, { useEffect, useState } from 'react';
 import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { Btn } from '../../Components/Btn';
-import { SelectFrom } from '../../Components/CoreUI';
-import { TextInput } from '../../Components/Input';
+import { loadAccountData } from '../../../Backend/Network/AccountApi';
+import { logOut } from '../../../Backend/Network/AccountManager';
+import { loadRecentMaps } from '../../../Backend/Network/MapsApi';
+import { Dropdown, DropdownItem } from '../../Components/Dropdown';
 import dfstyles from '../../Styles/dfstyles';
 import { useTwitters } from '../../Utils/AppHooks';
-import { competitiveConfig } from '../../Utils/constants';
+import { Account } from './Account';
 import { AccountInfoView } from './AccountInfoView';
 import { MapInfoView } from './MapInfoView';
 import { PortalHomeView } from './PortalHomeView';
 
-export function PortalMainView() {
+export function PortalMainView({ playerAddress }: { playerAddress: EthAddress }) {
   const [input, setInput] = useState<string>('');
-  const [type, setType] = useState<string>('Account');
+  const [results, setResults] = useState<DropdownItem[]>([]);
   const history = useHistory();
   const twitters = useTwitters() as Object;
-  function validateAddress() {
-    let output: string | undefined = undefined;
-    let lower = input.toLowerCase();
-    if (lower.slice(0, 2) === '0x') {
-      lower = lower.slice(2);
-    }
-    let error = false;
-    // for (const c of lower) {
-    //   if ('0123456789abcdef'.indexOf(c) === -1) {
-    //     console.log(`bad letter: ${c}`);
-    //     error = true;
-    //     alert(`invalid ${type == 'Account'? 'account address' : 'config hash'}! Please try again.`);
-    //     return;
-    //   }
-    // }
 
-    if (type == 'Map' && lower.length !== 64) error = true;
-    else if (lower.length !== 40) {
-      const foundTwitter = Object.entries(twitters).find((t) => t[1] == input);
-      if (!foundTwitter) error = true;
-      else output = foundTwitter[0];
-    }
-
-    console.log('output:', output);
-
-    if (error) {
-      alert(`invalid ${type == 'Account' ? 'account address' : 'config hash'}! Please try again.`);
+  function handleSearch() {
+    if (input.length > 0) {
+      let results: DropdownItem[] = [];
+      const lower = input.trim().toLowerCase();
+      // check twitters
+      const foundTwitter = Object.entries(twitters).find((t) => t[1] == lower);
+      if (foundTwitter) {
+        results.push({
+          label: foundTwitter[0],
+          action: () => history.push(`/portal/account/${foundTwitter[0]}`),
+        });
+      }
+      // check config hashes
+      loadRecentMaps(1, lower, undefined).then((maps) => {
+        if (maps && maps.length > 0) {
+          results.push({
+            label: maps[0].configHash,
+            action: () => history.push(`/portal/map/${maps[0].configHash}`),
+          });
+        }
+      });
+      // check accounts
+      loadAccountData(lower as EthAddress).then((account) => {
+        if (account) {
+          results.push({
+            label: lower,
+            action: () => history.push(`/portal/account/${lower}`),
+          });
+        }
+      });
+      console.log('test', results);
+      setResults(results);
       return;
     }
-
-    const link = `/portal/${type == 'Map' ? 'map/' : 'account/'}${output ? output : input}`;
-
-    history.push(link);
+    setResults([{ label: 'No results found.', action: () => {} }]);
+    return;
   }
 
   return (
@@ -61,25 +65,18 @@ export function PortalMainView() {
         </TitleContainer>
 
         <TitleContainer>
-          <SelectFrom
-            portal
-            wide={false}
-            style={{ padding: '6px' }}
-            values={['Account', 'Map']}
-            labels={['Account', 'Map']}
-            value={type}
-            setValue={setType}
-          />
-          <TextInput
-            portal={true}
-            style={inputStyle}
-            value={input}
-            placeholder={'Search for a map, twitter, or acct'}
-            onChange={(e: Event & React.ChangeEvent<DarkForestTextInput>) =>
-              setInput(e.target.value)
-            }
-          />{' '}
-          <MinimalButton onClick={() => validateAddress()}>Search</MinimalButton>
+          <InputContainer>
+            <PortalInput
+              placeholder={'Search for a map hash, twitter, or address'}
+              // TODO: fix type
+              onChange={(e: any) => setInput(e.target.value)}
+            />
+            <Dropdown items={results} open={true} />
+          </InputContainer>
+          <button onClick={() => handleSearch()}>Search</button>
+        </TitleContainer>
+        <TitleContainer>
+          <Account address={playerAddress} />
         </TitleContainer>
       </TopBar>
       <Switch>
@@ -101,20 +98,23 @@ export function PortalMainView() {
   );
 }
 
+const InputContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+`;
+
 const MainContainer = styled.div`
   display: flex;
   flex: 1 1;
   flex-direction: column;
-  // border-left: 1px solid ${dfstyles.colors.border};
   height: 100vh;
   overflow: hidden;
-  // padding-bottom: 3em;
   background: rgba(255, 255, 255, 0.04);
 `;
 
 const TopBar = styled.div`
-  // border-bottom: 1px solid ${dfstyles.colors.border};
-
   height: 56px;
   max-height: 56px;
   display: flex;
@@ -133,17 +133,8 @@ const Title = styled.p`
 const TitleContainer = styled.div`
   display: flex;
   align-items: center;
-  overflow: hidden;
-  // width: 100%;
-  justify-content: space-between;
   gap: 8px;
 `;
-
-const inputStyle = {
-  minWidth: '350px',
-  background: '#252525',
-  color: '#fff',
-} as CSSStyleDeclaration & React.CSSProperties;
 
 export const MinimalButton = styled.button`
   border-radius: 3px;
@@ -151,4 +142,14 @@ export const MinimalButton = styled.button`
   background: #252525;
   color: #fff;
   text-transform: uppercase;
+`;
+
+const PortalInput = styled.input`
+  min-width: 350px;
+  background: #252525;
+  color: #fff;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid ${dfstyles.colors.borderDarker};
+  z-index: 1;
 `;

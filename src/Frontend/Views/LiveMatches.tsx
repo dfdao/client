@@ -11,6 +11,7 @@ import dfstyles from '../Styles/dfstyles';
 import { useLiveMatches } from '../Utils/AppHooks';
 import { formatDuration } from '../Utils/TimeUtils';
 import { GenericErrorBoundary } from './GenericErrorBoundary';
+import { MinimalButton } from './Portal/PortalMainView';
 import { Table } from './Table';
 
 const errorMessage = 'Error Loading Leaderboard';
@@ -110,7 +111,7 @@ function LeaderboardTable({ rows }: { rows: Row[] }) {
             return (
               <Cell>
                 <Link to={`https://arena.dfdao.xyz/play/${row.id}`}>
-                  <Btn>View</Btn>
+                  <MinimalButton>View</MinimalButton>
                 </Link>
               </Cell>
             );

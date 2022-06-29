@@ -3,7 +3,7 @@ import { LobbyInitializers } from '../../Frontend/Panes/Lobbies/Reducer';
 import { apiUrl } from '../../Frontend/Utils/constants';
 import { getGraphQLData } from './GraphApi';
 
-const CONSTANTS = `config{
+export const CONSTANTS = `config{
   # START_PAUSED,
 ADMIN_CAN_ADD_PLANETS,
 TOKEN_MINT_END_TIMESTAMP,
@@ -97,25 +97,26 @@ export async function loadConfigFromAddress(address: EthAddress): Promise<
   | undefined
 > {
   const query = `
-query {
+  query {
     arena(id: "${address}") {
-        lobbyAddress,
-        ${CONSTANTS}
-      }
+      lobbyAddress,
+      ${CONSTANTS}
     }
+  }
 `;
-    try {
-    const rawData : GraphArena = (await getGraphQLData(query, apiUrl)).data.arena;
+  try {
+    const rawData: GraphArena = (await getGraphQLData(query, apiUrl)).data.arena;
     const configData = convertGraphConfig(rawData);
     return configData;
-    } catch (e) {
-      console.log(e);
-    }
+  } catch (e) {
+    console.log(e);
+  }
 }
 
-export function convertGraphConfig(
-  arena: GraphArena
-): { config: LobbyInitializers; address: string } {
+export function convertGraphConfig(arena: GraphArena): {
+  config: LobbyInitializers;
+  address: string;
+} {
   return {
     config: {
       ...arena.config,

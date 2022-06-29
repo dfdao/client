@@ -5,158 +5,26 @@ import { debounce } from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { loadArenaLeaderboard } from '../../../Backend/Network/ArenaLeaderboardApi';
 import { loadConfigFromHash } from '../../../Backend/Network/ConfigApi';
-import { loadMaps } from '../../../Backend/Network/MapsApi';
-import { Btn } from '../../Components/Btn';
+import { loadRecentMaps, MapInfo } from '../../../Backend/Network/MapsApi';
 import { Spacer } from '../../Components/CoreUI';
-import { LoadingSpinner } from '../../Components/LoadingSpinner';
-import { Minimap } from '../../Components/Minimap';
-import { generateMinimapConfig, MinimapConfig } from '../../Panes/Lobbies/MinimapUtils';
-import { LobbyInitializers } from '../../Panes/Lobbies/Reducer';
 import { competitiveConfig } from '../../Utils/constants';
-import { ArenaLeaderboardDisplay } from '../ArenaLeaderboard';
-
-export const MapDetails: React.FC<{ configHash: string }> = ({ configHash }) => {
-  const [config, setConfig] = useState<LobbyInitializers | undefined>();
-  const [lobbyAddress, setLobbyAddress] = useState<EthAddress | undefined>();
-  const [error, setError] = useState<boolean>(false);
-  const [refreshing, setRefreshing] = useState(false);
-  const [minimapConfig, setMinimapConfig] = useState<MinimapConfig | undefined>();
-
-  const onMapChange = useMemo(() => {
-    return debounce((config: MinimapConfig) => configHash && setMinimapConfig(config), 500);
-  }, [setMinimapConfig]);
-
-  useEffect(() => {
-    if (config) {
-      onMapChange(generateMinimapConfig(config, 20));
-    } else {
-      setMinimapConfig(undefined);
-    }
-  }, [config, onMapChange]);
-
-  const history = useHistory();
-
-  useEffect(() => {
-    loadConfigFromHash(configHash)
-      .then((c) => {
-        if (!c) {
-          setConfig(undefined);
-          return;
-        }
-        setConfig(c.config);
-        setLobbyAddress(address(c.address));
-      })
-      .catch((e) => {
-        setError(true);
-        console.log(e);
-      });
-  }, [configHash]);
-
-  return (
-    <DetailContainer onClick={() => history.push(`/portal/map/${configHash}`)}>
-      {!minimapConfig ? (
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            width: '300px',
-            height: '300px',
-          }}
-        >
-          <LoadingSpinner initialText='Loading...' />
-        </div>
-      ) : (
-        <Minimap
-          style={{ width: '100px', height: '100px' }}
-          minimapConfig={minimapConfig}
-          setRefreshing={setRefreshing}
-        />
-      )}
-      <span>{getConfigName(configHash)}</span>
-      {lobbyAddress && (
-        <>
-          <span>{lobbyAddress}</span>
-          <Link
-            style={{ minWidth: '250px' }}
-            target='blank'
-            to={`/play/${lobbyAddress}?create=true`}
-          ></Link>
-        </>
-      )}
-    </DetailContainer>
-  );
-};
-
-const OfficialGameBanner: React.FC<{}> = ({}) => {
-  const [config, setConfig] = useState<LobbyInitializers | undefined>();
-  const [lobbyAddress, setLobbyAddress] = useState<EthAddress | undefined>();
-  const [error, setError] = useState<boolean>(false);
-  const [leaderboard, setLeaderboard] = useState<Leaderboard | undefined>();
-  const [leaderboardError, setLeaderboardError] = useState<Error | undefined>();
-
-  useEffect(() => {
-    setLeaderboard(undefined);
-    loadArenaLeaderboard(competitiveConfig, false)
-      .then((board) => {
-        setLeaderboardError(undefined);
-        setLeaderboard(board);
-      })
-      .catch((e) => setLeaderboardError(e));
-  }, [competitiveConfig]);
-
-  useEffect(() => {
-    loadConfigFromHash(competitiveConfig)
-      .then((c) => {
-        if (!c) {
-          setConfig(undefined);
-          return;
-        }
-        setConfig(c.config);
-        setLobbyAddress(address(c.address));
-      })
-      .catch((e) => {
-        setError(true);
-        console.log(e);
-      });
-  }, [competitiveConfig]);
-
-  return (
-    <Banner>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        <BannerTitle>{getConfigName(competitiveConfig)}</BannerTitle>
-        <span>{lobbyAddress}</span>
-        <span style={{}}>Official DFDAO Map</span>
-        {lobbyAddress && (
-          <Link
-            style={{ minWidth: '250px' }}
-            target='blank'
-            to={`/play/${lobbyAddress}?create=true`}
-          >
-            <ArenaPortalButton>Play</ArenaPortalButton>
-          </Link>
-        )}
-      </div>
-      <div style={{ maxHeight: '25vh', overflowY: 'auto' }}>
-        <ArenaLeaderboardDisplay leaderboard={leaderboard} error={leaderboardError} />
-      </div>
-    </Banner>
-  );
-};
+import { MapGridDetail } from './Components/MapGridDetail';
+import { OfficialGameBanner } from './Components/OfficialGameBanner';
 
 export const PortalHomeView: React.FC<{}> = () => {
-  const [configHashes, setConfigHashes] = useState<string[]>([]);
+  const [portalMaps, setPortalMaps] = useState<MapInfo[]>([]);
 
   useEffect(() => {
-    loadMaps(1000)
+    loadRecentMaps(20)
       .then((maps) => {
         if (!maps) return;
-        const configHashes = maps.map((m) => m.configHash);
-        const uniqueHashes = new Set(configHashes);
-        setConfigHashes([...uniqueHashes]);
+        const uniqueMaps = maps.filter(
+          (m, i) => maps.findIndex((m2) => m2.configHash == m.configHash) == i
+        );
+        setPortalMaps(uniqueMaps);
       })
+
       .catch((e) => {
         console.error(e);
       });
@@ -164,13 +32,18 @@ export const PortalHomeView: React.FC<{}> = () => {
 
   return (
     <Container>
-      <OfficialGameBanner />
+      <OfficialGameBanner configHash={competitiveConfig} />
       <Spacer height={24} />
       <MoreMapsContainer>
         <span style={{ fontSize: '1rem' }}>Latest Community Maps</span>
         <MoreGrid>
-          {configHashes.map((c, i) => (
-            <MapDetails configHash={c} key={i} />
+          {portalMaps.map((m, i) => (
+            <MapGridDetail
+              configHash={m.configHash}
+              creator={m.creator}
+              lobbyAddress={m.lobbyAddress ?? undefined}
+              key={i}
+            />
           ))}
         </MoreGrid>
       </MoreMapsContainer>
@@ -185,26 +58,6 @@ const Container = styled.div`
   overflow-y: auto;
   height: 100%;
   overflow: hidden;
-`;
-
-const Banner = styled.div`
-  width: 100%:
-  height: 100%;
-  background: #000;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem;
-  border-radius: 6px;
-  min-height: 270px;
-  max-height: 25vh;
-`;
-
-const BannerTitle = styled.span`
-  font-size: 1.5rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
 `;
 
 // TODO: Replace this with LobbyButton when #68 is merged
@@ -236,20 +89,6 @@ const MoreGrid = styled.div`
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   grid-gap: 10px;
   margin-top: 16px;
-`;
-
-const DetailContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  overflow: hidden;
-  text-overflow: ellipses;
-  border-radius: 3px;
-  background: #161616;
-  border: 1px solid #5f5f5f;
-  color: #fff;
-  padding: 8px;
-  cursor: pointer;
 `;
 
 const MoreMapsContainer = styled.div`

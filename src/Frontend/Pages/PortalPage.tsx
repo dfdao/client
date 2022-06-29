@@ -50,7 +50,7 @@ function Portal({ playerAddress }: { playerAddress: EthAddress }) {
             <HideSmall>
               <PortalSidebarView playerAddress={playerAddress} />
             </HideSmall>
-            <PortalMainView />
+            <PortalMainView playerAddress={playerAddress} />
           </PortalContainer>
         </TwitterProvider>
       ) : (
@@ -62,11 +62,8 @@ function Portal({ playerAddress }: { playerAddress: EthAddress }) {
 
 const PortalContainer = styled.div`
   vertical-align: baseline;
-  // display: grid;
   display: flex;
   margin: 0 auto;
-  // grid-template-columns: 245px 800px;
-  // grid-template-columns: 2fr 6fr;
   min-height: 100vh;
   justify-content: center;
 `;

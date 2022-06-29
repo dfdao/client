@@ -97,6 +97,7 @@ const MapInfoContainer = styled.div`
   width: 100%;
   justify-content: space-evenly;
   padding: 10px;
+  overflow-y: scroll;
 `;
 
 const OverviewContainer = styled.div`

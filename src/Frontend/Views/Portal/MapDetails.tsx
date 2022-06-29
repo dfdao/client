@@ -28,19 +28,19 @@ export function MapDetails({
   useEffect(() => {
     setLeaderboard(undefined);
     setLiveMatches(undefined);
-    if(configHash) {
-    loadArenaLeaderboard(configHash, false)
-      .then((board) => {
-        setLeaderboardError(undefined);
-        setLeaderboard(board);
-      })
-      .catch((e) => setLeaderboardError(e));
-    loadLiveMatches(configHash)
-      .then((matches) => {
-        setLiveMatchError(undefined);
-        setLiveMatches(matches);
-      })
-      .catch((e) => setLiveMatchError(e));
+    if (configHash) {
+      loadArenaLeaderboard(configHash, false)
+        .then((board) => {
+          setLeaderboardError(undefined);
+          setLeaderboard(board);
+        })
+        .catch((e) => setLeaderboardError(e));
+      loadLiveMatches(configHash)
+        .then((matches) => {
+          setLiveMatchError(undefined);
+          setLiveMatches(matches);
+        })
+        .catch((e) => setLiveMatchError(e));
     }
   }, [configHash]);
 
@@ -53,6 +53,8 @@ export function MapDetails({
         flex: '1 1 50%',
         width: '50%',
         maxWidth: '50%',
+        maxHeight: '100vh',
+        overflowY: 'auto',
       }}
       tabTitles={['Leaderboard', 'Current Games', 'Config Details']}
       tabContents={(i) => {

@@ -66,10 +66,7 @@ planets(first: 20) {
   spawnPlanet
 }`;
 
-export async function loadAccountData(address: EthAddress): Promise<
-  RawAccount
-  | undefined
-> {
+export async function loadAccountData(address: EthAddress): Promise<RawAccount | undefined> {
   const query = `
 query {
   player(id:"${address}") {
