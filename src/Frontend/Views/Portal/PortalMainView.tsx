@@ -1,5 +1,5 @@
 import { EthAddress } from '@darkforest_eth/types';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { loadAccountData } from '../../../Backend/Network/AccountApi';
@@ -12,50 +12,55 @@ import { Account } from './Account';
 import { AccountInfoView } from './AccountInfoView';
 import { MapInfoView } from './MapInfoView';
 import { PortalHomeView } from './PortalHomeView';
+import { truncateAddress, truncateString } from './PortalUtils';
 
 export function PortalMainView({ playerAddress }: { playerAddress: EthAddress }) {
   const [input, setInput] = useState<string>('');
+  const [openSearch, setOpenSearch] = useState<boolean>(false);
   const [results, setResults] = useState<DropdownItem[]>([]);
   const history = useHistory();
   const twitters = useTwitters() as Object;
 
-  function handleSearch() {
-    if (input.length > 0) {
-      let results: DropdownItem[] = [];
-      const lower = input.trim().toLowerCase();
-      // check twitters
-      const foundTwitter = Object.entries(twitters).find((t) => t[1] == lower);
-      if (foundTwitter) {
-        results.push({
-          label: foundTwitter[0],
-          action: () => history.push(`/portal/account/${foundTwitter[0]}`),
-        });
-      }
-      // check config hashes
-      loadRecentMaps(1, lower, undefined).then((maps) => {
-        if (maps && maps.length > 0) {
+  useEffect(() => {
+    async function handleSearch() {
+      if (input.length > 0) {
+        let results: DropdownItem[] = [];
+        const lower = input.trim().toLowerCase();
+        // check twitters
+        const foundTwitter = Object.entries(twitters).find((t) => t[1] == lower);
+        if (foundTwitter) {
           results.push({
-            label: maps[0].configHash,
-            action: () => history.push(`/portal/map/${maps[0].configHash}`),
+            label: `Twitter -${foundTwitter[0]}`,
+            action: () => history.push(`/portal/account/${foundTwitter[0]}`),
           });
         }
-      });
-      // check accounts
-      loadAccountData(lower as EthAddress).then((account) => {
-        if (account) {
+        // check config hashes
+        const configHashes = await loadRecentMaps(1, lower, undefined);
+        if (configHashes && configHashes.length > 0) {
           results.push({
-            label: lower,
+            label: `Map - ${truncateString(configHashes[0].configHash, 8)}`,
+            action: () => history.push(`/portal/map/${configHashes[0].configHash}`),
+          });
+        }
+        // check accounts
+        const accounts = await loadAccountData(lower as EthAddress);
+        if (accounts) {
+          results.push({
+            label: `Address - ${truncateAddress(lower as EthAddress)}`,
             action: () => history.push(`/portal/account/${lower}`),
           });
         }
-      });
-      console.log('test', results);
-      setResults(results);
-      return;
+        if (results.length > 0) {
+          setResults(results);
+        } else {
+          setResults([{ label: 'No results found.', action: () => {} }]);
+        }
+      } else {
+        setResults([{ label: 'No results found.', action: () => {} }]);
+      }
     }
-    setResults([{ label: 'No results found.', action: () => {} }]);
-    return;
-  }
+    handleSearch();
+  }, [input]);
 
   return (
     <MainContainer>
@@ -70,10 +75,11 @@ export function PortalMainView({ playerAddress }: { playerAddress: EthAddress })
               placeholder={'Search for a map hash, twitter, or address'}
               // TODO: fix type
               onChange={(e: any) => setInput(e.target.value)}
+              onFocus={() => setOpenSearch(true)}
+              onBlur={() => setOpenSearch(false)}
             />
-            <Dropdown items={results} open={true} />
+            <Dropdown items={results} open={input.length > 0 && openSearch} />
           </InputContainer>
-          <button onClick={() => handleSearch()}>Search</button>
         </TitleContainer>
         <TitleContainer>
           <Account address={playerAddress} />

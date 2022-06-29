@@ -21,7 +21,6 @@
     "@darkforest_eth/ui": "6.7.29",
     "@darkforest_eth/whitelist": "6.7.29",
     "@lit-labs/react": "^1.0.0",
-    "@radix-ui/react-dropdown-menu": "^0.1.6",
     "animejs": "^3.2.1",
     "auto-bind": "^4.0.0",
     "bad-words": "^3.0.4",

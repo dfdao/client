@@ -10,11 +10,12 @@ import { TextPreview } from '../../Components/TextPreview';
 
 import dfstyles from '../../Styles/dfstyles';
 import { useTwitters } from '../../Utils/AppHooks';
+import { truncateAddress } from './PortalUtils';
 // import { MinimalButton } from './PortalMainView';
 
 function AccountDetails({ address }: { address: EthAddress }) {
   const twitters = useTwitters();
-  const truncatedAddress = address.substring(0, 6) + '...' + address.substring(36, 42);
+  const truncatedAddress = truncateAddress(address);
   return (
     <NamesContainer>
       <Large>
@@ -35,12 +36,12 @@ function AccountDetails({ address }: { address: EthAddress }) {
 export function Account({ address }: { address: EthAddress }) {
   const [dropdownActive, setDropdownActive] = useState<boolean>(false);
   return (
-    <>
+    <div style={{ position: 'relative' }}>
       <PaneContainer onClick={() => setDropdownActive(!dropdownActive)}>
         <AccountDetails address={address} />
       </PaneContainer>
       <Dropdown open={dropdownActive} items={[{ label: 'Log out', action: logOut }]}></Dropdown>
-    </>
+    </div>
   );
 }
 
