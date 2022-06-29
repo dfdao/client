@@ -58,9 +58,3 @@ const NamesContainer = styled.div`
   flex-direction: column;
   justify-content: center;
 `;
-
-const ButtonContainer = styled.div`
-  position: absolute;
-  right: 8px;
-  height: calc(49px - 16px);
-`;

@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import dfstyles from '../../Styles/dfstyles';
 import { GenericErrorBoundary } from '../GenericErrorBoundary';
-import { MinimalButton } from './PortalMainView';
 
 export interface FindMatchProps {
   game: LiveMatch | undefined;
@@ -29,12 +28,14 @@ export const MatchComponent: React.FC<MatchDetails> = ({
 }) => {
   return (
     <MatchContainer>
-      <span>By {creator}</span>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        <span>{matchType}</span>
-        <span style={{ color: dfstyles.colors.dfgreen }}>
-          {spotsTaken} / {totalSpots} spots available
-        </span>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+        <span>By {creator}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <span>{matchType}</span>
+          <span style={{ color: dfstyles.colors.dfgreen }}>
+            {spotsTaken} / {totalSpots} spots available
+          </span>
+        </div>
       </div>
       <Link to={`https://arena.dfdao.xyz/play/${matchId}`}>
         <MatchButton>Join</MatchButton>
@@ -71,12 +72,12 @@ const Container = styled.div`
 
 const MatchContainer = styled.div`
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   border: 1px solid ${dfstyles.colors.borderDark};
   background: ${dfstyles.colors.backgrounddark};
   padding: 16px;
   border-radius: 6px;
-  gap: 4px;
+  align-items: center;
 `;
 
 const MatchButton = styled.button`

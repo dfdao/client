@@ -60,12 +60,7 @@ export function MapDetails({
       tabContents={(i) => {
         if (i === 0) {
           if (numSpawnPlanets > 1) {
-            return (
-              <div>
-                <span>Multiplayer mode: ELO leaderboard goes here</span>
-                <ArenaLeaderboardDisplay leaderboard={leaderboard} error={leaderboardError} />
-              </div>
-            );
+            return <ArenaLeaderboardDisplay leaderboard={leaderboard} error={leaderboardError} />;
           } else {
             return <ArenaLeaderboardDisplay leaderboard={leaderboard} error={leaderboardError} />;
           }
@@ -73,10 +68,7 @@ export function MapDetails({
         if (i === 1) {
           if (numSpawnPlanets > 1) {
             return (
-              <div>
-                <span>Multiplayer mode: Matchmaking goes here</span>
-                <FindMatch game={liveMatches} error={liveMatchError} nPlayers={numSpawnPlanets} />
-              </div>
+              <FindMatch game={liveMatches} error={liveMatchError} nPlayers={numSpawnPlanets} />
             );
           } else {
             return (
