@@ -55,6 +55,7 @@ const defaultPlanet: LobbyPlanet = {
   planetType: 0,
   isTargetPlanet: false,
   isSpawnPlanet: false,
+  blockedPlanetIds: [],
 };
 
 const planetTypeNames = ['Planet', 'Asteroid Field', 'Foundry', 'Spacetime Rip', 'Quasar'];

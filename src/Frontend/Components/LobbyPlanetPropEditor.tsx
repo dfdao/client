@@ -133,7 +133,7 @@ export const PlanetPropEditor: React.FC<PlanetPropEditorProps> = ({
     }
 
     return (
-      <InputRow>
+      <InputRow key = {`input-row-${index}`}>
         <LabeledInput>{displayProperties[index]}</LabeledInput>
         {content}
       </InputRow>

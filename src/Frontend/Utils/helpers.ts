@@ -52,6 +52,7 @@ export function lobbyPlanetToInitPlanet(planet: LobbyPlanet, initializers: Lobby
     requireValidLocationId: false,
     isTargetPlanet: planet.isTargetPlanet,
     isSpawnPlanet: planet.isSpawnPlanet,
+    blockedPlanetIds: planet.blockedPlanetIds
   };
 }
 

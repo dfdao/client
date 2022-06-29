@@ -95,6 +95,7 @@ export const LobbyMapEditor: React.FC<{
       planetType: mutablePlanet.planetType,
       isTargetPlanet: mutablePlanet.isTargetPlanet,
       isSpawnPlanet: mutablePlanet.isSpawnPlanet,
+      blockedPlanetIds: []
     };
 
     updateConfig({

@@ -8,7 +8,7 @@ export interface ToastProps {
   title: string;
   onClose: () => void;
   description?: string;
-  viewportPadding?: [number, number];
+  vppadding?: [number, number];
   direction?: 'left' | 'right';
   flash?: boolean;
 }
@@ -18,7 +18,7 @@ export const Toast: React.FC<ToastProps> = ({
   title,
   onClose,
   description,
-  viewportPadding = [8, 8],
+  vppadding = [8, 8],
   direction = 'right',
   flash,
 }) => {
@@ -41,7 +41,7 @@ export const Toast: React.FC<ToastProps> = ({
           </TextContent>
         </div>
       </Container>
-      <ToastViewport viewportPadding={viewportPadding} direction={direction} />
+      <ToastViewport vppadding={vppadding} direction={direction} />
     </ToastPrimitive.Provider>
   );
 };
@@ -71,15 +71,15 @@ const ToastDescription = styled(ToastPrimitive.Description)`
 `;
 
 const ToastViewport = styled(ToastPrimitive.Viewport)<{
-  viewportPadding?: [number, number];
+  vppadding?: [number, number];
   direction?: 'left' | 'right';
 }>`
   position: fixed;
   bottom: 0;
   ${({ direction }) => (direction ? (direction === 'left' ? 'left: 0;' : 'right: 0;') : 'right: 0')}
   display: flex;
-  padding: ${({ viewportPadding }) =>
-    viewportPadding ? viewportPadding[0] + 'px ' + viewportPadding[1] + 'px' : 0};
+  padding: ${({ vppadding }) =>
+    vppadding ? vppadding[0] + 'px ' + vppadding[1] + 'px' : 0};
   gap: 10px;
   width: 360px;
   max-width: 100vw;

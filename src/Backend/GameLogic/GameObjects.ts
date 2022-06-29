@@ -1431,7 +1431,8 @@ export class GameObjects {
       capturer: EMPTY_ADDRESS,
 
       isTargetPlanet,
-      isSpawnPlanet
+      isSpawnPlanet,
+      blockedPlanetIds: []
     };
   }
 

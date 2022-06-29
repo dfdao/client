@@ -47,7 +47,6 @@ import {
   ArtifactId,
   ArtifactRarity,
   ArtifactType,
-  BlocklistMap,
   CaptureZone,
   Chunk,
   ClaimedCoords,
@@ -367,7 +366,6 @@ class GameManager extends EventEmitter {
    * running when the game was last closed.
    */
   private safeMode: boolean;
-  public blocklist: BlocklistMap;
 
   public get planetRarity(): number {
     return this.contractConstants.PLANET_RARITY;
@@ -414,7 +412,6 @@ class GameManager extends EventEmitter {
     spectator: boolean,
     startTime: number | undefined,
     endTime: number | undefined,
-    blocklist: BlocklistMap,
     configHashPersistentChunkStore: PersistentChunkStore
   ) {
     super();
@@ -528,7 +525,6 @@ class GameManager extends EventEmitter {
     this.paused = paused;
     this.startTime = startTime;
     this.endTimeSeconds = endTime;
-    this.blocklist = blocklist;
     this.spectator = spectator;
     this.ethConnection = ethConnection;
 
@@ -744,7 +740,6 @@ class GameManager extends EventEmitter {
       spectator,
       initialState.startTime,
       initialState.endTime,
-      initialState.blocklist,
       configHashPersistentChunkStore
     );
 
@@ -3768,15 +3763,11 @@ class GameManager extends EventEmitter {
 
   // Return true if move is blocked in blocklist.
   public isMoveBlocked(destId: LocationId, srcId: LocationId): boolean  {
-    return this.contractConstants.BLOCK_MOVES && !!this.blocklist.get(destId)?.get(srcId);
+    return this.contractConstants.BLOCK_MOVES && !!this.getPlanetWithId(destId)?.blockedPlanetIds.find(id => id == srcId);
   }
 
   public isCaptureBlocked(destId: LocationId, srcId: LocationId): boolean  {
-    return this.contractConstants.BLOCK_CAPTURE && !!this.blocklist.get(destId)?.get(srcId);
-  }
-
-  public getBlocklist() : BlocklistMap {
-    return this.blocklist;
+    return this.contractConstants.BLOCK_CAPTURE && !!this.getPlanetWithId(destId)?.blockedPlanetIds.find(id => id == srcId);
   }
 
   public blockMoves(): boolean {

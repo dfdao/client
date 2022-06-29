@@ -23,7 +23,6 @@ import {
   locationIdFromEthersBN,
   locationIdToDecStr,
 } from '@darkforest_eth/serde';
-import { InitBlocklist } from '@darkforest_eth/settings';
 import {
   Artifact,
   ArtifactId,
@@ -471,7 +470,6 @@ export class ContractsAPI extends EventEmitter {
       CAPTURE_ZONE_PLANET_LEVEL_SCORE,
       CAPTURE_ZONE_HOLD_BLOCKS_REQUIRED,
       CAPTURE_ZONES_PER_5000_WORLD_RADIUS,
-      INIT_BLOCKLIST,
     } = await this.makeCall(this.contract.getGameConstants);
 
     const {
@@ -636,12 +634,7 @@ export class ContractsAPI extends EventEmitter {
       START_PAUSED,
       BLOCK_CAPTURE,
       BLOCK_MOVES,
-      INIT_BLOCKLIST: INIT_BLOCKLIST.map(blockItem => {
-        return {
-        destId: locationIdFromEthersBN(blockItem.destId),
-        srcId: locationIdFromEthersBN(blockItem.srcId),
-        }
-      }),
+
       TARGETS_REQUIRED_FOR_VICTORY: TARGETS_REQUIRED_FOR_VICTORY.toNumber(),
       TEAMS_ENABLED,
       NUM_TEAMS: NUM_TEAMS.toNumber(),
@@ -825,18 +818,6 @@ export class ContractsAPI extends EventEmitter {
   public async getEndTime(): Promise<number | undefined> {
     const endTime = (await this.makeCall(this.contract.getEndTime)).toNumber();
     return endTime == 0 ? undefined : endTime ;
-  }
-
-  public async getBlocklistMap(): Promise<BlocklistMap> {
-    const arrayBlockList = (await this.getConstants()).INIT_BLOCKLIST;
-    const blockMap = new Map<LocationId, Map<LocationId, boolean>>();
-    arrayBlockList.forEach(blockItem => {
-      const planetMap = new Map<LocationId,boolean>();
-      planetMap.set(blockItem.srcId,true);
-      blockMap.set(blockItem.destId,planetMap);
-    });
-    console.log('BLOCK MAP', blockMap);
-    return blockMap;
   }
 
   public async getRevealedPlanetsCoords(

@@ -1,6 +1,6 @@
 /** This file contains some common utilities used by the Lobbies UI */
 import { Initializers } from '@darkforest_eth/settings';
-import { EthAddress } from '@darkforest_eth/types';
+import { EthAddress, LocationId } from '@darkforest_eth/types';
 import React from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import styled from 'styled-components';
@@ -17,6 +17,7 @@ export declare type LobbyPlanet = {
   planetType: number;
   isTargetPlanet: boolean;
   isSpawnPlanet: boolean;
+  blockedPlanetIds: LocationId[];
 };
 
 export interface LobbiesPaneProps {
@@ -276,6 +277,7 @@ export const DEFAULT_PLANET: LobbyPlanet = {
   planetType: 0,
   isTargetPlanet: false,
   isSpawnPlanet: false,
+  blockedPlanetIds: [],
 };
 
 export const PLANET_TYPE_NAMES = ['Planet', 'Asteroid Field', 'Foundry', 'Spacetime Rip', 'Quasar'];

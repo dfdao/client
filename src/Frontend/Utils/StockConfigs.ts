@@ -110,6 +110,7 @@ const onePlayerRace: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: true,
+      blockedPlanetIds: [],
     },
     {
       x: -320,
@@ -118,6 +119,7 @@ const onePlayerRace: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
+      blockedPlanetIds: [],
     },
     {
       x: 2005,
@@ -126,6 +128,7 @@ const onePlayerRace: LobbyInitializers = {
       planetType: 4,
       isTargetPlanet: true,
       isSpawnPlanet: false,
+      blockedPlanetIds: [],
     },
     {
       x: -1222,
@@ -134,6 +137,7 @@ const onePlayerRace: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
+      blockedPlanetIds: [],
     },
     {
       x: -263,
@@ -142,6 +146,7 @@ const onePlayerRace: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
+      blockedPlanetIds: [],
     },
     {
       x: -53,
@@ -150,6 +155,7 @@ const onePlayerRace: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
+      blockedPlanetIds: [],
     },
     {
       x: 717,
@@ -158,6 +164,7 @@ const onePlayerRace: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
+      blockedPlanetIds: [],
     },
     {
       x: 2054,
@@ -166,6 +173,7 @@ const onePlayerRace: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
+      blockedPlanetIds: [],
     },
   ],
   TOKEN_MINT_END_TIMESTAMP: 1717258179,
@@ -173,7 +181,6 @@ const onePlayerRace: LobbyInitializers = {
   INIT_PLANETS: [],
   CONFIRM_START: false,
   TARGETS_REQUIRED_FOR_VICTORY: 1,
-  INIT_BLOCKLIST: [],
   BLOCK_CAPTURE: false,
   BLOCK_MOVES: false,
   TEAMS_ENABLED: false,
@@ -289,6 +296,7 @@ const fourPlayerBattle: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: true,
+      blockedPlanetIds: [],
     },
     {
       x: 5500,
@@ -297,6 +305,7 @@ const fourPlayerBattle: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: true,
       isSpawnPlanet: true,
+      blockedPlanetIds: [],
     },
     {
       x: 0,
@@ -305,6 +314,7 @@ const fourPlayerBattle: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: true,
+      blockedPlanetIds: [],
     },
     {
       x: 0,
@@ -313,6 +323,7 @@ const fourPlayerBattle: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: true,
+      blockedPlanetIds: [],
     },
     {
       x: 0,
@@ -321,6 +332,7 @@ const fourPlayerBattle: LobbyInitializers = {
       planetType: 4,
       isTargetPlanet: true,
       isSpawnPlanet: false,
+      blockedPlanetIds: [],
     },
   ],
   TOKEN_MINT_END_TIMESTAMP: 1717258179, // SECONDS!,
@@ -329,7 +341,6 @@ const fourPlayerBattle: LobbyInitializers = {
   WHITELIST: [],
   CONFIRM_START: true,
   TARGETS_REQUIRED_FOR_VICTORY: 2,
-  INIT_BLOCKLIST: [],
   BLOCK_CAPTURE: false,
   BLOCK_MOVES: false,
   TEAMS_ENABLED: false,
@@ -445,6 +456,7 @@ const sprint: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: true,
+      blockedPlanetIds: [],
     },
     {
       x: 1000,
@@ -453,6 +465,7 @@ const sprint: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: true,
+      blockedPlanetIds: [],
     },
     {
       x: 0,
@@ -461,6 +474,7 @@ const sprint: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: true,
       isSpawnPlanet: false,
+      blockedPlanetIds: [],
     },
   ],
   TOKEN_MINT_END_TIMESTAMP: 1717258179, // SECONDS!,
@@ -469,7 +483,6 @@ const sprint: LobbyInitializers = {
   WHITELIST: [address('0x1c0f0af3262a7213e59be7f1440282279d788335')],
   CONFIRM_START: true,
   TARGETS_REQUIRED_FOR_VICTORY: 1,
-  INIT_BLOCKLIST: [],
   BLOCK_CAPTURE: false,
   BLOCK_MOVES: false,
   TEAMS_ENABLED: true,
@@ -586,6 +599,7 @@ const grandPrixWeek2: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: true,
+      blockedPlanetIds: [],
     },
     {
       x: 3500,
@@ -594,6 +608,7 @@ const grandPrixWeek2: LobbyInitializers = {
       planetType: 4,
       isTargetPlanet: true,
       isSpawnPlanet: false,
+      blockedPlanetIds: [],
     },
     {
       x: 400,
@@ -602,6 +617,7 @@ const grandPrixWeek2: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
+      blockedPlanetIds: [],
     },
     {
       x: -2800,
@@ -610,6 +626,7 @@ const grandPrixWeek2: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
+      blockedPlanetIds: [],
     },
     {
       x: 2000,
@@ -618,6 +635,7 @@ const grandPrixWeek2: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
+      blockedPlanetIds: [],
     },
     {
       x: 0,
@@ -626,6 +644,7 @@ const grandPrixWeek2: LobbyInitializers = {
       planetType: 1,
       isTargetPlanet: false,
       isSpawnPlanet: false,
+      blockedPlanetIds: [],
     },
     {
       x: 3000,
@@ -634,6 +653,7 @@ const grandPrixWeek2: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
+      blockedPlanetIds: [],
     },
     {
       x: -2300,
@@ -642,6 +662,7 @@ const grandPrixWeek2: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
+      blockedPlanetIds: [],
     },
     {
       x: 5000,
@@ -650,6 +671,7 @@ const grandPrixWeek2: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
+      blockedPlanetIds: [],
     },
   ],
   TOKEN_MINT_END_TIMESTAMP: 1682435240778,
@@ -657,7 +679,6 @@ const grandPrixWeek2: LobbyInitializers = {
   WHITELIST: [],
   CONFIRM_START: true,
   TARGETS_REQUIRED_FOR_VICTORY: 1,
-  INIT_BLOCKLIST: [],
   BLOCK_CAPTURE: true,
   BLOCK_MOVES: true,
   TEAMS_ENABLED: false,

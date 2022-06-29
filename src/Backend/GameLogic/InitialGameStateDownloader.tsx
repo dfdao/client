@@ -46,7 +46,6 @@ export interface InitialGameState {
   endTime: number | undefined;
   gameover: boolean;
   winners: EthAddress[];
-  blocklist: BlocklistMap;
 }
 
 export class InitialGameStateDownloader {
@@ -191,7 +190,6 @@ export class InitialGameStateDownloader {
     const winners = contractsAPI.getWinners();
     const startTime = contractsAPI.getStartTime();
     const endTime = contractsAPI.getEndTime();
-    const blockList = contractsAPI.getBlocklistMap();
 
     const initialState: InitialGameState = {
       contractConstants: await contractConstants,
@@ -215,7 +213,6 @@ export class InitialGameStateDownloader {
       winners: await winners,
       startTime: await startTime,
       endTime: await endTime,
-      blocklist: await blockList,
     };
 
     return initialState;

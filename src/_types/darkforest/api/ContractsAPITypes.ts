@@ -1,5 +1,4 @@
 import { ArtifactPointValues, EthAddress, LocationId, UpgradeBranches } from '@darkforest_eth/types';
-import { InitBlocklist } from '@darkforest_eth/settings';
 import { BigNumber as EthersBN } from 'ethers';
 
 export const enum ZKArgIdx {
@@ -345,10 +344,7 @@ export interface ContractConstants {
   CONFIRM_START: boolean;
   BLOCK_MOVES: boolean;
   BLOCK_CAPTURE: boolean;
-  INIT_BLOCKLIST: {
-    destId: LocationId;
-    srcId: LocationId;
-}[];
+
   TARGETS_REQUIRED_FOR_VICTORY: number;
   TEAMS_ENABLED: boolean;
   NUM_TEAMS: number;

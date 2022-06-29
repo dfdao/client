@@ -1254,17 +1254,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
         initializers
       );
     }
-    const spawn = initializers.INIT_PLANETS.filter((p) => p.isSpawnPlanet);
-    const target = initializers.INIT_PLANETS.filter((p) => p.isTargetPlanet);
-    if (spawn.length > 0 && target.length > 0) {
-      initializers.INIT_BLOCKLIST = [
-        {
-          destId: target[0].location,
-          srcId: spawn[0].location,
-        },
-      ];
-    }
-
+    
     /* Don't want to submit ADMIN_PLANET as initdata because they aren't used */
     // @ts-expect-error The Operand of a delete must be optional
     delete initializers.ADMIN_PLANETS;
