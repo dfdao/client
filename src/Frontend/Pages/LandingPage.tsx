@@ -153,7 +153,7 @@ export default function LandingPage() {
   );
 }
 
-export const PrettyOverlayGradient = styled.div`
+const PrettyOverlayGradient = styled.div`
   width: 100vw;
   height: 100vh;
   background-image: linear-gradient(to left bottom, #012338, #1e2142, #3e173e, #56042a, #5e0808);

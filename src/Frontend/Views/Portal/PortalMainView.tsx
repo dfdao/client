@@ -1,9 +1,8 @@
 import { EthAddress } from '@darkforest_eth/types';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { loadAccountData } from '../../../Backend/Network/AccountApi';
-import { logOut } from '../../../Backend/Network/AccountManager';
 import { loadRecentMaps } from '../../../Backend/Network/MapsApi';
 import { Dropdown, DropdownItem } from '../../Components/Dropdown';
 import dfstyles from '../../Styles/dfstyles';
@@ -86,7 +85,6 @@ export function PortalMainView({ playerAddress }: { playerAddress: EthAddress })
         </TitleContainer>
       </TopBar>
       <Switch>
-        {/* <Redirect path='/portal/map' to={`/portal/map/${competitiveConfig}`} exact={true} /> */}
         <Redirect path='/portal/map' to={`/portal/home`} exact={true} />
 
         <Route path={'/portal/home'} exact={true} component={PortalHomeView} />

@@ -1,11 +1,5 @@
-import { getConfigName } from '@darkforest_eth/procedural';
-import { address } from '@darkforest_eth/serde';
-import { EthAddress, Leaderboard, LiveMatch } from '@darkforest_eth/types';
-import { debounce } from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { loadConfigFromHash } from '../../../Backend/Network/ConfigApi';
 import { loadRecentMaps, MapInfo } from '../../../Backend/Network/MapsApi';
 import { Spacer } from '../../Components/CoreUI';
 import { competitiveConfig } from '../../Utils/constants';

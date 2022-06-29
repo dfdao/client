@@ -2,7 +2,7 @@ import { address } from '@darkforest_eth/serde';
 import { EthAddress, RawAccount } from '@darkforest_eth/types';
 import { isAddress } from 'ethers/lib/utils';
 import _ from 'lodash';
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import styled from 'styled-components';
 import { loadAccountData } from '../../../Backend/Network/AccountApi';
@@ -10,8 +10,6 @@ import { TextPreview } from '../../Components/TextPreview';
 import { LobbyInitializers } from '../../Panes/Lobbies/Reducer';
 import { useTwitters } from '../../Utils/AppHooks';
 import { ArenaDisplay } from './ArenaDisplay';
-
-const NONE = 'No map found';
 
 export interface uniqueArenas {
   configHash: string;

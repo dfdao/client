@@ -1,9 +1,7 @@
 import { EthAddress } from '@darkforest_eth/types';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { logOut } from '../../../Backend/Network/AccountManager';
-import { getAllTwitters } from '../../../Backend/Network/UtilityServerAPI';
-import { Btn } from '../../Components/Btn';
 import { Dropdown } from '../../Components/Dropdown';
 import { TwitterLink } from '../../Components/Labels/Labels';
 import { TextPreview } from '../../Components/TextPreview';
@@ -11,24 +9,20 @@ import { TextPreview } from '../../Components/TextPreview';
 import dfstyles from '../../Styles/dfstyles';
 import { useTwitters } from '../../Utils/AppHooks';
 import { truncateAddress } from './PortalUtils';
-// import { MinimalButton } from './PortalMainView';
 
 function AccountDetails({ address }: { address: EthAddress }) {
   const twitters = useTwitters();
   const truncatedAddress = truncateAddress(address);
   return (
     <NamesContainer>
-      <Large>
-        {twitters[address] ? (
-          <>
-            <TwitterLink twitter={twitters[address]} />
-            <TextPreview text={address} focusedWidth={'200px'} unFocusedWidth={'120px'} />
-          </>
-        ) : (
-          // <TextPreview text={truncatedAddress} focusedWidth={'200px'} unFocusedWidth={'150px'} />
-          <span>{truncatedAddress}</span>
-        )}
-      </Large>
+      {twitters[address] ? (
+        <>
+          <TwitterLink twitter={twitters[address]} />
+          <TextPreview text={address} focusedWidth={'200px'} unFocusedWidth={'120px'} />
+        </>
+      ) : (
+        <span>{truncatedAddress}</span>
+      )}
     </NamesContainer>
   );
 }
@@ -44,11 +38,6 @@ export function Account({ address }: { address: EthAddress }) {
     </div>
   );
 }
-
-// const Button = styled(MinimalButton)`
-//   background: ${dfstyles.colors.backgroundlighter};
-//   border: 1px solid ${dfstyles.colors.borderDarker};
-// `;
 
 const PaneContainer = styled.div`
   padding: 8px;
@@ -68,10 +57,6 @@ const NamesContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-`;
-
-const Large = styled.div`
-  // font-size: 1.25em;
 `;
 
 const ButtonContainer = styled.div`

@@ -1,5 +1,4 @@
 import { EthAddress } from '@darkforest_eth/types';
-import { LobbyInitializers } from '../../Frontend/Panes/Lobbies/Reducer';
 import { apiUrl } from '../../Frontend/Utils/constants';
 import { getGraphQLData } from './GraphApi';
 

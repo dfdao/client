@@ -1,4 +1,4 @@
-import { EthAddress, ModalName } from '@darkforest_eth/types';
+import { EthAddress } from '@darkforest_eth/types';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import dfstyles from '../../Styles/dfstyles';
