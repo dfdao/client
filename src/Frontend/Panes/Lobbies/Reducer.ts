@@ -130,7 +130,7 @@ export type LobbyConfigAction =
       type: 'CLAIM_VICTORY_ENERGY_PERCENT';
       value: Initializers['CLAIM_VICTORY_ENERGY_PERCENT'] | undefined;
     }
-    | {
+  | {
       type: 'RANDOM_ARTIFACTS';
       value: Initializers['RANDOM_ARTIFACTS'] | undefined;
     }
@@ -2084,18 +2084,6 @@ export function ofLobbyPlanets(
   const currentValue = [...prevCurrentValue];
   const displayValue = [...prevDisplayValue];
 
-  if (currentValue[index]) {
-    currentValue.splice(index, number);
-    displayValue.splice(index, number);
-
-    return {
-      ...state[type],
-      currentValue,
-      displayValue,
-      warning: undefined,
-    };
-  }
-
   if (value === undefined) {
     return {
       ...state[type],
@@ -2156,6 +2144,31 @@ export function ofLobbyPlanets(
       ...state[type],
       displayValue,
       warning: `Invalid planet level`,
+    };
+  }
+
+  if (currentValue[index]) {
+    const isPlanetUnchanged =
+      currentValue[index].x === value.x &&
+      currentValue[index].y === value.y &&
+      currentValue[index].level === value.level &&
+      currentValue[index].planetType === value.planetType &&
+      currentValue[index].isSpawnPlanet === value.isSpawnPlanet &&
+      currentValue[index].isTargetPlanet === value.isTargetPlanet;
+    // if value is the same, delete the planet, otherwise, update
+    if (isPlanetUnchanged) {
+      currentValue.splice(index, number);
+      displayValue.splice(index, number);
+    } else {
+      currentValue.splice(index, number, value);
+      displayValue.splice(index, number, value);
+    }
+
+    return {
+      ...state[type],
+      currentValue,
+      displayValue,
+      warning: undefined,
     };
   }
 

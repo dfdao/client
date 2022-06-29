@@ -5,7 +5,7 @@ import {
   fakeProof,
   RevealSnarkContractCallArgs,
   RevealSnarkInput,
-  SnarkJSProofAndSignals
+  SnarkJSProofAndSignals,
 } from '@darkforest_eth/snarks';
 import revealCircuitPath from '@darkforest_eth/snarks/reveal.wasm';
 import revealZkeyPath from '@darkforest_eth/snarks/reveal.zkey';
@@ -16,7 +16,7 @@ import {
   UnconfirmedCreateArenaPlanet,
   UnconfirmedReveal,
   WorldCoords,
-  WorldLocation
+  WorldLocation,
 } from '@darkforest_eth/types';
 import { LobbyPlanet } from '../../Frontend/Panes/Lobbies/LobbiesUtils';
 import { LobbyInitializers } from '../../Frontend/Panes/Lobbies/Reducer';
@@ -97,9 +97,7 @@ export class LobbyAdminTools {
   }
 
   async createPlanet(planet: LobbyPlanet, initializers: LobbyInitializers) {
-    const args = Promise.resolve([
-      lobbyPlanetToInitPlanet(planet, initializers)
-    ]);
+    const args = Promise.resolve([lobbyPlanetToInitPlanet(planet, initializers)]);
 
     const txIntent: UnconfirmedCreateArenaPlanet = {
       methodName: 'createArenaPlanet',
@@ -142,7 +140,7 @@ export class LobbyAdminTools {
     const txIntent: UnconfirmedReveal = {
       methodName: 'revealLocation',
       contract: this.contract.contract,
-      locationId: location.toString() as LocationId, 
+      locationId: location.toString() as LocationId,
       location: worldLocation,
       args: getArgs(),
     };
