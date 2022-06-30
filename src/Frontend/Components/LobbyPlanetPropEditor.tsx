@@ -5,8 +5,11 @@ import { SelectFrom } from './CoreUI';
 import Select from 'react-select';
 import { Checkbox, NumberInput, DarkForestCheckbox, DarkForestNumberInput } from './Input';
 import styled from 'styled-components';
-import { WorldCoords } from '@darkforest_eth/types';
+import { TooltipName, WorldCoords } from '@darkforest_eth/types';
 import stringify from 'json-stable-stringify';
+import dfstyles from '../Styles/dfstyles';
+import { PortalTooltipTrigger, TooltipTrigger } from '../Panes/Tooltip';
+import { Sub, White } from './Text';
 
 export interface PlanetPropEditorProps {
   selectedPlanet: LobbyPlanet;
@@ -28,7 +31,35 @@ export type planetInputType =
   | 'isSpawnPlanet'
   | 'isTargetPlanet'
   | 'blockedPlanetLocs';
-const displayProperties = ['x', 'y', 'Level', 'Type', 'Target?', 'Spawn?', 'Blocked Planets'];
+
+interface TitleInfo {
+  title: string;
+  description: JSX.Element;
+}
+const displayProperties: TitleInfo[] = [
+  { title: 'x', description: <span>The position of the planet on the x-axis</span> },
+  { title: 'y', description: <span>The position of the planet on the y-axis</span> },
+  {
+    title: 'Level',
+    description:
+    <span>Larger planets have more energy and can send resources farther. But they take more energy to capture.</span>,
+  },
+  {
+    title: 'Type',
+    description: (
+      <div style ={{display: 'flex', flexDirection: 'column'}}>
+        <Sub><White>Planets</White> are the most basic type of celestial body.</Sub>
+        <Sub><White>Asteroid</White> fields have half the defense of a planet, but produce silver.</Sub>
+        <Sub><White>Foundries</White> contain artifacts that can be discovered by players.</Sub>
+        <Sub><White>Spacetime</White> rips withdraw and deposit artifacts and points.</Sub>
+        <Sub><White>Quasars</White> have no energy regen but store lots of energy and silver.</Sub>
+      </div>
+    ),
+  },
+  { title: 'Target?', description: <span>If target planets are active, you must capture and fill a target planet with energy to win.</span> },
+  { title: 'Spawn?', description: <span>If spawn planets are active, players can only spawn on admin-created Spawn planets.</span> },
+  { title: 'Blocked Spawns', description: <span>The player who initializes on a blocked spawn planet cannot move to this planet.</span> },
+];
 
 export const PlanetPropEditor: React.FC<PlanetPropEditorProps> = ({
   selectedPlanet,
@@ -41,17 +72,7 @@ export const PlanetPropEditor: React.FC<PlanetPropEditorProps> = ({
   root,
   onChange,
 }) => {
-  const [mutablePlanet, setMutablePlanet] = useState<LobbyPlanet>(selectedPlanet);
-  const [selectedBlocks, setSelectedBlocks] = useState<{label: string, value: WorldCoords}[]>([])
   const history = useHistory();
-
-  useEffect(() => {
-    setMutablePlanet(selectedPlanet);
-  }, [selectedPlanet]);
-
-  useEffect(() => {
-    onChange({...mutablePlanet, blockedPlanetLocs : selectedBlocks.map(block => block.value)});
-  }, [mutablePlanet, selectedBlocks]);
 
   function planetInput(value: planetInputType, index: number) {
     let content = null;
@@ -59,9 +80,9 @@ export const PlanetPropEditor: React.FC<PlanetPropEditorProps> = ({
       content = (
         <NumberInput
           format='integer'
-          value={mutablePlanet[value]}
+          value={selectedPlanet[value]}
           onChange={(e: Event & React.ChangeEvent<DarkForestNumberInput>) => {
-            setMutablePlanet({ ...mutablePlanet, [value]: e.target.value });
+            onChange({ ...selectedPlanet, [value]: e.target.value });
           }}
         />
       );
@@ -73,8 +94,8 @@ export const PlanetPropEditor: React.FC<PlanetPropEditorProps> = ({
           style={{ padding: '5px' }}
           values={[...Array(10).keys()].map((i) => i.toString())}
           labels={[...Array(10).keys()].map((i) => i.toString())}
-          value={mutablePlanet.level.toString()}
-          setValue={(value) => setMutablePlanet({ ...mutablePlanet, level: parseInt(value) })}
+          value={selectedPlanet.level.toString()}
+          setValue={(value) => onChange({ ...selectedPlanet, level: parseInt(value) })}
         />
       );
     } else if (value == 'planetType') {
@@ -84,9 +105,9 @@ export const PlanetPropEditor: React.FC<PlanetPropEditorProps> = ({
           style={{ padding: '5px' }}
           values={PLANET_TYPE_NAMES}
           labels={PLANET_TYPE_NAMES}
-          value={PLANET_TYPE_NAMES[mutablePlanet.planetType]}
+          value={PLANET_TYPE_NAMES[selectedPlanet.planetType]}
           setValue={(value) =>
-            setMutablePlanet({ ...mutablePlanet, planetType: PLANET_TYPE_NAMES.indexOf(value) })
+            onChange({ ...selectedPlanet, planetType: PLANET_TYPE_NAMES.indexOf(value) })
           }
         />
       );
@@ -95,11 +116,11 @@ export const PlanetPropEditor: React.FC<PlanetPropEditorProps> = ({
         targetPlanetsEnabled
           ? (content = (
               <Checkbox
-                checked={mutablePlanet.isTargetPlanet}
+                checked={selectedPlanet.isTargetPlanet}
                 onChange={() => {
-                  setMutablePlanet({
-                    ...mutablePlanet,
-                    isTargetPlanet: !mutablePlanet.isTargetPlanet,
+                  onChange({
+                    ...selectedPlanet,
+                    isTargetPlanet: !selectedPlanet.isTargetPlanet,
                   });
                 }}
               />
@@ -113,11 +134,11 @@ export const PlanetPropEditor: React.FC<PlanetPropEditorProps> = ({
         spawnPlanetsEnabled
           ? (content = (
               <Checkbox
-                checked={mutablePlanet.isSpawnPlanet}
+                checked={selectedPlanet.isSpawnPlanet}
                 onChange={() => {
-                  setMutablePlanet({
-                    ...mutablePlanet,
-                    isSpawnPlanet: !mutablePlanet.isSpawnPlanet,
+                  onChange({
+                    ...selectedPlanet,
+                    isSpawnPlanet: !selectedPlanet.isSpawnPlanet,
                   });
                 }}
               />
@@ -127,19 +148,77 @@ export const PlanetPropEditor: React.FC<PlanetPropEditorProps> = ({
             ));
       }
     } else if (value == 'blockedPlanetLocs') {
-      const options = stagedPlanets.map((planet) => {return { label: `(x:${planet.x},y: ${planet.y})`, value: planet }});
-      const handleChange = (selected: any) => {
-        setSelectedBlocks(selected);
-      };
+      const options = stagedPlanets.reduce(
+        (total, curr) =>
+          curr.isSpawnPlanet ? [...total, { label: `(${curr.x},${curr.y})`, value: curr }] : total,
+        []
+      );
+      const value = selectedPlanet.blockedPlanetLocs.map((loc) => ({
+        label: `(${loc.x},${loc.y})`,
+        value: loc,
+      }));
+
       {
         blockEnabled
           ? (content = (
               <Select
-                name='Blocked Planets'
+                styles={{
+                  container: (provided, state) => ({ ...provided, width: '100%' }),
+                  control: (provided, state) => ({
+                    ...provided,
+                    background: `${dfstyles.colors.background}`,
+                    color: `${dfstyles.colors.subtext}`,
+                    borderRadius: '4px',
+                    border: `1px solid ${dfstyles.colors.border}`,
+                    padding: '2px 6px',
+                    cursor: 'pointer',
+                  }),
+                  input: (provided, state) => ({
+                    ...provided,
+                    color: `${dfstyles.colors.subtext}`,
+                  }),
+                  valueContainer: (provided, state) => ({ ...provided, padding: '0px ' }),
+                  indicatorSeparator: (provided, state) => ({ ...provided, display: 'none' }),
+                  indicatorsContainer: (provided, state) => ({ padding: 'none' }),
+                  menu: (provided, state) => ({
+                    ...provided,
+                    color: `${dfstyles.colors.subtext}`,
+                  }),
+                  menuList: (provided, state) => ({
+                    ...provided,
+                    color: `${dfstyles.colors.text}`,
+                    background:
+                      options.length > 0 ? `${dfstyles.colors.backgroundlight}` : `#5B1522`,
+                  }),
+                  option: (provided, state) => ({
+                    ...provided,
+                    background: !state.isFocused
+                      ? `${dfstyles.colors.backgroundlight}`
+                      : `${dfstyles.colors.backgroundlighter}`,
+                  }),
+                  multiValue: (provided, state) => ({
+                    ...provided,
+                    color: `${dfstyles.colors.text}`,
+                    background: `${dfstyles.colors.backgroundlighter}`,
+                  }),
+                  multiValueLabel: (provided, state) => ({
+                    ...provided,
+                    background: `${dfstyles.colors.backgroundlight}`,
+                    color: `${dfstyles.colors.text}`,
+                  }),
+                }}
+                name='Blocked Spawns'
                 options={options}
                 isMulti
-                value={selectedBlocks}
-                onChange={handleChange}
+                value={value}
+                onChange={(selected: any) =>
+                  onChange({
+                    ...selectedPlanet,
+                    blockedPlanetLocs: selected.map(
+                      (block: { label: string; value: LobbyPlanet }) => block.value
+                    ),
+                  })
+                }
               />
             ))
           : (content = (
@@ -149,19 +228,27 @@ export const PlanetPropEditor: React.FC<PlanetPropEditorProps> = ({
     } else {
       content = (
         <Checkbox
-          checked={(mutablePlanet as any)[value]}
+          checked={(selectedPlanet as any)[value]}
           onChange={(e: Event & React.ChangeEvent<DarkForestCheckbox>) => {
-            setMutablePlanet({ ...mutablePlanet, [value]: e.target.checked });
+            onChange({ ...selectedPlanet, [value]: e.target.checked });
           }}
         />
       );
     }
 
     return (
-      <InputRow key={`input-row-${index}`}>
-        <LabeledInput>
-          {displayProperties[index]}{' '}
-        </LabeledInput>
+      <InputRow
+        key={`input-row-${index}`}
+        style={value == 'blockedPlanetLocs' && blockEnabled ? { flexDirection: 'column' } : {}}
+      >
+        <PortalTooltipTrigger
+          name={TooltipName.Empty}
+          extraContent={displayProperties[index].description}
+          style={{ width: '100%' }}
+        >
+          <LabeledInput>{displayProperties[index].title}</LabeledInput>
+        </PortalTooltipTrigger>
+
         {content}
       </InputRow>
     );

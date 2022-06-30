@@ -163,22 +163,13 @@ export function LobbyWorldSettingsPage({
               </div>
             </MainContentInner>
           </MainContent>
-          <MapContainer>
-            <MinimapPane
-              minimapConfig={minimapConfig}
-              onUpdate={onUpdate}
-              created={!!lobbyAdminTools}
-              displayConfig={{
-                keys: true,
-              }}
-            />
-          </MapContainer>
         </Container>
       </Route>
     );
   });
 
   return (
+    <>
     <Switch>
       <Route path={`${root}/settings`} exact>
         {/* Just in case */}
@@ -186,6 +177,17 @@ export function LobbyWorldSettingsPage({
       </Route>
       {routes}
     </Switch>
+     <MapContainer>
+     <MinimapPane
+       minimapConfig={minimapConfig}
+       onUpdate={onUpdate}
+       created={!!lobbyAdminTools}
+       displayConfig={{
+         keys: true,
+       }}
+     />
+   </MapContainer>
+   </>
   );
 }
 

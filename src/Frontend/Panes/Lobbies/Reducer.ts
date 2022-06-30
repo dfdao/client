@@ -2172,8 +2172,8 @@ export function ofLobbyPlanets(
     };
   }
 
-  currentValue[index] = value;
-  displayValue[index] = value;
+  currentValue.unshift(value);
+  displayValue.unshift(value);
 
   return {
     ...state[type],

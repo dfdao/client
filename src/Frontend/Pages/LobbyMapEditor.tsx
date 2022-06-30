@@ -53,20 +53,13 @@ export const LobbyMapEditor: React.FC<{
   const history = useHistory();
   const placementModeShortcut = useIsDown('s');
 
-  useEffect(() => {
-    if (placementModeShortcut) {
-      setIsPlacementMode(true);
-    } else {
-      setIsPlacementMode(false);
-    }
-  }, [placementModeShortcut]);
+  useEffect(() => setIsPlacementMode(placementModeShortcut), [placementModeShortcut]);
 
   const selectedPlanet = useMemo(() => {
     if (selectedPlanetIndex !== undefined && config.ADMIN_PLANETS.displayValue) {
       return config.ADMIN_PLANETS.displayValue[selectedPlanetIndex];
-    } else {
-      return undefined;
     }
+    return undefined;
   }, [selectedPlanetIndex, config.ADMIN_PLANETS]);
 
   const randomizeMap = () => {
@@ -83,26 +76,26 @@ export const LobbyMapEditor: React.FC<{
     //   return;
     // }
     if (
-      config.ADMIN_PLANETS.displayValue?.find((p) => planetCoord.x == p?.x && planetCoord.y == p?.y)
+      config.ADMIN_PLANETS.displayValue?.find(
+        (p) => planetCoord.x == p?.x && planetCoord.y == p?.y
+      )
     ) {
       onError('Planet with identical coords staged');
       return;
     }
     const newPlanetToStage: LobbyPlanet = {
+      ...mutablePlanet,
       x: planetCoord.x,
-      y: planetCoord.y,
-      level: mutablePlanet.level,
-      planetType: mutablePlanet.planetType,
-      isTargetPlanet: mutablePlanet.isTargetPlanet,
-      isSpawnPlanet: mutablePlanet.isSpawnPlanet,
-      blockedPlanetLocs: []
+      y: planetCoord.y
     };
-
+    const index = config.ADMIN_PLANETS.displayValue?.length ?? 0;
     updateConfig({
       type: 'ADMIN_PLANETS',
       value: newPlanetToStage,
       index: config.ADMIN_PLANETS.displayValue?.length ?? 0,
     });
+    mutablePlanet.blockedPlanetLocs = [];
+    setSelectedPlanetIndex(0);
   }
 
   return (
@@ -124,9 +117,12 @@ export const LobbyMapEditor: React.FC<{
             canAddPlanets={config.ADMIN_CAN_ADD_PLANETS.displayValue ?? false}
             spawnPlanetsEnabled={config.MANUAL_SPAWN.displayValue ?? false}
             targetPlanetsEnabled={config.TARGET_PLANETS.displayValue ?? false}
-            blockEnabled = {(config.BLOCK_CAPTURE.displayValue ?? false) || (config.BLOCK_MOVES.displayValue ?? false)}
-            stagedPlanets = {config.ADMIN_PLANETS.currentValue ?? []}
-            excludePlanetTypes={['x', 'y',]}
+            blockEnabled={
+              (config.BLOCK_CAPTURE.displayValue ?? false) ||
+              (config.BLOCK_MOVES.displayValue ?? false)
+            }
+            stagedPlanets={config.ADMIN_PLANETS.currentValue ?? []}
+            excludePlanetTypes={['x','y']}
             onChange={(planet) => setMutablePlanet(planet)}
             root={root}
           />
@@ -148,23 +144,14 @@ export const LobbyMapEditor: React.FC<{
               }}
             />
           </InputRow> */}
-          <EditorButton
-            cancel={isPlacementMode}
-            onClick={() => setIsPlacementMode(!isPlacementMode)}
-          >
-            {isPlacementMode ? 'Cancel' : 'Set coordinates on map'}
-          </EditorButton>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginTop: '8px',
-            }}
-          >
-            Or {placementModeShortcut ? 'release' : 'hold'}{' '}
-            <Key active={placementModeShortcut}>S</Key> to{' '}
-            {placementModeShortcut ? 'cancel' : 'place planets'}
+          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+            <EditorButton
+              cancel={isPlacementMode}
+              onClick={() => setIsPlacementMode(!isPlacementMode)}
+            >
+              {isPlacementMode ? 'Cancel' : 'Set coordinates on map'}
+            </EditorButton>
+            <Key active={placementModeShortcut}>S</Key>
           </div>
         </div>
         <Spacer height={32} />
@@ -214,11 +201,11 @@ export const LobbyMapEditor: React.FC<{
           >
             Randomize Map
           </LobbyButton>
-          <Spacer height={24} />
-          <LobbyButton primary onClick={() => history.push(`${root}/confirm`)}>
+          {/* <Spacer height={24} /> */}
+          {/* <LobbyButton primary onClick={() => history.push(`${root}/confirm`)}>
             Save Changes
-          </LobbyButton>
-          <Spacer height={24} />
+          </LobbyButton> */}
+          <Spacer height={16} />
           <ConfigDownload
             renderer={() =>
               !createDisabled ? (
@@ -234,19 +221,17 @@ export const LobbyMapEditor: React.FC<{
           />
         </MainContentInner>
       </MainContent>
-      {selectedPlanet && selectedPlanetIndex !== undefined && (
-        <LobbyCreationPlanetInspector
-          selectedPlanet={selectedPlanet}
-          selectedIndex={selectedPlanetIndex}
-          config={config}
-          updateConfig={updateConfig}
-          onDelete={() => setSelectedPlanetIndex(undefined)}
-          onClose={() => {
-            setSelectedPlanetIndex(undefined);
-          }}
-          root={root}
-        />
-      )}
+      <LobbyCreationPlanetInspector
+        selectedPlanet={selectedPlanet}
+        selectedIndex={selectedPlanetIndex}
+        config={config}
+        updateConfig={updateConfig}
+        onDelete={() => setSelectedPlanetIndex(undefined)}
+        onClose={() => {
+          setSelectedPlanetIndex(undefined);
+        }}
+        root={root}
+      />
     </Container>
   );
 };
@@ -319,6 +304,7 @@ const EditorButton = styled.button<{ cancel: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
 `;
 
 // styles copied from { DarkForestShortcutButton } from '@darkforest_eth/ui';

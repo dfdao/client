@@ -6,8 +6,8 @@ import { LobbyAction, LobbyConfigState } from '../Panes/Lobbies/Reducer';
 import { PlanetPropEditor } from './LobbyPlanetPropEditor';
 
 export interface LobbyPlanetInspectorProps {
-  selectedPlanet: LobbyPlanet;
-  selectedIndex: number;
+  selectedPlanet?: LobbyPlanet ;
+  selectedIndex?: number;
   config: LobbyConfigState;
   updateConfig: React.Dispatch<LobbyAction>;
   onDelete: (deletedIndex: number) => void;
@@ -35,12 +35,13 @@ export const LobbyCreationPlanetInspector: React.FC<LobbyPlanetInspectorProps> =
   onClose,
   root,
 }) => {
-  const [mutablePlanet, setMutablePlanet] = useState<LobbyPlanet>(selectedPlanet);
+  const [mutablePlanet, setMutablePlanet] = useState<LobbyPlanet | undefined>(selectedPlanet);
 
   useEffect(() => {
     setMutablePlanet(selectedPlanet);
   }, [selectedPlanet, selectedIndex]);
 
+  if(!mutablePlanet || !selectedPlanet || selectedIndex == undefined) return <Inspector><InspectorInner></InspectorInner></Inspector>;
   return (
     <Inspector>
       <InspectorInner>
