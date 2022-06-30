@@ -61,6 +61,7 @@ export function Timer({ account }: { account: EthAddress | undefined }) {
             gridTemplateColumns: 'repeat(3, 33%)',
             width: '100%',
             textAlign: 'center',
+            marginTop: '7px',
           }}
         >
           <span style={{ gridColumn: '1' }}>Moves: {moves}</span>
