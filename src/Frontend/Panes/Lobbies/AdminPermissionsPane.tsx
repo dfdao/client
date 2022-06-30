@@ -4,11 +4,21 @@ import { Row } from '../../Components/Row';
 import { LobbiesPaneProps, Warning } from './LobbiesUtils';
 
 export function AdminPermissionsPane({ config, onUpdate }: LobbiesPaneProps) {
-  const checkboxes = [
-    
-  ]
+  const checkboxes = [];
   return (
     <>
+      <Row>
+        <Checkbox
+          label='Spawn block enabled?'
+          checked={config.BLOCK_MOVES.displayValue}
+          onChange={(e: Event & React.ChangeEvent<DarkForestCheckbox>) =>
+            onUpdate({ type: 'BLOCK_MOVES', value: e.target.checked })
+          }
+        />
+      </Row>
+      <Row>
+        <Warning>{config.BLOCK_MOVES.warning}</Warning>
+      </Row>
       <Row>
         <Checkbox
           label='Admin disabled?'
@@ -18,21 +28,10 @@ export function AdminPermissionsPane({ config, onUpdate }: LobbiesPaneProps) {
           }
         />
       </Row>
-        <Row>
-        <Warning>{config.NO_ADMIN.warning}</Warning>
-      </Row>
       <Row>
-        <Checkbox
-          label='Planet block enabled?'
-          checked={config.BLOCK_MOVES.displayValue}
-          onChange={(e: Event & React.ChangeEvent<DarkForestCheckbox>) =>
-            onUpdate({ type: 'BLOCK_MOVES', value: e.target.checked })
-          }
-        />
-      </Row>
-        <Row>
         <Warning>{config.NO_ADMIN.warning}</Warning>
       </Row>
+
       {/* <Row>
         <Checkbox
           label='Admin can add planets?'
@@ -81,7 +80,6 @@ export function AdminPermissionsPane({ config, onUpdate }: LobbiesPaneProps) {
       <Row>
         <Warning>{config.CONFIRM_START.warning}</Warning>
       </Row>
-
     </>
   );
 }
