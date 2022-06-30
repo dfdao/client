@@ -7,6 +7,7 @@ import { Checkbox, NumberInput, DarkForestCheckbox, DarkForestNumberInput } from
 import styled from 'styled-components';
 import { WorldCoords } from '@darkforest_eth/types';
 import stringify from 'json-stable-stringify';
+import dfstyles from '../Styles/dfstyles';
 
 export interface PlanetPropEditorProps {
   selectedPlanet: LobbyPlanet;
@@ -41,17 +42,7 @@ export const PlanetPropEditor: React.FC<PlanetPropEditorProps> = ({
   root,
   onChange,
 }) => {
-  const [mutablePlanet, setMutablePlanet] = useState<LobbyPlanet>(selectedPlanet);
-  const [selectedBlocks, setSelectedBlocks] = useState<{label: string, value: WorldCoords}[]>([])
   const history = useHistory();
-
-  useEffect(() => {
-    setMutablePlanet(selectedPlanet);
-  }, [selectedPlanet]);
-
-  useEffect(() => {
-    onChange({...mutablePlanet, blockedPlanetLocs : selectedBlocks.map(block => block.value)});
-  }, [mutablePlanet, selectedBlocks]);
 
   function planetInput(value: planetInputType, index: number) {
     let content = null;
@@ -59,9 +50,9 @@ export const PlanetPropEditor: React.FC<PlanetPropEditorProps> = ({
       content = (
         <NumberInput
           format='integer'
-          value={mutablePlanet[value]}
+          value={selectedPlanet[value]}
           onChange={(e: Event & React.ChangeEvent<DarkForestNumberInput>) => {
-            setMutablePlanet({ ...mutablePlanet, [value]: e.target.value });
+            onChange({ ...selectedPlanet, [value]: e.target.value });
           }}
         />
       );
@@ -73,8 +64,8 @@ export const PlanetPropEditor: React.FC<PlanetPropEditorProps> = ({
           style={{ padding: '5px' }}
           values={[...Array(10).keys()].map((i) => i.toString())}
           labels={[...Array(10).keys()].map((i) => i.toString())}
-          value={mutablePlanet.level.toString()}
-          setValue={(value) => setMutablePlanet({ ...mutablePlanet, level: parseInt(value) })}
+          value={selectedPlanet.level.toString()}
+          setValue={(value) => onChange({ ...selectedPlanet, level: parseInt(value) })}
         />
       );
     } else if (value == 'planetType') {
@@ -84,9 +75,9 @@ export const PlanetPropEditor: React.FC<PlanetPropEditorProps> = ({
           style={{ padding: '5px' }}
           values={PLANET_TYPE_NAMES}
           labels={PLANET_TYPE_NAMES}
-          value={PLANET_TYPE_NAMES[mutablePlanet.planetType]}
+          value={PLANET_TYPE_NAMES[selectedPlanet.planetType]}
           setValue={(value) =>
-            setMutablePlanet({ ...mutablePlanet, planetType: PLANET_TYPE_NAMES.indexOf(value) })
+            onChange({ ...selectedPlanet, planetType: PLANET_TYPE_NAMES.indexOf(value) })
           }
         />
       );
@@ -95,11 +86,11 @@ export const PlanetPropEditor: React.FC<PlanetPropEditorProps> = ({
         targetPlanetsEnabled
           ? (content = (
               <Checkbox
-                checked={mutablePlanet.isTargetPlanet}
+                checked={selectedPlanet.isTargetPlanet}
                 onChange={() => {
-                  setMutablePlanet({
-                    ...mutablePlanet,
-                    isTargetPlanet: !mutablePlanet.isTargetPlanet,
+                  onChange({
+                    ...selectedPlanet,
+                    isTargetPlanet: !selectedPlanet.isTargetPlanet,
                   });
                 }}
               />
@@ -113,11 +104,11 @@ export const PlanetPropEditor: React.FC<PlanetPropEditorProps> = ({
         spawnPlanetsEnabled
           ? (content = (
               <Checkbox
-                checked={mutablePlanet.isSpawnPlanet}
+                checked={selectedPlanet.isSpawnPlanet}
                 onChange={() => {
-                  setMutablePlanet({
-                    ...mutablePlanet,
-                    isSpawnPlanet: !mutablePlanet.isSpawnPlanet,
+                  onChange({
+                    ...selectedPlanet,
+                    isSpawnPlanet: !selectedPlanet.isSpawnPlanet,
                   });
                 }}
               />
@@ -127,19 +118,77 @@ export const PlanetPropEditor: React.FC<PlanetPropEditorProps> = ({
             ));
       }
     } else if (value == 'blockedPlanetLocs') {
-      const options = stagedPlanets.map((planet) => {return { label: `(x:${planet.x},y: ${planet.y})`, value: planet }});
-      const handleChange = (selected: any) => {
-        setSelectedBlocks(selected);
-      };
+      const options = stagedPlanets.reduce(
+        (total, curr) =>
+          curr.isSpawnPlanet ? [...total, { label: `(${curr.x},${curr.y})`, value: curr }] : total,
+        []
+      );
+      const value = selectedPlanet.blockedPlanetLocs.map((loc) => ({
+        label: `(${loc.x},${loc.y})`,
+        value: loc,
+      }));
+
       {
         blockEnabled
           ? (content = (
               <Select
-                name='Blocked Planets'
+                styles={{
+                  container: (provided, state) => ({ ...provided, width: '100%' }),
+                  control: (provided, state) => ({
+                    ...provided,
+                    background: `${dfstyles.colors.background}`,
+                    color: `${dfstyles.colors.subtext}`,
+                    borderRadius: '4px',
+                    border: `1px solid ${dfstyles.colors.border}`,
+                    padding: '2px 6px',
+                    cursor: 'pointer',
+                  }),
+                  input: (provided, state) => ({
+                    ...provided,
+                    color: `${dfstyles.colors.subtext}`,
+                  }),
+                  valueContainer: (provided, state) => ({ ...provided, padding: '0px ' }),
+                  indicatorSeparator: (provided, state) => ({ ...provided, display: 'none' }),
+                  indicatorsContainer: (provided, state) => ({ padding: 'none' }),
+                  menu: (provided, state) => ({
+                    ...provided,
+                    color: `${dfstyles.colors.subtext}`,
+                  }),
+                  menuList: (provided, state) => ({
+                    ...provided,
+                    color: `${dfstyles.colors.text}`,
+                    background:
+                      options.length > 0 ? `${dfstyles.colors.backgroundlight}` : `#5B1522`,
+                  }),
+                  option: (provided, state) => ({
+                    ...provided,
+                    background: !state.isFocused
+                      ? `${dfstyles.colors.backgroundlight}`
+                      : `${dfstyles.colors.backgroundlighter}`,
+                  }),
+                  multiValue: (provided, state) => ({
+                    ...provided,
+                    color: `${dfstyles.colors.text}`,
+                    background: `${dfstyles.colors.backgroundlighter}`,
+                  }),
+                  multiValueLabel: (provided, state) => ({
+                    ...provided,
+                    background: `${dfstyles.colors.backgroundlight}`,
+                    color: `${dfstyles.colors.text}`,
+                  }),
+                }}
+                name='Blocked Spawns'
                 options={options}
                 isMulti
-                value={selectedBlocks}
-                onChange={handleChange}
+                value={value}
+                onChange={(selected: any) =>
+                  onChange({
+                    ...selectedPlanet,
+                    blockedPlanetLocs: selected.map(
+                      (block: { label: string; value: LobbyPlanet }) => block.value
+                    ),
+                  })
+                }
               />
             ))
           : (content = (
@@ -149,9 +198,9 @@ export const PlanetPropEditor: React.FC<PlanetPropEditorProps> = ({
     } else {
       content = (
         <Checkbox
-          checked={(mutablePlanet as any)[value]}
+          checked={(selectedPlanet as any)[value]}
           onChange={(e: Event & React.ChangeEvent<DarkForestCheckbox>) => {
-            setMutablePlanet({ ...mutablePlanet, [value]: e.target.checked });
+            onChange({ ...selectedPlanet, [value]: e.target.checked });
           }}
         />
       );
