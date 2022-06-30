@@ -107,7 +107,7 @@ export function PortalTooltipTrigger(props: TooltipTriggerProps) {
         {props.children}
       </StyledTooltipTrigger>
 
-      {hovering && <Tooltip {...props} top={mouseCoords.y} left={mouseCoords.x} style = {{zIndex: 9999}}/> }
+      {hovering && <Tooltip {...props} top={mouseCoords.y} left={mouseCoords.x} style = {{zIndex: 9999, position: 'fixed'}}/> }
     </>
   );
 }
@@ -175,7 +175,7 @@ const StyledTooltipTrigger = styled.span`
 
 const StyledTooltip = styled.div`
   max-width: ${RECOMMENDED_MODAL_WIDTH};
-  position: absolute;
+  position: fixed;
   border: 1px solid ${dfstyles.colors.border};
   background: ${dfstyles.colors.background};
   padding: 0.5em 1em;

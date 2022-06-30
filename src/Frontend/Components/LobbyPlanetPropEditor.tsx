@@ -49,9 +49,9 @@ const displayProperties: TitleInfo[] = [
     description: (
       <div style ={{display: 'flex', flexDirection: 'column'}}>
         <Sub><White>Planets</White> are the most basic type of celestial body.</Sub>
-        <Sub><White>Asteroid</White> fields have half the defense of a planet, but produce silver.</Sub>
+        <Sub><White>Asteroid Fields</White> have half the defense of a planet, but produce silver.</Sub>
         <Sub><White>Foundries</White> contain artifacts that can be discovered by players.</Sub>
-        <Sub><White>Spacetime</White> rips withdraw and deposit artifacts and points.</Sub>
+        <Sub><White>Spacetime Rips</White> withdraw and deposit artifacts and points.</Sub>
         <Sub><White>Quasars</White> have no energy regen but store lots of energy and silver.</Sub>
       </div>
     ),

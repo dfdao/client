@@ -96,7 +96,7 @@ export function LobbyConfirmPage({
   const history = useHistory();
   return (
     <Container>
-      <Sidebar previousPath={root} title={'← Choose Map'}>
+      <Sidebar previousPath={!created ? root : undefined} title={!created ? '← Choose Map': ''}>
         <span>Confirm your map configuration before creating your DF Arena Universe.</span>
         <Spacer height={24} />
         <PlanetListPane
@@ -197,8 +197,8 @@ export function LobbyConfirmPage({
         <Spacer height={16} />
         {!createDisabled && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Button onClick={() => history.push(`${root}/edit-map`)}>Edit map</Button>
             <Button onClick={() => history.push(`${root}/settings/game`)}>Game Settings</Button>
+            <Button onClick={() => history.push(`${root}/edit-map`)}>Add Planets</Button>
           </div>
         )}
       </MapContainer>

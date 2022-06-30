@@ -5,7 +5,7 @@ import { Spacer } from './CoreUI';
 
 export const Sidebar: React.FC<{
   children: React.ReactNode;
-  previousPath: string;
+  previousPath: string | undefined;
   title: string;
 }> = ({ children, previousPath, title }) => {
   const history = useHistory();
@@ -19,7 +19,7 @@ export const Sidebar: React.FC<{
           gap: '8px',
         }}
       >
-        <SidebarTitle onClick={() => history.push(previousPath)}>{title}</SidebarTitle>
+        <SidebarTitle onClick={() => previousPath ? history.push(previousPath): null}>{title}</SidebarTitle>
       </div>
       <Spacer height={8} />
       <SidebarContent>{children}</SidebarContent>

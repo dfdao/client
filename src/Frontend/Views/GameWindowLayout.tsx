@@ -36,6 +36,7 @@ import { TOGGLE_DIAGNOSTICS_PANE } from '../Utils/ShortcutConstants';
 import { NotificationsPane } from './Notifications';
 import { SidebarPane } from './SidebarPane';
 import { TopBar } from './TopBar';
+import GameManager from '../../Backend/GameLogic/GameManager';
 
 export function GameWindowLayout({
   terminalVisible,
@@ -90,7 +91,7 @@ export function GameWindowLayout({
     setModalsContainer(node);
   }, []);
 
-  const [waitingRoomVisible, setWaitingRoomVisible] = useState(!uiManager.gameStarted);
+  const [waitingRoomVisible, setWaitingRoomVisible] = useState(!uiManager.gameStarted && uiManager.contractConstants.MANUAL_SPAWN);
 
   // const [onboardingVisible, setOnboardingVisible] = useBooleanSetting(uiManager, Setting.NewPlayer);
   const [tutorialVisible, setTutorialVisible] = useBooleanSetting(uiManager, Setting.TutorialOpen);

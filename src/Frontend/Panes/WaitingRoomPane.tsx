@@ -83,7 +83,8 @@ export function WaitingRoomPane({ visible, onClose }: { visible: boolean; onClos
   const player = uiManager.getPlayer();
   const constants = uiManager.getGameManager().getContractConstants();
   const [players, setPlayers] = useState<Array<Player | undefined>>([]);
-
+  const confirmStart = uiManager.getGameManager().getContractConstants().CONFIRM_START 
+  
   // refresh players every 10 seconds
   useEffect(() => {
     if (!uiManager) return;
@@ -107,7 +108,7 @@ export function WaitingRoomPane({ visible, onClose }: { visible: boolean; onClos
       <div>
         <p>This is the waiting room.</p>
         <Spacer height={8} />
-        {uiManager.getGameManager().getContractConstants().CONFIRM_START ? (
+        {confirmStart ? (
           <p>Once all players initialize and press READY, the game will begin.</p>
         ) : (
           <p>Once a player makes a move, the game will begin.</p>
@@ -116,7 +117,7 @@ export function WaitingRoomPane({ visible, onClose }: { visible: boolean; onClos
     );
   }
 
-  const headers = ['', 'Planet', 'Owner', 'Ready'];
+  const headers = ['', 'Planet', 'Owner', confirmStart ? 'Ready': ''];
   const alignments: Array<'r' | 'c' | 'l'> = ['l', 'l', 'l', 'r'];
 
   const columns = [
@@ -141,6 +142,7 @@ export function WaitingRoomPane({ visible, onClose }: { visible: boolean; onClos
     ),
     //ready
     (planet: Planet, i: number) => {
+      if(!confirmStart) return <></>
       const player = players[i];
       if (!player || !player.ready) return <Red>N</Red>;
       return <Green>Y</Green>;
@@ -166,17 +168,26 @@ export function WaitingRoomPane({ visible, onClose }: { visible: boolean; onClos
           </Row>
         ) : (
           <>
-            <Row>Welcome to Dark Forest Arena! Once everyone is ready, the game will begin.</Row>{' '}
-            <ReadyContainer>
-              <Btn
-                size='stretch'
-                onClick={() =>
-                  ready ? uiManager.getGameManager().notReady() : uiManager.getGameManager().ready()
-                }
-              >
-                I'm {ready ? 'not ready' : 'ready'}
-              </Btn>
-            </ReadyContainer>
+            <Row>Welcome to Dark Forest Arena!</Row>
+            {confirmStart ? (
+              <>
+                <Row>Once everyone is ready, the game will begin.</Row>
+                <ReadyContainer>
+                  <Btn
+                    size='stretch'
+                    onClick={() =>
+                      ready
+                        ? uiManager.getGameManager().notReady()
+                        : uiManager.getGameManager().ready()
+                    }
+                  >
+                    I'm {ready ? 'not ready' : 'ready'}
+                  </Btn>
+                </ReadyContainer>
+              </>
+            ) : (
+              <Row>Once a player moves, the game will begin.</Row>
+            )}
           </>
         )}
 
@@ -191,7 +202,7 @@ export function WaitingRoomPane({ visible, onClose }: { visible: boolean; onClos
     <ModalPane
       visible={visible}
       onClose={onClose}
-      hideClose={!uiManager.gameStarted || !constants.CONFIRM_START}
+      hideClose={!uiManager.gameStarted}
       id={ModalName.WaitingRoom}
       title='Waiting Room'
       helpContent={HelpContent}
