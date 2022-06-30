@@ -132,7 +132,7 @@ function CaptureZones({
 
   useEmitterSubscribe(
     emitter,
-    (zoneGeneration: { nextChangeBlock: any; }) => {
+    (zoneGeneration: { nextChangeBlock: any }) => {
       setNextGenerationBlock(zoneGeneration.nextChangeBlock);
     },
     [setNextGenerationBlock]
@@ -145,6 +145,32 @@ function CaptureZones({
       </TooltipTrigger>
     </Numbers>
   );
+}
+
+function BoardPlacement({ account }: { account: EthAddress | undefined }) {
+  const uiManager = useUIManager();
+  const player = usePlayer(uiManager, account);
+
+  let content;
+
+  if (!player.value) {
+    content = <Sub>n/a</Sub>;
+  } else {
+    let formattedScore = 'n/a';
+    if (player.value.score !== undefined && player.value.score !== null) {
+      formattedScore = player.value.score.toLocaleString();
+    }
+
+    content = (
+      <Sub>
+        <TooltipTrigger name={TooltipName.Score}>
+          score: <Text>{formattedScore}</Text>
+        </TooltipTrigger>
+      </Sub>
+    );
+  }
+
+  return <Numbers>{content}</Numbers>;
 }
 
 export function TopBar({ twitterVerifyHook }: { twitterVerifyHook: Hook<boolean> }) {
@@ -199,19 +225,20 @@ export function TopBar({ twitterVerifyHook }: { twitterVerifyHook: Hook<boolean>
             </TooltipTrigger>
           </>
         )}
-        {/* <BoardPlacement account={account} /> */}
-        <Timer account={account}/>
-      </AlignCenterHorizontally>
-      <AlignCenterHorizontally style={{ justifyContent: 'space-around', width: '100%', marginTop: '10px' }}>
-        {captureZones}
-        {uiManager.getSpaceJunkEnabled() && (
-          <>
-            <SpaceJunk account={account} />
-          </>
-        )}
-        <TargetPlanetVictory />
-      </AlignCenterHorizontally>
-      <Timer account={account} />
+        {uiManager.getSpaceJunkEnabled() && <SpaceJunk account={account} />}
+      </AlignCenterHorizontally>{' '}
+      {uiManager.contractConstants.TARGET_PLANETS ? (
+        <>
+          <Timer account={account} />
+          <AlignCenterHorizontally style={{ justifyContent: 'space-around', width: '100%' }}>
+            <TargetPlanetVictory />
+          </AlignCenterHorizontally>
+        </>
+      ) : (
+        <AlignCenterHorizontally style={{ justifyContent: 'space-around', width: '100%' }}>
+          <BoardPlacement account={account} />{' '}
+        </AlignCenterHorizontally>
+      )}
       <NetworkHealth />
       <Gameover />
       <Paused />

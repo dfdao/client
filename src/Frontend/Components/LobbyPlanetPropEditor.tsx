@@ -222,7 +222,7 @@ export const PlanetPropEditor: React.FC<PlanetPropEditorProps> = ({
               />
             ))
           : (content = (
-              <Hoverable onClick={() => history.push(`${root}/settings/admin`)}>Enable</Hoverable>
+              <Hoverable onClick={() => history.push(`${root}/settings/game`)}>Enable</Hoverable>
             ));
       }
     } else {

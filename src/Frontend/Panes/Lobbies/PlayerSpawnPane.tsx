@@ -21,10 +21,24 @@ export function PlayerSpawnPane({ config, onUpdate }: LobbiesPaneProps) {
             if (e.target.checked) {
               onUpdate({ type: 'INIT_PERLIN_MIN', value: 0 });
               onUpdate({ type: 'INIT_PERLIN_MAX', value: 32 });
+            } else {
+              onUpdate({ type: 'CONFIRM_START', value: false })
             }
           }}
         />
       </Row>
+      { config.MANUAL_SPAWN.displayValue && <><Row>
+        <Checkbox
+          label='Players confirm ready before start?'
+          checked={config.CONFIRM_START.displayValue}
+          onChange={(e: Event & React.ChangeEvent<DarkForestCheckbox>) =>
+            onUpdate({ type: 'CONFIRM_START', value: e.target.checked })
+          }
+        />
+      </Row>
+      <Row>
+        <Warning>{config.CONFIRM_START.warning}</Warning>
+      </Row></>}
       <Row>
         <Slider min={0} max={32} step={1} variant='range' label='Spawn perlin range'>
           <SliderHandle

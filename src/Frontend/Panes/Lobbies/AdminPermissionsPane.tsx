@@ -9,18 +9,6 @@ export function AdminPermissionsPane({ config, onUpdate }: LobbiesPaneProps) {
     <>
       <Row>
         <Checkbox
-          label='Spawn block enabled?'
-          checked={config.BLOCK_MOVES.displayValue}
-          onChange={(e: Event & React.ChangeEvent<DarkForestCheckbox>) =>
-            onUpdate({ type: 'BLOCK_MOVES', value: e.target.checked })
-          }
-        />
-      </Row>
-      <Row>
-        <Warning>{config.BLOCK_MOVES.warning}</Warning>
-      </Row>
-      <Row>
-        <Checkbox
           label='Admin disabled?'
           checked={config.NO_ADMIN.displayValue}
           onChange={(e: Event & React.ChangeEvent<DarkForestCheckbox>) =>
@@ -67,18 +55,6 @@ export function AdminPermissionsPane({ config, onUpdate }: LobbiesPaneProps) {
       </Row>
       <Row>
         <Warning>{config.RANKED.warning}</Warning>
-      </Row>
-      <Row>
-        <Checkbox
-          label='Players confirm ready before start?'
-          checked={config.CONFIRM_START.displayValue}
-          onChange={(e: Event & React.ChangeEvent<DarkForestCheckbox>) =>
-            onUpdate({ type: 'CONFIRM_START', value: e.target.checked })
-          }
-        />
-      </Row>
-      <Row>
-        <Warning>{config.CONFIRM_START.warning}</Warning>
       </Row>
     </>
   );

@@ -299,7 +299,7 @@ const EditorButton = styled.button<{ cancel: boolean }>`
   background: ${({ cancel }) => (cancel ? '#5B1522' : '#525252')};
   border: ${({ cancel }) => (cancel ? '1px solid #FF4163' : '1px solid #7a7d88')};
   color: ${({ cancel }) => (cancel ? '#FF4163' : '#fff')};
-  padding: 8px 0;
+  padding: 4px 0;
   border-radius: 4px;
   display: flex;
   align-items: center;

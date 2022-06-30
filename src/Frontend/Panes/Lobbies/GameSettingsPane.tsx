@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  ModifierType,
-} from '@darkforest_eth/types';
+import { ModifierType } from '@darkforest_eth/types';
 import {
   Checkbox,
   DarkForestCheckbox,
@@ -23,46 +21,43 @@ function Modifiers({
   index,
   value,
   onUpdate,
-}: LobbiesPaneProps & {  index: number; value: number | undefined }) {
+}: LobbiesPaneProps & { index: number; value: number | undefined }) {
   // The level 0 value can never change
-    return (
-      <div style={itemStyle}>
-        <ModifierText modifier = {index as ModifierType}/>
-        <span> (%)</span>
-        <NumberInput
-          format='integer'
-          value={value}
-          onChange={(e: Event & React.ChangeEvent<DarkForestNumberInput>) => {
-            onUpdate({ type: 'MODIFIERS', index, value: e.target.value });
-          }}
-        />
-      </div>
-    );
+  return (
+    <div style={itemStyle}>
+      <ModifierText modifier={index as ModifierType} />
+      <span> (%)</span>
+      <NumberInput
+        format='integer'
+        value={value}
+        onChange={(e: Event & React.ChangeEvent<DarkForestNumberInput>) => {
+          onUpdate({ type: 'MODIFIERS', index, value: e.target.value });
+        }}
+      />
+    </div>
+  );
 }
 
 export function GameSettingsPane({ config, onUpdate }: LobbiesPaneProps) {
-
-  let modifiers =  _.chunk(config.MODIFIERS.displayValue, rowChunkSize).map(
-    (items, rowIdx) => {
-      return (
-        <Row key={`threshold-row-${rowIdx}`} style={rowStyle}>
-          {items.map((item, idx) => (
-            <Modifiers
-              key={`threshold-lvl-${idx}`}
-              config={config}
-              value={item}
-              index={rowIdx * rowChunkSize + idx}
-              onUpdate={onUpdate}
-            />
-          ))}
-        </Row>
-      );
-    }
-  );
+  let modifiers = _.chunk(config.MODIFIERS.displayValue, rowChunkSize).map((items, rowIdx) => {
+    return (
+      <Row key={`threshold-row-${rowIdx}`} style={rowStyle}>
+        {items.map((item, idx) => (
+          <Modifiers
+            key={`threshold-lvl-${idx}`}
+            config={config}
+            value={item}
+            index={rowIdx * rowChunkSize + idx}
+            onUpdate={onUpdate}
+          />
+        ))}
+      </Row>
+    );
+  });
 
   return (
     <>
-     <Row>
+      <Row>
         <Checkbox
           label='Start game paused?'
           checked={config.START_PAUSED.displayValue}
@@ -73,6 +68,18 @@ export function GameSettingsPane({ config, onUpdate }: LobbiesPaneProps) {
       </Row>
       <Row>
         <Warning>{config.START_PAUSED.warning}</Warning>
+      </Row>
+      <Row>
+        <Checkbox
+          label='Block spawn planets enabled?'
+          checked={config.BLOCK_MOVES.displayValue}
+          onChange={(e: Event & React.ChangeEvent<DarkForestCheckbox>) =>
+            onUpdate({ type: 'BLOCK_MOVES', value: e.target.checked })
+          }
+        />
+      </Row>
+      <Row>
+        <Warning>{config.BLOCK_MOVES.warning}</Warning>
       </Row>
       <Row>
         <Slider
@@ -92,12 +99,12 @@ export function GameSettingsPane({ config, onUpdate }: LobbiesPaneProps) {
         <Warning>{config.TIME_FACTOR_HUNDREDTHS.warning}</Warning>
       </Row>
       <Row>
-        <span>Advanced: Modify game constants</span> <br/>
+        <span>Advanced: Modify game constants</span> <br />
       </Row>
       <Row>
-      <Sub>Input value is a percent of default (100 is normal)</Sub>
+        <Sub>Input value is a percent of default (100 is normal)</Sub>
       </Row>
-      
+
       {modifiers}
       <Row>
         <Warning>{config.MODIFIERS.warning}</Warning>
@@ -140,7 +147,6 @@ export function GameSettingsPane({ config, onUpdate }: LobbiesPaneProps) {
       <Row>
         <Warning>{config.SILVER_SCORE_VALUE.warning}</Warning>
       </Row>
-
     </>
   );
 }
