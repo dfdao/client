@@ -3,16 +3,26 @@ import { competitiveConfig } from '../../Frontend/Utils/constants';
 import { getGraphQLData } from './GraphApi';
 import { getAllTwitters } from './UtilityServerAPI';
 
-export const loadLiveMatches = async (config: string = competitiveConfig): Promise<LiveMatch> => {
+export const loadLiveMatches = async (
+  config: string = competitiveConfig,
+  multiplayer?: boolean
+): Promise<LiveMatch> => {
   const query = `
     query {
-        arenas(first: 1000, where: {configHash: "${config}", gameOver: false, firstMover_not: null}) {
-        firstMover {
+      arenas(first: 1000, where: {configHash: "${config}", gameOver: false, firstMover_not: null}) {
+      firstMover {
         address
-        },
-        id
-        startTime
-    }
+      },
+      ${
+        multiplayer &&
+        `players {
+          address
+        }`
+      }
+      creator,
+      id
+      startTime
+      }
     }`;
 
   const response = await getGraphQLData(
@@ -31,6 +41,6 @@ export const loadLiveMatches = async (config: string = competitiveConfig): Promi
   }
 
   const twitters = await getAllTwitters();
-  arenas.map((a : LiveMatchEntry) => a.twitter = twitters[a.firstMover.address]);
-  return {entries: arenas};
+  arenas.map((a: LiveMatchEntry) => (a.twitter = twitters[a.firstMover.address]));
+  return { entries: arenas };
 };

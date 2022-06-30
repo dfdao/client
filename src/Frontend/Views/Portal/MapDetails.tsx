@@ -33,7 +33,7 @@ export function MapDetails({
           setLeaderboard(board);
         })
         .catch((e) => setLeaderboardError(e));
-      loadLiveMatches(configHash)
+      loadLiveMatches(configHash, numSpawnPlanets > 1 ? true : false)
         .then((matches) => {
           setLiveMatchError(undefined);
           setLiveMatches(matches);
@@ -43,6 +43,7 @@ export function MapDetails({
   }, [configHash]);
 
   const numSpawnPlanets = config?.ADMIN_PLANETS.filter((p) => p.isSpawnPlanet).length ?? 0;
+  const hasWhitelist = config?.WHITELIST_ENABLED ?? true;
 
   return (
     <TabbedView
@@ -66,7 +67,7 @@ export function MapDetails({
           }
         }
         if (i === 1) {
-          if (numSpawnPlanets > 1) {
+          if (numSpawnPlanets > 1 && !hasWhitelist) {
             return (
               <FindMatch game={liveMatches} error={liveMatchError} nPlayers={numSpawnPlanets} />
             );

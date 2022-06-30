@@ -46,7 +46,6 @@ const PaneContainer = styled.div`
   align-items: center;
   width: 100%;
   background: rgba(255, 255, 255, 0.04);
-  // border: 1px solid ${dfstyles.colors.borderDarker};
   width: 100%;
   border-radius: 3px;
   gap: 8px;

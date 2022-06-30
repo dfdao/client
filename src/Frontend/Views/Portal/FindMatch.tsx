@@ -1,4 +1,4 @@
-import { EthAddress, LiveMatch } from '@darkforest_eth/types';
+import { EthAddress, LiveMatch, LiveMatchEntry } from '@darkforest_eth/types';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
@@ -17,6 +17,12 @@ export interface MatchDetails {
   totalSpots: number;
   spotsTaken: number;
   matchId: string;
+}
+
+export interface ExtendedMatchEntry extends LiveMatchEntry {
+  players?: {
+    address: string;
+  }[];
 }
 
 export const MatchComponent: React.FC<MatchDetails> = ({
@@ -49,12 +55,12 @@ export const FindMatch: React.FC<FindMatchProps> = ({ game, error, nPlayers }) =
     <GenericErrorBoundary errorMessage={"Couldn't load matches"}>
       <Container>
         {game &&
-          game.entries.map((entry) => (
+          game.entries.map((entry: ExtendedMatchEntry) => (
             <MatchComponent
-              creator={entry.firstMover.address as EthAddress}
+              creator={entry.creator as EthAddress}
               matchType='Solo'
               totalSpots={nPlayers}
-              spotsTaken={1}
+              spotsTaken={entry.players ? entry.players.length : 0}
               matchId={entry.id}
             />
           ))}

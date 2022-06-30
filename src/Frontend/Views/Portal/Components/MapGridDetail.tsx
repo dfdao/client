@@ -9,6 +9,8 @@ import { LoadingSpinner } from '../../../Components/LoadingSpinner';
 import { Minimap } from '../../../Components/Minimap';
 import { getConfigName } from '@darkforest_eth/procedural';
 import { loadConfigFromHash } from '../../../../Backend/Network/ConfigApi';
+import { truncateAddress } from '../PortalUtils';
+import { Spacer } from '../../../Components/CoreUI';
 
 export const MapGridDetail: React.FC<{
   configHash: string;
@@ -69,11 +71,12 @@ export const MapGridDetail: React.FC<{
           setRefreshing={() => {}}
         />
       )}
-      <span>{getConfigName(configHash)}</span>
+      <Spacer height={16} />
+      <ConfigTitle>{getConfigName(configHash)}</ConfigTitle>
       {lobbyAddress && (
         <>
-          <span>{lobbyAddress}</span>
-          <span>{creator}</span>
+          <span>By {truncateAddress(creator)}</span>
+          <span>Lobby: {truncateAddress(lobbyAddress)}</span>
           <Link
             style={{ minWidth: '250px' }}
             target='blank'
@@ -89,6 +92,7 @@ const DetailContainer = styled.div`
   display: flex;
   justify-content: center;
   flex-direction: column;
+  align-items: center;
   overflow: hidden;
   text-overflow: ellipses;
   border-radius: 3px;
@@ -97,4 +101,11 @@ const DetailContainer = styled.div`
   color: #fff;
   padding: 8px;
   cursor: pointer;
+`;
+
+const ConfigTitle = styled.span`
+  font-size: 1rem;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 `;
