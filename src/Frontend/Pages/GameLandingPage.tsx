@@ -50,10 +50,16 @@ import UIEmitter, { UIEmitterEvent } from '../Utils/UIEmitter';
 import { GameWindowLayout } from '../Views/GameWindowLayout';
 import { Terminal, TerminalHandle } from '../Views/Terminal';
 import { stockConfig } from '../Utils/StockConfigs';
-import { ContractMethodName, EthAddress, UnconfirmedCreateLobby } from '@darkforest_eth/types';
+import {
+  ContractMethodName,
+  EthAddress,
+  LocationId,
+  UnconfirmedCreateLobby,
+} from '@darkforest_eth/types';
 import { getLobbyCreatedEvent, lobbyPlanetsToInitPlanets } from '../Utils/helpers';
 import _ from 'lodash';
 import { LobbyInitializers } from '../Panes/Lobbies/Reducer';
+import { createAndInitArena, createPlanets } from '../../Backend/Utils/Arena';
 
 const enum TerminalPromptStep {
   NONE,
@@ -101,7 +107,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
   const selectedAddress = params.get('account');
   const isLobby = contractAddress !== address(CONTRACT_ADDRESS);
   const CHUNK_SIZE = 5;
-  const config = stockConfig.competitive;
+  const config = stockConfig.sprint;
   const defaultAddress = address(CONTRACT_ADDRESS);
   const isGrandPrix = !contractAddress;
 
@@ -530,6 +536,13 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
       terminal.current?.print('Adding custom planets... ');
 
       try {
+        if (!ethConnection || !defaultAddress) throw new Error('cannot create arena');
+
+        const contractsAPI = await makeContractsAPI({
+          connection: ethConnection,
+          contractAddress: defaultAddress,
+        });
+ 
         await createPlanets();
         terminal.current?.println('planets created.', TerminalTextStyle.Green);
         setStep(TerminalPromptStep.PLANETS_CREATED);
@@ -558,7 +571,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
 
   const advanceStateFromContractSet = useCallback(
     async (terminal: React.MutableRefObject<TerminalHandle | undefined>) => {
-      if(isGrandPrix) {
+      if (isGrandPrix) {
         setStep(TerminalPromptStep.PLAYING);
         return;
       }
@@ -655,11 +668,15 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
         const adminAddress = address(await whitelist.adminAddress());
 
         terminal.current?.println('');
-        terminal.current?.print('Checking if whitelisted... ');
+        terminal.current?.print('Checking if allow listed... ');
 
         // TODO(#2329): isWhitelisted should just check the contractOwner
         if (!isWhitelisted && playerAddress !== adminAddress) {
-          setStep(TerminalPromptStep.ASKING_HAS_WHITELIST_KEY);
+          terminal.current?.print(
+            'You are not allowed to play this game. ',
+            TerminalTextStyle.Red
+          );
+          setStep(TerminalPromptStep.TERMINATED);
           return;
         }
         terminal.current?.println('Player whitelisted.');
@@ -913,13 +930,14 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
         );
 
         const configHash = (await diamond.getArenaConstants()).CONFIG_HASH;
+        console.log('loaded config hash', configHash);
 
         newGameManager = await GameManager.create({
           connection: ethConnection,
           terminal,
           contractAddress,
           spectator: false,
-          configHash
+          configHash,
         });
       } catch (e) {
         console.error(e);
@@ -1051,6 +1069,27 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
         setStep(TerminalPromptStep.TERMINATED);
         return;
       }
+      const teamsEnabled = gameUIManager.getGameManager().getContractConstants().TEAMS_ENABLED;
+      const numTeams = gameUIManager.getGameManager().getContractConstants().NUM_TEAMS;
+      console.log(`teamsEnabled: ${teamsEnabled}, numTeams: ${numTeams}`)
+      let team = 0;
+      if(teamsEnabled && numTeams !== undefined) {
+        terminal.current?.println('')
+        terminal.current?.println('This is a team game!')
+        for (let i = 1; i <= numTeams; i += 1) {
+          terminal.current?.print(`(${i}): `, TerminalTextStyle.Sub);
+          terminal.current?.println(`Team ${i}`);
+        }
+        terminal.current?.println(``);
+        terminal.current?.println(`Select a team:`, TerminalTextStyle.Text);
+  
+        team = +((await terminal.current?.getInput()) || '');
+        if (isNaN(team) || team > numTeams || team == 0) {
+          terminal.current?.println('Unrecognized input. Please try again.');
+          await advanceStateFromNoHomePlanet(terminal);
+          return;
+        }
+      }
 
       terminal.current?.newline();
 
@@ -1087,10 +1126,10 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
 
           await terminal.current?.getInput();
           return true;
-        })
+        }, team)
         .catch((error: Error) => {
           terminal.current?.println(
-            `[ERROR] An error occurred: ${error.toString().slice(0, 10000)}`,
+            `[ERROR] ${error.toString().slice(0, 10000)}`,
             TerminalTextStyle.Red
           );
         });
@@ -1215,9 +1254,12 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
         initializers
       );
     }
+    
     /* Don't want to submit ADMIN_PLANET as initdata because they aren't used */
     // @ts-expect-error The Operand of a delete must be optional
     delete initializers.ADMIN_PLANETS;
+
+    console.log('INITIALIZERS', initializers);
 
     const initContract = await ethConnection.loadContract<DFArenaInitialize>(
       INIT_ADDRESS,
@@ -1228,9 +1270,12 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
     const initInterface = initContract.interface;
     const initAddress = INIT_ADDRESS;
     const initFunctionCall = initInterface.encodeFunctionData('init', [
-      initializers.WHITELIST_ENABLED,
-      artifactBaseURI,
       initializers,
+      {
+        allowListEnabled: initializers.WHITELIST_ENABLED,
+        artifactBaseURI,
+        allowedAddresses: initializers.WHITELIST,
+      },
     ]);
     const txIntent: UnconfirmedCreateLobby = {
       methodName: 'createLobby',
@@ -1248,20 +1293,19 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
 
     const { owner, lobby } = getLobbyCreatedEvent(lobbyReceipt, contractsAPI.contract);
 
-    const diamond = await ethConnection.loadContract<DarkForest>(
-      lobby,
-      loadDiamondContract
-    );
+    const diamond = await ethConnection.loadContract<DarkForest>(lobby, loadDiamondContract);
 
-    // const startTx = await diamond.start();
-    // const startRct = startTx.wait();
-    // console.log(`initialized arena with ${(await startRct).gasUsed} gas`);
+    const startTx = await diamond.start();
+    const startRct = startTx.wait();
+    console.log(`initialized arena with ${(await startRct).gasUsed} gas`);
+
 
     if (owner === playerAddress) {
       history.push({ pathname: `${match.path}${lobby}`, state: { contract: lobby } });
       setContractAddress(lobby);
     }
   }
+
 
   async function createPlanets() {
     if (!ethConnection || !contractAddress) throw new Error('cannot create planets');
@@ -1285,13 +1329,12 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
 
       return tx.confirmedPromise;
     });
-    
+
     await Promise.all(createPlanetTxs);
     console.log(
       `successfully created planets`,
       createPlanetTxs.map((i) => i)
     );
-
   }
 
   useEffect(() => {

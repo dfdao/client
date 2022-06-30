@@ -1,0 +1,202 @@
+import { EMPTY_ADDRESS, RECOMMENDED_MODAL_WIDTH } from '@darkforest_eth/constants';
+import { formatNumber } from '@darkforest_eth/gamelogic';
+import {
+  getPlanetClass,
+  getPlanetCosmetic,
+  getPlanetName,
+  getPlayerColor,
+  rgbStr,
+} from '@darkforest_eth/procedural';
+import { engineConsts } from '@darkforest_eth/renderer';
+import { ModalName, Planet, PlanetType, Player, RGBVec } from '@darkforest_eth/types';
+import React, { useEffect, useState, useMemo } from 'react';
+import styled, { CSSProperties } from 'styled-components';
+import { getPlanetRank } from '../../Backend/Utils/Utils';
+import { Btn } from '../Components/Btn';
+import { CenterBackgroundSubtext, Spacer } from '../Components/CoreUI';
+import { Icon, IconType } from '../Components/Icons';
+import { Row } from '../Components/Row';
+import { Green, Red, Sub } from '../Components/Text';
+import { TextPreview } from '../Components/TextPreview';
+import dfstyles from '../Styles/dfstyles';
+import { useGameStarted, useUIManager } from '../Utils/AppHooks';
+import { ModalPane } from '../Views/ModalPane';
+import { PlanetLink } from '../Views/PlanetLink';
+import { SortableTable } from '../Views/SortableTable';
+import { Table } from '../Views/Table';
+import { PlanetThumb } from './PlanetDexPane';
+
+const StyledOnboardingContent = styled.div`
+  width: 25em;
+  //   height: 25em;
+  position: relative;
+  color: ${dfstyles.colors.text};
+`;
+const ReadyContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 4px;
+  margin-bottom: 4px;
+  font-size: 2em;
+`;
+const StyledPlanetThumb = styled.div<{ iconColor?: string }>`
+  width: 20px;
+  height: 20px;
+  position: relative;
+  line-height: 0;
+  z-index: 1;
+
+  /* Set the Icon color if specified on the outer component */
+  --df-icon-color: ${({ iconColor }) => iconColor};
+`;
+
+const PlanetElement = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const PlanetName = styled.span`
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100px;
+`;
+
+const TableContainer = styled.div`
+  overflow-y: scroll;
+`;
+
+export function WaitingRoomPane({ visible, onClose }: { visible: boolean; onClose: () => void }) {
+  const uiManager = useUIManager();
+  const started = useGameStarted();
+  const spawnPlanets = uiManager.getSpawnPlanets();
+  const player = uiManager.getPlayer();
+  const constants = uiManager.getGameManager().getContractConstants();
+  const [players, setPlayers] = useState<Array<Player | undefined>>([]);
+
+  // refresh players every 10 seconds
+  useEffect(() => {
+    if (!uiManager) return;
+    if (!visible) return;
+    const refreshPlayers = () => {
+      if (!uiManager) return;
+      const ps: Array<Player | undefined> = [];
+      spawnPlanets.forEach((planet) => ps.push(uiManager.getPlayer(planet.owner)));
+      setPlayers(ps);
+    };
+
+    const intervalId = setInterval(refreshPlayers, 5000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [uiManager]);
+
+  function HelpContent() {
+    return (
+      <div>
+        <p>This is the waiting room.</p>
+        <Spacer height={8} />
+        {uiManager.getGameManager().getContractConstants().CONFIRM_START ? (
+          <p>Once all players initialize and press READY, the game will begin.</p>
+        ) : (
+          <p>Once a player makes a move, the game will begin.</p>
+        )}
+      </div>
+    );
+  }
+
+  const headers = ['', 'Planet', 'Owner', 'Ready'];
+  const alignments: Array<'r' | 'c' | 'l'> = ['l', 'l', 'l', 'r'];
+
+  const columns = [
+    //thumb
+    (planet: Planet) => <PlanetThumb planet={planet} />,
+    // name
+    (planet: Planet) => (
+      <PlanetLink planet={planet}>
+        <PlanetName>{getPlanetName(planet)}</PlanetName>
+      </PlanetLink>
+    ),
+    //player
+    (planet: Planet) => (
+      <Sub>
+        {planet.owner === EMPTY_ADDRESS
+          ? 'nobody'
+          : uiManager.getTwitter(planet.owner) || (
+              <TextPreview text={planet.owner} unFocusedWidth='100px' focusedWidth='100px' />
+            )}
+        {planet.owner == player?.address && '(you)'}
+      </Sub>
+    ),
+    //ready
+    (planet: Planet, i: number) => {
+      const player = players[i];
+      if (!player || !player.ready) return <Red>N</Red>;
+      return <Green>Y</Green>;
+    },
+  ];
+  let content;
+  if (!player) {
+    return <></>;
+  }
+  if (spawnPlanets.length === 0) {
+    content = (
+      <CenterBackgroundSubtext width={RECOMMENDED_MODAL_WIDTH} height='100px'>
+        Loading...
+      </CenterBackgroundSubtext>
+    );
+  } else {
+    const ready = player.ready;
+    content = (
+      <StyledOnboardingContent>
+        {started ? (
+          <Row>
+            <Green>The game has started! </Green>
+          </Row>
+        ) : (
+          <>
+            <Row>Welcome to Dark Forest Arena! Once everyone is ready, the game will begin.</Row>{' '}
+            <ReadyContainer>
+              <Btn
+                size='stretch'
+                onClick={() =>
+                  ready ? uiManager.getGameManager().notReady() : uiManager.getGameManager().ready()
+                }
+              >
+                I'm {ready ? 'not ready' : 'ready'}
+              </Btn>
+            </ReadyContainer>
+          </>
+        )}
+
+        <TableContainer>
+          <Table rows={spawnPlanets} headers={headers} columns={columns} alignments={alignments} />
+        </TableContainer>
+      </StyledOnboardingContent>
+    );
+  }
+
+  return (
+    <ModalPane
+      visible={visible}
+      onClose={onClose}
+      hideClose={!uiManager.gameStarted || !constants.CONFIRM_START}
+      id={ModalName.WaitingRoom}
+      title='Waiting Room'
+      helpContent={HelpContent}
+    >
+      {content}
+    </ModalPane>
+  );
+}

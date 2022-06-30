@@ -357,6 +357,46 @@ export function SelectFrom({
   );
 }
 
+export function SelectMultipleFrom({
+  options,
+  values,
+  setValues,
+  labels,
+  style,
+  wide,
+}: {
+  options: string[];
+  values: string[];
+  setValues: (values: string[]) => void;
+  labels: string[];
+  style?: React.CSSProperties;
+  wide?: boolean;
+}) {
+  const onChange = useCallback(
+    (e: ChangeEvent<HTMLSelectElement>) => {
+      if(values.find(v => v == e.target.value)) setValues(values.filter(v => v !== e.target.value))
+      else setValues([...values, e.target.value]);
+    },
+    [setValues]
+  );
+
+  const copyOfOptions = [...options];
+  const copyOfLabels = [...labels];
+    console.log(`values length: ${values.length}`)
+  const v = `${values.length} selected`
+  return (
+    <Select wide={wide} style={style} value={v} onChange={onChange}>
+      {copyOfOptions.map((option, i) => {
+        return (
+          <option key={option} value={option}>
+            {copyOfLabels[i]} {values.find(v => option == v) && 'found'}
+          </option>
+        );
+      })}
+    </Select>
+  );
+}
+
 export const CenterRow = styled.div`
   display: flex;
   justify-content: flex-start;

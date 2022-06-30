@@ -332,7 +332,14 @@ export function usePaused() {
   return useEmitterValue(ui.getPaused$(), ui.getPaused());
 }
 
+export function useGameStarted() {
+  const ui = useUIManager();
+  return useEmitterValue(ui.getGameStarted$(), ui.gameStarted);
+}
+
 export function useGameover() {
   const ui = useUIManager();
   return useEmitterValue(ui.getGameover$(), ui.getGameover());
 }
+
+

@@ -88,7 +88,7 @@ function PlanetContextPaneContent({
       />
       <MineArtifactButton planetWrapper={planet} />
       {captureRow}
-      {captureTargetRow}
+      {/* {captureTargetRow} */}
 
       <VerticalSplit>
         <>

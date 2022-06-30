@@ -1,3 +1,4 @@
+import { address } from '@darkforest_eth/serde';
 import { LobbyInitializers } from '../Panes/Lobbies/Reducer';
 
 const onePlayerRace: LobbyInitializers = {
@@ -11,7 +12,6 @@ const onePlayerRace: LobbyInitializers = {
   PERLIN_LENGTH_SCALE: 512,
   PERLIN_MIRROR_X: false,
   PERLIN_MIRROR_Y: false,
-  CLAIM_PLANET_COOLDOWN: 0,
   MAX_NATURAL_PLANET_LEVEL: 3,
   TIME_FACTOR_HUNDREDTHS: 1000,
   PERLIN_THRESHOLD_1: 11,
@@ -99,7 +99,7 @@ const onePlayerRace: LobbyInitializers = {
   MODIFIERS: [100, 100, 100, 100, 75, 100, 100, 100],
   SPACESHIPS: [true, true, false, true, false],
   RANDOM_ARTIFACTS: false,
-  NO_ADMIN: true,
+  NO_ADMIN: false,
   WHITELIST_ENABLED: false,
   START_PAUSED: false,
   ADMIN_PLANETS: [
@@ -110,6 +110,7 @@ const onePlayerRace: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: true,
+      blockedPlanetLocs: [],
     },
     {
       x: -320,
@@ -118,6 +119,7 @@ const onePlayerRace: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
+      blockedPlanetLocs: [],
     },
     {
       x: 2005,
@@ -126,6 +128,7 @@ const onePlayerRace: LobbyInitializers = {
       planetType: 4,
       isTargetPlanet: true,
       isSpawnPlanet: false,
+      blockedPlanetLocs: [],
     },
     {
       x: -1222,
@@ -134,6 +137,7 @@ const onePlayerRace: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
+      blockedPlanetLocs: [],
     },
     {
       x: -263,
@@ -142,6 +146,7 @@ const onePlayerRace: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
+      blockedPlanetLocs: [],
     },
     {
       x: -53,
@@ -150,6 +155,7 @@ const onePlayerRace: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
+      blockedPlanetLocs: [],
     },
     {
       x: 717,
@@ -158,6 +164,7 @@ const onePlayerRace: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
+      blockedPlanetLocs: [],
     },
     {
       x: 2054,
@@ -166,11 +173,19 @@ const onePlayerRace: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
+      blockedPlanetLocs: [],
     },
   ],
   TOKEN_MINT_END_TIMESTAMP: 1717258179,
   WHITELIST: [],
   INIT_PLANETS: [],
+  CONFIRM_START: false,
+  TARGETS_REQUIRED_FOR_VICTORY: 1,
+  BLOCK_CAPTURE: false,
+  BLOCK_MOVES: false,
+  TEAMS_ENABLED: false,
+  NUM_TEAMS: 2,
+  RANKED: false
 };
 
 const fourPlayerBattle: LobbyInitializers = {
@@ -184,7 +199,6 @@ const fourPlayerBattle: LobbyInitializers = {
   PERLIN_LENGTH_SCALE: 2048,
   PERLIN_MIRROR_X: true,
   PERLIN_MIRROR_Y: true,
-  CLAIM_PLANET_COOLDOWN: 0,
   MAX_NATURAL_PLANET_LEVEL: 9,
   TIME_FACTOR_HUNDREDTHS: 1500,
   PERLIN_THRESHOLD_1: 13,
@@ -282,14 +296,16 @@ const fourPlayerBattle: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: true,
+      blockedPlanetLocs: [],
     },
     {
       x: 5500,
       y: 0,
       level: 3,
       planetType: 0,
-      isTargetPlanet: false,
+      isTargetPlanet: true,
       isSpawnPlanet: true,
+      blockedPlanetLocs: [],
     },
     {
       x: 0,
@@ -298,6 +314,7 @@ const fourPlayerBattle: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: true,
+      blockedPlanetLocs: [],
     },
     {
       x: 0,
@@ -306,6 +323,7 @@ const fourPlayerBattle: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: true,
+      blockedPlanetLocs: [],
     },
     {
       x: 0,
@@ -314,12 +332,20 @@ const fourPlayerBattle: LobbyInitializers = {
       planetType: 4,
       isTargetPlanet: true,
       isSpawnPlanet: false,
+      blockedPlanetLocs: [],
     },
   ],
   TOKEN_MINT_END_TIMESTAMP: 1717258179, // SECONDS!,
   NO_ADMIN: false,
   INIT_PLANETS: [],
   WHITELIST: [],
+  CONFIRM_START: true,
+  TARGETS_REQUIRED_FOR_VICTORY: 2,
+  BLOCK_CAPTURE: false,
+  BLOCK_MOVES: false,
+  TEAMS_ENABLED: false,
+  NUM_TEAMS: 2,
+  RANKED: false
 };
 
 const sprint: LobbyInitializers = {
@@ -333,7 +359,6 @@ const sprint: LobbyInitializers = {
   PERLIN_LENGTH_SCALE: 2048,
   PERLIN_MIRROR_X: false,
   PERLIN_MIRROR_Y: true,
-  CLAIM_PLANET_COOLDOWN: 0,
   MAX_NATURAL_PLANET_LEVEL: 4,
   TIME_FACTOR_HUNDREDTHS: 1500,
   PERLIN_THRESHOLD_1: 12,
@@ -420,7 +445,7 @@ const sprint: LobbyInitializers = {
   CLAIM_VICTORY_ENERGY_PERCENT: 50,
   MODIFIERS: [100, 100, 100, 100, 100, 100, 100, 100],
   SPACESHIPS: [true, true, false, true, true],
-  WHITELIST_ENABLED: false,
+  WHITELIST_ENABLED: true,
   START_PAUSED: false,
   RANDOM_ARTIFACTS: true,
   ADMIN_PLANETS: [
@@ -431,6 +456,7 @@ const sprint: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: true,
+      blockedPlanetLocs: [],
     },
     {
       x: 1000,
@@ -439,6 +465,7 @@ const sprint: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: true,
+      blockedPlanetLocs: [],
     },
     {
       x: 0,
@@ -447,12 +474,20 @@ const sprint: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: true,
       isSpawnPlanet: false,
+      blockedPlanetLocs: [],
     },
   ],
   TOKEN_MINT_END_TIMESTAMP: 1717258179, // SECONDS!,
   NO_ADMIN: false,
   INIT_PLANETS: [],
-  WHITELIST: [],
+  WHITELIST: [address('0x1c0f0af3262a7213e59be7f1440282279d788335')],
+  CONFIRM_START: true,
+  TARGETS_REQUIRED_FOR_VICTORY: 1,
+  BLOCK_CAPTURE: false,
+  BLOCK_MOVES: false,
+  TEAMS_ENABLED: true,
+  NUM_TEAMS: 2,
+  RANKED: false
 };
 
 const grandPrixWeek2: LobbyInitializers = {
@@ -466,7 +501,6 @@ const grandPrixWeek2: LobbyInitializers = {
   PERLIN_LENGTH_SCALE: 1024,
   PERLIN_MIRROR_X: false,
   PERLIN_MIRROR_Y: false,
-  CLAIM_PLANET_COOLDOWN: 0,
   MAX_NATURAL_PLANET_LEVEL: 3,
   TIME_FACTOR_HUNDREDTHS: 1600,
   PERLIN_THRESHOLD_1: 15,
@@ -554,7 +588,7 @@ const grandPrixWeek2: LobbyInitializers = {
   MODIFIERS: [95, 100, 150, 150, 75, 100, 100, 100],
   SPACESHIPS: [true, true, false, true, false],
   RANDOM_ARTIFACTS: false,
-  NO_ADMIN: true,
+  NO_ADMIN: false,
   WHITELIST_ENABLED: false,
   START_PAUSED: false,
   ADMIN_PLANETS: [
@@ -565,6 +599,7 @@ const grandPrixWeek2: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: true,
+      blockedPlanetLocs: [],
     },
     {
       x: 3500,
@@ -573,6 +608,7 @@ const grandPrixWeek2: LobbyInitializers = {
       planetType: 4,
       isTargetPlanet: true,
       isSpawnPlanet: false,
+      blockedPlanetLocs: [],
     },
     {
       x: 400,
@@ -581,6 +617,7 @@ const grandPrixWeek2: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
+      blockedPlanetLocs: [],
     },
     {
       x: -2800,
@@ -589,6 +626,7 @@ const grandPrixWeek2: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
+      blockedPlanetLocs: [],
     },
     {
       x: 2000,
@@ -597,6 +635,7 @@ const grandPrixWeek2: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
+      blockedPlanetLocs: [],
     },
     {
       x: 0,
@@ -605,6 +644,7 @@ const grandPrixWeek2: LobbyInitializers = {
       planetType: 1,
       isTargetPlanet: false,
       isSpawnPlanet: false,
+      blockedPlanetLocs: [],
     },
     {
       x: 3000,
@@ -613,6 +653,7 @@ const grandPrixWeek2: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
+      blockedPlanetLocs: [],
     },
     {
       x: -2300,
@@ -621,6 +662,7 @@ const grandPrixWeek2: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
+      blockedPlanetLocs: [],
     },
     {
       x: 5000,
@@ -629,11 +671,19 @@ const grandPrixWeek2: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
+      blockedPlanetLocs: [],
     },
   ],
   TOKEN_MINT_END_TIMESTAMP: 1682435240778,
   INIT_PLANETS: [],
   WHITELIST: [],
+  CONFIRM_START: true,
+  TARGETS_REQUIRED_FOR_VICTORY: 1,
+  BLOCK_CAPTURE: true,
+  BLOCK_MOVES: true,
+  TEAMS_ENABLED: false,
+  NUM_TEAMS: 2,
+  RANKED: false
 };
 
 const grandPrixWeek3: LobbyInitializers = {

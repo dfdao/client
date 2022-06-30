@@ -17,11 +17,14 @@ import { NetworkHealth } from './NetworkHealth';
 import { Paused } from './Paused';
 import { Gameover } from './Gameover';
 import { Timer } from './Timer';
+import { Play } from './Play';
+import { TargetPlanetVictory } from './TargetPlanetVictory';
 
 const TopBarContainer = styled.div`
   z-index: ${DFZIndex.MenuBar};
   padding: 0 2px;
   width: 530px;
+  gap: 5px;
 `;
 
 const Numbers = styled.div`
@@ -129,7 +132,7 @@ function CaptureZones({
 
   useEmitterSubscribe(
     emitter,
-    (zoneGeneration) => {
+    (zoneGeneration: { nextChangeBlock: any; }) => {
       setNextGenerationBlock(zoneGeneration.nextChangeBlock);
     },
     [setNextGenerationBlock]
@@ -168,7 +171,7 @@ export function TopBar({ twitterVerifyHook }: { twitterVerifyHook: Hook<boolean>
           name={TooltipName.Empty}
           extraContent={<Text>Your burner wallet address.</Text>}
         >
-          <AccountLabel includeAddressIfHasTwitter={true} width={'50px'} />
+          <AccountLabel includeAddressIfHasTwitter={true} width={'75px'} />
         </TooltipTrigger>
         <TooltipTrigger
           name={TooltipName.Empty}
@@ -196,18 +199,23 @@ export function TopBar({ twitterVerifyHook }: { twitterVerifyHook: Hook<boolean>
             </TooltipTrigger>
           </>
         )}
-        {/* {captureZones} */}
+        {/* <BoardPlacement account={account} /> */}
+        <Timer account={account}/>
+      </AlignCenterHorizontally>
+      <AlignCenterHorizontally style={{ justifyContent: 'space-around', width: '100%', marginTop: '10px' }}>
+        {captureZones}
         {uiManager.getSpaceJunkEnabled() && (
           <>
             <SpaceJunk account={account} />
           </>
         )}
-        {/* <BoardPlacement account={account} /> */}
+        <TargetPlanetVictory />
       </AlignCenterHorizontally>
       <Timer account={account} />
       <NetworkHealth />
       <Gameover />
       <Paused />
+      {/* <Play /> */}
     </TopBarContainer>
   );
 }

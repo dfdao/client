@@ -9,27 +9,142 @@ import { Hook } from '../../_types/global/GlobalTypes';
 import { Btn } from '../Components/Btn';
 import { Link } from '../Components/CoreUI';
 import { Icon, IconType } from '../Components/Icons';
-import { Gold, Green, Red, White } from '../Components/Text';
+import { Bronze, Gold, Green, Red, Silver, White } from '../Components/Text';
+import { TextPreview } from '../Components/TextPreview';
 import dfstyles from '../Styles/dfstyles';
 import { useUIManager } from '../Utils/AppHooks';
+import { bronzeTime, goldTime, silverTime } from '../Utils/constants';
 import { useBooleanSetting } from '../Utils/SettingsHooks';
+import { formatDuration } from '../Utils/TimeUtils';
 
 function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }) {
   const uiManager = useUIManager();
+  const isCompetitive = uiManager.getGameManager().isCompetitive();
+  const gameManager = uiManager.getGameManager();
+  const victoryThreshold = gameManager.getContractConstants().CLAIM_VICTORY_ENERGY_PERCENT;
+
   const tutorialManager = TutorialManager.getInstance(uiManager);
+
+  const [sKey, setSKey] = useState<string | undefined>(undefined);
+  const [viewPrivateKey, setViewPrivateKey] = useState<boolean>(false);
+  const [viewHomeCoords, setViewHomeCoords] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!uiManager) return;
+    setSKey(uiManager.getPrivateKey());
+  }, [uiManager]);
+
+  const [home, setHome] = useState<string | undefined>(undefined);
+  useEffect(() => {
+    if (!uiManager) return;
+    const coords = uiManager.getHomeCoords();
+    setHome(coords ? `(${coords.x}, ${coords.y})` : '');
+  }, [uiManager]);
 
   if (tutorialState === TutorialState.None) {
     return (
       <div className='tutzoom'>
-        Welcome to the Dark Forest tutorial!
+                Welcome to Dark Forest Arena!
         <br />
         <br />
+        <div>
+        Race against the clock to capture the Target Planet (it has a big 🎯 floating above it)
+        and <Green>claim victory when it contains at least <Gold>{victoryThreshold}%</Gold> energy!</Green>
+      </div>
+        {isCompetitive && (
+          <div>
+            <p>End the race in a certain time to earn Bronze, Silver, and Gold ranks.</p>
+            <p>
+              Gold: <Gold>{formatDuration(goldTime * 1000)}</Gold>
+            </p>
+            <p>
+              Silver: <Silver>{formatDuration(silverTime * 1000)}</Silver>
+            </p>
+            <p>
+              Bronze: <Bronze>{formatDuration(bronzeTime * 1000)}</Bronze>
+            </p>
+          </div>
+        )}
+        <div>
+          ⏲️ starts when you press ready!
+          {isCompetitive && 'The player with the fastest time after 48hrs will win XDAI and a 🏆!'}
+        </div>
+
+        <div style={{ gap: '5px' }}>
+          <Btn className='btn' onClick={() => tutorialManager.acceptInput(TutorialState.None)}>
+            Next
+          </Btn>
+        </div>
+      </div>
+    );
+  } else if (tutorialState === TutorialState.Security) {
+    return (
+      <div className='tutzoom'>
+        <div>
+          The game stores your <White>private key</White> and home coordinates in your browser. They
+          are your password, and <Red>should never be viewed by anyone else.</Red>
+        </div>
+        <div>
+          <Btn
+            onClick={() => {
+              setViewPrivateKey(!viewPrivateKey);
+            }}
+          >
+            {viewPrivateKey ? 'Hide' : 'View'} private key
+          </Btn>{' '}
+          <br />
+          Your private key is:{' '}
+          <TextPreview
+            text={viewPrivateKey ? sKey : 'hidden'}
+            focusedWidth={'150px'}
+            unFocusedWidth={'150px'}
+          />
+        </div>
+        <div>
+          <Btn
+            onClick={() => {
+              setViewHomeCoords(!viewHomeCoords);
+            }}
+          >
+            {viewHomeCoords ? 'Hide' : 'View'} home coords
+          </Btn>{' '}
+          <br />
+          Your home coords are:{' '}
+          <TextPreview
+            text={viewHomeCoords ? home : 'hidden'}
+            focusedWidth={'150px'}
+            unFocusedWidth={'150px'}
+          />
+        </div>
+
+        <p>We recommend you back this information up.</p>
+        <br/>
+        <p>
+          If you are new to Dark Forest, play the tutorial! Otherwise, skip and jump into the
+          action.
+        </p>
+        <div style={{ gap: '5px' }}>
+          <Btn className='btn' onClick={() => tutorialManager.complete()}>
+            Exit
+          </Btn>
+          <Btn className='btn' onClick={() => tutorialManager.acceptInput(TutorialState.Security)}>
+            Play Tutorial
+          </Btn>
+        </div>
+      </div>
+    );
+  } else if (tutorialState === TutorialState.HomePlanet) {
+    return (
+      <div className='tutzoom'>
         <White>Click your home planet to learn more.</White>
         <div style={{ gap: '5px' }}>
           <Btn className='btn' onClick={() => tutorialManager.complete()}>
             Exit
           </Btn>
-          <Btn className='btn' onClick={() => tutorialManager.acceptInput(TutorialState.None)}>
+          <Btn
+            className='btn'
+            onClick={() => tutorialManager.acceptInput(TutorialState.HomePlanet)}
+          >
             Skip
           </Btn>
         </div>

@@ -130,7 +130,7 @@ export type LobbyConfigAction =
       type: 'CLAIM_VICTORY_ENERGY_PERCENT';
       value: Initializers['CLAIM_VICTORY_ENERGY_PERCENT'] | undefined;
     }
-    | {
+  | {
       type: 'RANDOM_ARTIFACTS';
       value: Initializers['RANDOM_ARTIFACTS'] | undefined;
     }
@@ -149,7 +149,23 @@ export type LobbyConfigAction =
       index: number;
       value: EthAddress | undefined;
     }
-  | { type: 'NO_ADMIN'; value: Initializers['NO_ADMIN'] | undefined };
+  | { type: 'NO_ADMIN'; value: Initializers['NO_ADMIN'] | undefined }
+  | { type: 'RANKED'; value: Initializers['RANKED'] | undefined }
+  | { type: 'CONFIRM_START'; value: Initializers['CONFIRM_START'] | undefined }
+  | { type: 'BLOCK_MOVES'; value: Initializers['BLOCK_MOVES'] | undefined }
+  | { type: 'BLOCK_CAPTURE'; value: Initializers['BLOCK_CAPTURE'] | undefined }
+  | {
+      type: 'TEAMS_ENABLED';
+      value: Initializers['TEAMS_ENABLED'] | undefined;
+    }
+    | {
+      type: 'TARGETS_REQUIRED_FOR_VICTORY';
+      value: Initializers['TARGETS_REQUIRED_FOR_VICTORY'] | undefined;
+    }
+  | {
+      type: 'NUM_TEAMS';
+      value: Initializers['NUM_TEAMS'] | undefined;
+    };
 
 // TODO(#2328): WHITELIST_ENABLED should just be on Initializers
 export type LobbyInitializers = Initializers & {
@@ -376,12 +392,17 @@ export function lobbyConfigReducer(state: LobbyConfigState, action: LobbyAction)
       update = ofWhitelist(action, state);
       break;
     }
-    case 'RESET': {
-      // Hard reset all values that were available in the JSON
-      return {
-        ...state,
-        ...action.value,
-      };
+    case 'TEAMS_ENABLED': {
+      update = ofBoolean(action, state);
+      break;
+    }
+    case 'NUM_TEAMS': {
+      update = ofPositiveInteger(action, state);
+      break;
+    }
+    case 'TARGETS_REQUIRED_FOR_VICTORY': {
+      update = ofPositiveInteger(action, state);
+      break;
     }
     case 'MODIFIERS': {
       update = ofModifiers(action, state);
@@ -398,6 +419,29 @@ export function lobbyConfigReducer(state: LobbyConfigState, action: LobbyAction)
     case 'NO_ADMIN': {
       update = ofBoolean(action, state);
       break;
+    }
+    case 'CONFIRM_START': {
+      update = ofBoolean(action, state);
+      break;
+    }
+    case 'BLOCK_MOVES': {
+      update = ofBoolean(action, state);
+      break;
+    }
+    case 'BLOCK_CAPTURE': {
+      update = ofBoolean(action, state);
+      break;
+    }
+    case 'RANKED': {
+      update = ofBoolean(action, state);
+      break;
+    }
+    case 'RESET': {
+      // Hard reset all values that were available in the JSON
+      return {
+        ...state,
+        ...action.value,
+      };
     }
     default: {
       // https://www.typescriptlang.org/docs/handbook/2/narrowing.html#exhaustiveness-checking
@@ -687,16 +731,16 @@ export function lobbyConfigInit(startingConfig: LobbyInitializers) {
         };
         break;
       }
-      case 'CLAIM_PLANET_COOLDOWN': {
-        const defaultValue = startingConfig[key];
-        state[key] = {
-          currentValue: defaultValue,
-          displayValue: defaultValue,
-          defaultValue,
-          warning: undefined,
-        };
-        break;
-      }
+      // case 'CLAIM_PLANET_COOLDOWN': {
+      //   const defaultValue = startingConfig[key];
+      //   state[key] = {
+      //     currentValue: defaultValue,
+      //     displayValue: defaultValue,
+      //     defaultValue,
+      //     warning: undefined,
+      //   };
+      //   break;
+      // }
       case 'PLANET_TYPE_WEIGHTS': {
         const defaultValue = startingConfig[key];
         state[key] = {
@@ -943,6 +987,82 @@ export function lobbyConfigInit(startingConfig: LobbyInitializers) {
         break;
       }
       case 'NO_ADMIN': {
+        // Default this to false if we don't have it
+        const defaultValue = startingConfig[key] || false;
+        state[key] = {
+          currentValue: defaultValue,
+          displayValue: defaultValue,
+          defaultValue,
+          warning: undefined,
+        };
+        break;
+      }
+      case 'CONFIRM_START': {
+        // Default this to false if we don't have it
+        const defaultValue = startingConfig[key] || false;
+        state[key] = {
+          currentValue: defaultValue,
+          displayValue: defaultValue,
+          defaultValue,
+          warning: undefined,
+        };
+        break;
+      }
+      case 'RANKED': {
+        // Default this to false if we don't have it
+        const defaultValue = startingConfig[key] || false;
+        state[key] = {
+          currentValue: defaultValue,
+          displayValue: defaultValue,
+          defaultValue,
+          warning: undefined,
+        };
+        break;
+      }
+      case 'BLOCK_MOVES': {
+        // Default this to false if we don't have it
+        const defaultValue = startingConfig[key] || false;
+        state[key] = {
+          currentValue: defaultValue,
+          displayValue: defaultValue,
+          defaultValue,
+          warning: undefined,
+        };
+        break;
+      }
+      case 'BLOCK_CAPTURE': {
+        // Default this to false if we don't have it
+        const defaultValue = startingConfig[key] || false;
+        state[key] = {
+          currentValue: defaultValue,
+          displayValue: defaultValue,
+          defaultValue,
+          warning: undefined,
+        };
+        break;
+      }
+      case 'TEAMS_ENABLED': {
+        // Default this to false if we don't have it
+        const defaultValue = startingConfig[key] || false;
+        state[key] = {
+          currentValue: defaultValue,
+          displayValue: defaultValue,
+          defaultValue,
+          warning: undefined,
+        };
+        break;
+      }
+      case 'NUM_TEAMS': {
+        const defaultValue = startingConfig[key];
+        state[key] = {
+          currentValue: defaultValue,
+          displayValue: defaultValue,
+          defaultValue,
+          warning: undefined,
+        };
+        break;
+      }
+      case 'TARGETS_REQUIRED_FOR_VICTORY': {
         const defaultValue = startingConfig[key];
         state[key] = {
           currentValue: defaultValue,
@@ -1964,18 +2084,6 @@ export function ofLobbyPlanets(
   const currentValue = [...prevCurrentValue];
   const displayValue = [...prevDisplayValue];
 
-  if (currentValue[index]) {
-    currentValue.splice(index, number);
-    displayValue.splice(index, number);
-
-    return {
-      ...state[type],
-      currentValue,
-      displayValue,
-      warning: undefined,
-    };
-  }
-
   if (value === undefined) {
     return {
       ...state[type],
@@ -2036,6 +2144,31 @@ export function ofLobbyPlanets(
       ...state[type],
       displayValue,
       warning: `Invalid planet level`,
+    };
+  }
+
+  if (currentValue[index]) {
+    const isPlanetUnchanged =
+      currentValue[index].x === value.x &&
+      currentValue[index].y === value.y &&
+      currentValue[index].level === value.level &&
+      currentValue[index].planetType === value.planetType &&
+      currentValue[index].isSpawnPlanet === value.isSpawnPlanet &&
+      currentValue[index].isTargetPlanet === value.isTargetPlanet;
+    // if value is the same, delete the planet, otherwise, update
+    if (isPlanetUnchanged) {
+      currentValue.splice(index, number);
+      displayValue.splice(index, number);
+    } else {
+      currentValue.splice(index, number, value);
+      displayValue.splice(index, number, value);
+    }
+
+    return {
+      ...state[type],
+      currentValue,
+      displayValue,
+      warning: undefined,
     };
   }
 
@@ -2193,7 +2326,6 @@ export function ofWhitelist(
   const displayValue = [...prevDisplayValue];
 
   if (currentValue[index]) {
-    console.log(`deleting ${currentValue[index]}`);
     currentValue.splice(index, 1);
     displayValue.splice(index, 1);
 

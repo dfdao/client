@@ -48,7 +48,7 @@ const ClownIcon = styled.span`
 
 export function PlanetIcons({ planet }: { planet: Planet | undefined }) {
   const uiManager = useUIManager();
-
+  const account = uiManager.getAccount();
   if (!planet) return <StyledPlanetIcons />;
   const bonuses = bonusFromHex(planet.locationId);
   const rank = getPlanetRank(planet);
@@ -87,12 +87,20 @@ export function PlanetIcons({ planet }: { planet: Planet | undefined }) {
 
   return (
     <StyledPlanetIcons>
-        {planet.isTargetPlanet && (
+      {account &&
+        uiManager.blockMovesEnabled() &&
+        uiManager.playerMoveBlocked(account, planet.locationId) && (
+          <TooltipTrigger name={TooltipName.Blocked}>
+            <Icon type={IconType.Blocked} />
+          </TooltipTrigger>
+        )}
+
+      {planet.isTargetPlanet && (
         <TooltipTrigger name={TooltipName.TargetPlanet}>
           <Icon type={IconType.TargetPlanet} />
         </TooltipTrigger>
       )}
-        {planet.isSpawnPlanet && (
+      {planet.isSpawnPlanet && (
         <TooltipTrigger name={TooltipName.SpawnPlanet}>
           <Icon type={IconType.SpawnPlanet} />
         </TooltipTrigger>

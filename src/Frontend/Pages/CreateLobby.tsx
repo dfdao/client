@@ -63,10 +63,9 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
         .getConstants()
         .then((config) => {
           setStartingConfig({
+            // TODO: clean up these types
             ...config,
             WHITELIST_ENABLED: false,
-            START_PAUSED: false,
-            CLAIM_PLANET_COOLDOWN: 0,
             ADMIN_PLANETS: [],
             TOKEN_MINT_END_TIMESTAMP: 1682435240778, // Tuesday, April 25, 2023
             ARTIFACT_POINT_VALUES: [
@@ -106,7 +105,7 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
   const content =
     contract && connection && ownerAddress && startingConfig ? (
       <LobbyConfigPage
-        contract={contract}
+        contractsAPI={contract}
         connection={connection}
         ownerAddress={ownerAddress}
         startingConfig={startingConfig}

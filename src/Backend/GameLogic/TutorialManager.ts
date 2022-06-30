@@ -10,6 +10,8 @@ export const enum TutorialManagerEvent {
 
 export const enum TutorialState {
   None,
+  Security,
+  HomePlanet,
   SendFleet,
   SpaceJunk,
   Spaceship,
@@ -54,7 +56,7 @@ class TutorialManager extends EventEmitter {
     } else if (newState === TutorialState.HowToGetScore) {
       const targetLocation = this.uiManager.getGameManager().getTargetPlanets();
       if (targetLocation.length > 0) {
-        this.uiManager.centerLocationId(targetLocation[0])
+        this.uiManager.centerLocationId(targetLocation[0].locationId)
       };
     } else if (newState === TutorialState.ZoomOut) {
       const homeLocation = this.uiManager.getHomeHash();

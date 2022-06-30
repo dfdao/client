@@ -1,12 +1,13 @@
 import React from 'react';
 import {
   Checkbox,
-  DarkForestCheckbox
+  DarkForestCheckbox,
+  DarkForestNumberInput,
+  NumberInput,
 } from '../../Components/Input';
 import { Row } from '../../Components/Row';
 import { DarkForestSlider, Slider } from '../../Components/Slider';
 import { LobbiesPaneProps } from './LobbiesUtils';
-
 
 export function TargetPlanetPane({ config: config, onUpdate: onUpdate }: LobbiesPaneProps) {
   return (
@@ -21,20 +22,31 @@ export function TargetPlanetPane({ config: config, onUpdate: onUpdate }: Lobbies
         />
       </Row>
       {config.TARGET_PLANETS.displayValue && (
-         <Row>
-         <Slider
-           label='Percent energy needed to claim victory'
-           variant='filled'
-           min={1}
-           max={100}
-           value={config.CLAIM_VICTORY_ENERGY_PERCENT.displayValue}
-           step={1}
-           formatOptions={{ style: 'unit', unit: '%' }}
-           onChange={(e: Event & React.ChangeEvent<DarkForestSlider>) => {
-             onUpdate({ type: 'CLAIM_VICTORY_ENERGY_PERCENT', value: e.target.value });
-           }}
-         />
-       </Row>
+        <Row>
+          <Slider
+            label='Percent energy needed to claim victory'
+            variant='filled'
+            min={1}
+            max={100}
+            value={config.CLAIM_VICTORY_ENERGY_PERCENT.displayValue}
+            step={1}
+            formatOptions={{ style: 'unit', unit: '%' }}
+            onChange={(e: Event & React.ChangeEvent<DarkForestSlider>) => {
+              onUpdate({ type: 'CLAIM_VICTORY_ENERGY_PERCENT', value: e.target.value });
+            }}
+          />
+        </Row>
+      )}
+      {config.TARGET_PLANETS.displayValue && (
+        <Row>
+          <span>Number of targets required for victory:</span>
+          <NumberInput
+            value={config.TARGETS_REQUIRED_FOR_VICTORY.displayValue}
+            onChange={(e: Event & React.ChangeEvent<DarkForestNumberInput>) => {
+              onUpdate({ type: 'TARGETS_REQUIRED_FOR_VICTORY', value: e.target.value });
+            }}
+          />
+        </Row>
       )}
     </>
   );
