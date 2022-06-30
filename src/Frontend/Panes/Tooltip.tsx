@@ -81,6 +81,37 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
   );
 }
 
+export function PortalTooltipTrigger(props: TooltipTriggerProps) {
+  const [hovering, setHovering] = useState(false);
+  const [mouseCoords, setMouseCoords] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const doMouseMove = (e: MouseEvent) => {
+      setMouseCoords({ x: e.clientX, y: e.clientY });
+    };
+
+    window.addEventListener('mousemove', doMouseMove);
+
+    return () => {
+      window.removeEventListener('mousemove', doMouseMove);
+    };
+  });
+
+  return (
+    <>
+      <StyledTooltipTrigger
+        style={{ ...props.style}}
+        onMouseEnter={() => setHovering(true)}
+        onMouseLeave={() => setHovering(false)}
+      >
+        {props.children}
+      </StyledTooltipTrigger>
+
+      {hovering && <Tooltip {...props} top={mouseCoords.y} left={mouseCoords.x} style = {{zIndex: 9999}}/> }
+    </>
+  );
+}
+
 /**
  * At any given moment, there can only be one tooltip visible in the game. This is true because a
  * player only has one mouse cursor on the screen, and therefore can only be hovering over a single

@@ -95,7 +95,7 @@ export const LobbyMapEditor: React.FC<{
       index: config.ADMIN_PLANETS.displayValue?.length ?? 0,
     });
     mutablePlanet.blockedPlanetLocs = [];
-    setSelectedPlanetIndex(index);
+    setSelectedPlanetIndex(0);
   }
 
   return (

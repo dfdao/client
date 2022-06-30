@@ -54,6 +54,7 @@ export function PlanetListPane({
         onMouseEnter={() => {
           setHoveringPlanet(true);
         }}
+        onMouseOver={() => setHoveringPlanet(true)}
         onMouseLeave={() => {
           setHoveringPlanet(false);
         }}
