@@ -1,28 +1,18 @@
-import { INIT_ADDRESS } from '@darkforest_eth/contracts';
-import initContractAbiUrl from '@darkforest_eth/contracts/abis/DFArenaInitialize.json';
-import { DFArenaInitialize } from '@darkforest_eth/contracts/typechain';
 import { EthConnection } from '@darkforest_eth/network';
-import { ContractMethodName, EthAddress, UnconfirmedCreateLobby } from '@darkforest_eth/types';
-import { Contract } from 'ethers';
-import _, { initial } from 'lodash';
+import { EthAddress } from '@darkforest_eth/types';
 import React, { useEffect, useMemo, useReducer, useState } from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
 import { ContractsAPI } from '../../Backend/GameLogic/ContractsAPI';
-import { loadInitContract } from '../../Backend/Network/Blockchain';
 import { createAndInitArena } from '../../Backend/Utils/Arena';
 import { LobbyAdminTools } from '../../Backend/Utils/LobbyAdminTools';
-import { ExtrasNavPane } from '../Panes/Lobbies/ExtrasNavPane';
-import { MinimapPane } from '../Panes/Lobbies/MinimapPane';
 import { MinimapConfig } from '../Panes/Lobbies/MinimapUtils';
 import {
   InvalidConfigError,
-  LobbyConfigAction,
   lobbyConfigInit,
   lobbyConfigReducer,
   LobbyInitializers,
   toInitializers,
 } from '../Panes/Lobbies/Reducer';
-import { getLobbyCreatedEvent, lobbyPlanetsToInitPlanets } from '../Utils/helpers';
 import { LobbyMapSelectPage } from './LobbyMapSelectPage';
 import { LobbyWorldSettingsPage } from './LobbyWorldSettingsPage';
 import { LobbyConfirmPage } from './LobbyConfirmPage';
@@ -63,10 +53,10 @@ export function LobbyConfigPage({
   useEffect(() => {
     async function doCreateReveal() {
       await bulkCreateAndRevealPlanets();
+      setStatus('created');
     }
     if (lobbyAdminTools && !created) {
       doCreateReveal();
-      setStatus('created');
     }
   }, [lobbyAdminTools]);
 

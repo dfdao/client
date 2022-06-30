@@ -3871,9 +3871,16 @@ class GameManager extends EventEmitter {
   public isCompetitive(): boolean {
     return this.contractConstants.CONFIG_HASH == competitiveConfig;
   }
-  getTeamsEnabled() {
+  public getTeamsEnabled() {
     return this.contractConstants.TEAMS_ENABLED;
   }
+
+  public getPlayerMoves(addr : EthAddress) {
+    const player = this.getPlayer(addr);
+    if (!player) throw new Error('Player not found');
+    return player.moves
+  }
+
 }
 
 export default GameManager;

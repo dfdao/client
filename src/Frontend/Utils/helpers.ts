@@ -25,15 +25,14 @@ export function getLobbyCreatedEvent(
 }
 
 export function lobbyPlanetToInitPlanet(planet: LobbyPlanet, initializers: LobbyInitializers) {
-  const locationFunc = initializers.DISABLE_ZK_CHECKS ? fakeHash : mimcHash;
+  const locationFunc = initializers.DISABLE_ZK_CHECKS ? fakeHash(initializers.PLANET_RARITY) : mimcHash(initializers.PLANETHASH_KEY) ;
 
-  const location = locationFunc(initializers.PLANET_RARITY)(planet.x, planet.y).toString();
+  const location = locationFunc(planet.x, planet.y).toString();
 
   const planetCoords = {
     x: planet.x,
     y: planet.y,
-  };
-
+  }
   const perlinValue = perlin(planetCoords, {
     key: initializers.SPACETYPE_KEY,
     scale: initializers.PERLIN_LENGTH_SCALE,
@@ -53,7 +52,7 @@ export function lobbyPlanetToInitPlanet(planet: LobbyPlanet, initializers: Lobby
     isTargetPlanet: planet.isTargetPlanet,
     isSpawnPlanet: planet.isSpawnPlanet,
     blockedPlanetIds: planet.blockedPlanetLocs.map((p) =>
-      locationFunc(initializers.PLANET_RARITY)(p.x, p.y).toString()
+      locationFunc(p.x, p.y).toString()
     ),
   };
 }
