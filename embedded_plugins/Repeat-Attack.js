@@ -140,7 +140,7 @@ class Repeater {
     if (attacksJSON) this.attacks = JSON.parse(attacksJSON);
   }
   addAttack(attack) {
-    let newAttacks = this.attacks.filter(a => a.srcId !== attack.srcId);
+    let newAttacks = this.attacks.filter(a => a.sourceId !== attack.sourceId);
     newAttacks = [attack, ...newAttacks];
     this.attacks = newAttacks;
     this.saveAttacks();
@@ -162,7 +162,7 @@ class Repeater {
     this.saveAttacks();
   }
   stopFiring(planetId) {
-    this.attacks = this.attacks.filter(a => a.srcId !== planetId);
+    this.attacks = this.attacks.filter(a => a.sourceId !== planetId);
     this.saveAttacks();
   }
   stopBeingFiredAt(planetId) {
@@ -176,8 +176,8 @@ class Repeater {
     });
   }
 }
-const ExecuteAttack = ({srcId, targetId, active, pcTrigger, pcRemain, sendSilverStatus}) => {
-  let srcPlanet = df.getPlanetWithId(srcId);
+const ExecuteAttack = ({sourceId, targetId, active, pcTrigger, pcRemain, sendSilverStatus}) => {
+  let srcPlanet = df.getPlanetWithId(sourceId);
   if (!srcPlanet) return;
   if (!active) return;
   // Needs updated check getUnconfirmedDepartingForces
@@ -192,7 +192,7 @@ const ExecuteAttack = ({srcId, targetId, active, pcTrigger, pcRemain, sendSilver
     if ( sendSilverStatus === SEND_ALL_SILVER || (sendSilverStatus === UPGRADE_FIRST && isFullRank(srcPlanet))) {
       silver = Math.round(srcPlanet.silver * (SILVER_SEND_PERCENT / 100));
     }
-    df.move(srcId, targetId, FORCES, silver);
+    df.move(sourceId, targetId, FORCES, silver);
   }
 };
 let Keyboard_Shortcut = {
@@ -230,7 +230,7 @@ function planetShort(locationId) {
   return locationId.substring(4, 9);
 }
 function Attack({ attack, onToggleActive, onToggleSilver, onDelete }) {
-  const srcString = getPlanetString(attack.srcId);
+  const srcString = getPlanetString(attack.sourceId);
   const targetString = getPlanetString(attack.targetId);
   const finalSrc = srcString.length > MAX_CHARS ? srcString.slice(0, MAX_CHARS - 3).concat('...') : srcString;
   const finalTarget = targetString.length > MAX_CHARS ? targetString.slice(0, MAX_CHARS - 3).concat('...') : targetString;
@@ -239,7 +239,7 @@ function Attack({ attack, onToggleActive, onToggleSilver, onDelete }) {
       <button style=${{border: 'none', margin: 'none'}} onClick=${onToggleActive}>${attack.active?'▶️':'⏸️'}</button>
       <span>
         <span style=${{ ...Margin_3L_3R }}>
-          <span style=${{ ...Clickable }} onClick=${() => centerPlanet(attack.srcId)}>${finalSrc}</span>
+          <span style=${{ ...Clickable }} onClick=${() => centerPlanet(attack.sourceId)}>${finalSrc}</span>
           <span style=${{ ...Margin_3L_3R }}>-></span>
           <span style=${{ ...Clickable }} onClick=${() => centerPlanet(attack.targetId)}>${finalTarget}</span>
         </span>
@@ -293,7 +293,7 @@ function AddAttack({ repeater, startFiring, stopFiring, stopBeingFiredAt }) {
   }, []);
 
   // Note: an attack is an object with this format:
-  // { srcId, targetId, active, pcTrigger, pcRemain, sendSilverStatus }
+  // { sourceId, targetId, active, pcTrigger, pcRemain, sendSilverStatus }
   // Each item is used to control a different aspect of the attack
 
   return html`
@@ -343,7 +343,7 @@ function AddAttack({ repeater, startFiring, stopFiring, stopBeingFiredAt }) {
         <button
           style=${{...Margin_12B, width: 150}}
           onClick=${() => target && source && startFiring({
-            srcId: source.locationId,
+            sourceId: source.locationId,
             targetId: target.locationId,
             active,
             pcTrigger,
@@ -446,7 +446,7 @@ const drawHighlights = plugin => {
   if (!planet || !planet.location) return;
   const selectedPlanetId = planet.locationId;
   const attacks = plugin.repeater.attacks;
-  const attacksSelectedIsSource = attacks.filter(a => a.srcId === selectedPlanetId);
+  const attacksSelectedIsSource = attacks.filter(a => a.sourceId === selectedPlanetId);
   const attacksSelectedIsTarget = attacks.filter(a => a.targetId === selectedPlanetId);
   if (!attacksSelectedIsSource.length && !attacksSelectedIsTarget.length) return;
   const getSawWave01 = (periodMs, planet) => {
@@ -479,8 +479,8 @@ const drawHighlights = plugin => {
   );
   drawHighlight(selectedPlanetId, `rgba(80, 80, 255, 0.7)`, -12000, 6, 0.7);
   attacksSelectedIsTarget.forEach(a => a.active
-    ? drawHighlight(a.srcId, `rgba(80, 255, 80, 0.5)`, 7000, 4, 0.8)
-    : drawHighlight(a.srcId, `rgba(140, 180, 40, 0.5)`, 7000, 3, 0.4)
+    ? drawHighlight(a.sourceId, `rgba(80, 255, 80, 0.5)`, 7000, 4, 0.8)
+    : drawHighlight(a.sourceId, `rgba(140, 180, 40, 0.5)`, 7000, 3, 0.4)
   );
 }
 
