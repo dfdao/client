@@ -7,18 +7,15 @@ export const loadLiveMatches = async (
   config: string = competitiveConfig,
   multiplayer?: boolean
 ): Promise<LiveMatch> => {
+  const multiplayerStats = multiplayer ? `players {address}` : '';
+
   const query = `
     query {
       arenas(first: 1000, where: {configHash: "${config}", gameOver: false, firstMover_not: null}) {
       firstMover {
         address
       },
-      ${
-        multiplayer &&
-        `players {
-          address
-        }`
-      }
+      ${multiplayerStats}
       creator,
       id
       startTime

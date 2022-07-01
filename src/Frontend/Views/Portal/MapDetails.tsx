@@ -38,7 +38,10 @@ export function MapDetails({
           setLiveMatchError(undefined);
           setLiveMatches(matches);
         })
-        .catch((e) => setLiveMatchError(e));
+        .catch((e) => {
+          console.log(e);
+          setLiveMatchError(e);
+        });
     }
   }, [configHash]);
 

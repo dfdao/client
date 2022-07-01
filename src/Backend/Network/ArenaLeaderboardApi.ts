@@ -26,6 +26,7 @@ query {
     startTime
     winners(first :1) {
       address
+      moves
    }
     gameOver
     endTime
@@ -40,13 +41,14 @@ query {
     throw new Error(rawData.error);
   }
 
-  const ret = await convertData(rawData.data.arenas, isCompetitive);
+  const ret = await convertData(rawData.data.arenas, config == competitiveConfig);
 
   return ret;
 }
 
 interface winners {
   address: string;
+  moves: number
 }
 interface graphArena {
   winners: winners[];
@@ -56,6 +58,7 @@ interface graphArena {
   gameOver: boolean;
   id: string;
   startTime: number;
+  moves: number;
 }
 
 async function convertData(arenas: graphArena[], isCompetitive: boolean): Promise<Leaderboard> {
@@ -85,8 +88,10 @@ async function convertData(arenas: graphArena[], isCompetitive: boolean): Promis
         ethAddress: winnerAddress,
         score: arena.duration,
         twitter: twitters[winnerAddress],
-        moves: 0,
-        time: 0
+        moves: arena.winners[0].moves,
+        startTime: arena.startTime,
+        endTime: arena.endTime,
+        time: arena.duration
       });
     } else if (entry.score && entry.score > arena.duration) {
       entry.score = arena.duration;
