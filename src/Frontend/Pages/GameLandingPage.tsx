@@ -1281,7 +1281,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
     await fetchConfig();
 
     if (config.ADMIN_PLANETS.length > 0) {
-      lobbyPlanetsToInitPlanets(config);
+      config.INIT_PLANETS = lobbyPlanetsToInitPlanets(config, config.ADMIN_PLANETS);
       setConfig(config);
     }
     

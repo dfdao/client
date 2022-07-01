@@ -23,7 +23,7 @@ export async function createAndInitArena({
 }) {
   var initializers = config;
   if (initializers.ADMIN_PLANETS) {
-    lobbyPlanetsToInitPlanets(initializers);
+    initializers.INIT_PLANETS = lobbyPlanetsToInitPlanets(initializers, initializers.ADMIN_PLANETS);
   }
 
   /* Don't want to submit ADMIN_PLANET as initdata because not used */

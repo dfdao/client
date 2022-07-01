@@ -211,9 +211,9 @@ export class LobbyAdminTools {
 
   async bulkCreateAndReveal(planets: LobbyPlanet[], initializers: LobbyInitializers) {
     // make create Planet args
-    lobbyPlanetsToInitPlanets(initializers);
+    const initPlanets = lobbyPlanetsToInitPlanets(initializers, planets);
 
-    const args = Promise.resolve([initializers.INIT_PLANETS]);
+    const args = Promise.resolve([initPlanets]);
     const txIntent = {
       methodName: 'bulkCreateAndReveal' as ContractMethodName,
       contract: this.contract.contract,

@@ -57,7 +57,7 @@ export function lobbyPlanetToInitPlanet(planet: LobbyPlanet, initializers: Lobby
   };
 }
 
-export function lobbyPlanetsToInitPlanets(initializers: LobbyInitializers) {
+export function lobbyPlanetsToInitPlanets(initializers: LobbyInitializers, planets: LobbyPlanet[]) {
   const initPlanets: {
     x: string;
     y: string;
@@ -70,9 +70,9 @@ export function lobbyPlanetsToInitPlanets(initializers: LobbyInitializers) {
     isSpawnPlanet: boolean;
     blockedPlanetIds: string[];
   }[] = [];
-  initializers.ADMIN_PLANETS.forEach((p) =>
+  planets.forEach((p) =>
   initPlanets.push(lobbyPlanetToInitPlanet(p, initializers))
   );
-  initializers.INIT_PLANETS = initPlanets;
-  console.log('new config: ', initializers);
+  return initPlanets;
 }
+
