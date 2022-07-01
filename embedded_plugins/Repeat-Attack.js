@@ -39,7 +39,7 @@ let STAGGER_S = 15;  // Over what number of seconds will all repeat attacks happ
 
 // UI controls
 let MAX_CHARS = 15;  // How many letters of planet name to display?
-let WIDTH_PX = 430;  // What is the width of plugin window?
+let WIDTH_PX = 440;  // What is the width of plugin window?
 let MIN_V = 10; // Set minimum values for sliders
 let MAX_V = 90; // Set maximum values for sliders
 let STEP_V = 5; // Set step size for sliders
