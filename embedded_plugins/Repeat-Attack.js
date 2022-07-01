@@ -49,10 +49,10 @@ const KEY_SET_SOURCE = 'v';
 const KEY_SET_TARGET = 'b';
 const KEY_START_FIRING = 'n';
 const KEY_TOGGLE_SILVER = 'm';
-const KEY_STOP_FIRING = ',';
-const KEY_STOP_FIRING_DISPLAY = '<'; // '<' displays better than ','
-const KEY_STOP_BEING_FIRED_AT = '.';
-const KEY_STOP_BEING_FIRED_AT_DISPLAY = '>'; // '>' displays better than '.'
+const KEY_TOGGLE_OUTGOING_FIRING = ',';
+const KEY_TOGGLE_OUTGOING_FIRING_DISPLAY = '<'; // '<' displays better than ','
+const KEY_TOGGLE_INCOMING_FIRING = '.';
+const KEY_TOGGLE_INCOMING_FIRING_DISPLAY = '>'; // '>' displays better than '.'
 
 // Other controls
 let SILVER_SEND_PERCENT = 99;  // Sends this proportion of silver from the source planet
@@ -60,6 +60,10 @@ let SILVER_SEND_PERCENT = 99;  // Sends this proportion of silver from the sourc
 // Note - `let` was sometimes used by original author in this plugin to sidestep any weird execution env problems
 // ----------------------------------------
 
+
+const FIRING_NONE = 0;
+const FIRING_ACTIVE = 1;
+const FIRING_PAUSED = 2;
 
 const sendSilverStatuses = [
   'Do not send', // 0
@@ -185,16 +189,34 @@ class Repeater {
     this.attacks = [];
     this.saveAttacks();
   }
-  stopFiring() {
-    const planetId = this.currentPlanets['selected']?.locationId;
+  getFiringStatus(item) {
+    const planetId = this.currentPlanets.selected?.locationId;
+    if (!planetId) return FIRING_NONE;
+    const attacks = this.attacks.filter(a => a[item] === planetId);
+    if (!attacks.length) return FIRING_NONE;
+    const pausedAttacks = attacks.filter(a => !a.active);
+    return (pausedAttacks.length < attacks.length) ? FIRING_ACTIVE : FIRING_PAUSED;
+  }
+  outgoingStatus() { return this.getFiringStatus('sourceId'); }
+  incomingStatus() { return this.getFiringStatus('targetId'); }
+  toggleOutgoingFiring() {
+    const planetId = this.currentPlanets.selected?.locationId;
     if (!planetId) return;
-    this.attacks = this.attacks.filter(a => a.sourceId !== planetId);
+    const newActive = !(this.outgoingStatus() === FIRING_ACTIVE);
+    this.attacks = this.attacks.map(a => {
+      if (a.sourceId === planetId) a.active = newActive;
+      return a
+    })
     this.saveAttacks();
   }
-  stopBeingFiredAt() {
-    const planetId = this.currentPlanets['selected']?.locationId;
+  toggleIncomingFiring() {
+    const planetId = this.currentPlanets.selected?.locationId;
     if (!planetId) return;
-    this.attacks = this.attacks.filter(a => a.targetId !== planetId);
+    const newActive = !(this.incomingStatus() === FIRING_ACTIVE);
+    this.attacks = this.attacks.map(a => {
+      if (a.targetId === planetId) a.active = newActive;
+      return a
+    })
     this.saveAttacks();
   }
   coreLoop() {
@@ -281,7 +303,7 @@ function Attack({ attack, onToggleActive, onToggleSilver, onDelete }) {
     </div>
   `;
 }
-function AddAttack({ repeater, startFiring, stopFiring, stopBeingFiredAt }) {
+function AddAttack({ repeater, startFiring, toggleOutgoingFiring, toggleIncomingFiring }) {
 
   const [currentPlanets, setCurrentPlanetsUS] = useState(repeater.currentPlanets);
   const getCurrentPlanet = option => {
@@ -342,13 +364,13 @@ function AddAttack({ repeater, startFiring, stopFiring, stopBeingFiredAt }) {
         case KEY_START_FIRING:
           startFiring();
           break;
-        case KEY_STOP_FIRING:
-        case KEY_STOP_FIRING_DISPLAY:
-          stopFiring();
+        case KEY_TOGGLE_OUTGOING_FIRING:
+        case KEY_TOGGLE_OUTGOING_FIRING_DISPLAY:
+          toggleOutgoingFiring();
           break;
-        case KEY_STOP_BEING_FIRED_AT:
-        case KEY_STOP_BEING_FIRED_AT_DISPLAY:
-          stopBeingFiredAt();
+        case KEY_TOGGLE_INCOMING_FIRING:
+        case KEY_TOGGLE_INCOMING_FIRING_DISPLAY:
+          toggleIncomingFiring();
           break;
       }
     };
@@ -409,12 +431,16 @@ function AddAttack({ repeater, startFiring, stopFiring, stopBeingFiredAt }) {
           </span>
         </div>
         <div>
-          <button style=${{...Margin_12B, width: 150, marginRight: 10}} onClick=${stopFiring}>
-            Stop Firing <span style=${Keyboard_Shortcut}>[${KEY_STOP_FIRING_DISPLAY}]</span>
-          </button>
-          <button style=${{...Margin_12B, width: 210}} onClick=${stopBeingFiredAt}>
-            Stop Being Fired At <span style=${Keyboard_Shortcut}>[${KEY_STOP_BEING_FIRED_AT_DISPLAY}]</span>
-          </button>
+          ${repeater.outgoingStatus() === FIRING_NONE ? '' : html`
+            <button style=${{...Margin_12B, width: 150, marginRight: 10}} onClick=${toggleOutgoingFiring}>
+              ${repeater.outgoingStatus() === FIRING_PAUSED ? 'Resume' : 'Pause'} Firing <span style=${Keyboard_Shortcut}>[${KEY_TOGGLE_OUTGOING_FIRING_DISPLAY}]</span>
+            </button>
+          `}
+          ${repeater.incomingStatus() === FIRING_NONE ? '' : html`
+            <button style=${{...Margin_12B, width: 210}} onClick=${toggleIncomingFiring}>
+              ${repeater.incomingStatus() === FIRING_PAUSED ? 'Resume' : 'Pause'} Being Fired At <span style=${Keyboard_Shortcut}>[${KEY_TOGGLE_INCOMING_FIRING_DISPLAY}]</span>
+            </button>
+          `}
         </div>
       </div>
       <hr style=${{borderColor: 'grey', marginBottom: '10px'}} /> 
@@ -456,8 +482,8 @@ function AttackList({ repeater }) {
     <${AddAttack}
       repeater=${repeater}
       startFiring=${() => repeater.addAttack()}
-      stopFiring=${() => repeater.stopFiring()}
-      stopBeingFiredAt=${() => repeater.stopBeingFiredAt()}
+      toggleOutgoingFiring=${() => repeater.toggleOutgoingFiring()}
+      toggleIncomingFiring=${() => repeater.toggleIncomingFiring()}
     />
     <h1 style=${{...Margin_6B, fontWeight: 'bold'}}>
       Active (${attacks.reduce((acc, atk) => acc + (atk.active ? 1 : 0), 0)} / ${attacks.length})
@@ -478,7 +504,7 @@ function App({ repeater }) {
 const drawHighlights = plugin => {
   const ctx = plugin.ctx;
   const timeMs = plugin.dateNow;
-  const planet = plugin.repeater.currentPlanets['selected'];
+  const planet = plugin.repeater.currentPlanets.selected;
   if (!planet || !planet.location) return;
   const selectedPlanetId = planet.locationId;
   const attacks = plugin.repeater.attacks;
