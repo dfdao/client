@@ -1,11 +1,12 @@
 import { getConfigName } from '@darkforest_eth/procedural';
 import { EthAddress, Leaderboard } from '@darkforest_eth/types';
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { loadArenaLeaderboard } from '../../../../Backend/Network/ArenaLeaderboardApi';
 import { loadConfigFromHash } from '../../../../Backend/Network/ConfigApi';
 import { loadRecentMaps } from '../../../../Backend/Network/MapsApi';
+import { Sub } from '../../../Components/Text';
 import { ArenaLeaderboardDisplay } from '../../ArenaLeaderboard';
 import { ArenaPortalButton } from '../PortalHomeView';
 
@@ -15,6 +16,8 @@ export const OfficialGameBanner: React.FC<{
   const [leaderboardError, setLeaderboardError] = useState<Error | undefined>();
   const [leaderboard, setLeaderboard] = useState<Leaderboard | undefined>();
   const [lobbyAddress, setLobbyAddress] = useState<EthAddress | undefined>();
+
+  const history = useHistory();
 
   useEffect(() => {
     setLeaderboard(undefined);
@@ -30,11 +33,14 @@ export const OfficialGameBanner: React.FC<{
   }, [configHash]);
 
   return (
-    <Banner>
+    <Banner onClick={() => history.push(`/portal/map/${configHash}`)}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        <BannerTitle>{getConfigName(configHash)}</BannerTitle>
+        <div style = {{display: 'flex', flexDirection: 'column'}}>
+          <Sub>Play the Grand Prix</Sub>
+          <BannerTitle>{getConfigName(configHash)}</BannerTitle>
+        </div>
         <span>{lobbyAddress}</span>
-        <span style={{}}>Official DFDAO Map</span>
+        {/* <span style={{}}>Official DFDAO Map</span> */}
         {lobbyAddress && (
           <Link
             style={{ minWidth: '250px' }}

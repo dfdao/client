@@ -85,6 +85,8 @@ async function convertData(arenas: graphArena[], isCompetitive: boolean): Promis
         ethAddress: winnerAddress,
         score: arena.duration,
         twitter: twitters[winnerAddress],
+        moves: 0,
+        time: 0
       });
     } else if (entry.score && entry.score > arena.duration) {
       entry.score = arena.duration;

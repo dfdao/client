@@ -121,7 +121,7 @@ export function convertGraphConfig(arena: GraphArena): {
     config: {
       ...arena.config,
       START_PAUSED: true,
-      CLAIM_PLANET_COOLDOWN: 0,
+      // CLAIM_PLANET_COOLDOWN: 0,
       PLANET_TYPE_WEIGHTS: [
         [
           [1, 0, 0, 0, 0],
@@ -181,11 +181,19 @@ export function convertGraphConfig(arena: GraphArena): {
           location: planet.locationDec,
           isTargetPlanet: planet.targetPlanet,
           isSpawnPlanet: planet.spawnPlanet,
+          blockedPlanetLocs: []
         };
       }),
       INIT_PLANETS: [],
       WHITELIST_ENABLED: false,
       WHITELIST: [],
+      CONFIRM_START: true,
+      TARGETS_REQUIRED_FOR_VICTORY: 1,
+      BLOCK_CAPTURE: true,
+      BLOCK_MOVES: true,
+      TEAMS_ENABLED: false,
+      NUM_TEAMS: 2,
+      RANKED: false,
     },
     address: arena.lobbyAddress,
   };

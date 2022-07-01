@@ -255,7 +255,7 @@ export const tryGetAllTwitters = async (): Promise<AddressTwitterMap> => {
 export const getAllTwitters = async (): Promise<AddressTwitterMap> => {
   try {
     const twitterMap: AddressTwitterMap = await fetch(
-      `${process.env.DF_TWITTER_URL}/twitter/all-twitters`
+      `${process.env.DF_TWITTER_URL}twitter/all-twitters`
     ).then((x) => x.json());
     return twitterMap;
   } catch (e) {
