@@ -12,10 +12,12 @@ export function TabbedView({
   tabTitles,
   tabContents,
   style,
+  buttonStyle,
 }: {
   tabTitles: string[];
   tabContents: (tabIndex: number) => React.ReactNode;
   style?: React.CSSProperties;
+  buttonStyle?: React.CSSProperties;
 }) {
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 
@@ -24,6 +26,7 @@ export function TabbedView({
       <TabButtonContainer>
         {tabTitles.map((title, i) => (
           <TabButton
+            style = {buttonStyle}
             key={i}
             active={i === selectedTabIndex}
             onClick={() => {

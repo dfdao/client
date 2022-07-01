@@ -1,23 +1,24 @@
 import { getActivatedArtifact, isActivated } from '@darkforest_eth/gamelogic';
 import {
-  ArenaLeaderboard,
   Artifact,
   ArtifactId,
   EthAddress,
   Leaderboard,
+  LiveMatch,
   LocationId,
   Planet,
   Player,
   Transaction,
-  TransactionId
+  TransactionId,
 } from '@darkforest_eth/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import GameUIManager from '../../Backend/GameLogic/GameUIManager';
 import { loadArenaLeaderboard } from '../../Backend/Network/ArenaLeaderboardApi';
-import { loadCompetitiveLeaderboard } from '../../Backend/Network/CompetitiveLeaderboardApi';
 import { loadLeaderboard } from '../../Backend/Network/LeaderboardApi';
+import { loadLiveMatches } from '../../Backend/Network/SpyApi';
 import { Wrapper } from '../../Backend/Utils/Wrapper';
 import { ContractsAPIEvent } from '../../_types/darkforest/api/ContractsAPITypes';
+import { AddressTwitterMap } from '../../_types/darkforest/api/UtilityServerAPITypes';
 import { ModalHandle } from '../Views/ModalPane';
 import { createDefinedContext } from './createDefinedContext';
 import { useEmitterSubscribe, useEmitterValue, useWrappedEmitter } from './EmitterHooks';
@@ -28,6 +29,9 @@ export const { useDefinedContext: useUIManager, provider: UIManagerProvider } =
 
 export const { useDefinedContext: useTopLevelDiv, provider: TopLevelDivProvider } =
   createDefinedContext<HTMLDivElement>();
+
+export const { useDefinedContext: useTwitters, provider: TwitterProvider } =
+  createDefinedContext<AddressTwitterMap>();
 
 export function useOverlayContainer(): HTMLDivElement | null {
   return useUIManager()?.getOverlayContainer() ?? null;
@@ -216,52 +220,54 @@ export function useLeaderboard(poll: number | undefined = undefined): {
   return { leaderboard, error };
 }
 
-export function useArenaLeaderboard(poll: number | undefined = undefined): {
-  leaderboard: ArenaLeaderboard | undefined;
-  error: Error | undefined;
+export function useArenaLeaderboard(
+  isCompetitive: boolean,
+  address: string | undefined = undefined,
+  poll: number | undefined = undefined
+): {
+  arenaLeaderboard: Leaderboard | undefined;
+  arenaError: Error | undefined;
 } {
-  const [leaderboard, setLeaderboard] = useState<ArenaLeaderboard | undefined>();
-  const [error, setError] = useState<Error | undefined>();
+  const [arenaLeaderboard, setArenaLeaderboard] = useState<Leaderboard | undefined>();
+  const [arenaError, setArenaError] = useState<Error | undefined>();
 
-  const load = useCallback(async function load() {
+  const loadArena = useCallback(async function loadArena() {
     try {
-      setLeaderboard(await loadArenaLeaderboard());
+      setArenaLeaderboard(await loadArenaLeaderboard(address, isCompetitive));
     } catch (e) {
       console.log('error loading leaderboard', e);
-      setError(e);
+      setArenaError(e);
     }
   }, []);
 
+  usePoll(loadArena, poll, true);
 
-  usePoll(load, poll, true);
-
-
-  return { leaderboard, error };
+  return { arenaLeaderboard, arenaError };
 }
 
-export function useCompetitiveLeaderboard(isCompetitive: boolean, address : string | undefined = undefined , poll: number | undefined = undefined ): {
-competitiveLeaderboard: Leaderboard | undefined;
-competitiveError: Error | undefined;
+export function useLiveMatches(
+  config: string | undefined = undefined,
+  poll: number | undefined = undefined
+): {
+  liveMatches: LiveMatch | undefined;
+  spyError: Error | undefined;
 } {
-const [competitiveLeaderboard, setCompetitiveLeaderboard] = useState<Leaderboard | undefined>();
-const [competitiveError, setCompetitiveError] = useState<Error | undefined>();
+  const [liveMatches, setLiveMatches] = useState<LiveMatch | undefined>();
+  const [spyError, setSpyError] = useState<Error | undefined>();
+  const loadSpy = useCallback(async function loadSpy() {
+    try {
+      setLiveMatches(await loadLiveMatches(config));
+    } catch (e) {
+      console.log('error loading leaderboard', e);
+      setSpyError(e);
+    }
+  }, []);
 
-const loadCompetitive = useCallback(async function loadCompetitive() {
-  try {
-    setCompetitiveLeaderboard(await loadCompetitiveLeaderboard(address, isCompetitive));
-  } catch (e) {
-    console.log('error loading leaderboard', e);
-    setCompetitiveError(e);
-  }
-}, []);
+  usePoll(loadSpy, poll, true);
 
-
-
-usePoll(loadCompetitive, poll, true);
-
-
-return { competitiveLeaderboard, competitiveError };
+  return { liveMatches, spyError };
 }
+
 export function usePopAllOnSelectedPlanetChanged(
   modal: ModalHandle,
   startingId: LocationId | undefined

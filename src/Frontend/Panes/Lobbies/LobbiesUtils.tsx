@@ -4,11 +4,12 @@ import { EthAddress, LocationId, WorldCoords } from '@darkforest_eth/types';
 import React, { ChangeEvent, MouseEventHandler, useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import styled from 'styled-components';
+import { LobbyAdminTools } from '../../../Backend/Utils/LobbyAdminTools';
 import { Btn, ShortcutBtn } from '../../Components/Btn';
 import { Select, Title } from '../../Components/CoreUI';
 import { Row } from '../../Components/Row';
 import { Red } from '../../Components/Text';
-import { LobbyConfigAction, LobbyConfigState, toInitializers } from './Reducer';
+import { LobbyConfigAction, LobbyConfigState, LobbyInitializers, toInitializers } from './Reducer';
 
 export declare type LobbyPlanet = {
   x: number;

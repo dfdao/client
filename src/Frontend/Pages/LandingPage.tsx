@@ -54,14 +54,14 @@ export default function LandingPage() {
   return (
     <>
       <PrettyOverlayGradient />
-      <GrandPrix />
+      {/* <GrandPrix /> */}
 
       <Page>
         <OnlyMobile>
           <Spacer height={8} />
         </OnlyMobile>
         <HideOnMobile>
-          <Spacer height={150} />
+          <Spacer height={50} />
         </HideOnMobile>
 
         <MainContentContainer>
@@ -101,16 +101,8 @@ export default function LandingPage() {
 
             <Spacer height={16} />
             <ButtonWrapper>
-              <Btn
-                size='large'
-                // disabled={!isRoundOngoing()}
-                style={{ borderColor: 'red', color: 'red' } as CSSStyleDeclaration & CSSProperties}
-                onClick={() => history.push(`/play/`)}
-              >
-                Practice Grand Prix #4
-              </Btn>
-              <Btn size='large' onClick={() => history.push(`/arena/${defaultAddress}`)}>
-                Create Custom Arena
+              <Btn size='large' onClick={() => history.push('/portal/home')}>
+                <p style={button}>Enter</p>
               </Btn>
             </ButtonWrapper>
           </Header>
@@ -118,13 +110,13 @@ export default function LandingPage() {
           <Spacer height={32} />
 
           <HallOfFame style={{ color: dfstyles.colors.text }}>
-            <HallOfFameTitle>Racing Legends</HallOfFameTitle>
+            <HallOfFameTitle>Grand Prix Legends</HallOfFameTitle>
             <Spacer height={8} />
-            <table style = {{width: '100%'}}>
-              <tbody style = {{width: '100%'}}>
+            <table style={{ width: '100%' }}>
+              <tbody style={{ width: '100%' }}>
                 <TRow>
                   <td>
-                    <HideSmall>Week{' '}</HideSmall>1
+                    <HideSmall>Week </HideSmall>1
                   </td>
                   <td>
                     06/05/<HideSmall>20</HideSmall>22
@@ -135,7 +127,7 @@ export default function LandingPage() {
                 </TRow>
                 <TRow>
                   <td>
-                    <HideSmall>Week{' '}</HideSmall>2
+                    <HideSmall>Week </HideSmall>2
                   </td>
                   <td>
                     06/11/<HideSmall>20</HideSmall>22
@@ -180,19 +172,12 @@ export default function LandingPage() {
             <EmailCTA mode={EmailCTAMode.SUBSCRIBE} />
           </EmailWrapper> */}
         </MainContentContainer>
-
-        <Spacer height={28} />
-
-        {/* <LeadboardDisplay /> */}
-        <ArenaLeaderboardDisplay />
-
-        <Spacer height={256} />
       </Page>
     </>
   );
 }
 
-const PrettyOverlayGradient = styled.div`
+export const PrettyOverlayGradient = styled.div`
   width: 100vw;
   height: 100vh;
   background-image: linear-gradient(to left bottom, #012338, #1e2142, #3e173e, #56042a, #5e0808);
@@ -225,6 +210,8 @@ const TRow = styled.tr`
     padding-left: 16pt;
   }
 `;
+
+const button = { minWidth: '200px' } as CSSStyleDeclaration & CSSProperties;
 
 const MainContentContainer = styled.div`
   max-width: 100%;

@@ -13,7 +13,7 @@ import { Icon, IconType } from '../Components/Icons';
 import { Row } from '../Components/Row';
 import { Bronze, Gold, Green, Red, Silver, White } from '../Components/Text';
 import dfstyles from '../Styles/dfstyles';
-import { useCompetitiveLeaderboard, useUIManager } from '../Utils/AppHooks';
+import { useArenaLeaderboard, useUIManager } from '../Utils/AppHooks';
 import { bronzeTime, goldTime, silverTime } from '../Utils/constants';
 import { useBooleanSetting } from '../Utils/SettingsHooks';
 import { formatDuration } from '../Utils/TimeUtils';
@@ -56,13 +56,13 @@ function SurveyPaneContent() {
   const isCompetitive = uiManager.getGameManager().isCompetitive();
   const config = uiManager.getGameManager().getContractConstants().CONFIG_HASH;
   // const config = '0x8ea5aaee703231d3893553d7c2d287c2da33e2251811dce40cca2d768b3a7950'
-  const { competitiveLeaderboard, competitiveError } = useCompetitiveLeaderboard(false, config);
+  const { arenaLeaderboard, arenaError } = useArenaLeaderboard(false, config);
 
-  let competitiveStats = undefined;
+  let arenaStats = undefined;
   if (isCompetitive) {
     const rank = getRank(time);
 
-    competitiveStats = (
+    arenaStats = (
       <div>
         <Row>
           Gold time: <Gold>{formatDuration(goldTime * 1000)}</Gold>
@@ -95,15 +95,15 @@ function SurveyPaneContent() {
       <Row>
         Time: <Green>{formatDuration(time * 1000)}</Green>
       </Row>
-      {competitiveLeaderboard && !competitiveError && (
+      {arenaLeaderboard && !arenaError && (
         <Row>
           Place:{' '}
           <White>
-            {getPlace(competitiveLeaderboard, time)}/{competitiveLeaderboard.entries.length}
+            {getPlace(arenaLeaderboard, time)}/{arenaLeaderboard.entries.length}
           </White>
         </Row>
       )}
-      {competitiveStats}
+      {arenaStats}
       <div style={{ textAlign: 'center' }}>
         <p>Help us improve Grand Prix by </p>
         <Link to={'https://forms.gle/coFn68RvPrEKaXcKA'}>

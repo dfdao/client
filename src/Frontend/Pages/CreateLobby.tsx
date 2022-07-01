@@ -1,15 +1,18 @@
+import { CONTRACT_ADDRESS } from '@darkforest_eth/contracts';
 import { EthConnection } from '@darkforest_eth/network';
 import { address } from '@darkforest_eth/serde';
 import { ArtifactRarity, EthAddress } from '@darkforest_eth/types';
 import React, { useCallback, useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { ContractsAPI, makeContractsAPI } from '../../Backend/GameLogic/ContractsAPI';
+import { loadConfigFromAddress } from '../../Backend/Network/ConfigApi';
 import { InitRenderState, Wrapper } from '../Components/GameLandingPageComponents';
 import { LobbyInitializers } from '../Panes/Lobbies/Reducer';
 import { listenForKeyboardEvents, unlinkKeyboardEvents } from '../Utils/KeyEmitters';
+import { stockConfig } from '../Utils/StockConfigs';
 import { CadetWormhole } from '../Views/CadetWormhole';
 import { LobbyConfigPage } from './LobbyConfigPage';
-import { LobbyLandingPage } from './LobbyLandingPage';
+import { PortalLandingPage } from './PortalLandingPage';
 
 type ErrorState =
   | { type: 'invalidAddress' }
@@ -21,12 +24,8 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
   const [ownerAddress, setOwnerAddress] = useState<EthAddress | undefined>();
   const [contract, setContract] = useState<ContractsAPI | undefined>();
   const [startingConfig, setStartingConfig] = useState<LobbyInitializers | undefined>();
-  let contractAddress: EthAddress | undefined;
-  try {
-    contractAddress = address(match.params.contract);
-  } catch (err) {
-    console.error('Invalid address', err);
-  }
+  const contractAddress: EthAddress = address(CONTRACT_ADDRESS);
+  const configContractAddress = address(match.params.contract) || contractAddress;
 
   const [errorState, setErrorState] = useState<ErrorState | undefined>(
     contractAddress ? undefined : { type: 'invalidAddress' }
@@ -47,13 +46,31 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
   );
 
   useEffect(() => {
-    if (connection && contractAddress) {
-      makeContractsAPI({ connection, contractAddress })
-        .then((contract) => setContract(contract))
-        .catch((e) => {
-          console.log(e);
-          setErrorState({ type: 'contractLoad' });
-        });
+    if (connection) {
+      if (contractAddress) {
+        makeContractsAPI({ connection, contractAddress })
+          .then((contract) => setContract(contract))
+          .catch((e) => {
+            console.log(e);
+            setErrorState({ type: 'contractLoad' });
+          });
+      }
+      if (configContractAddress) {
+        loadConfigFromAddress(configContractAddress)
+          .then((config) => {
+            if (!config) {
+              setStartingConfig(stockConfig.onePlayerRace);
+            } else {
+              setStartingConfig(config.config);
+            }
+            return;
+
+          })
+          .catch((e) => {
+            console.log(e);
+            setErrorState({ type: 'contractLoad' });
+          });
+      }
     }
   }, [connection, contractAddress]);
 
@@ -109,10 +126,10 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
         connection={connection}
         ownerAddress={ownerAddress}
         startingConfig={startingConfig}
-        root={`/arena/${contractAddress}`}
+        root={`/arena/${configContractAddress}`}
       />
     ) : (
-      <LobbyLandingPage onReady={onReady} />
+      <PortalLandingPage onReady={onReady} />
     );
 
   return (
