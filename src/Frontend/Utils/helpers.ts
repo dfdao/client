@@ -25,14 +25,16 @@ export function getLobbyCreatedEvent(
 }
 
 export function lobbyPlanetToInitPlanet(planet: LobbyPlanet, initializers: LobbyInitializers) {
-  const locationFunc = initializers.DISABLE_ZK_CHECKS ? fakeHash(initializers.PLANET_RARITY) : mimcHash(initializers.PLANETHASH_KEY) ;
+  const locationFunc = initializers.DISABLE_ZK_CHECKS
+    ? fakeHash(initializers.PLANET_RARITY)
+    : mimcHash(initializers.PLANETHASH_KEY);
 
   const location = locationFunc(planet.x, planet.y).toString();
 
   const planetCoords = {
     x: planet.x,
     y: planet.y,
-  }
+  };
   const perlinValue = perlin(planetCoords, {
     key: initializers.SPACETYPE_KEY,
     scale: initializers.PERLIN_LENGTH_SCALE,
@@ -51,12 +53,26 @@ export function lobbyPlanetToInitPlanet(planet: LobbyPlanet, initializers: Lobby
     requireValidLocationId: false,
     isTargetPlanet: planet.isTargetPlanet,
     isSpawnPlanet: planet.isSpawnPlanet,
-    blockedPlanetIds: planet.blockedPlanetLocs.map((p) =>
-      locationFunc(p.x, p.y).toString()
-    ),
+    blockedPlanetIds: planet.blockedPlanetLocs.map((p) => locationFunc(p.x, p.y).toString()),
   };
 }
 
 export function lobbyPlanetsToInitPlanets(initializers: LobbyInitializers) {
-  initializers.ADMIN_PLANETS.forEach(p => initializers.INIT_PLANETS.push(lobbyPlanetToInitPlanet(p, initializers)));
+  const initPlanets: {
+    x: string;
+    y: string;
+    level: number;
+    planetType: number;
+    requireValidLocationId: boolean;
+    location: string;
+    perlin: number;
+    isTargetPlanet: boolean;
+    isSpawnPlanet: boolean;
+    blockedPlanetIds: string[];
+  }[] = [];
+  initializers.ADMIN_PLANETS.forEach((p) =>
+  initPlanets.push(lobbyPlanetToInitPlanet(p, initializers))
+  );
+  initializers.INIT_PLANETS = initPlanets;
+  console.log('new config: ', initializers);
 }

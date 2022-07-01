@@ -717,7 +717,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
             (nextAccessTimeSeconds - nowSeconds) / 60 / 60
           )} hours`
         );
-        if (currBalance < 0.05 && nowSeconds > nextAccessTimeSeconds) {
+        if (currBalance < 0.005 && nowSeconds > nextAccessTimeSeconds) {
           terminal.current?.println(`Getting xDAI from faucet...`, TerminalTextStyle.Blue);
           const success = await requestFaucet(playerAddress);
           if (success) {

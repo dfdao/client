@@ -36,7 +36,7 @@ export const CopyableInput: React.FC<{
     <Container>
       {label && <LabelText>{label}</LabelText>}
       <InputContainer>
-        <Input value={displayValue ?? copyText} />
+        <Input value={displayValue ?? copyText} onChange = {()=>{}}/>
         <CopyButton onClick={() => onCopy(copyText, handleCopySuccess, onCopyError)}>
           {copied ? '✓ Copied' : 'Copy'}
         </CopyButton>

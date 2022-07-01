@@ -110,7 +110,7 @@ export default function LandingPage() {
           <Spacer height={32} />
 
           <HallOfFame style={{ color: dfstyles.colors.text }}>
-            <HallOfFameTitle>Grand Prix Legends</HallOfFameTitle>
+            <HallOfFameTitle>Wallbreakers</HallOfFameTitle>
             <Spacer height={8} />
             <table style={{ width: '100%' }}>
               <tbody style={{ width: '100%' }}>

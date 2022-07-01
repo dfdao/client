@@ -3780,13 +3780,13 @@ class GameManager extends EventEmitter {
 
   public playerMoveBlocked(account: EthAddress, targetLocation: LocationId): boolean {
     const player = this.getPlayer(account);
-    if (!player) throw new Error('Player not found');
+    if (!player) return false;
     return this.isMoveBlocked(targetLocation, player.homePlanetId);
   }
 
   public playerCaptureBlocked(account: EthAddress, targetLocation: LocationId): boolean {
     const player = this.getPlayer(account);
-    if (!player) throw new Error('Player not found');
+    if (!player) return false;
     return this.isCaptureBlocked(targetLocation, player.homePlanetId);
   }
 

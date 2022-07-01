@@ -36,7 +36,7 @@ export const Toast: React.FC<ToastProps> = ({
             <CloseIcon />
           </CloseButtonStyle>
           <TextContent>
-            <ToastText flash={flash ?? false}>{title}</ToastText>
+            <ToastText flash={flash} >{title}</ToastText>
             {description && <ToastDescription>{description}</ToastDescription>}
           </TextContent>
         </div>
@@ -46,7 +46,7 @@ export const Toast: React.FC<ToastProps> = ({
   );
 };
 
-const ToastText = styled(ToastPrimitive.Title)<{ flash: boolean }>`
+const ToastText = styled(ToastPrimitive.Title)<{ flash: boolean | undefined }>`
   font-weight: 510;
   ${({ flash }) =>
     flash &&
