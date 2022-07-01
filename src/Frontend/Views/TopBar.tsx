@@ -230,12 +230,12 @@ export function TopBar({ twitterVerifyHook }: { twitterVerifyHook: Hook<boolean>
       {uiManager.contractConstants.TARGET_PLANETS ? (
         <>
           <Timer account={account} />
-          <AlignCenterHorizontally style={{ justifyContent: 'space-around', width: '100%' }}>
+          <AlignCenterHorizontally style={{ justifyContent: 'space-around', width: '100%', marginTop: '7px' }}>
             <TargetPlanetVictory />
           </AlignCenterHorizontally>
         </>
       ) : (
-        <AlignCenterHorizontally style={{ justifyContent: 'space-around', width: '100%' }}>
+        <AlignCenterHorizontally style={{ justifyContent: 'space-around', width: '100%', marginTop: '7px' }}>
           <BoardPlacement account={account} />{' '}
         </AlignCenterHorizontally>
       )}

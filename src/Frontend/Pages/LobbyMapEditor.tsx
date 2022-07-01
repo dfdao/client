@@ -1,5 +1,4 @@
 import { EthAddress, WorldCoords } from '@darkforest_eth/types';
-import { colors } from '@darkforest_eth/ui';
 import React, { useMemo, useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled, { css } from 'styled-components';
@@ -24,6 +23,7 @@ import {
 import { useIsDown } from '../Utils/KeyEmitters';
 import { Checkbox } from '../Components/Input';
 import { Toast } from '../Components/Toast';
+import dfstyles from '../Styles/dfstyles';
 
 export const LobbyMapEditor: React.FC<{
   updateConfig: React.Dispatch<LobbyAction>;
@@ -314,7 +314,7 @@ const Key = styled.kbd<{ active: boolean }>`
   padding: 0.1rem 0.45rem;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  border: 1px solid ${colors.border};
+  border: 1px solid ${dfstyles.colors.border};
   border-radius: 0.25rem;
   display: inline-block;
   font-weight: 400;
@@ -325,7 +325,7 @@ const Key = styled.kbd<{ active: boolean }>`
   box-shadow: 0 0 #6b6b6b, 0 0 #6b6b6b, 0 1px #6d6d6d, 0 2px #6d6d6d, 2px 1px 4px #adb5bd,
     0 -1px 1px #adb5bd;
   background-color: #343a40;
-  color: ${colors.text};
+  color: ${dfstyles.colors.text};
   flex: 0;
   height: fit-content;
   margin: 1px 5px 5px;
@@ -344,16 +344,16 @@ const Key = styled.kbd<{ active: boolean }>`
     position: absolute;
     transform-style: preserve-3d;
     transition: all 0.25s cubic-bezier(0.2, 1, 0.2, 1);
-    border-color: ${colors.borderDarker};
-    background: ${colors.background};
+    border-color: ${dfstyles.colors.borderDarker};
+    background: ${dfstyles.colors.background};
   }
   ${({ active }) =>
     active &&
     css`
       transform: translate3d(0, 2px, 0);
       box-shadow: 0 0 1px 1px #929292;
-      background-color: ${colors.text};
-      color: ${colors.background};
+      background-color: ${dfstyles.colors.text};
+      color: ${dfstyles.colors.background};
       &:after {
         transform: translate3d(0, -2px, 0);
         background: transparent;
