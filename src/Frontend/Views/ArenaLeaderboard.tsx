@@ -228,9 +228,9 @@ function ArenaLeaderboardTable({ rows }: { rows: Row[] }) {
                   <a
                     style={{ display: 'flex', alignItems: 'center' }}
                     target='_blank'
-                    href={`https://twitter.com/address/${row.twitter}`}
+                    href={`https://twitter.com/${row.twitter}`}
                   >
-                    <Twitter width='30px' height='30px' />
+                    <Twitter width='24px' height='24px' />
                   </a>
                 )}
               </Cell>
@@ -248,7 +248,7 @@ function ArenaLeaderboardTable({ rows }: { rows: Row[] }) {
                   href={`https://blockscout.com/xdai/optimism/address/${row.address}`}
                 >
                   <GnoButton>
-                    <Gnosis width='30px' height='30px' />
+                    <Gnosis width='24px' height='24px' />
                   </GnoButton>
                 </a>
               </Cell>

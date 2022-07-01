@@ -33,9 +33,9 @@ export const OfficialGameBanner: React.FC<{
   }, [configHash]);
 
   return (
-    <Banner onClick={() => history.push(`/portal/map/${configHash}`)}>
+    <Banner>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        <div style = {{display: 'flex', flexDirection: 'column'}}>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
           <Sub>Play the Grand Prix</Sub>
           <BannerTitle>{getConfigName(configHash)}</BannerTitle>
         </div>
