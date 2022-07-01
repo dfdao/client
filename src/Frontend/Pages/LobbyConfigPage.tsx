@@ -93,7 +93,7 @@ export function LobbyConfigPage({
         await lobbyAdminTools.bulkCreateAndReveal(chunk, toInitializers(config));
         updateConfig({
           type: 'ADMIN_PLANETS',
-          value: DEFAULT_PLANET,
+          value: undefined,
           index: i,
           number: BULK_CREATE_CHUNK_SIZE,
         });

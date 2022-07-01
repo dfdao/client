@@ -2085,8 +2085,12 @@ export function ofLobbyPlanets(
   const displayValue = [...prevDisplayValue];
 
   if (value === undefined) {
+    currentValue.splice(index, number);
+    displayValue.splice(index, number);
     return {
       ...state[type],
+      currentValue,
+      displayValue,
       warning: undefined,
     };
   }

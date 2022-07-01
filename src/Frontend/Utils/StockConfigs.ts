@@ -445,7 +445,7 @@ const sprint: LobbyInitializers = {
   CLAIM_VICTORY_ENERGY_PERCENT: 50,
   MODIFIERS: [100, 100, 100, 100, 100, 100, 100, 100],
   SPACESHIPS: [true, true, false, true, true],
-  WHITELIST_ENABLED: true,
+  WHITELIST_ENABLED: false,
   START_PAUSED: false,
   RANDOM_ARTIFACTS: true,
   ADMIN_PLANETS: [
@@ -480,7 +480,7 @@ const sprint: LobbyInitializers = {
   TOKEN_MINT_END_TIMESTAMP: 1717258179, // SECONDS!,
   NO_ADMIN: false,
   INIT_PLANETS: [],
-  WHITELIST: [address('0x1c0f0af3262a7213e59be7f1440282279d788335')],
+  WHITELIST: [],
   CONFIRM_START: true,
   TARGETS_REQUIRED_FOR_VICTORY: 1,
   BLOCK_CAPTURE: false,
