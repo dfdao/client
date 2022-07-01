@@ -23,9 +23,11 @@ export function ArenaLeaderboardWithData({ config }: { config: string }) {
 export function ArenaLeaderboardDisplay({
   leaderboard,
   error,
+  multiplayer,
 }: {
   leaderboard: Leaderboard | undefined;
   error: Error | undefined;
+  multiplayer?: boolean;
 }) {
   return (
     <GenericErrorBoundary errorMessage={errorMessage}>
@@ -64,11 +66,20 @@ function compPlayerToEntry(
   color: string
 ) {
   return (
-    <Link to={`/portal/account/${playerAddress}`} style={{ color: color, textDecoration: 'underline' }}>
+    <Link
+      to={`/portal/account/${playerAddress}`}
+      style={{ color: color, textDecoration: 'underline' }}
+    >
       {playerTwitter ? (
         `@${playerTwitter}`
       ) : (
-        <TextPreview style = {{textDecoration: 'underline' }} disabled text={playerAddress} focusedWidth={'130px'} unFocusedWidth={'130px'} />
+        <TextPreview
+          style={{ textDecoration: 'underline' }}
+          disabled
+          text={playerAddress}
+          focusedWidth={'130px'}
+          unFocusedWidth={'130px'}
+        />
       )}
     </Link>
   );
@@ -219,7 +230,7 @@ function ArenaLeaderboardTable({ rows }: { rows: Row[] }) {
                     target='_blank'
                     href={`https://twitter.com/address/${row.twitter}`}
                   >
-                    <Twitter width= '30px' height= '30px'/>
+                    <Twitter width='30px' height='30px' />
                   </a>
                 )}
               </Cell>
@@ -237,7 +248,7 @@ function ArenaLeaderboardTable({ rows }: { rows: Row[] }) {
                   href={`https://blockscout.com/xdai/optimism/address/${row.address}`}
                 >
                   <GnoButton>
-                    <Gnosis  width= '30px' height= '30px'/>
+                    <Gnosis width='30px' height='30px' />
                   </GnoButton>
                 </a>
               </Cell>

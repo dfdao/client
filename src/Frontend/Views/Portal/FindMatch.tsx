@@ -1,4 +1,4 @@
-import { EthAddress, LiveMatch, LiveMatchEntry } from '@darkforest_eth/types';
+import { EthAddress, LiveMatch, LiveMatchEntry, ExtendedMatchEntry } from '@darkforest_eth/types';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
@@ -17,12 +17,6 @@ export interface MatchDetails {
   totalSpots: number;
   spotsTaken: number;
   matchId: string;
-}
-
-export interface ExtendedMatchEntry extends LiveMatchEntry {
-  players?: {
-    address: string;
-  }[];
 }
 
 export const MatchComponent: React.FC<MatchDetails> = ({
@@ -57,7 +51,7 @@ export const FindMatch: React.FC<FindMatchProps> = ({ game, error, nPlayers }) =
         {game &&
           game.entries.map((entry: ExtendedMatchEntry) => (
             <MatchComponent
-              creator={entry.creator as EthAddress}
+              creator={entry.creator}
               matchType='Solo'
               totalSpots={nPlayers}
               spotsTaken={entry.players ? entry.players.length : 0}
