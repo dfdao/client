@@ -47,11 +47,17 @@ let STEP_V = 5; // Set step size for sliders
 // Keyboard shortcuts
 const KEY_SET_SOURCE = 'v';
 const KEY_SET_TARGET = 'b';
+const KEY_START_FIRING = 'n';
+const KEY_TOGGLE_SILVER = 'm';
+const KEY_STOP_FIRING = ',';
+const KEY_STOP_FIRING_DISPLAY = '<'; // '<' displays better than ','
+const KEY_STOP_BEING_FIRED_AT = '.';
+const KEY_STOP_BEING_FIRED_AT_DISPLAY = '>'; // '>' displays better than '.'
 
 // Other controls
 let SILVER_SEND_PERCENT = 99;  // Sends this proportion of silver from the source planet
 
-// Note - `let` is used in this plugin to sidestep any weird execution env problems
+// Note - `let` was sometimes used by original author in this plugin to sidestep any weird execution env problems
 // ----------------------------------------
 
 
@@ -73,7 +79,7 @@ const [DESYNC_X, DESYNC_Y] = [101, 103];  // Desynchronises pulsing of separate 
 const PLANET_UNKNOWN = '?????';
 const getPlanetString = locationId => {
   const planet = df.getPlanetWithId(locationId);
-  if(!planet) return PLANET_UNKNOWN;
+  if (!planet) return PLANET_UNKNOWN;
   let type = 'P';
   if( planet.planetType == PlanetType.SILVER_MINE) type = 'A'
   else if (planet.planetType == PlanetType.RUINS) type = 'F'
@@ -123,8 +129,20 @@ class Repeater {
       //@ts-ignore
       window.__CORELOOP__.forEach((id) => window.clearInterval(id));
     }
-    this.uiSelectedPlanet = null;
-    this.attacks = [];
+    this.currentPlanets = { // store relevant planets
+      selected: ui.getSelectedPlanet(),
+      source: null,
+      target: null
+    }
+    this.currentAttack = { // store attack being set up
+      sourceId: null,
+      targetId: null,
+      active: true,
+      pcTrigger: DEFAULT_PERCENTAGE_TRIGGER,
+      pcRemain: DEFAULT_PERCENTAGE_REMAIN,
+      sendSilverStatus: INITIAL_SILVER_STATUS
+    }
+    this.attacks = []; // attacks already set up
     this.account = df.getAccount();
     this.loadAttacks();
     this.intervalId = window.setInterval(this.coreLoop.bind(this), 1000);
@@ -139,7 +157,13 @@ class Repeater {
     // @ts-ignore
     if (attacksJSON) this.attacks = JSON.parse(attacksJSON);
   }
-  addAttack(attack) {
+  addAttack() {
+    const attack = { ...this.currentAttack };
+    // Make sure source and target set
+    if (!attack.sourceId || !attack.targetId) return;
+    // Make sure remaining energy is less than trigger energy
+    attack.pcRemain = (attack.pcTrigger <= attack.pcRemain) ? parseInt(attack.pcTrigger / 2) : attack.pcRemain;
+    // Filter out existing attacks from this source, then add new attack at top
     let newAttacks = this.attacks.filter(a => a.sourceId !== attack.sourceId);
     newAttacks = [attack, ...newAttacks];
     this.attacks = newAttacks;
@@ -161,11 +185,15 @@ class Repeater {
     this.attacks = [];
     this.saveAttacks();
   }
-  stopFiring(planetId) {
+  stopFiring() {
+    const planetId = this.currentPlanets['selected']?.locationId;
+    if (!planetId) return;
     this.attacks = this.attacks.filter(a => a.sourceId !== planetId);
     this.saveAttacks();
   }
-  stopBeingFiredAt(planetId) {
+  stopBeingFiredAt() {
+    const planetId = this.currentPlanets['selected']?.locationId;
+    if (!planetId) return;
     this.attacks = this.attacks.filter(a => a.targetId !== planetId);
     this.saveAttacks();
   }
@@ -226,9 +254,6 @@ let ActionEntry = {
 function centerPlanet(id) {
   ui.centerLocationId(id);
 }
-function planetShort(locationId) {
-  return locationId.substring(4, 9);
-}
 function Attack({ attack, onToggleActive, onToggleSilver, onDelete }) {
   const srcString = getPlanetString(attack.sourceId);
   const targetString = getPlanetString(attack.targetId);
@@ -257,19 +282,46 @@ function Attack({ attack, onToggleActive, onToggleSilver, onDelete }) {
   `;
 }
 function AddAttack({ repeater, startFiring, stopFiring, stopBeingFiredAt }) {
-  let [planet, setPlanet] = useState(ui.getSelectedPlanet());
-  let [source, setSource] = useState(undefined);
-  let [target, setTarget] = useState(undefined);
-  let [active, setActive] = useState(true);
-  let [pcTrigger, setPcTrigger] = useState(DEFAULT_PERCENTAGE_TRIGGER);
-  let [pcRemain, setPcRemain] = useState(DEFAULT_PERCENTAGE_REMAIN);
-  let [sendSilverStatus, setSendSilverStatus] = useState(INITIAL_SILVER_STATUS);
+
+  const [currentPlanets, setCurrentPlanetsUS] = useState(repeater.currentPlanets);
+  const getCurrentPlanet = option => {
+    currentPlanets; // call UI state, but use repeater state
+    return repeater.currentPlanets[option];
+  }
+  const setCurrentPlanet = (option, value) => {
+    repeater.currentPlanets[option] = value;
+    setCurrentPlanetsUS(repeater.currentPlanets);
+  }
+  
+  const [currentAttack, setCurrentAttackUS] = useState(repeater.currentAttack);
+  const getCurrentAttack = option => {
+    currentAttack; // call UI state, but use repeater state
+    return repeater.currentAttack[option];
+  }
+  const setCurrentAttack = (option, value) => {
+    repeater.currentAttack[option] = value;
+    setCurrentAttackUS(repeater.currentAttack);
+  }
+
+  const setSource = () => {
+    const planet = getCurrentPlanet('selected');
+    setCurrentPlanet('source', planet);
+    setCurrentAttack('sourceId', planet?.locationId)
+  }
+  
+  const setTarget = () => {
+    const planet = getCurrentPlanet('selected');
+    setCurrentPlanet('target', planet);
+    setCurrentAttack('targetId', planet?.locationId)
+  }
+
+  const toggleSendSilver = () => setCurrentAttack(
+    'sendSilverStatus',
+    toggleSilverStatus(getCurrentAttack('sendSilverStatus'))
+  );
+
   useLayoutEffect(() => {
-    let onClick = () => {
-      const planet = ui.getSelectedPlanet();
-      setPlanet(planet);
-      repeater.uiSelectedPlanet = planet;
-    };
+    let onClick = () => setCurrentPlanet('selected', ui.getSelectedPlanet());
     window.addEventListener('click', onClick);
     return () => {
       window.removeEventListener('click', onClick);
@@ -279,10 +331,24 @@ function AddAttack({ repeater, startFiring, stopFiring, stopBeingFiredAt }) {
     let onKeyUp = e => {
       switch (e.key) {
         case KEY_SET_SOURCE:
-          setSource(ui.getSelectedPlanet());
+          setSource();
           break;
         case KEY_SET_TARGET:
-          setTarget(ui.getSelectedPlanet());
+          setTarget();
+          break;
+        case KEY_TOGGLE_SILVER:
+          toggleSendSilver();
+          break;
+        case KEY_START_FIRING:
+          startFiring();
+          break;
+        case KEY_STOP_FIRING:
+        case KEY_STOP_FIRING_DISPLAY:
+          stopFiring();
+          break;
+        case KEY_STOP_BEING_FIRED_AT:
+        case KEY_STOP_BEING_FIRED_AT_DISPLAY:
+          stopBeingFiredAt();
           break;
       }
     };
@@ -291,97 +357,67 @@ function AddAttack({ repeater, startFiring, stopFiring, stopBeingFiredAt }) {
       window.removeEventListener('keyup', onKeyUp);
     };
   }, []);
-
-  // Note: an attack is an object with this format:
-  // { sourceId, targetId, active, pcTrigger, pcRemain, sendSilverStatus }
-  // Each item is used to control a different aspect of the attack
-
   return html`
     <div style=${{ display: 'flex', flexDirection: 'column' }}>
       <div style=${{ display: 'flex' }}>
-        <button
-          style=${Margin_12B}
-          onClick=${() => {
-            setSource(planet);
-          }}
-        >
+        <button style=${Margin_12B} onClick=${setSource}>
           Set Source <span style=${Keyboard_Shortcut}>[${KEY_SET_SOURCE}]</span>
         </button>
         <span 
-          style=${source ? { ...Margin_12L_12R, ...Clickable, marginRight: 'auto' } : {...Margin_12L_12R, marginRight: 'auto'}} 
-          onClick=${source? () => centerPlanet(source.locationId) : () => {}}
+          style=${getCurrentPlanet('source') ? { ...Margin_12L_12R, ...Clickable, marginRight: 'auto' } : {...Margin_12L_12R, marginRight: 'auto'}} 
+          onClick=${getCurrentPlanet('source') ? () => centerPlanet(getCurrentAttack('sourceId')) : () => {}}
         >
-          ${source ? getPlanetString(source.locationId) : PLANET_UNKNOWN}
+          ${getPlanetString(getCurrentAttack('sourceId'))}
         </span>
       </div>
       <div style=${{ display: 'flex' }}>
-        <button style=${Margin_12B} onClick=${() => setTarget(planet)}>
+        <button style=${Margin_12B} onClick=${setTarget}>
           Set Target <span style=${Keyboard_Shortcut}>[${KEY_SET_TARGET}]</span>
         </button>
         <span 
-          style=${target ? { ...Margin_12L_12R, ...Clickable, marginRight: 'auto' } : {...Margin_12L_12R, marginRight: 'auto'}} 
-          onClick=${target? () => centerPlanet(target.locationId) : () => {}}
+          style=${getCurrentPlanet('target') ? { ...Margin_12L_12R, ...Clickable, marginRight: 'auto' } : {...Margin_12L_12R, marginRight: 'auto'}} 
+          onClick=${getCurrentPlanet('target') ? () => centerPlanet(getCurrentAttack('targetId')) : () => {}}
         >
-          ${target ? getPlanetString(target.locationId) : PLANET_UNKNOWN}
+          ${getPlanetString(getCurrentAttack('targetId'))}
         </span>
       </div>
       <div style=${{marginBottom: 3}}>
-        Trigger firing at this energy: <input type='range' min=${MIN_V} max=${MAX_V} step=${STEP_V} defaultValue=${pcTrigger} onChange=${e => setPcTrigger(parseInt(e.target.value))}/> ${pcTrigger}%
+        Trigger firing at this energy: <input type='range' min=${MIN_V} max=${MAX_V} step=${STEP_V} defaultValue=${getCurrentAttack('pcTrigger')} onChange=${e => setCurrentAttack('pcTrigger', parseInt(e.target.value))}/> ${getCurrentAttack('pcTrigger')}%
       </div>
       <div style=${{marginBottom: 3}}>
-        Remaining energy after firing: <input type='range' min=${MIN_V} max=${MAX_V} step=${STEP_V} defaultValue=${pcRemain} onChange=${e => setPcRemain(parseInt(e.target.value))}/> ${pcRemain}%
+        Remaining energy after firing: <input type='range' min=${MIN_V} max=${MAX_V} step=${STEP_V} defaultValue=${getCurrentAttack('pcRemain')} onChange=${e => setCurrentAttack('pcRemain', parseInt(e.target.value))}/> ${getCurrentAttack('pcRemain')}%
       </div>
       <div style=${{marginBottom: 10}}>
-        Choose when to send silver: <button
-          style=${{width: 150, height: 23, fontSize: '90%'}}
-          onClick=${() => setSendSilverStatus(toggleSilverStatus(sendSilverStatus))}
-        >
-          ${sendSilverStatuses[sendSilverStatus]}
+        Choose when to send silver: <button style=${{width: 150, height: 23, fontSize: '90%'}} onClick=${toggleSendSilver}>
+          ${sendSilverStatuses[getCurrentAttack('sendSilverStatus')]} <span style=${Keyboard_Shortcut}>[${KEY_TOGGLE_SILVER}]</span>
         </button>
       </div>
       <div>
-        <button
-          style=${{...Margin_12B, width: 150}}
-          onClick=${() => target && source && startFiring({
-            sourceId: source.locationId,
-            targetId: target.locationId,
-            active,
-            pcTrigger,
-            pcRemain: ((pcTrigger <= pcRemain) ? parseInt(pcTrigger / 2) : pcRemain),
-            sendSilverStatus
-          })}
-        >
-          Start Firing!
+        <button style=${{...Margin_12B, width: 150}} onClick=${startFiring}>
+          Start Firing! <span style=${Keyboard_Shortcut}>[${KEY_START_FIRING}]</span>
         </button>
       </div>
-      <hr
-        style=${{borderColor: 'grey', marginBottom: '10px'}}
-      />
-      <div
-        style=${{fontSize: '90%'}}
-      >
-        <button
-          style=${{...Margin_12B, width: 80, marginRight: 10}}
-          onClick=${() => planet && stopFiring(planet.locationId)}
-        >
-          Stop Firing
-        </button>
-        <button
-          style=${{...Margin_12B, width: 93}}
-          onClick=${() => planet && stopBeingFiredAt(planet.locationId)}
-        >
-          Stop Being Fired At
-        </button>
-        <span 
-          style=${planet ? { ...Margin_12L_12R, ...Clickable, marginRight: 'auto' } : {...Margin_12L_12R, marginRight: 'auto'}} 
-          onClick=${planet ? () => centerPlanet(planet.locationId) : () => {}}
-        >
-          ${planet ? getPlanetString(planet.locationId) : PLANET_UNKNOWN}
-        </span>
+      <hr style=${{borderColor: 'grey', marginBottom: '10px'}} />
+      <div style=${{fontSize: '99%'}}>
+        <div style=${{marginBottom: '10px'}}>
+          Selected:
+          <span 
+            style=${getCurrentPlanet('selected') ? { ...Margin_12L_12R, ...Clickable, marginRight: 'auto' } : {...Margin_12L_12R, marginRight: 'auto'}} 
+            onClick=${getCurrentPlanet('selected') ? () => centerPlanet(getCurrentPlanet('selected').locationId) : () => {}}
+          >
+            ${getPlanetString(getCurrentPlanet('selected')?.locationId)}
+          </span>
+        </div>
+        <div>
+          <button style=${{...Margin_12B, width: 150, marginRight: 10}} onClick=${stopFiring}>
+            Stop Firing <span style=${Keyboard_Shortcut}>[${KEY_STOP_FIRING_DISPLAY}]</span>
+          </button>
+          <button style=${{...Margin_12B, width: 210}} onClick=${stopBeingFiredAt}>
+            Stop Being Fired At <span style=${Keyboard_Shortcut}>[${KEY_STOP_BEING_FIRED_AT_DISPLAY}]</span>
+          </button>
+        </div>
       </div>
-      <hr
-        style=${{borderColor: 'grey', marginBottom: '10px'}}
-      /> 
+      <hr style=${{borderColor: 'grey', marginBottom: '10px'}} /> 
     </div>
   `;
 }
@@ -419,9 +455,9 @@ function AttackList({ repeater }) {
     </i>
     <${AddAttack}
       repeater=${repeater}
-      startFiring=${attack => repeater.addAttack(attack)}
-      stopFiring=${planetId => repeater.stopFiring(planetId)}
-      stopBeingFiredAt=${planetId => repeater.stopBeingFiredAt(planetId)}
+      startFiring=${() => repeater.addAttack()}
+      stopFiring=${() => repeater.stopFiring()}
+      stopBeingFiredAt=${() => repeater.stopBeingFiredAt()}
     />
     <h1 style=${{...Margin_6B, fontWeight: 'bold'}}>
       Active (${attacks.reduce((acc, atk) => acc + (atk.active ? 1 : 0), 0)} / ${attacks.length})
@@ -442,7 +478,7 @@ function App({ repeater }) {
 const drawHighlights = plugin => {
   const ctx = plugin.ctx;
   const timeMs = plugin.dateNow;
-  const planet = plugin.repeater.uiSelectedPlanet;
+  const planet = plugin.repeater.currentPlanets['selected'];
   if (!planet || !planet.location) return;
   const selectedPlanetId = planet.locationId;
   const attacks = plugin.repeater.attacks;
