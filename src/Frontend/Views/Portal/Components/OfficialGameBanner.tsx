@@ -42,13 +42,18 @@ export const OfficialGameBanner: React.FC<{
         <span>{lobbyAddress}</span>
         {/* <span style={{}}>Official DFDAO Map</span> */}
         {lobbyAddress && (
-          <Link
-            style={{ minWidth: '250px' }}
-            target='blank'
-            to={`/play/${lobbyAddress}?create=true`}
-          >
-            <ArenaPortalButton>Play</ArenaPortalButton>
-          </Link>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Link
+              style={{ minWidth: '250px' }}
+              target='blank'
+              to={`/play/${lobbyAddress}?create=true`}
+            >
+              <ArenaPortalButton>Play</ArenaPortalButton>
+            </Link>
+            <Link target='blank' to={`/portal/map/${configHash}`}>
+              <ArenaPortalButton secondary>View Map</ArenaPortalButton>
+            </Link>
+          </div>
         )}
       </div>
       {leaderboard && (
