@@ -50,7 +50,7 @@ interface winners {
   address: string;
   moves: number
 }
-interface graphArena {
+interface GraphArena {
   winners: winners[];
   creator: string;
   duration: number | null;
@@ -61,7 +61,7 @@ interface graphArena {
   moves: number;
 }
 
-async function convertData(arenas: graphArena[], isCompetitive: boolean): Promise<Leaderboard> {
+async function convertData(arenas: GraphArena[], isCompetitive: boolean): Promise<Leaderboard> {
   let entries: LeaderboardEntry[] = [];
   const twitters = await getAllTwitters();
 

@@ -351,7 +351,7 @@ const fourPlayerBattle: LobbyInitializers = {
 const sprint: LobbyInitializers = {
   ADMIN_CAN_ADD_PLANETS: true,
   WORLD_RADIUS_LOCKED: true,
-  WORLD_RADIUS_MIN: 5000,
+  WORLD_RADIUS_MIN: 6000,
   DISABLE_ZK_CHECKS: false,
   PLANETHASH_KEY: 9348,
   SPACETYPE_KEY: 9349,
@@ -450,7 +450,7 @@ const sprint: LobbyInitializers = {
   RANDOM_ARTIFACTS: true,
   ADMIN_PLANETS: [
     {
-      x: -1000,
+      x: -4000,
       y: -4000,
       level: 2,
       planetType: 0,
@@ -459,8 +459,8 @@ const sprint: LobbyInitializers = {
       blockedPlanetLocs: [],
     },
     {
-      x: 1000,
-      y: -4000,
+      x: 4000,
+      y: 4000,
       level: 2,
       planetType: 0,
       isTargetPlanet: false,
@@ -468,13 +468,28 @@ const sprint: LobbyInitializers = {
       blockedPlanetLocs: [],
     },
     {
-      x: 0,
-      y: 4600,
+      x: -4000,
+      y: 4000,
       level: 4,
       planetType: 0,
       isTargetPlanet: true,
       isSpawnPlanet: false,
-      blockedPlanetLocs: [],
+      blockedPlanetLocs: [{
+        x: -4000,
+        y: -4000
+      }],
+    },
+    {
+      x: 4000,
+      y: -4000,
+      level: 4,
+      planetType: 0,
+      isTargetPlanet: true,
+      isSpawnPlanet: false,
+      blockedPlanetLocs: [{
+        x: 4000,
+        y: 4000
+      }],
     },
   ],
   TOKEN_MINT_END_TIMESTAMP: 1717258179, // SECONDS!,
@@ -483,11 +498,11 @@ const sprint: LobbyInitializers = {
   WHITELIST: [],
   CONFIRM_START: true,
   TARGETS_REQUIRED_FOR_VICTORY: 1,
-  BLOCK_CAPTURE: false,
-  BLOCK_MOVES: false,
-  TEAMS_ENABLED: true,
+  BLOCK_CAPTURE: true,
+  BLOCK_MOVES: true,
+  TEAMS_ENABLED: false,
   NUM_TEAMS: 2,
-  RANKED: false,
+  RANKED: true,
 };
 
 const grandPrixWeek2: LobbyInitializers = {
