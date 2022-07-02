@@ -1,5 +1,5 @@
 import { LiveMatch, LiveMatchEntry } from '@darkforest_eth/types';
-import { competitiveConfig } from '../../Frontend/Utils/constants';
+import { apiUrl, competitiveConfig } from '../../Frontend/Utils/constants';
 import { getGraphQLData } from './GraphApi';
 import { getAllTwitters } from './UtilityServerAPI';
 
@@ -24,7 +24,7 @@ export const loadLiveMatches = async (
 
   const response = await getGraphQLData(
     query,
-    'https://graph-optimism.gnosischain.com/subgraphs/name/dfdao/arena-v1'
+    apiUrl
   );
 
   if ('errors' in response) {

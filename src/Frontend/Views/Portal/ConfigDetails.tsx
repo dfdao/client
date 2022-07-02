@@ -5,7 +5,17 @@ import { LobbyInitializers } from '../../Panes/Lobbies/Reducer';
 import dfstyles from '../../Styles/dfstyles';
 import { Table } from '../Table';
 
-function configItemName(name: string) {
+function capitalizeFirstLetter(word: string) {
+  return word.charAt(0).toUpperCase() + word.slice(1);
+}
+
+function configItemName(config: LobbyInitializers, name: string) {
+  // return capitalizeFirstLetter(name.toLowerCase().split("_").join(" "));
+  const prettyName = capitalizeFirstLetter(name.toLowerCase().split("_").join(" "));
+  console.log(prettyName, name, prettyName.length);
+  if (name == 'START_PAUSED') return 'Start Paused';
+
+  // return prettyName.slice(0,5);
   if (name == 'START_PAUSED') return 'Start Paused';
   if (name == 'WORLD_RADIUS_LOCKED') return 'Locked world radius';
   if (name == 'WORLD_RADIUS_MIN') return 'Min world radius';
@@ -68,7 +78,7 @@ export function ConfigDetails({ config }: { config: LobbyInitializers | undefine
   if (!config) return <>loading...</>;
 
   const columns = [
-    (item: any) => <Cell style = {{fontWeight: 'bold'}}>{configItemName(item[0].toString())}</Cell>,
+    (item: any) => <Cell style = {{fontWeight: 'bold'}}>{configItemName(config, item[0].toString())}</Cell>,
     (item: any) => (typeof item[1] == 'object' ? Tableify(item[1]) : item[1].toString()
     ),
   ];
@@ -76,7 +86,7 @@ export function ConfigDetails({ config }: { config: LobbyInitializers | undefine
     <DetailsContainer>
       <Table
         paginated={false}
-        rows={Object.entries(config).filter((item) => !!configItemName(item[0].toString()))}
+        rows={Object.entries(config).filter((item) => !!configItemName(config, item[0].toString()))}
         headers={[]}
         columns={columns}
         alignments={['l', 'r']}

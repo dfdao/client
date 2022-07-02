@@ -28,7 +28,7 @@ export const OfficialGameBanner: React.FC<{
       })
       .catch((e) => setLeaderboardError(e));
     loadRecentMaps(1, configHash).then((maps) => {
-      setLobbyAddress(maps ? maps[0].lobbyAddress : undefined);
+      setLobbyAddress((maps && maps.length > 0) ? maps[0].lobbyAddress : undefined);
     });
   }, [configHash]);
 
