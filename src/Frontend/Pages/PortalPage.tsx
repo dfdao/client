@@ -9,7 +9,7 @@ import { HideSmall } from '../Components/Text';
 import { TwitterProvider } from '../Utils/AppHooks';
 import { PortalMainView } from '../Views/Portal/PortalMainView';
 import { PortalSidebarView } from '../Views/Portal/PortalSidebarView';
-import { PrettyOverlayGradient } from './LandingPage';
+import { BackgroundImage } from './LandingPage';
 import LoadingPage from './LoadingPage';
 import { PortalLandingPage } from './PortalLandingPage';
 
@@ -68,6 +68,6 @@ const PortalContainer = styled.div`
   justify-content: center;
 `;
 
-const Background = styled(PrettyOverlayGradient)`
+const Background = styled(BackgroundImage)`
   background: #111;
 `;

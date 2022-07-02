@@ -1,5 +1,6 @@
 import { CONTRACT_ADDRESS } from '@darkforest_eth/contracts';
 import { address } from '@darkforest_eth/serde';
+import { IconType } from '@darkforest_eth/ui';
 import React, { CSSProperties } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
@@ -7,6 +8,7 @@ import { isRoundOngoing } from '../../Backend/Utils/Utils';
 import { Btn } from '../Components/Btn';
 import { EmSpacer, Link, Spacer, Title } from '../Components/CoreUI';
 import { EmailCTA, EmailCTAMode } from '../Components/Email';
+import { Icon } from '../Components/Icons';
 import { Modal } from '../Components/Modal';
 import { Red, White, Text, HideSmall } from '../Components/Text';
 import dfstyles from '../Styles/dfstyles';
@@ -53,23 +55,35 @@ export default function LandingPage() {
 
   return (
     <>
-      <PrettyOverlayGradient />
-      {/* <GrandPrix /> */}
-
-      <Page>
-        <OnlyMobile>
+      <BackgroundImage />
+      <TopBar>
+      <Icon style = {{width: '80px', height: '80px'} as CSSStyleDeclaration & CSSProperties} type={IconType.Dfdao} />
+        <ButtonWrapper>
+          <EnterButton onClick={() => history.push('/portal/home')}>
+            Enter
+        </EnterButton>
+        </ButtonWrapper>
+      </TopBar>
+      <Main>
+        {/* <OnlyMobile>
           <Spacer height={8} />
         </OnlyMobile>
         <HideOnMobile>
           <Spacer height={50} />
-        </HideOnMobile>
+        </HideOnMobile> */}
 
         <MainContentContainer>
           <Header>
+            <PageTitle>Dark Forest Arena</PageTitle>
+            <Subtitle style = {{width: '75%'}}>Play the fast-paced, free version of the premier on-chain game. </Subtitle>
             <LinkContainer>
-              <Link to={links.email}>email</Link>
+              <Link color='#00ff00' to={links.email}>
+                email
+              </Link>
               <Spacer width={4} />
-              <Link to={links.blog}>blog</Link>
+              <Link color='#00ff00' to={links.blog}>
+                blog
+              </Link>
               <Spacer width={4} />
 
               <a className={'link-twitter'} href={links.twitter}>
@@ -85,9 +99,13 @@ export default function LandingPage() {
               </a>
 
               <Spacer width={4} />
-              <Link to={links.plugins}>plugins</Link>
+              <Link color='#00ff00' to={links.plugins}>
+                plugins
+              </Link>
               <Spacer width={4} />
-              <Link to={links.wiki}>wiki</Link>
+              <Link color='#00ff00' to={links.wiki}>
+                wiki
+              </Link>
             </LinkContainer>
 
             <OnlyMobile>
@@ -97,19 +115,14 @@ export default function LandingPage() {
               <Spacer height={16} />
             </HideOnMobile>
 
-            <LandingPageRoundArt />
+            {/* <LandingPageRoundArt /> */}
 
             <Spacer height={16} />
-            <ButtonWrapper>
-              <Btn size='large' onClick={() => history.push('/portal/home')}>
-                <p style={button}>Enter</p>
-              </Btn>
-            </ButtonWrapper>
           </Header>
 
-          <Spacer height={32} />
+          {/* <Spacer height={32} /> */}
 
-          <HallOfFame style={{ color: dfstyles.colors.text }}>
+          {/* <HallOfFame style={{ color: dfstyles.colors.text }}>
             <HallOfFameTitle>Wallbreakers</HallOfFameTitle>
             <Spacer height={8} />
             <table style={{ width: '100%' }}>
@@ -139,7 +152,7 @@ export default function LandingPage() {
                 </TRow>
                 <TRow>
                   <td>
-                    <HideSmall>Week{' '}</HideSmall>3
+                    <HideSmall>Week </HideSmall>3
                   </td>
                   <td>
                     06/18/<HideSmall>20</HideSmall>22
@@ -151,7 +164,7 @@ export default function LandingPage() {
                 </TRow>
                 <TRow>
                   <td>
-                    <HideSmall>Week{' '}</HideSmall>4
+                    <HideSmall>Week </HideSmall>4
                   </td>
                   <td>
                     06/25/<HideSmall>20</HideSmall>22
@@ -163,7 +176,7 @@ export default function LandingPage() {
                 </TRow>
               </tbody>
             </table>
-          </HallOfFame>
+          </HallOfFame> */}
           {/* <Link to='https://medium.com/dfdao/dark-forest-arena-grand-prix-f761896a752e'>
             🏎 Grand Prix Info 🏎
           </Link> */}
@@ -172,15 +185,39 @@ export default function LandingPage() {
             <EmailCTA mode={EmailCTAMode.SUBSCRIBE} />
           </EmailWrapper> */}
         </MainContentContainer>
-      </Page>
+      </Main>
     </>
   );
 }
 
-export const PrettyOverlayGradient = styled.div`
+const EnterButton = styled.button`
+  font-size: 20pt;
+  border-radius: 4px;
+  padding: 4px 50px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  background-color: #00DC82;
+  color: black;
+`
+
+const PageTitle = styled.div`
+  font-size: 5em;
+  3px 3px 13px black;
+`;
+
+const Subtitle = styled.div`
+  font-size: 2em;
+  3px 3px 13px black;
+`;
+
+export const BackgroundImage = styled.div`
   width: 100vw;
   height: 100vh;
-  background-image: linear-gradient(to left bottom, #012338, #1e2142, #3e173e, #56042a, #5e0808);
+  background-image: url(/img/epicbattle.jpg);
+  background-size: cover;
+  filter: blur(3px);
   background-position: 50%, 50%;
   display: inline-block;
   position: fixed;
@@ -189,8 +226,30 @@ export const PrettyOverlayGradient = styled.div`
   z-index: -1;
 `;
 
+const TopBar = styled.div`
+  // position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100px;
+  background: rgba(0, 0, 0, 0.9);
+  padding: 64px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+`;
+
 const Header = styled.div`
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  -webkit-box-pack: end;
+  justify-content: flex-end;
+  will-change: transform;
+  align-items: flex-start;
+  width: 100%;
+  height: calc(100vh - 100px);
+  padding-bottom: 100px;
 `;
 
 const EmailWrapper = styled.div`
@@ -214,14 +273,14 @@ const TRow = styled.tr`
 const button = { minWidth: '200px' } as CSSStyleDeclaration & CSSProperties;
 
 const MainContentContainer = styled.div`
-  max-width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
+  width: 90%;
+  max-width: 1340px;
+  padding: 64px 0px;
+  min-height: 80vh;
+  margin-bottom: 60px;
 `;
 
-const Page = styled.div`
+const Main = styled.div`
   position: absolute;
   width: 100vw;
   max-width: 100vw;
