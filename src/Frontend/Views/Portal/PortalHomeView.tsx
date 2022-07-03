@@ -26,6 +26,11 @@ export const PortalHomeView: React.FC<{}> = () => {
 
   return (
     <Container>
+      <span style = {{fontSize: '3em'}}>Welcome to Dark Forest Arena!</span>
+      <span style = {{fontSize: '1.5em'}}>
+        Play our official map, discover community-created matches, or view data about other players.
+      </span>
+
       <OfficialGameBanner configHash={competitiveConfig} />
       <Spacer height={24} />
       <MoreMapsContainer>

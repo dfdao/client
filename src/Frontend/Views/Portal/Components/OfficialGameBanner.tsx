@@ -28,40 +28,42 @@ export const OfficialGameBanner: React.FC<{
       })
       .catch((e) => setLeaderboardError(e));
     loadRecentMaps(1, configHash).then((maps) => {
-      setLobbyAddress((maps && maps.length > 0) ? maps[0].lobbyAddress : undefined);
+      setLobbyAddress(maps && maps.length > 0 ? maps[0].lobbyAddress : undefined);
     });
   }, [configHash]);
 
   return (
-    <Banner>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <Sub>Play the Grand Prix</Sub>
-          <BannerTitle>{getConfigName(configHash)}</BannerTitle>
-        </div>
-        <span>{lobbyAddress}</span>
-        {/* <span style={{}}>Official DFDAO Map</span> */}
-        {lobbyAddress && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Link
-              style={{ minWidth: '250px' }}
-              target='blank'
-              to={`/play/${lobbyAddress}?create=true`}
-            >
-              <ArenaPortalButton>Play</ArenaPortalButton>
-            </Link>
-            <Link to={`/portal/map/${configHash}`}>
-              <ArenaPortalButton secondary>View Map</ArenaPortalButton>
-            </Link>
+    <>
+      {lobbyAddress && (
+        <Banner>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <Sub>Play the Grand Prix</Sub>
+              <BannerTitle>{getConfigName(configHash)}</BannerTitle>
+            </div>
+            <span>{lobbyAddress}</span>
+            {/* <span style={{}}>Official DFDAO Map</span> */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Link
+                style={{ minWidth: '250px' }}
+                target='blank'
+                to={`/play/${lobbyAddress}?create=true`}
+              >
+                <ArenaPortalButton>Play</ArenaPortalButton>
+              </Link>
+              <Link to={`/portal/map/${configHash}`}>
+                <ArenaPortalButton secondary>View Map</ArenaPortalButton>
+              </Link>
+            </div>
           </div>
-        )}
-      </div>
-      {leaderboard && (
-        <div style={{ maxHeight: '25vh', overflowY: 'auto', marginBottom: '3rem' }}>
-          <ArenaLeaderboardDisplay leaderboard={leaderboard} error={leaderboardError} />
-        </div>
+          {leaderboard && (
+            <div style={{ maxHeight: '25vh', overflowY: 'auto', marginBottom: '3rem' }}>
+              <ArenaLeaderboardDisplay leaderboard={leaderboard} error={leaderboardError} />
+            </div>
+          )}
+        </Banner>
       )}
-    </Banner>
+    </>
   );
 };
 
