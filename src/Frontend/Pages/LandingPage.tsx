@@ -1,7 +1,7 @@
 import { CONTRACT_ADDRESS } from '@darkforest_eth/contracts';
 import { address } from '@darkforest_eth/serde';
 import { IconType } from '@darkforest_eth/ui';
-import React, { CSSProperties } from 'react';
+import React, { CSSProperties, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { isRoundOngoing } from '../../Backend/Utils/Utils';
@@ -22,11 +22,11 @@ export const enum LandingPageZIndex {
 }
 
 const links = {
-  twitter: 'http://twitter.com/darkforest_eth',
-  email: 'mailto:ivan@0xparc.org',
+  twitter: 'http://twitter.com/d_fdao',
+  email: 'mailto:zeroxhank@gmail.com',
   blog: 'https://blog.zkga.me/',
-  discord: 'https://discord.gg/2u2TN6v8r6',
-  github: 'https://github.com/darkforest-eth',
+  discord: 'https://discord.gg/XxveJpwJ',
+  github: 'https://github.com/dfdao',
   wiki: 'https://dfwiki.net/wiki/Main_Page',
   plugins: 'https://plugins.zkga.me/',
 };
@@ -52,17 +52,66 @@ const ButtonWrapper = styled.div`
 
 export default function LandingPage() {
   const history = useHistory();
-
+  const [wallbreakers, setWallbreakers] = useState<boolean>(false);
   return (
     <>
       <BackgroundImage />
       <TopBar>
-      <Icon style = {{width: '80px', height: '80px'} as CSSStyleDeclaration & CSSProperties} type={IconType.Dfdao} />
-        <ButtonWrapper>
-          <EnterButton onClick={() => history.push('/portal/home')}>
-            Enter
-        </EnterButton>
-        </ButtonWrapper>
+        <Icon
+          style={{ width: '80px', height: '80px' } as CSSStyleDeclaration & CSSProperties}
+          type={IconType.Dfdao}
+        />
+        <div
+          style={{ fontSize: '1.5em' }}
+          onMouseEnter={() => setWallbreakers(true)}
+          onMouseLeave={() => setWallbreakers(false)}
+        >
+          Wallbreakers
+          {wallbreakers && (
+            <WallbreakersContainer>
+              {' '}
+              <table style={{ width: '100%' }}>
+                <tbody style={{ width: '100%' }}>
+                  <TRow>
+                    <td>
+                      <HideSmall>Week </HideSmall>1
+                    </td>
+                    <td>
+                      <Link to='https://twitter.com/TheVelorum'>Velorum</Link>
+                    </td>
+                  </TRow>
+                  <TRow>
+                    <td>
+                      <HideSmall>Week </HideSmall>2
+                    </td>
+                    <td>
+                      {' '}
+                      <Link to='https://twitter.com/Ner0nzz'>Ner0nzz</Link>
+                    </td>
+                  </TRow>
+                  <TRow>
+                    <td>
+                      <HideSmall>Week </HideSmall>3
+                    </td>
+                    <td>
+                      {' '}
+                      <Link to='https://twitter.com/Ner0nzz'>Ner0nzz</Link>
+                    </td>
+                  </TRow>
+                  <TRow>
+                    <td>
+                      <HideSmall>Week </HideSmall>4
+                    </td>
+                    <td>
+                      {' '}
+                      <Link to='https://twitter.com/ClassicJordon'>ClassicJordon</Link>
+                    </td>
+                  </TRow>
+                </tbody>
+              </table>
+            </WallbreakersContainer>
+          )}
+        </div>
       </TopBar>
       <Main>
         {/* <OnlyMobile>
@@ -75,7 +124,10 @@ export default function LandingPage() {
         <MainContentContainer>
           <Header>
             <PageTitle>Dark Forest Arena</PageTitle>
-            <Subtitle style = {{width: '75%'}}>Play the fast-paced, free version of the premier on-chain game. </Subtitle>
+            <Subtitle>
+              Play dfdao's fast-paced, free version of the premier on-chain game.{' '}
+            </Subtitle>
+            <EnterButton onClick={() => history.push('/portal/home')}>Enter</EnterButton>
             <LinkContainer>
               <Link color='#00ff00' to={links.email}>
                 email
@@ -193,31 +245,33 @@ export default function LandingPage() {
 const EnterButton = styled.button`
   font-size: 20pt;
   border-radius: 4px;
-  padding: 4px 50px;
+  padding: 10px 50px;
   display: inline-flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  background-color: #00DC82;
+  background-color: #00dc82;
   color: black;
-`
+  width: 50%;
+`;
 
 const PageTitle = styled.div`
   font-size: 5em;
   3px 3px 13px black;
-`;
+  font-weight: bold;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;`;
 
 const Subtitle = styled.div`
   font-size: 2em;
-  3px 3px 13px black;
+  font-weight: bold;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 `;
-
 export const BackgroundImage = styled.div`
   width: 100vw;
   height: 100vh;
   background-image: url(/img/epicbattle.jpg);
   background-size: cover;
-  filter: blur(3px);
+  filter: blur(3px) brightness(0.7) saturate(1.5);
   background-position: 50%, 50%;
   display: inline-block;
   position: fixed;
@@ -232,7 +286,7 @@ const TopBar = styled.div`
   left: 0;
   width: 100vw;
   height: 100px;
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.4);
   padding: 64px;
   display: flex;
   flex-direction: row;
@@ -247,9 +301,11 @@ const Header = styled.div`
   justify-content: flex-end;
   will-change: transform;
   align-items: flex-start;
-  width: 100%;
-  height: calc(100vh - 100px);
-  padding-bottom: 100px;
+  width: 80%;
+  // height: calc(100vh - 100px);
+  height: 100%;
+  // padding-bottom: 100px;
+  gap: 10px;
 `;
 
 const EmailWrapper = styled.div`
@@ -273,18 +329,20 @@ const TRow = styled.tr`
 const button = { minWidth: '200px' } as CSSStyleDeclaration & CSSProperties;
 
 const MainContentContainer = styled.div`
-  width: 90%;
-  max-width: 1340px;
-  padding: 64px 0px;
+  width: 95%;
+  // max-width: 1340px;
+  // padding: 64px 0px;
   min-height: 80vh;
-  margin-bottom: 60px;
+  // margin-bottom: 60px;
+  // height: calc(100vh - 100px);
+  height: 100%;
 `;
 
 const Main = styled.div`
   position: absolute;
   width: 100vw;
   max-width: 100vw;
-  height: 100%;
+  height: calc(100vh - 180px);
   color: white;
   font-size: ${dfstyles.fontSize};
   display: flex;
@@ -351,7 +409,7 @@ function GrandPrix() {
           , courtesy of <Link to='https://twitter.com/moongate_io'>Moongate Guild</Link>.
           <br />
           <br />
-          Or read community member ClassicJordon's {' '}
+          Or read community member ClassicJordon's{' '}
           <Link to='https://medium.com/@classicjdf/classicjs-dark-forest-101-strategy-guide-part-1-energy-1b80923fee69'>
             beginners strategy guide!
           </Link>
@@ -415,4 +473,19 @@ const HallOfFame = styled.div`
   @media only screen and (max-device-width: 1000px) {
     font-size: 70%;
   }
+`;
+
+const WallbreakersContainer = styled.div`
+  right: 0;
+  padding: 10px;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: space-between;
+  background: rgba(0, 0, 0, 0.2);
 `;
