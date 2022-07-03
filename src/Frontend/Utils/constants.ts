@@ -18,7 +18,7 @@ const LOCATION_ID_UB = bigInt(
   '21888242871839275222246405745257275088548364400416034343698204186575808495617'
 );
 
-const apiUrl = 'https://graph-optimism.gnosischain.com/subgraphs/name/dfdao/arena-v1';
+const apiUrl = 'https://graph-optimism.gnosischain.com/subgraphs/name/dfdao/arena-v2';
 
 
 const competitiveConfig = '0xa5270a267313d923a05a95b11d2be9b7d9e7c5194bf9d5d9f3ee28366a7809c4';
