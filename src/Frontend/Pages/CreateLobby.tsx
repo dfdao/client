@@ -5,12 +5,15 @@ import { ArtifactRarity, EthAddress } from '@darkforest_eth/types';
 import React, { useCallback, useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { ContractsAPI, makeContractsAPI } from '../../Backend/GameLogic/ContractsAPI';
+import { Account, getActive } from '../../Backend/Network/AccountManager';
+import { getEthConnection } from '../../Backend/Network/Blockchain';
 import { loadConfigFromAddress } from '../../Backend/Network/ConfigApi';
 import { InitRenderState, Wrapper } from '../Components/GameLandingPageComponents';
 import { LobbyInitializers } from '../Panes/Lobbies/Reducer';
 import { listenForKeyboardEvents, unlinkKeyboardEvents } from '../Utils/KeyEmitters';
 import { stockConfig } from '../Utils/StockConfigs';
 import { CadetWormhole } from '../Views/CadetWormhole';
+import LoadingPage from './LoadingPage';
 import { LobbyConfigPage } from './LobbyConfigPage';
 import { PortalLandingPage } from './PortalLandingPage';
 
@@ -21,7 +24,7 @@ type ErrorState =
 
 export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>) {
   const [connection, setConnection] = useState<EthConnection | undefined>();
-  const [ownerAddress, setOwnerAddress] = useState<EthAddress | undefined>();
+  const [account, setAccount] = useState<Account | undefined>(getActive());
   const [contract, setContract] = useState<ContractsAPI | undefined>();
   const [startingConfig, setStartingConfig] = useState<LobbyInitializers | undefined>();
   const contractAddress: EthAddress = address(CONTRACT_ADDRESS);
@@ -32,15 +35,28 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
   );
 
   useEffect(() => {
+    async function getConnection() {
+      try {
+        const connection = await getEthConnection();
+        setConnection(connection);
+      } catch (e) {
+        alert('error connecting to blockchain');
+        console.log(e);
+      }
+    }
+
+    getConnection();
     listenForKeyboardEvents();
 
     return () => unlinkKeyboardEvents();
   }, []);
 
   const onReady = useCallback(
-    (connection: EthConnection) => {
-      setConnection(connection);
-      setOwnerAddress(connection.getAddress());
+    (connect: EthConnection) => {
+      const address = connect.getAddress();
+      const privateKey = connect.getPrivateKey();
+      if (!address || !privateKey) throw new Error('account not found');
+      setAccount({ address, privateKey });
     },
     [setConnection]
   );
@@ -64,7 +80,6 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
               setStartingConfig(config.config);
             }
             return;
-
           })
           .catch((e) => {
             console.log(e);
@@ -88,18 +103,22 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
     }
   }
 
-  const content =
-    contract && connection && ownerAddress && startingConfig ? (
-      <LobbyConfigPage
-        contractsAPI={contract}
-        connection={connection}
-        ownerAddress={ownerAddress}
-        startingConfig={startingConfig}
-        root={`/arena/${configContractAddress}`}
-      />
-    ) : (
-      <PortalLandingPage onReady={onReady} />
-    );
+  let content = <LoadingPage />;
+
+  if (connection && startingConfig && contract) {
+    content =
+      account ? (
+        <LobbyConfigPage
+          contractsAPI={contract}
+          connection={connection}
+          ownerAddress={account.address}
+          startingConfig={startingConfig}
+          root={`/arena/${configContractAddress}`}
+        />
+      ) : (
+        <PortalLandingPage onReady={onReady} connection={connection} />
+      );
+  }
 
   return (
     <Wrapper initRender={InitRenderState.NONE} terminalEnabled={false}>

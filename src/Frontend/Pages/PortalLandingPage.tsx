@@ -215,7 +215,7 @@ class PortalPageTerminal {
   }
 }
 
-async function sendDrip(connection: EthConnection, address: EthAddress) {
+export async function sendDrip(connection: EthConnection, address: EthAddress) {
   // If drip fails
   try {
     const currBalance = weiToEth(await connection.loadBalance(address));
@@ -236,41 +236,11 @@ async function sendDrip(connection: EthConnection, address: EthAddress) {
   }
 }
 
-export function PortalLandingPage({ onReady }: { onReady: (connection: EthConnection) => void }) {
+export function PortalLandingPage({ onReady, connection }: { onReady: (connection: EthConnection) => void, connection: EthConnection }) {
   const terminal = useRef<TerminalHandle>();
-  const [connection, setConnection] = useState<EthConnection | undefined>();
   const [controller, setController] = useState<PortalPageTerminal | undefined>();
 
   useEffect(() => {
-    async function getConnection() {
-      try {
-        const connection = await getEthConnection();
-        setConnection(connection);
-      } catch (e) {
-        alert('error connecting to blockchain');
-        console.log(e);
-      }
-    }
-
-    getConnection();
-  }, []);
-
-  useEffect(() => {
-    async function setPlayer(ethConnection : EthConnection) {
-      try {
-        const account = getActive();
-        if (!!account) {
-          await ethConnection.setAccount(account.privateKey);
-          await sendDrip(ethConnection, account.address);
-          onReady(ethConnection);
-          return;
-        }
-      } catch (e) {
-        alert('Unable to connect account');
-        logOut();        
-      }
-    }
-
     if (!controller && connection && terminal.current) {
       const newController = new PortalPageTerminal(
         connection,
@@ -284,7 +254,6 @@ export function PortalLandingPage({ onReady }: { onReady: (connection: EthConnec
           }
         }
       );
-      setPlayer(connection);
       newController.chooseAccount();
       setController(newController);
     }
