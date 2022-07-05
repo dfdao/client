@@ -59,7 +59,7 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
         loadConfigFromAddress(configContractAddress)
           .then((config) => {
             if (!config) {
-              setStartingConfig(stockConfig.onePlayerRace);
+              setStartingConfig(stockConfig.vanilla);
             } else {
               setStartingConfig(config.config);
             }
@@ -73,37 +73,6 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
       }
     }
   }, [connection, contractAddress]);
-
-  useEffect(() => {
-    if (contract) {
-      contract
-        .getConstants()
-        .then((config) => {
-          setStartingConfig({
-            // TODO: clean up these types
-            ...config,
-            WHITELIST_ENABLED: false,
-            ADMIN_PLANETS: [],
-            TOKEN_MINT_END_TIMESTAMP: 1682435240778, // Tuesday, April 25, 2023
-            ARTIFACT_POINT_VALUES: [
-              config.ARTIFACT_POINT_VALUES[ArtifactRarity.Unknown],
-              config.ARTIFACT_POINT_VALUES[ArtifactRarity.Common],
-              config.ARTIFACT_POINT_VALUES[ArtifactRarity.Rare],
-              config.ARTIFACT_POINT_VALUES[ArtifactRarity.Epic],
-              config.ARTIFACT_POINT_VALUES[ArtifactRarity.Legendary],
-              config.ARTIFACT_POINT_VALUES[ArtifactRarity.Mythic],
-            ],
-            INIT_PLANETS: [],
-            NO_ADMIN: false,
-            WHITELIST: [],
-          });
-        })
-        .catch((e) => {
-          console.log(e);
-          setErrorState({ type: 'invalidContract' });
-        });
-    }
-  }, [contract]);
 
   if (errorState) {
     switch (errorState.type) {

@@ -55,7 +55,7 @@ export default function LandingPage() {
   const [wallbreakers, setWallbreakers] = useState<boolean>(false);
   return (
     <>
-      <BackgroundImage />
+      <BackgroundImage src={'/public/img/epicbattle.jpg'} />
       <TopBar>
         <Icon
           style={{ width: '80px', height: '80px' } as CSSStyleDeclaration & CSSProperties}
@@ -67,10 +67,10 @@ export default function LandingPage() {
           onMouseLeave={() => setWallbreakers(false)}
         >
           Wallbreakers
-          {wallbreakers && (
-            <WallbreakersContainer>
+          
+            <WallbreakersContainer >
               {' '}
-              <table style={{ width: '100%' }}>
+              <table style={{ width: '100%', display: wallbreakers ? 'block' : 'none'}}>
                 <tbody style={{ width: '100%' }}>
                   <TRow>
                     <td>
@@ -107,10 +107,19 @@ export default function LandingPage() {
                       <Link to='https://twitter.com/ClassicJordon'>ClassicJordon</Link>
                     </td>
                   </TRow>
+                  <TRow>
+                    <td>
+                      <HideSmall>Week </HideSmall>5
+                    </td>
+                    <td>
+                      {' '}
+                      <Link to='https://twitter.com/Yuri_v9v'>Yuri_v9v</Link>
+                    </td>
+                  </TRow>
                 </tbody>
               </table>
             </WallbreakersContainer>
-          )}
+          
         </div>
       </TopBar>
       <Main>
@@ -266,10 +275,10 @@ const Subtitle = styled.div`
   font-weight: bold;
   text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 `;
-export const BackgroundImage = styled.div`
+export const BackgroundImage = styled.img`
   width: 100vw;
   height: 100vh;
-  background-image: url(/img/epicbattle.jpg);
+  // background-image: url(/img/epicbattle.jpg);
   background-size: cover;
   filter: blur(3px) brightness(0.7) saturate(1.5);
   background-position: 50%, 50%;
@@ -482,7 +491,7 @@ const WallbreakersContainer = styled.div`
   background-color: #f1f1f1;
   min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  z-index: 1;
+  z-index: 20;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
