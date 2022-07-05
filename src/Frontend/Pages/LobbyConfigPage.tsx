@@ -128,12 +128,11 @@ export function LobbyConfigPage({
   }
 
   async function createLobby(config: LobbyInitializers) {
-    
-    const {owner, lobby, startTx} = await createAndInitArena({
+    const { owner, lobby, startTx } = await createAndInitArena({
       config,
       contractsAPI,
       ethConnection: connection,
-    })
+    });
     setLobbyTx(startTx?.hash);
 
     if (owner === ownerAddress) {
@@ -190,6 +189,7 @@ export function LobbyConfigPage({
       <Switch>
         <Route path={root} exact={true}>
           <LobbyMapSelectPage
+            address={ownerAddress}
             startingConfig={startingConfig}
             updateConfig={updateConfig}
             lobbyAdminTools={lobbyAdminTools}

@@ -8,8 +8,11 @@ import { ContractsAPI, makeContractsAPI } from '../../Backend/GameLogic/Contract
 import { Account, getActive } from '../../Backend/Network/AccountManager';
 import { getEthConnection } from '../../Backend/Network/Blockchain';
 import { loadConfigFromAddress } from '../../Backend/Network/ConfigApi';
+import { getAllTwitters } from '../../Backend/Network/UtilityServerAPI';
+import { AddressTwitterMap } from '../../_types/darkforest/api/UtilityServerAPITypes';
 import { InitRenderState, Wrapper } from '../Components/GameLandingPageComponents';
 import { LobbyInitializers } from '../Panes/Lobbies/Reducer';
+import { TwitterProvider } from '../Utils/AppHooks';
 import { listenForKeyboardEvents, unlinkKeyboardEvents } from '../Utils/KeyEmitters';
 import { stockConfig } from '../Utils/StockConfigs';
 import { CadetWormhole } from '../Views/CadetWormhole';
@@ -29,6 +32,11 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
   const [startingConfig, setStartingConfig] = useState<LobbyInitializers | undefined>();
   const contractAddress: EthAddress = address(CONTRACT_ADDRESS);
   const configContractAddress = address(match.params.contract) || contractAddress;
+  const [twitters, setTwitters] = useState<AddressTwitterMap | undefined>();
+
+  useEffect(() => {
+    getAllTwitters().then((t) => setTwitters(t));
+  }, []);
 
   const [errorState, setErrorState] = useState<ErrorState | undefined>(
     contractAddress ? undefined : { type: 'invalidAddress' }
@@ -107,14 +115,16 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
 
   if (connection && startingConfig && contract) {
     content =
-      account ? (
-        <LobbyConfigPage
-          contractsAPI={contract}
-          connection={connection}
-          ownerAddress={account.address}
-          startingConfig={startingConfig}
-          root={`/arena/${configContractAddress}`}
-        />
+      account && twitters ? (
+        <TwitterProvider value={twitters}>
+          <LobbyConfigPage
+            contractsAPI={contract}
+            connection={connection}
+            ownerAddress={account.address}
+            startingConfig={startingConfig}
+            root={`/arena/${configContractAddress}`}
+          />
+        </TwitterProvider>
       ) : (
         <PortalLandingPage onReady={onReady} connection={connection} />
       );

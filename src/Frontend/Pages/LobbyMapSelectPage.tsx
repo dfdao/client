@@ -1,4 +1,4 @@
-import { WorldCoords } from '@darkforest_eth/types';
+import { EthAddress, WorldCoords } from '@darkforest_eth/types';
 import React, { CSSProperties, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
@@ -10,15 +10,17 @@ import { ConfigUpload } from '../Panes/Lobbies/LobbiesUtils';
 import { MinimapConfig } from '../Panes/Lobbies/MinimapUtils';
 import { LobbyAction, lobbyConfigInit, LobbyInitializers } from '../Panes/Lobbies/Reducer';
 import { stockConfig } from '../Utils/StockConfigs';
+import { Account } from '../Views/Portal/Account';
 
 export const LobbyMapSelectPage: React.FC<{
+  address : EthAddress;
   startingConfig: LobbyInitializers;
   updateConfig: React.Dispatch<LobbyAction>;
   lobbyAdminTools: LobbyAdminTools | undefined;
   createDisabled: boolean;
   root: string;
   setError: (error: string) => void;
-}> = ({ startingConfig, updateConfig, lobbyAdminTools, createDisabled, root, setError }) => {
+}> = ({ address, startingConfig, updateConfig, lobbyAdminTools, createDisabled, root, setError }) => {
   const mapSizePx = '250px';
   const history = useHistory();
 
@@ -107,6 +109,8 @@ export const LobbyMapSelectPage: React.FC<{
 
   return (
     <Container>
+            <div style = {{width: '150px'}}><Account address = {address} /></div>
+
       <Header>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
           <Logo />
