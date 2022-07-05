@@ -14,6 +14,7 @@ import {
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import GameUIManager from '../../Backend/GameLogic/GameUIManager';
 import { loadArenaLeaderboard } from '../../Backend/Network/ArenaLeaderboardApi';
+import { GraphConfigPlayer, loadEloLeaderboard } from '../../Backend/Network/EloLeaderboardApi';
 import { loadLeaderboard } from '../../Backend/Network/LeaderboardApi';
 import { loadLiveMatches } from '../../Backend/Network/SpyApi';
 import { Wrapper } from '../../Backend/Utils/Wrapper';
@@ -244,6 +245,32 @@ export function useArenaLeaderboard(
 
   return { arenaLeaderboard, arenaError };
 }
+
+export function useEloLeaderboard(
+  isCompetitive: boolean,
+  address: string | undefined = undefined,
+  poll: number | undefined = undefined
+): {
+  eloLeaderboard: GraphConfigPlayer[] | undefined;
+  eloError: Error | undefined;
+} {
+  const [eloLeaderboard, setEloLeaderboard] = useState<GraphConfigPlayer[] | undefined>();
+  const [eloError, setEloError] = useState<Error | undefined>();
+
+  const loadElo = useCallback(async function loadElo() {
+    try {
+      setEloLeaderboard(await loadEloLeaderboard(address, isCompetitive));
+    } catch (e) {
+      console.log('error loading leaderboard', e);
+      setEloError(e);
+    }
+  }, []);
+
+  usePoll(loadElo, poll, true);
+
+  return { eloLeaderboard, eloError };
+}
+
 
 export function useLiveMatches(
   config: string | undefined = undefined,

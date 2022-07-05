@@ -5,7 +5,7 @@ import { ArtifactRarity, EthAddress } from '@darkforest_eth/types';
 import React, { useCallback, useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { ContractsAPI, makeContractsAPI } from '../../Backend/GameLogic/ContractsAPI';
-import { Account, getActive } from '../../Backend/Network/AccountManager';
+import { Account, getActive, logOut } from '../../Backend/Network/AccountManager';
 import { getEthConnection } from '../../Backend/Network/Blockchain';
 import { loadConfigFromAddress } from '../../Backend/Network/ConfigApi';
 import { getAllTwitters } from '../../Backend/Network/UtilityServerAPI';
@@ -18,7 +18,7 @@ import { stockConfig } from '../Utils/StockConfigs';
 import { CadetWormhole } from '../Views/CadetWormhole';
 import LoadingPage from './LoadingPage';
 import { LobbyConfigPage } from './LobbyConfigPage';
-import { PortalLandingPage } from './PortalLandingPage';
+import { PortalLandingPage, sendDrip } from './PortalLandingPage';
 
 type ErrorState =
   | { type: 'invalidAddress' }
@@ -71,6 +71,20 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
 
   useEffect(() => {
     if (connection) {
+      async function setPlayer(ethConnection : EthConnection) {
+        try {
+          if (!!account) {
+            await ethConnection.setAccount(account.privateKey);
+            await sendDrip(ethConnection, account.address);
+            onReady(ethConnection);
+            return;
+          }
+        } catch (e) {
+          alert('Unable to connect account');
+          logOut();        
+        }
+      }
+      if(connection) setPlayer(connection);
       if (contractAddress) {
         makeContractsAPI({ connection, contractAddress })
           .then((contract) => setContract(contract))
@@ -95,7 +109,7 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
           });
       }
     }
-  }, [connection, contractAddress]);
+  }, [connection, contractAddress, account]);
 
   if (errorState) {
     switch (errorState.type) {

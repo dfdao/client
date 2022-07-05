@@ -2,12 +2,13 @@ import { Leaderboard } from '@darkforest_eth/types';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { GraphConfigPlayer } from '../../Backend/Network/EloLeaderboardApi';
 import { getRank, Rank } from '../../Backend/Utils/Rank';
 import { Gnosis, Star, Twitter } from '../Components/Icons';
 import { Red, Subber } from '../Components/Text';
 import { TextPreview } from '../Components/TextPreview';
 import dfstyles from '../Styles/dfstyles';
-import { useArenaLeaderboard } from '../Utils/AppHooks';
+import { useArenaLeaderboard, useEloLeaderboard, useTwitters } from '../Utils/AppHooks';
 import { roundEndTimestamp, roundStartTimestamp } from '../Utils/constants';
 import { formatDuration } from '../Utils/TimeUtils';
 import { GenericErrorBoundary } from './GenericErrorBoundary';
@@ -40,6 +41,34 @@ export function ArenaLeaderboardDisplay({
         </StatsTableContainer>
         {/* <Spacer height={8} /> */}
         <ArenaLeaderboardBody leaderboard={leaderboard} error={error} />
+      </LeaderboardContainer>
+    </GenericErrorBoundary>
+  );
+}
+
+export function EloLeaderboardWithData({ config }: { config: string }) {
+  const { eloLeaderboard, eloError } = useEloLeaderboard(false, config);
+  return <EloLeaderboardDisplay leaderboard={eloLeaderboard} error={eloError} />;
+}
+
+export function EloLeaderboardDisplay({
+  leaderboard,
+  error,
+}: {
+  leaderboard: GraphConfigPlayer[] | undefined;
+  error: Error | undefined;
+}) {
+  return (
+    <GenericErrorBoundary errorMessage={errorMessage}>
+      <LeaderboardContainer>
+        <StatsTableContainer>
+          <StatsTable>
+            {/* <CountDown /> */}
+            <TotalPlayers leaderboard={leaderboard} error={error} />
+          </StatsTable>
+        </StatsTableContainer>
+        {/* <Spacer height={8} /> */}
+        <EloLeaderboardBody leaderboard={leaderboard} error={error} />
       </LeaderboardContainer>
     </GenericErrorBoundary>
   );
@@ -110,10 +139,19 @@ function getRankStar(rank: number) {
   }
   return <></>;
 }
+
 interface Row {
   address: string;
   twitter: string | undefined;
   score: number | undefined;
+}
+
+interface EloRow {
+  address: string;
+  twitter: string | undefined;
+  score: number | undefined;
+  wins: number;
+  losses: number;
 }
 
 function CountDown() {
@@ -177,6 +215,34 @@ function ArenasCreated({
     return (
       <tbody style={{ fontSize: '1.25em' }}>
         <tr>
+          <td>Total Players</td>
+          <td>{leaderboard.length}</td>
+        </tr>
+      </tbody>
+    );
+  } else {
+    return <></>;
+  }
+}
+
+function TotalPlayers({
+  leaderboard,
+  error,
+}: {
+  leaderboard: GraphConfigPlayer[] | undefined;
+  error: Error | undefined;
+}) {
+  if (error) {
+    return (
+      <LeaderboardContainer>
+        <Red>{errorMessage}</Red>
+      </LeaderboardContainer>
+    );
+  }
+  if (leaderboard) {
+    return (
+      <tbody style={{ fontSize: '1.25em' }}>
+        <tr>
           <td>Total races</td>
           <td>{leaderboard.length}</td>
         </tr>
@@ -194,7 +260,7 @@ function ArenaLeaderboardTable({ rows }: { rows: Row[] }) {
       <Table
         alignments={['r', 'r', 'l', 'l', 'r']}
         headers={[
-          <Cell key='star'></Cell>,
+          // <Cell key='star'></Cell>,
           <Cell key='rank'></Cell>,
           <Cell key='name'></Cell>,
           <Cell key='twitter'></Cell>,
@@ -203,7 +269,7 @@ function ArenaLeaderboardTable({ rows }: { rows: Row[] }) {
         ]}
         rows={rows}
         columns={[
-          (row: Row, i) => getRankStar(i), //star
+          // (row: Row, i) => getRankStar(i), //star
           (
             row: Row,
             i //rank
@@ -304,6 +370,121 @@ function ArenaLeaderboardBody({
   return <ArenaLeaderboardTable rows={arenaRows} />;
 }
 
+function EloLeaderboardTable({ rows }: { rows: EloRow[] }) {
+  if (rows.length == 0) return <Subber>No players finished</Subber>;
+  return (
+    <TableContainer>
+      <Table
+        alignments={['r', 'l', 'c', 'c', 'r', 'r']}
+        headers={[
+          // <Cell key='star'></Cell>,
+          <Cell key='rank'></Cell>,
+          <Cell key='name'></Cell>,
+          <Cell key='twitter'></Cell>,
+          <Cell key='gnosis'></Cell>,
+          <Cell key='score'>Elo</Cell>,
+          <Cell key='W/L'>W/L</Cell>,
+        ]}
+        rows={rows}
+        columns={[
+          // (row: Row, i) => getRankStar(i), //star
+          (row: EloRow, i) => (
+            <Cell>{row.score === undefined || row.score === null ? 'unranked' : i + 1 + '.'}</Cell>
+          ),
+          (row: EloRow, i) => {
+            // name
+            const color = getRankColor([i, row.score]);
+            return <Cell>{compPlayerToEntry(row.address, row.twitter, color)}</Cell>;
+          },
+          (row: EloRow, i) => {
+            // twitter
+            return (
+              <Cell>
+                {row.twitter && (
+                  <a
+                    style={{ display: 'flex', alignItems: 'center' }}
+                    target='_blank'
+                    href={`https://twitter.com/${row.twitter}`}
+                  >
+                    <Twitter width='24px' height='24px' />
+                  </a>
+                )}
+              </Cell>
+            );
+          },
+          (row: EloRow, i) => {
+            // gnosis
+            return (
+              <Cell>
+                {' '}
+                <a
+                  style={{ display: 'flex', alignItems: 'center' }}
+                  target='_blank'
+                  href={`https://blockscout.com/xdai/optimism/address/${row.address}`}
+                >
+                  <GnoButton>
+                    <Gnosis width='24px' height='24px' />
+                  </GnoButton>
+                </a>
+              </Cell>
+            );
+          },
+          (row: EloRow, i) => {
+            // score
+            return <Cell>{row.score}</Cell>;
+          },
+          (row: EloRow, i) => {
+            // win/loss
+            return <Cell>{row.wins}/{row.losses}</Cell>;
+          },
+        ]}
+      />
+    </TableContainer>
+  );
+}
+
+function EloLeaderboardBody({
+  leaderboard,
+  error,
+}: {
+  leaderboard: GraphConfigPlayer[] | undefined;
+  error: Error | undefined;
+}) {
+  const twitters = useTwitters();
+  if (error) {
+    return (
+      <LeaderboardContainer>
+        <Red>{errorMessage}</Red>
+      </LeaderboardContainer>
+    );
+  }
+
+  console.log('leaderboard:', leaderboard);
+  if (leaderboard == undefined) {
+    return <Subber>Leaderboard loading...</Subber>;
+  }
+
+  if (leaderboard.length !== 0) {
+    leaderboard.sort((a, b) => {
+      if (typeof a.elo !== 'number' && typeof b.elo !== 'number') {
+        return 0;
+      } else if (typeof a.elo !== 'number') {
+        return -1;
+      } else if (typeof b.elo !== 'number') {
+        return 1;
+      }
+
+      return b.elo - a.elo;
+    });
+  }
+
+  const eloRows: EloRow[] = leaderboard.map((entry) => {
+    return { address: entry.address, twitter: twitters[entry.address], score: entry.elo, wins: entry.wins, losses: entry.losses };
+  });
+
+  return <EloLeaderboardTable rows={eloRows} />;
+}
+
 const Cell = styled.div`
   padding: 4px 8px;
   color: ${dfstyles.colors.text};
@@ -326,6 +507,7 @@ const LeaderboardContainer = styled.div`
   align-items: center;
   overflow: hidden;
 `;
+
 const StatsTableContainer = styled.div`
   display: flex;
   justify-content: center;

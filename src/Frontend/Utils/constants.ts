@@ -21,7 +21,7 @@ const LOCATION_ID_UB = bigInt(
 const apiUrl = 'https://graph-optimism.gnosischain.com/subgraphs/name/dfdao/arena-v2';
 
 
-const competitiveConfig = '0xa5270a267313d923a05a95b11d2be9b7d9e7c5194bf9d5d9f3ee28366a7809c4';
+const competitiveConfig = '0x4ab73334ef9f0a9d117ba1c3df71839edafc3ccbf5863f997ff34f5fea8a3385';
 
 const roundStartTimestamp = '2022-06-25T00:00:00.000Z';
 
