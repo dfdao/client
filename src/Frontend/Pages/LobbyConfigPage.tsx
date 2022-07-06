@@ -128,19 +128,25 @@ export function LobbyConfigPage({
   }
 
   async function createLobby(config: LobbyInitializers) {
-    const { owner, lobby, startTx } = await createAndInitArena({
-      config,
-      contractsAPI,
-      ethConnection: connection,
-    });
-    setLobbyTx(startTx?.hash);
+    try {
+      const { owner, lobby, startTx } = await createAndInitArena({
+        config,
+        contractsAPI,
+        ethConnection: connection,
+      });
 
-    if (owner === ownerAddress) {
-      if (!connection) {
-        throw 'error: no connection';
+      setLobbyTx(startTx?.hash);
+
+      if (owner === ownerAddress) {
+        if (!connection) {
+          throw 'error: no connection';
+        }
+        const lobbyAdminTools = await LobbyAdminTools.create(lobby, connection);
+        setLobbyAdminTools(lobbyAdminTools);
       }
-      const lobbyAdminTools = await LobbyAdminTools.create(lobby, connection);
-      setLobbyAdminTools(lobbyAdminTools);
+    } catch (e) {
+      console.log(e)
+      throw new Error('failed to create lobby!');
     }
   }
 

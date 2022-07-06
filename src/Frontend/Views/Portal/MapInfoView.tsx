@@ -43,6 +43,12 @@ function MapOverview({
     }
   }, [config, onMapChange, setMapName]);
 
+  const { innerHeight: height } = window;
+  let mapSize = '500px';
+  if (innerHeight < 700) {
+    mapSize = '300px';
+  }
+
   return (
     <OverviewContainer>
       <div style={{ textAlign: 'center' }}>
@@ -64,17 +70,19 @@ function MapOverview({
         </div>
       ) : (
         <Minimap
-          style={{ width: '500px', height: '500px' }}
+          style={{ width: mapSize, height: mapSize }}
           minimapConfig={minimapConfig}
           setRefreshing={() => {}}
         />
       )}
-      <Link style={{ minWidth: '250px' }} target='blank' to={`/play/${lobbyAddress}?create=true`}>
-        <ArenaPortalButton>New Game with this Map</ArenaPortalButton>
-      </Link>
-      <Link style={{ minWidth: '250px' }} target='blank' to={`/arena/${lobbyAddress}/settings`}>
-        <ArenaPortalButton secondary>Remix map</ArenaPortalButton>
-      </Link>
+      <div style = {{display: 'flex', gap: '16px', justifyContent: 'center', width: '100%'}}>
+        <Link style={{ minWidth: '250px' }} target='blank' to={`/arena/${lobbyAddress}/settings`}>
+          <ArenaPortalButton secondary>Remix map</ArenaPortalButton>
+        </Link>
+        <Link style={{ minWidth: '250px' }} target='blank' to={`/play/${lobbyAddress}?create=true`}>
+          <ArenaPortalButton>New Game with this Map</ArenaPortalButton>
+        </Link>
+      </div>
     </OverviewContainer>
   );
 }

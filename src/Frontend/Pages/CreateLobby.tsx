@@ -70,8 +70,7 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
   );
 
   useEffect(() => {
-    if (connection) {
-      async function setPlayer(ethConnection : EthConnection) {
+      async function setPlayer(ethConnection: EthConnection) {
         try {
           if (!!account) {
             await ethConnection.setAccount(account.privateKey);
@@ -81,10 +80,16 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
           }
         } catch (e) {
           alert('Unable to connect account');
-          logOut();        
+          logOut();
         }
       }
-      if(connection) setPlayer(connection);
+    
+    if (connection) setPlayer(connection);
+  
+  }, [connection]);
+
+  useEffect(() => {
+    if (connection) {
       if (contractAddress) {
         makeContractsAPI({ connection, contractAddress })
           .then((contract) => setContract(contract))
@@ -93,7 +98,7 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
             setErrorState({ type: 'contractLoad' });
           });
       }
-      if (configContractAddress) {
+      if (configContractAddress && !startingConfig) {
         loadConfigFromAddress(configContractAddress)
           .then((config) => {
             if (!config) {

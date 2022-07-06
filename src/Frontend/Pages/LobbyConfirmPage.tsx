@@ -94,6 +94,12 @@ export function LobbyConfirmPage({
   const numCreatedTargetPlanets =
     lobbyAdminTools?.planets.filter((p) => p.isTargetPlanet).length ?? 0;
   const history = useHistory();
+
+  const { innerHeight: height } = window;
+  let mapSize = '600px';
+  if (innerHeight < 700) {
+    mapSize = '400px';
+  }
   return (
     <Container>
       <Sidebar previousPath={!created ? root : undefined} title={!created ? '← Choose Map': ''}>
@@ -115,8 +121,8 @@ export function LobbyConfirmPage({
             created={!!lobbyAdminTools}
             displayConfig={{
               size: {
-                width: '600px',
-                height: '600px',
+                width: mapSize,
+                height: mapSize,
               },
               keys: true,
             }}

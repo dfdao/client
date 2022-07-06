@@ -65,7 +65,7 @@ export function PlanetListPane({
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <StagedPlanetIcon>
-            {PLANET_TYPE_NAMES[planet.planetType].charAt(0).toUpperCase()}
+            {PLANET_TYPE_NAMES[planet.planetType] && PLANET_TYPE_NAMES[planet.planetType].charAt(0).toUpperCase()}
           </StagedPlanetIcon>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <span
@@ -109,10 +109,12 @@ export function PlanetListPane({
     const [currentPage, setCurrentPage] = useState<number>(0);
 
     const visiblePlanets = useMemo(() => {
-      return LobbyPlanets.slice(
+      const planets = LobbyPlanets.slice(
         currentPage * maxPlanetsPerPage,
         currentPage * maxPlanetsPerPage + maxPlanetsPerPage
       );
+      return planets;
+
     }, [currentPage, LobbyPlanets]);
 
     return LobbyPlanets.length > 0 ? (
