@@ -44,9 +44,9 @@ export default function LandingPage() {
           />
           <LinksContainer>
             {Object.entries(links).map(([link, href], key) => (
-              <Link key={key} to={href}>
+              <NavLink key={key} to={href}>
                 {link}
-              </Link>
+              </NavLink>
             ))}
           </LinksContainer>
         </Nav>
@@ -127,51 +127,40 @@ export default function LandingPage() {
             <img src='/img/deathstar.png' />
           </ImgContainer>
         </Content>
+        <HideOnMobile>
+          <BgGrid src='/img/LandingPageGrid.svg' />
+        </HideOnMobile>
       </Container>
-      {/* 
-      <Main>
-        <MainContentContainer>
-          <Header>
-            <PageTitle>Dark Forest Arena</PageTitle>
-            <Subtitle>
-              Play dfdao's fast-paced, free version of the premier on-chain game.{' '}
-            </Subtitle>
-            <EnterButton onClick={() => history.push('/portal/home')}>Enter</EnterButton>
-            <LinkContainer>
-              <Link color='#00ff00' to={links.email}>
-                email
-              </Link>
-              <Spacer width={4} />
-              <Link color='#00ff00' to={links.blog}>
-                blog
-              </Link>
-              <Spacer width={4} />
-
-              <a className={'link-twitter'} href={links.twitter}>
-                <span className={'icon-twitter'}></span>
-              </a>
-              <Spacer width={4} />
-              <a className={'link-discord'} href={links.discord}>
-                <span className={'icon-discord'}></span>
-              </a>
-              <Spacer width={4} />
-              <a className={'link-github'} href={links.github}>
-                <span className={'icon-github'}></span>
-              </a>
-
-              <Spacer width={4} />
-              <Link color='#00ff00' to={links.plugins}>
-                plugins
-              </Link>
-              <Spacer width={4} />
-              <Link color='#00ff00' to={links.wiki}>
-                wiki
-              </Link>
-            </LinkContainer>
-      </Main> */}
     </>
   );
 }
+
+const HideOnMobile = styled.div`
+  @media only screen and (max-device-width: 1000px) {
+    display: none;
+  }
+`;
+
+const BgGrid = styled.img`
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  z-index: 1;
+`;
+
+const NavLink = styled(Link)`
+  color: #fff;
+  font-family: 'Karla', sans-serif;
+  text-transform: uppercase;
+  text-decoration: none;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  transition: color 0.2s ease;
+  &:hover {
+    color: ${dfstyles.colors.dfblue};
+  }
+`;
 
 const Badge = styled.div`
   border-radius: 3rem;
@@ -208,6 +197,11 @@ const Container = styled.div`
   height: 100vh;
   overflow: hidden;
   align-items: center;
+  position: relative;
+  @media (max-width: 768px) {
+    overflow-y: auto;
+    margin-bottom: 3rem;
+  }
 `;
 
 const Content = styled.div`
@@ -218,6 +212,7 @@ const Content = styled.div`
     display: flex;
     flex-direction: column;
   }
+  z-index: 2;
 `;
 
 const Nav = styled.div`
@@ -235,6 +230,10 @@ const LinksContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
+  @media (max-width: 768px) {
+    justify-content: center;
+  }
 `;
 
 const TextContainer = styled.div`
@@ -292,26 +291,6 @@ const TRow = styled.tr`
   }
 `;
 
-const Main = styled.div`
-  position: absolute;
-  width: 100vw;
-  max-width: 100vw;
-  height: calc(100vh - 180px);
-  color: white;
-  font-size: ${dfstyles.fontSize};
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  z-index: ${LandingPageZIndex.BasePage};
-`;
-
-const HallOfFameTitle = styled.div`
-  color: ${dfstyles.colors.subtext};
-  display: inline-block;
-  border-bottom: 1px solid ${dfstyles.colors.subtext};
-  line-height: 1em;
-`;
-
 export const LinkContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -342,18 +321,6 @@ export const LinkContainer = styled.div`
         color: ${dfstyles.colors.icons.email};
       }
     }
-  }
-`;
-
-const HideOnMobile = styled.div`
-  @media only screen and (max-device-width: 1000px) {
-    display: none;
-  }
-`;
-
-const OnlyMobile = styled.div`
-  @media only screen and (min-device-width: 1000px) {
-    display: none;
   }
 `;
 
