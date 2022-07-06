@@ -1,6 +1,9 @@
 import { EthAddress, GraphArena, GraphPlanet } from '@darkforest_eth/types';
+import _ from 'lodash';
+import { LobbyPlanet } from '../../Frontend/Panes/Lobbies/LobbiesUtils';
 import { LobbyInitializers } from '../../Frontend/Panes/Lobbies/Reducer';
 import { apiUrl } from '../../Frontend/Utils/constants';
+import { PlanetTypeWeights } from '../../_types/darkforest/api/ContractsAPITypes';
 import { getGraphQLData } from './GraphApi';
 
 export const CONSTANTS = `config{
@@ -52,8 +55,18 @@ TARGET_PLANETS,
 CLAIM_VICTORY_ENERGY_PERCENT,
 MODIFIERS,
 SPACESHIPS,
-# RANDOM_ARTIFACTS,
+RANDOM_ARTIFACTS,
+START_PAUSED,
+WHITELIST_ENABLED,
+CONFIRM_START,
+TARGETS_REQUIRED_FOR_VICTORY,
+BLOCK_CAPTURE,
+BLOCK_MOVES,
+TEAMS_ENABLED,
+NUM_TEAMS,
+RANKED,
 NO_ADMIN,
+PLANET_TYPE_WEIGHTS,
 # INIT_PLANETS,
 },
 planets(first: 20) {
@@ -113,87 +126,35 @@ export async function loadConfigFromAddress(address: EthAddress): Promise<
   }
 }
 
+const GraphPlanetType = ["PLANET", "SILVER_MINE", "RUINS", "TRADING_POST", "SILVER_BANK"]
+
 export function convertGraphConfig(arena: GraphArena): {
   config: LobbyInitializers;
   address: string;
 } {
-  return {
+
+  // const planetTypeWeights : PlanetTypeWeights = ;
+  // console.log('config:', arena.config)
+  return { 
     config: {
       ...arena.config,
-      START_PAUSED: true,
       // CLAIM_PLANET_COOLDOWN: 0,
-      PLANET_TYPE_WEIGHTS: [
-        [
-          [1, 0, 0, 0, 0],
-          [13, 2, 0, 1, 0],
-          [13, 2, 0, 1, 0],
-          [13, 2, 0, 0, 1],
-          [13, 2, 0, 0, 1],
-          [13, 2, 0, 0, 1],
-          [13, 2, 0, 0, 1],
-          [13, 2, 0, 0, 1],
-          [13, 2, 0, 0, 1],
-          [13, 2, 0, 0, 1],
-        ],
-        [
-          [1, 0, 0, 0, 0],
-          [13, 2, 1, 0, 0],
-          [12, 2, 1, 1, 0],
-          [11, 2, 1, 1, 1],
-          [12, 2, 1, 0, 1],
-          [12, 2, 1, 0, 1],
-          [12, 2, 1, 0, 1],
-          [12, 2, 1, 0, 1],
-          [12, 2, 1, 0, 1],
-          [12, 2, 1, 0, 1],
-        ],
-        [
-          [1, 0, 0, 0, 0],
-          [10, 4, 2, 0, 0],
-          [10, 4, 1, 1, 0],
-          [8, 4, 1, 2, 1],
-          [8, 4, 1, 2, 1],
-          [8, 4, 1, 2, 1],
-          [8, 4, 1, 2, 1],
-          [8, 4, 1, 2, 1],
-          [8, 4, 1, 2, 1],
-          [8, 4, 1, 2, 1],
-        ],
-        [
-          [1, 0, 0, 0, 0],
-          [11, 4, 1, 0, 0],
-          [11, 4, 1, 0, 0],
-          [7, 4, 2, 2, 1],
-          [7, 4, 2, 2, 1],
-          [7, 4, 2, 2, 1],
-          [7, 4, 2, 2, 1],
-          [7, 4, 2, 2, 1],
-          [7, 4, 2, 2, 1],
-          [7, 4, 2, 2, 1],
-        ],
-      ],
-      RANDOM_ARTIFACTS: false,
+      PLANET_TYPE_WEIGHTS:  _.chunk(arena.config.PLANET_TYPE_WEIGHTS, 50).map(block => _.chunk(block, 5)) as any,
+  
+      WHITELIST: [],
       ADMIN_PLANETS: arena.planets.map((planet: GraphPlanet) => {
         return {
           ...planet,
+          planetType: GraphPlanetType.indexOf(planet.planetType),
           x: Number(planet.x),
           y: Number(planet.y),
           location: planet.locationDec,
           isTargetPlanet: planet.targetPlanet,
           isSpawnPlanet: planet.spawnPlanet,
           blockedPlanetLocs: []
-        };
+        } as LobbyPlanet;
       }),
       INIT_PLANETS: [],
-      WHITELIST_ENABLED: false,
-      WHITELIST: [],
-      CONFIRM_START: true,
-      TARGETS_REQUIRED_FOR_VICTORY: 1,
-      BLOCK_CAPTURE: true,
-      BLOCK_MOVES: true,
-      TEAMS_ENABLED: false,
-      NUM_TEAMS: 2,
-      RANKED: false,
     },
     address: arena.lobbyAddress,
   };

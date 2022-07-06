@@ -2,10 +2,11 @@ import { getConfigName } from '@darkforest_eth/procedural';
 import { Leaderboard, LiveMatch } from '@darkforest_eth/types';
 import React, { useEffect, useState } from 'react';
 import { loadArenaLeaderboard } from '../../../Backend/Network/ArenaLeaderboardApi';
+import { GraphConfigPlayer, loadEloLeaderboard } from '../../../Backend/Network/EloLeaderboardApi';
 import { loadLiveMatches } from '../../../Backend/Network/SpyApi';
 import { Subber } from '../../Components/Text';
 import { LobbyInitializers } from '../../Panes/Lobbies/Reducer';
-import { ArenaLeaderboardDisplay } from '../ArenaLeaderboard';
+import { ArenaLeaderboardDisplay, EloLeaderboardDisplay } from '../ArenaLeaderboard';
 import { LiveMatches } from '../LiveMatches';
 import { TabbedView } from '../TabbedView';
 import { ConfigDetails } from './ConfigDetails';
@@ -19,20 +20,33 @@ export function MapDetails({
   config: LobbyInitializers | undefined;
 }) {
   const [leaderboard, setLeaderboard] = useState<Leaderboard | undefined>();
+  const [eloLeaderboard, setEloLeaderboard] = useState<GraphConfigPlayer[] | undefined>();
   const [leaderboardError, setLeaderboardError] = useState<Error | undefined>();
   const [liveMatches, setLiveMatches] = useState<LiveMatch | undefined>();
   const [liveMatchError, setLiveMatchError] = useState<Error | undefined>();
+
+  const numSpawnPlanets = config?.ADMIN_PLANETS.filter((p) => p.isSpawnPlanet).length ?? 0;
+  const hasWhitelist = config?.WHITELIST_ENABLED ?? true;
 
   useEffect(() => {
     setLeaderboard(undefined);
     setLiveMatches(undefined);
     if (configHash) {
-      loadArenaLeaderboard(configHash, false)
-        .then((board) => {
-          setLeaderboardError(undefined);
-          setLeaderboard(board);
-        })
-        .catch((e) => setLeaderboardError(e));
+      if (numSpawnPlanets > 0) {
+        loadEloLeaderboard(configHash, numSpawnPlanets > 1 ? true : false)
+          .then((board) => {
+            setLeaderboardError(undefined);
+            setEloLeaderboard(board);
+          })
+          .catch((e) => setLeaderboardError(e));
+      } else {
+        loadArenaLeaderboard(configHash, numSpawnPlanets > 1 ? true : false)
+          .then((board) => {
+            setLeaderboardError(undefined);
+            setLeaderboard(board);
+          })
+          .catch((e) => setLeaderboardError(e));
+      }
       loadLiveMatches(configHash, numSpawnPlanets > 1 ? true : false)
         .then((matches) => {
           setLiveMatchError(undefined);
@@ -44,9 +58,6 @@ export function MapDetails({
         });
     }
   }, [configHash]);
-
-  const numSpawnPlanets = config?.ADMIN_PLANETS.filter((p) => p.isSpawnPlanet).length ?? 0;
-  const hasWhitelist = config?.WHITELIST_ENABLED ?? true;
 
   return (
     <TabbedView
@@ -63,11 +74,11 @@ export function MapDetails({
       tabTitles={['Leaderboard', 'Current Games', 'Config Details']}
       tabContents={(i) => {
         if (i === 0) {
-          if (numSpawnPlanets > 1) {
-            return <ArenaLeaderboardDisplay leaderboard={leaderboard} error={leaderboardError} />;
-          } else {
-            return <ArenaLeaderboardDisplay leaderboard={leaderboard} error={leaderboardError} />;
-          }
+          return numSpawnPlanets > 1 ? (
+            <EloLeaderboardDisplay leaderboard={eloLeaderboard} error={leaderboardError} />
+          ) : (
+            <ArenaLeaderboardDisplay leaderboard={leaderboard} error={leaderboardError} />
+          );
         }
         if (i === 1) {
           if (numSpawnPlanets > 1 && !hasWhitelist) {
