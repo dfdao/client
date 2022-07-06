@@ -2082,19 +2082,19 @@ class GameManager extends EventEmitter {
         this.terminal.current?.println(``);
 
         const spawnPlanets = await this.contractsAPI.getSpawnPlanetIds(0);
-        console.log(`all manually created spawn planets: ${spawnPlanets}`);
+        // console.log(`all manually created spawn planets: ${spawnPlanets}`);
         const potentialHomeIds = spawnPlanets.filter((planetId) => {
           const planet = this.getGameObjects().getPlanetWithId(planetId);
           if (!planet) {
-            console.log('not a planet');
+            // console.log('not a planet');
             return false;
           }
-          console.log(`planet's owner: ${planet.owner}`);
+          // console.log(`planet's owner: ${planet.owner}`);
           if (planet.owner !== constants.AddressZero) {
             return false;
           }
           if (!isLocatable(planet)) {
-            console.log('planet not locatable');
+            // console.log('planet not locatable');
             return false;
           }
           return true;

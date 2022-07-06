@@ -234,7 +234,7 @@ export class ContractsAPI extends EventEmitter {
 
     const eventHandlers = {
       [ContractEvent.PauseStateChanged]: (paused: boolean) => {
-        console.log(`paused ${paused}`);
+        // console.log(`paused ${paused}`);
         this.emit(ContractsAPIEvent.PauseStateChanged, paused);
       },
       [ContractEvent.AdminOwnershipChanged]: (location: EthersBN, _newOwner: string) => {
@@ -378,15 +378,15 @@ export class ContractsAPI extends EventEmitter {
         this.emit(ContractsAPIEvent.Gameover);
       },
       [ContractEvent.GameStarted]: (player: string, startTime: EthersBN) => {
-        console.log('GAme started', player);
+        // console.log('GAme started', player);
         this.emit(ContractsAPIEvent.GameStarted, address(player), startTime.toNumber());
       },
       [ContractEvent.PlayerReady]: (player: string, time: EthersBN) => {
-        console.log('CONTRACT PLAYER READY', player);
+        // console.log('CONTRACT PLAYER READY', player);
         this.emit(ContractsAPIEvent.PlayerUpdate, address(player));
       },
       [ContractEvent.PlayerNotReady]: (player: string, time: EthersBN) => {
-        console.log('CONTRACT PLAYER NOT READY', player);
+        // console.log('CONTRACT PLAYER NOT READY', player);
         this.emit(ContractsAPIEvent.PlayerUpdate, address(player));
       },
     };

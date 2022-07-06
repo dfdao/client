@@ -1093,7 +1093,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
       }
       const teamsEnabled = gameUIManager.getGameManager().getContractConstants().TEAMS_ENABLED;
       const numTeams = gameUIManager.getGameManager().getContractConstants().NUM_TEAMS;
-      console.log(`teamsEnabled: ${teamsEnabled}, numTeams: ${numTeams}`)
+      // console.log(`teamsEnabled: ${teamsEnabled}, numTeams: ${numTeams}`)
       let team = 0;
       if(teamsEnabled && numTeams !== undefined) {
         terminal.current?.println('')

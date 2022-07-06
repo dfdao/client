@@ -47,6 +47,7 @@ export async function createAndInitArena({
       allowedAddresses: initializers.WHITELIST,
     },
   ]);
+  console.log('creating lobby at', contractsAPI.getContractAddress())
   const txIntent: UnconfirmedCreateLobby = {
     methodName: 'createLobby',
     contract: contractsAPI.contract,
