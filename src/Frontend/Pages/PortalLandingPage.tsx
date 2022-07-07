@@ -183,11 +183,13 @@ class PortalPageTerminal {
 
   private async setAccount(account: Account) {
     try {
-      setActive(account);
-      await this.ethConnection.setAccount(account.privateKey);
       await this.drip(account.address);
+      await this.ethConnection.setAccount(account.privateKey);
+      setActive(account);
+      this.accountSet(account.address);
     } catch (e) {
-      this.terminal.println('An unknown error occurred. please try again.', TerminalTextStyle.Red);
+      console.log('set account aborted')
+      console.log(e);
       await this.chooseAccount();
     }
   }
@@ -195,21 +197,28 @@ class PortalPageTerminal {
   private async drip(address: EthAddress) {
     try {
       const currBalance = weiToEth(await this.ethConnection.loadBalance(address));
-      await sendDrip(this.ethConnection, address);
-      const newBalance = weiToEth(await this.ethConnection.loadBalance(address));
-      if (newBalance - currBalance > 0) {
-        this.terminal.println(
-          `Dripped XDAI from faucet. Your balance has increased by ${newBalance - currBalance}.`,
-          TerminalTextStyle.Green
-        );
-        await new Promise((r) => setTimeout(r, 1500));
+      if (currBalance < 0.005) {
+        this.terminal.println(`Dripping XDAI to your account.`);
+        await sendDrip(this.ethConnection, address);
+        const newBalance = weiToEth(await this.ethConnection.loadBalance(address));
+        if (newBalance - currBalance > 0) {
+          this.terminal.println(
+            `Dripped XDAI from faucet. Your balance has increased by ${newBalance - currBalance}.`,
+            TerminalTextStyle.Green
+          );
+          await new Promise((r) => setTimeout(r, 1500));
+        }
       }
-
-      this.accountSet(address);
     } catch (e) {
       console.log(e);
       this.terminal.println(
-        'An error occurred in faucet. Try again with an account that has XDAI.'
+        'An error occurred in faucet. Please try again with an account that has XDAI.',
+        TerminalTextStyle.Red
+      );
+      this.terminal.println('');
+
+      throw new Error(
+        'An error occurred in faucet. Please try again with an account that has XDAI.'
       );
     }
   }
@@ -232,11 +241,17 @@ export async function sendDrip(connection: EthConnection, address: EthAddress) {
       throw new Error('An error occurred in faucet. Try again with an account that has XDAI');
     }
   } catch (e) {
-    return e;
+    throw new Error('An error occurred in faucet. Try again with an account that has XDAI');
   }
 }
 
-export function PortalLandingPage({ onReady, connection }: { onReady: (connection: EthConnection) => void, connection: EthConnection }) {
+export function PortalLandingPage({
+  onReady,
+  connection,
+}: {
+  onReady: (connection: EthConnection) => void;
+  connection: EthConnection;
+}) {
   const terminal = useRef<TerminalHandle>();
   const [controller, setController] = useState<PortalPageTerminal | undefined>();
 
@@ -247,7 +262,6 @@ export function PortalLandingPage({ onReady, connection }: { onReady: (connectio
         terminal.current,
         (account: EthAddress) => {
           if (connection) {
-            terminal.current?.println(`Creating arena with account: ${account}`);
             onReady(connection);
           } else {
             alert('Unable to make a connection to blockchain');
