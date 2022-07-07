@@ -124,11 +124,11 @@ export default function LandingPage() {
             </div>
           </TextContainer>
           <ImgContainer>
-            <img src='/img/deathstar.png' />
+            <img src='/public/img/deathstar.png' />
           </ImgContainer>
         </Content>
         <HideOnMobile>
-          <BgGrid src='/img/LandingPageGrid.svg' />
+          <BgGrid src='/public/img/LandingPageGrid.svg' />
         </HideOnMobile>
       </Container>
     </>
