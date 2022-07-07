@@ -129,7 +129,7 @@ export default function LandingPage() {
             </ArenaPortalButton>
           </TextContainer>
           <ImgContainer>
-            <img src='/public/img/deathstar.png' />
+            <img src='/public/img/deathstar.png' style = {{maxWidth: '90%'}} />
           </ImgContainer>
         </Content>
         <HideOnMobile>
