@@ -924,7 +924,6 @@ class GameManager extends EventEmitter {
       .on(ContractsAPIEvent.GameStarted, async (player: EthAddress, startTime: number) => {
         gameManager.startTime = startTime;
         gameManager.gameStarted$.publish(true);
-
       });
 
     const unconfirmedTxs = await persistentChunkStore.getUnconfirmedSubmittedEthTxs();
@@ -2018,13 +2017,12 @@ class GameManager extends EventEmitter {
     } else if (planet.owner != this.account) return false;
     if ((planet.energy * 100) / planet.energyCap < constants.CLAIM_VICTORY_ENERGY_PERCENT)
       return false;
-    if (this.playerCaptureBlocked(this.account, planet.locationId))
-      return false;
+    if (this.playerCaptureBlocked(this.account, planet.locationId)) return false;
     return true;
   }
 
   public checkVictoryCondition(): boolean {
-    const targetPlanets = this.getTargetPlanets();
+    const targetPlanets = this.getPlayerTargetPlanets();
 
     let captured: number = 0;
 
@@ -3599,9 +3597,58 @@ class GameManager extends EventEmitter {
     return spawns.map((p) => p[1]);
   }
 
-  public getTargetPlanets(): Planet[] {
-    const targets = [...this.getPlanetMap()].filter(([, planet]) => planet.isTargetPlanet);
-    return targets.map((p) => p[1]);
+  public getAllTargetPlanets(): Planet[] {
+    return [...this.getPlanetMap()].reduce(
+      (total, [location, planet]) => (planet.isTargetPlanet ? [...total, planet] : total),
+      []
+    );
+  }
+
+  public getPlayerTargetPlanets(account?: EthAddress): Planet[] {
+    const player = this.getPlayer(account);
+    if (!player) return [];
+    return [...this.getPlanetMap()].reduce(
+      (total, [location, planet]) =>
+          planet.isTargetPlanet && !this.isMoveBlocked(location, player.homePlanetId)
+          ? [...total, planet]
+          : total,
+      []
+    );
+  }
+
+  public getAllBlocks() :{[dest: LocationId]: LocationId[]} {
+    const blocks : {[dest: LocationId]: LocationId[]}= {};
+
+    [...this.getPlanetMap()].forEach(
+      ([location, planet]) => {
+          if(planet.blockedPlanetIds.length > 0) blocks[location] = planet.blockedPlanetIds
+      }
+    );
+    return blocks;
+  }
+
+  public getPlayerBlockedPlanets(account?: EthAddress): Planet[] {
+    const player = this.getPlayer(account);
+    if (!player) return [];
+    return [...this.getPlanetMap()].reduce(
+      (total, [location, planet]) =>
+        !planet.isTargetPlanet && this.isMoveBlocked(location, player.homePlanetId)
+          ? [...total, planet]
+          : total,
+      []
+    );
+  }
+
+  public getPlayerDefensePlanets(account?: EthAddress): Planet[] {
+    const player = this.getPlayer(account);
+    if (!player) return [];
+    return [...this.getPlanetMap()].reduce(
+      (total, [location, planet]) =>
+        planet.isTargetPlanet && this.isMoveBlocked(location, player.homePlanetId)
+          ? [...total, planet]
+          : total,
+      []
+    );
   }
 
   /** Return a reference to the artifact map */
@@ -3762,12 +3809,18 @@ class GameManager extends EventEmitter {
   }
 
   // Return true if move is blocked in blocklist.
-  public isMoveBlocked(destId: LocationId, srcId: LocationId): boolean  {
-    return this.contractConstants.BLOCK_MOVES && !!this.getPlanetWithId(destId)?.blockedPlanetIds.find(id => id == srcId);
+  public isMoveBlocked(destId: LocationId, srcId: LocationId): boolean {
+    return (
+      this.contractConstants.BLOCK_MOVES &&
+      !!this.getPlanetWithId(destId)?.blockedPlanetIds.find((id) => id == srcId)
+    );
   }
 
-  public isCaptureBlocked(destId: LocationId, srcId: LocationId): boolean  {
-    return this.contractConstants.BLOCK_CAPTURE && !!this.getPlanetWithId(destId)?.blockedPlanetIds.find(id => id == srcId);
+  public isCaptureBlocked(destId: LocationId, srcId: LocationId): boolean {
+    return (
+      this.contractConstants.BLOCK_CAPTURE &&
+      !!this.getPlanetWithId(destId)?.blockedPlanetIds.find((id) => id == srcId)
+    );
   }
 
   public blockMoves(): boolean {
@@ -3792,7 +3845,7 @@ class GameManager extends EventEmitter {
 
   public getTargetsHeld(address?: EthAddress): Planet[] {
     address = address || this.account;
-    return this.getTargetPlanets().filter((planet) => this.isTargetHeld(planet));
+    return this.getPlayerTargetPlanets().filter((planet) => this.isTargetHeld(planet));
   }
 
   get targetsRequired(): number {
@@ -3855,7 +3908,7 @@ class GameManager extends EventEmitter {
   public getGameStarted$(): Monomitter<boolean> {
     return this.gameStarted$;
   }
-  
+
   public getGameover(): boolean {
     return this.gameover;
   }
@@ -3875,12 +3928,11 @@ class GameManager extends EventEmitter {
     return this.contractConstants.TEAMS_ENABLED;
   }
 
-  public getPlayerMoves(addr : EthAddress) {
+  public getPlayerMoves(addr: EthAddress) {
     const player = this.getPlayer(addr);
     if (!player) throw new Error('Player not found');
-    return player.moves
+    return player.moves;
   }
-
 }
 
 export default GameManager;

@@ -794,7 +794,7 @@ class GameUIManager extends EventEmitter {
 
         if (coordsEqual(loc.coords, this.getHomeCoords())) {
           const tutorialManager = TutorialManager.getInstance(this);
-          tutorialManager.acceptInput(TutorialState.HomePlanet);
+          tutorialManager.acceptInput(TutorialState.SpawnPlanet);
         }
       }
     }
@@ -1357,8 +1357,8 @@ class GameUIManager extends EventEmitter {
     return this.gameManager.getSpawnPlanets();
   }
 
-  public getTargetPlanets(): Planet[] {
-    return this.gameManager.getTargetPlanets();
+  public getPlayerTargetPlanets(account? : EthAddress): Planet[] {
+    return this.gameManager.getPlayerTargetPlanets(account);
   }
 
   public isTargetHeld(planet: Planet) : boolean {
@@ -1373,10 +1373,21 @@ class GameUIManager extends EventEmitter {
     return this.gameManager.playerMoveBlocked(player, planet);
   }
 
+  public getAllTargetPlanets() : Planet[] {
+    return this.gameManager.getAllTargetPlanets();
+  }
+
   public playerCaptureBlocked(player: EthAddress, planet: LocationId) : boolean {
     return this.gameManager.playerCaptureBlocked(player, planet);
   }
 
+  public getPlayerBlockedPlanets(account?: EthAddress) : Planet[] {
+    return this.gameManager.getPlayerBlockedPlanets(account);
+  }
+
+  public getPlayerDefensePlanets(account?: EthAddress) : Planet[] {
+    return this.gameManager.getPlayerDefensePlanets(account);
+  }
 
   public potentialCaptureScore(planetLevel: number): number {
     return this.contractConstants.CAPTURE_ZONE_PLANET_LEVEL_SCORE[planetLevel];

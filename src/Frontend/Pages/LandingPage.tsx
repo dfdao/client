@@ -129,7 +129,7 @@ export default function LandingPage() {
             </ArenaPortalButton>
           </TextContainer>
           <ImgContainer>
-            <img src='/img/deathstar.png' />
+            <img src='/public/img/deathstar.png' />
           </ImgContainer>
         </Content>
         <HideOnMobile>{/* <BgGrid src='/img/LandingPageGrid.svg' /> */}</HideOnMobile>

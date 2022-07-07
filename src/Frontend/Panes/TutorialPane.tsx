@@ -44,13 +44,30 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
   if (tutorialState === TutorialState.None) {
     return (
       <div className='tutzoom'>
-                Welcome to Dark Forest Arena!
+        Welcome to Dark Forest Arena!
         <br />
         <br />
         <div>
-        Race against the clock to capture the Target Planet (it has a big 🎯 floating above it)
-        and <Green>claim victory when it contains at least <Gold>{victoryThreshold}%</Gold> energy!</Green>
-      </div>
+          { uiManager.getSpawnPlanets().length == 1 ?
+          <>
+          Race against the clock to capture the Target Planet (it has a big 🎯 floating above it)
+          and{' '}
+          <Green>
+            claim victory when it contains at least <Gold>{victoryThreshold}%</Gold> energy!
+          </Green>
+          </>
+          : 
+          
+            <>
+           Battle your opponent to capture the Target Planet (it has a big 🎯 floating above it)
+            and{' '}
+            <Green>
+              claim victory when it contains at least <Gold>{victoryThreshold}%</Gold> energy!
+            </Green>.
+            </>
+          }
+          You need {uiManager.getAllTargetPlanets().length} to win.
+        </div>
         {isCompetitive && (
           <div>
             <p>End the race in a certain time to earn Bronze, Silver, and Gold ranks.</p>
@@ -69,7 +86,6 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
           ⏲️ starts when you press ready!
           {isCompetitive && 'The player with the fastest time after 48hrs will win XDAI and a 🏆!'}
         </div>
-
         <div style={{ gap: '5px' }}>
           <Btn className='btn' onClick={() => tutorialManager.acceptInput(TutorialState.None)}>
             Next
@@ -118,7 +134,7 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
         </div>
 
         <p>We recommend you back this information up.</p>
-        <br/>
+        <br />
         <p>
           If you are new to Dark Forest, play the tutorial! Otherwise, skip and jump into the
           action.
@@ -133,7 +149,7 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
         </div>
       </div>
     );
-  } else if (tutorialState === TutorialState.HomePlanet) {
+  } else if (tutorialState === TutorialState.SpawnPlanet) {
     return (
       <div className='tutzoom'>
         <White>Click your home planet to learn more.</White>
@@ -143,7 +159,7 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
           </Btn>
           <Btn
             className='btn'
-            onClick={() => tutorialManager.acceptInput(TutorialState.HomePlanet)}
+            onClick={() => tutorialManager.acceptInput(TutorialState.SpawnPlanet)}
           >
             Skip
           </Btn>
@@ -155,7 +171,11 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
       <div className='tutzoom'>
         Well done! This pane displays quick information about your planet and the ability to send
         resources. Your planet uses <White>energy</White> to capture nearby planets. You can use{' '}
-        <Gold>silver</Gold> for planet upgrades <Link to = "https://www.youtube.com/watch?v=eXWfaVt_i3o&list=PLn4H2Bj-iklclFZW_YpKCQaTnBVaECLDK&index=5">(Click here for more on silver)</Link>.
+        <Gold>silver</Gold> for planet upgrades{' '}
+        <Link to='https://www.youtube.com/watch?v=eXWfaVt_i3o&list=PLn4H2Bj-iklclFZW_YpKCQaTnBVaECLDK&index=5'>
+          (Click here for more on silver)
+        </Link>
+        .
         <br />
         <br />
         <White>Try sending energy to another planet.</White> You can click and drag to send energy
@@ -340,54 +360,64 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
         </div>
       </div>
     );
-  }
-  // else if (tutorialState === TutorialState.ScoringDetails) {
-  //   return (
-  //     <div className='tutzoom'>
-  //       To win, take ownership of the target planet and fill its energy to{' '}
-  //       {uiManager.getGameManager().getContractConstants().CLAIM_VICTORY_ENERGY_PERCENT}%. Then
-  //       claim victory on that planet. If you capture the target planet first, you win!
-  //       <div style={{ gap: '5px' }}>
-  //         <Btn className='btn' onClick={() => tutorialManager.complete()}>
-  //           Exit
-  //         </Btn>
-  //         <Btn
-  //           className='btn'
-  //           onClick={() => tutorialManager.acceptInput(TutorialState.ScoringDetails)}
-  //         >
-  //           Next
-  //         </Btn>
-  //       </div>
-  //     </div>
-  //   );
-  // }
-  // else if (tutorialState === TutorialState.Valhalla) {
-  //   return (
-  //     <div className='tutalmost'>
-  //       If you win an official round (one of the default worlds on the home page), you will improve
-  //       your ELO and see your name on the leaderboard! More details about rewards and competitive
-  //       play will be released soon ;).
-  //       <br />
-  //       <br />
-  //       To win, capture the target planet (^:
-  //       <div>
-  //         <Btn className='btn' onClick={() => tutorialManager.acceptInput(TutorialState.Valhalla)}>
-  //           Next
-  //         </Btn>
-  //       </div>
-  //     </div>
-  //   );
-  // }
-  else if (tutorialState === TutorialState.AlmostCompleted) {
+  } else if (tutorialState === TutorialState.BlockedPlanet) {
+    return (
+      <div className='tutzoom'>
+        <p>
+          This game includes blocked planets. You can't move to this planet! However, your opponents
+          may be able to.
+        </p>
+        <p>
+          Hover over the blocked icon on the planet card to see which players can move to that
+          planet.
+        </p>
+        <div style={{ gap: '5px' }}>
+          <Btn className='btn' onClick={() => tutorialManager.complete()}>
+            Exit
+          </Btn>
+          <Btn
+            className='btn'
+            onClick={() => tutorialManager.acceptInput(TutorialState.BlockedPlanet)}
+          >
+            Next
+          </Btn>
+        </div>
+      </div>
+    );
+  } else if (tutorialState === TutorialState.DefensePlanet) {
+    return (
+      <div className='tutzoom'>
+        <p>This is your home planet. A home planet is a target planet that you cannot move to!</p>
+        <p>
+          You will need to defend this planet from potential attacks, because if someone else
+          captures it, they could win. Hover over the blocked icon on the planet card to see which
+          players can move there.
+        </p>
+        <div style={{ gap: '5px' }}>
+          <Btn className='btn' onClick={() => tutorialManager.complete()}>
+            Exit
+          </Btn>
+          <Btn
+            className='btn'
+            onClick={() => tutorialManager.acceptInput(TutorialState.DefensePlanet)}
+          >
+            Next
+          </Btn>
+        </div>
+      </div>
+    );
+  } else if (tutorialState === TutorialState.AlmostCompleted) {
     return (
       <div className='tutalmost'>
         This is the end of the tutorial. For a more in-depth strategy guide,{' '}
         <Link to='https://medium.com/@classicjdf/classicjs-dark-forest-101-strategy-guide-part-1-energy-1b80923fee69'>
           click here
         </Link>
-        . For video tutorials, <Link to='https://www.youtube.com/watch?v=3a4i9IyfmBI&list=PLn4H2Bj-iklclFZW_YpKCQaTnBVaECLDK'>
+        . For video tutorials,{' '}
+        <Link to='https://www.youtube.com/watch?v=3a4i9IyfmBI&list=PLn4H2Bj-iklclFZW_YpKCQaTnBVaECLDK'>
           click here
-        </Link>. More information will pop up in the <White>upper-right</White> as you discover more about
+        </Link>
+        . More information will pop up in the <White>upper-right</White> as you discover more about
         the game.
         <br />
         We hope you enjoy Dark Forest!
