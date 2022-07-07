@@ -79,7 +79,7 @@ export const LobbyCreationPlanetInspector: React.FC<LobbyPlanetInspectorProps> =
             if (!selectedPlanet) return;
             updateConfig({
               type: 'ADMIN_PLANETS',
-              value: selectedPlanet,
+              value: undefined,
               index: selectedIndex,
             });
             onDelete(selectedIndex);

@@ -158,7 +158,7 @@ export type LobbyConfigAction =
       type: 'TEAMS_ENABLED';
       value: Initializers['TEAMS_ENABLED'] | undefined;
     }
-    | {
+  | {
       type: 'TARGETS_REQUIRED_FOR_VICTORY';
       value: Initializers['TARGETS_REQUIRED_FOR_VICTORY'] | undefined;
     }
@@ -2152,21 +2152,8 @@ export function ofLobbyPlanets(
   }
 
   if (currentValue[index]) {
-    const isPlanetUnchanged =
-      currentValue[index].x === value.x &&
-      currentValue[index].y === value.y &&
-      currentValue[index].level === value.level &&
-      currentValue[index].planetType === value.planetType &&
-      currentValue[index].isSpawnPlanet === value.isSpawnPlanet &&
-      currentValue[index].isTargetPlanet === value.isTargetPlanet;
-    // if value is the same, delete the planet, otherwise, update
-    if (isPlanetUnchanged) {
-      currentValue.splice(index, number);
-      displayValue.splice(index, number);
-    } else {
-      currentValue.splice(index, number, value);
-      displayValue.splice(index, number, value);
-    }
+    currentValue.splice(index, number, value);
+    displayValue.splice(index, number, value);
 
     return {
       ...state[type],

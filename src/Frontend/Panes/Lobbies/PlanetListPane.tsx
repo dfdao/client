@@ -92,7 +92,7 @@ export function PlanetListPane({
               onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
                 e.stopPropagation();
                 e.nativeEvent.stopImmediatePropagation();
-                onUpdate({ type: 'ADMIN_PLANETS', value: planet, index: index });
+                onUpdate({ type: 'ADMIN_PLANETS', value: undefined, index: index });
               }}
             />
           )}
