@@ -105,11 +105,11 @@ export function PlanetIcons({ planet }: { planet: Planet | undefined }) {
           <Icon type={IconType.SpawnPlanet} />
         </TooltipTrigger>
       )}
-      {planet.owner === EMPTY_ADDRESS && planet.energy > 0 && (
+      {/* {planet.owner === EMPTY_ADDRESS && planet.energy > 0 && (
         <TooltipTrigger name={TooltipName.Pirates}>
           <Icon type={IconType.Pirates} />
         </TooltipTrigger>
-      )}
+      )} */}
       {planet.planetLevel === MAX_PLANET_LEVEL && (
         <TooltipTrigger name={TooltipName.MaxLevel}>
           <Icon type={IconType.MaxLevel} />

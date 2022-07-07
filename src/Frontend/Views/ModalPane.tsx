@@ -223,7 +223,7 @@ export function ModalPane({
             shortcutKey={MODAL_BACK_SHORTCUT}
             shortcutText={MODAL_BACK_SHORTCUT}
           >
-            back
+            🠔
           </MaybeShortcutButton>
         )}
         <Title slot='title'>
@@ -239,19 +239,19 @@ export function ModalPane({
           {helpContent !== undefined && !minimized && (
             <>
               <Btn size='small' onClick={() => setShowingInformationSection((showing) => !showing)}>
-                help
+              ❔
               </Btn>
               <Spacer width={4} />
             </>
           )}
           <Btn size='small' onClick={() => setMinimized((minimized: boolean) => !minimized)}>
-            {minimized ? 'maximize' : 'minimize'}
+            {minimized ? '🗖' : '🗕'}
           </Btn>
           {!hideClose && (
             <>
               <Spacer width={4} />
               <Btn size='small' onClick={() => onClose()}>
-                close
+              🗙
               </Btn>
             </>
           )}
