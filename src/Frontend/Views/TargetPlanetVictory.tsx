@@ -30,20 +30,19 @@ export function TargetPlanetVictory() {
             </>
           }
           name={TooltipName.Empty}
-          style = {{gap: '5px'}}
+          style={{ gap: '5px' }}
         >
-          <span style = {{marginInline: '5px'}}>
+          <span style={{ marginInline: '5px' }}>
             Targets: {gameManager.getTargetsHeld().length}/{requiredPlanets}
           </span>
-          <Btn
-            size='small'
-            disabled={!canClaimVictory}
-            onClick={() => uiManager.getGameManager().claimVictory()}
-          >
-            Claim Victory!
-          </Btn>
 
-          <br />
+          {canClaimVictory && (
+            <ArenaPortalButton
+              onClick={() => uiManager.getGameManager().claimVictory()}
+            >
+              Claim Victory!
+            </ArenaPortalButton>
+          )}
         </TooltipTrigger>
       </GameoverContainer>
       {/* <TimeContainer>Game length: {prettyTime(gameDuration)}</TimeContainer> */}
@@ -58,4 +57,26 @@ const GameoverContainer = styled.div`
 const TimeContainer = styled.div`
   font-size: 1em;
   text-align: center;
+`;
+
+export const ArenaPortalButton = styled.button<{ secondary?: boolean }>`
+  padding: 8px 16px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border: ${({ secondary }) => (!secondary ? '2px solid #2EE7BA' : '1px solid #5F5F5F')};
+  color: ${({ secondary }) => (!secondary ? '#2EE7BA' : '#fff')};
+  background: ${({ secondary }) => (!secondary ? '#09352B' : '#252525')};
+  border-radius: 4px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background 80ms ease 0s, border-color;
+  &:hover {
+    background: ${({ secondary }) => (!secondary ? '#0E5141' : '#3D3D3D')};
+    border-color: ${({ secondary }) => (!secondary ? '#30FFCD' : '#797979')};
+  }
 `;
