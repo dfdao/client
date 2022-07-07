@@ -57,9 +57,13 @@ export class LobbyAdminTools {
     lobbyAddress: EthAddress,
     connection: EthConnection
   ): Promise<LobbyAdminTools> {
+    try {
     const contract = await makeContractsAPI({ connection, contractAddress: lobbyAddress });
     const lobbyAdminTools = new LobbyAdminTools(lobbyAddress, contract, connection);
     return lobbyAdminTools;
+    } catch(e) {
+      throw new Error("couldn't connect to blockchain.")
+    }
   }
 
   private generatePlanetData(planet: LobbyPlanet, initializers: LobbyInitializers) {

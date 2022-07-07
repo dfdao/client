@@ -31,6 +31,8 @@ export async function createAndInitArena({
   // @ts-expect-error The Operand of a delete must be optional
   delete initializers.ADMIN_PLANETS;
 
+  try {
+
   const initContract = await ethConnection.loadContract<DFArenaInitialize>(
     INIT_ADDRESS,
     loadInitContract
@@ -69,8 +71,13 @@ export async function createAndInitArena({
   const startTx = await diamond.start({gasLimit: OPTIMISM_GAS_LIMIT});
   const startRct = await startTx.wait();
   console.log(`initialized arena with ${startRct.gasUsed} gas`);
-
   return { owner, lobby, startTx };
+
+} catch(e) {
+  console.log(e);
+  throw new Error('lobby creation transaction failed.')
+}
+
 }
 
 export async function createPlanets({

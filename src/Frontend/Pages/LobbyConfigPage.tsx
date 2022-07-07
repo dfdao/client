@@ -103,8 +103,11 @@ export function LobbyConfigPage({
         console.error('Error creating and revealing planets:', err);
         if (err instanceof InvalidConfigError) {
           setError(`Invalid ${err.key} value ${err.value ?? ''} - ${err.message}`);
+          throw new Error(`Invalid ${err.key} value ${err.value ?? ''} - ${err.message}`)
         } else {
           setError(err?.message || 'Something went wrong. Check your dev console.');
+          throw new Error(err?.message || 'Something went wrong. Check your dev console.');
+
         }
       }
     }
@@ -145,8 +148,8 @@ export function LobbyConfigPage({
         setLobbyAdminTools(lobbyAdminTools);
       }
     } catch (e) {
-      console.log(e)
-      throw new Error('failed to create lobby!');
+      console.log(e);
+      throw new Error(e?.message || `Failed to create lobby.`);
     }
   }
 
