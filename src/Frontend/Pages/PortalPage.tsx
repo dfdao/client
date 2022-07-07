@@ -17,7 +17,8 @@ import { PortalLandingPage, sendDrip } from './PortalLandingPage';
 
 export function PortalPage() {
   const [connection, setConnection] = useState<EthConnection | undefined>();
-  const [account, setAccount] = useState<Account | undefined>(getActive());
+  const [account, setAccount] = useState<Account | undefined>();
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     async function getConnection() {
@@ -36,19 +37,25 @@ export function PortalPage() {
 
   useEffect(() => {
     async function setPlayer(ethConnection : EthConnection) {
+      const active = getActive();
       try {
-        if (!!account) {
-          await ethConnection.setAccount(account.privateKey);
-          await sendDrip(ethConnection, account.address);
+        if (!!active) {
+          await sendDrip(ethConnection, active.address);
+          await ethConnection.setAccount(active.privateKey);
+          setAccount(active);
           onReady(ethConnection);
           return;
         }
       } catch (e) {
-        alert('Unable to connect account');
+        alert('Unable to connect to active account. Please login into another.');
         logOut();        
+      } finally {
+        setLoading(false);
       }
     }
-    if(connection) setPlayer(connection);
+    if(connection) {
+      setPlayer(connection);
+    }
   }, [connection]);
 
 
@@ -62,7 +69,7 @@ export function PortalPage() {
     [setConnection]
   );
 
-  if(!connection) return <LoadingPage/>
+  if(!connection || loading) return <LoadingPage/>
   if (connection && account) {
     return <Portal playerAddress={account.address} />;
   }
