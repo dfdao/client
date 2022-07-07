@@ -65,16 +65,25 @@ export function PlanetListPane({
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <StagedPlanetIcon>
-            {PLANET_TYPE_NAMES[planet.planetType] && PLANET_TYPE_NAMES[planet.planetType].charAt(0).toUpperCase()}
+            {PLANET_TYPE_NAMES[planet.planetType] &&
+              PLANET_TYPE_NAMES[planet.planetType].charAt(0).toUpperCase()}
           </StagedPlanetIcon>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span
-              style={{
-                color: '#fff',
-              }}
-            >
-              ({planet.x},{planet.y})
-            </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span
+                style={{
+                  color: '#fff',
+                }}
+              >
+                ({planet.x},{planet.y})
+              </span>
+              {planet.blockedPlanetLocs.length > 0 && (
+                <span>
+                  🚫 {planet.blockedPlanetLocs.length} planet
+                  {planet.blockedPlanetLocs.length > 1 && 's'}
+                </span>
+              )}
+            </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span style={{ color: '#bbb' }}>Level {planet.level}</span>
               {planet.isSpawnPlanet && (
@@ -114,7 +123,6 @@ export function PlanetListPane({
         currentPage * maxPlanetsPerPage + maxPlanetsPerPage
       );
       return planets;
-
     }, [currentPage, LobbyPlanets]);
 
     return LobbyPlanets.length > 0 ? (
@@ -203,13 +211,21 @@ export function PlanetListPane({
             {PLANET_TYPE_NAMES[planet.planetType].charAt(0).toUpperCase()}
           </StagedPlanetIcon>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span
-              style={{
-                color: '#fff',
-              }}
-            >
-              ({planet.x},{planet.y})
-            </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span
+                style={{
+                  color: '#fff',
+                }}
+              >
+                ({planet.x},{planet.y})
+              </span>
+              {planet.blockedPlanetLocs.length > 0 && (
+                <span>
+                  🚫 {planet.blockedPlanetLocs.length} planet
+                  {planet.blockedPlanetLocs.length > 1 && 's'}
+                </span>
+              )}
+            </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span style={{ color: '#bbb' }}>Level {planet.level}</span>
               {planet.isSpawnPlanet && (
