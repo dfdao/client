@@ -38,26 +38,11 @@ export default function LandingPage() {
     <>
       <Container>
         <Nav>
-          <Icon
-            style={{ width: '80px', height: '80px' } as CSSStyleDeclaration & CSSProperties}
-            type={IconType.Dfdao}
-          />
-          <LinksContainer>
-            {Object.entries(links).map(([link, href], key) => (
-              <NavLink key={key} to={href}>
-                {link}
-              </NavLink>
-            ))}
-          </LinksContainer>
-        </Nav>
-        <Content>
-          <TextContainer>
-            <Badge>Dark Forest Arena</Badge>
-            <Title>Playing is building</Title>
-            <Desc>Play dfdao's fast-paced, free version of the premier on-chain game.</Desc>
-            <ArenaPortalButton onClick={() => history.push('/portal/home')}>
-              Enter
-            </ArenaPortalButton>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <Icon
+              style={{ width: '80px', height: '80px' } as CSSStyleDeclaration & CSSProperties}
+              type={IconType.Dfdao}
+            />
             <div>
               <WallbreakersButton onClick={() => setShowWallbreakers(!showWallbreakers)}>
                 <span
@@ -122,14 +107,32 @@ export default function LandingPage() {
                 </WallbreakersContainer>
               )}
             </div>
+          </div>
+          <LinksContainer>
+            {Object.entries(links).map(([link, href], key) => (
+              <>
+                <NavLink key={key} to={href}>
+                  {link}
+                </NavLink>
+                {key !== Object.entries(links).length - 1 && <p>{` | `}</p>}
+              </>
+            ))}
+          </LinksContainer>
+        </Nav>
+        <Content>
+          <TextContainer>
+            <Badge>Dark Forest Arena 🏟️</Badge>
+            <Title>Playing is building</Title>
+            <Desc>Play dfdao's fast-paced, free version of the premier on-chain game.</Desc>
+            <ArenaPortalButton onClick={() => history.push('/portal/home')}>
+              Enter
+            </ArenaPortalButton>
           </TextContainer>
           <ImgContainer>
             <img src='/img/deathstar.png' />
           </ImgContainer>
         </Content>
-        <HideOnMobile>
-          <BgGrid src='/img/LandingPageGrid.svg' />
-        </HideOnMobile>
+        <HideOnMobile>{/* <BgGrid src='/img/LandingPageGrid.svg' /> */}</HideOnMobile>
       </Container>
     </>
   );
@@ -163,6 +166,7 @@ const NavLink = styled(Link)`
 `;
 
 const Badge = styled.div`
+  font-size: 2rem;
   border-radius: 3rem;
   background-color: ${dfstyles.colors.backgroundlighter};
   color: #fff;
@@ -181,7 +185,7 @@ const WallbreakersButton = styled.div`
   justify-content: space-between;
   border-radius: 6px;
   background: #323232;
-  border: 1px solid #646464;
+  // border: 1px solid #646464;
   padding: 8px;
   cursor: pointer;
   box-shadow: 0px 0px 1px rgba(66, 71, 76, 0.32), 0px 4px 8px rgba(66, 71, 76, 0.06),
@@ -207,7 +211,7 @@ const Container = styled.div`
 const Content = styled.div`
   display: grid;
   grid-template-columns: 1fr 1.5fr;
-  align-items: flex-start;
+  align-items: center;
   @media (max-width: 768px) {
     display: flex;
     flex-direction: column;
@@ -325,6 +329,7 @@ export const LinkContainer = styled.div`
 `;
 
 const WallbreakersContainer = styled.div`
+  position: absolute;
   padding: 16px;
   background-color: ${dfstyles.colors.backgroundlight};
   min-width: 160px;
