@@ -126,21 +126,26 @@ export async function loadConfigFromAddress(address: EthAddress): Promise<
   }
 }
 
-const GraphPlanetType = ["PLANET", "SILVER_MINE", "RUINS", "TRADING_POST", "SILVER_BANK"]
+const GraphPlanetType = ['PLANET', 'SILVER_MINE', 'RUINS', 'TRADING_POST', 'SILVER_BANK'];
 
 export function convertGraphConfig(arena: GraphArena): {
   config: LobbyInitializers;
   address: string;
 } {
-
+  const thresholds: number[] = arena.config.PLANET_LEVEL_THRESHOLDS;
+  console.log('thresholds:', thresholds);
   // const planetTypeWeights : PlanetTypeWeights = ;
   // console.log('config:', arena.config)
-  return { 
+  return {
     config: {
       ...arena.config,
       // CLAIM_PLANET_COOLDOWN: 0,
-      PLANET_TYPE_WEIGHTS:  _.chunk(arena.config.PLANET_TYPE_WEIGHTS, 50).map(block => _.chunk(block, 5)) as any,
-  
+      PLANET_TYPE_WEIGHTS: _.chunk(arena.config.PLANET_TYPE_WEIGHTS, 50).map((block) =>
+        _.chunk(block, 5)
+      ) as any,
+      PLANET_LEVEL_THRESHOLDS: thresholds.find((i) => i == 0) !== undefined
+        ? [16_777_216, 4_194_292, 1_048_561, 262_128, 65_520, 16_368, 4_080, 1_008, 240, 48]
+        : arena.config.PLANET_LEVEL_THRESHOLDS,
       WHITELIST: [],
       ADMIN_PLANETS: arena.planets.map((planet: GraphPlanet) => {
         return {
@@ -151,7 +156,7 @@ export function convertGraphConfig(arena: GraphArena): {
           location: planet.locationDec,
           isTargetPlanet: planet.targetPlanet,
           isSpawnPlanet: planet.spawnPlanet,
-          blockedPlanetLocs: []
+          blockedPlanetLocs: [],
         } as LobbyPlanet;
       }),
       INIT_PLANETS: [],

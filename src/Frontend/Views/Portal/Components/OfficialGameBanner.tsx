@@ -52,7 +52,7 @@ export const OfficialGameBanner: React.FC<{
                 <ArenaPortalButton>Play</ArenaPortalButton>
               </Link>
               <Link to={`/portal/map/${configHash}`}>
-                <ArenaPortalButton secondary>View Map</ArenaPortalButton>
+                <ArenaPortalButton secondary>Map Details</ArenaPortalButton>
               </Link>
             </div>
           </div>
