@@ -12,7 +12,7 @@ function capitalizeFirstLetter(word: string) {
 function configItemName(config: LobbyInitializers, name: string) {
   // return capitalizeFirstLetter(name.toLowerCase().split("_").join(" "));
   const prettyName = capitalizeFirstLetter(name.toLowerCase().split("_").join(" "));
-  console.log(prettyName, name, prettyName.length);
+  // console.log(prettyName, name, prettyName.length);
   if (name == 'START_PAUSED') return 'Start Paused';
 
   // return prettyName.slice(0,5);

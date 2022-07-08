@@ -459,7 +459,6 @@ function EloLeaderboardBody({
     );
   }
 
-  console.log('leaderboard:', leaderboard);
   if (leaderboard == undefined) {
     return <Subber>Leaderboard loading...</Subber>;
   }

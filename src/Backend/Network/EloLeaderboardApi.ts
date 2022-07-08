@@ -44,6 +44,8 @@ export async function loadEloLeaderboard(
         configPlayers(first:1000, where: {configHash: "${config}"}) {
             address,
             elo,
+            wins,
+            losses
         }
     }
     `;

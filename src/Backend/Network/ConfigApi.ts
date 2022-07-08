@@ -113,13 +113,18 @@ export async function loadConfigFromAddress(address: EthAddress): Promise<
   query {
     arena(id: "${address}") {
       lobbyAddress,
-      ${CONSTANTS}
+        configHash,
+        gameOver,
+        startTime,
+        ${CONSTANTS}
     }
   }
 `;
   try {
     const rawData: GraphArena = (await getGraphQLData(query, apiUrl)).data.arena;
     const configData = convertGraphConfig(rawData);
+    console.log('rawData:', configData )
+
     return configData;
   } catch (e) {
     console.log(e);
@@ -133,9 +138,6 @@ export function convertGraphConfig(arena: GraphArena): {
   address: string;
 } {
   const thresholds: number[] = arena.config.PLANET_LEVEL_THRESHOLDS;
-  console.log('thresholds:', thresholds);
-  // const planetTypeWeights : PlanetTypeWeights = ;
-  // console.log('config:', arena.config)
   return {
     config: {
       ...arena.config,

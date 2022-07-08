@@ -32,7 +32,7 @@ export function MapDetails({
     setLeaderboard(undefined);
     setLiveMatches(undefined);
     if (configHash) {
-      if (numSpawnPlanets > 0) {
+      if (numSpawnPlanets > 1) {
         loadEloLeaderboard(configHash, numSpawnPlanets > 1 ? true : false)
           .then((board) => {
             setLeaderboardError(undefined);

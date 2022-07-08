@@ -1264,7 +1264,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
     if (!contractAddress) return;
     try {
       const newConfig = await loadConfigFromAddress(contractAddress);
-      if (newConfig) setConfig(newConfig.config);
+      return newConfig?.config;
     } catch (e) {
       console.error('failed to load config', e);
     }
@@ -1278,16 +1278,19 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
     });
     const playerAddress = ethConnection.getAddress();
 
-    await fetchConfig();
+    const fetchedConfig = await fetchConfig();
 
-    if (config.ADMIN_PLANETS.length > 0) {
-      config.INIT_PLANETS = lobbyPlanetsToInitPlanets(config, config.ADMIN_PLANETS);
-      setConfig(config);
+    if(!fetchedConfig) throw new Error('cannot find config');
+
+    if (fetchedConfig.ADMIN_PLANETS.length > 0) {
+      fetchedConfig.INIT_PLANETS = lobbyPlanetsToInitPlanets(fetchedConfig, fetchedConfig.ADMIN_PLANETS);
     }
+
+    setConfig(fetchedConfig);
     
     /* Don't want to submit ADMIN_PLANET as initdata because they aren't used */
     // @ts-expect-error The Operand of a delete must be optional
-    delete config.ADMIN_PLANETS;
+    delete fetchedConfig.ADMIN_PLANETS;
 
     // console.log('config', config);
 
@@ -1300,11 +1303,11 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
     const initInterface = initContract.interface;
     const initAddress = INIT_ADDRESS;
     const initFunctionCall = initInterface.encodeFunctionData('init', [
-      config,
+      fetchedConfig,
       {
-        allowListEnabled: config.WHITELIST_ENABLED,
+        allowListEnabled: fetchedConfig.WHITELIST_ENABLED,
         artifactBaseURI,
-        allowedAddresses: config.WHITELIST,
+        allowedAddresses: fetchedConfig.WHITELIST,
       },
     ]);
     const txIntent: UnconfirmedCreateLobby = {

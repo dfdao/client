@@ -41,7 +41,7 @@ export const OfficialGameBanner: React.FC<{
               <Sub>Play the Grand Prix</Sub>
               <BannerTitle>{getConfigName(configHash)}</BannerTitle>
             </div>
-            <span>{lobbyAddress}</span>
+            <span>{configHash}</span>
             {/* <span style={{}}>Official DFDAO Map</span> */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Link
