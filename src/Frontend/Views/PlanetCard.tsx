@@ -100,8 +100,11 @@ export function PlanetCard({
     }
     const energyRequired = gameManager.getContractConstants().CLAIM_VICTORY_ENERGY_PERCENT;
     const planetEnergyPercent = Math.floor((planet.energy * 100) / planet.energyCap);
-    const percentNeeded = energyRequired - planetEnergyPercent;
-    const energyNeeded = Math.ceil(((percentNeeded + 2) / 100) * planet.energyCap);
+    const percentNeeded =
+      energyRequired + planet.owner == EMPTY_ADDRESS
+        ? planetEnergyPercent
+        : 0 - planetEnergyPercent;
+    const energyNeeded = Math.ceil(((percentNeeded + 1) / 100) * planet.energyCap);
     return energyNeeded;
   }, [planet?.energy]);
 
@@ -111,11 +114,7 @@ export function PlanetCard({
   const triedFinding = planet.hasTriedFindingArtifact;
 
   const energyRequired =
-    (gameManager.getContractConstants().CLAIM_VICTORY_ENERGY_PERCENT *
-      planet.energyCap) /
-    100;
-
-
+    (gameManager.getContractConstants().CLAIM_VICTORY_ENERGY_PERCENT * planet.energyCap) / 100;
 
   const energyNeeded = energyRequired - planet.energy;
   return (
@@ -139,9 +138,11 @@ export function PlanetCard({
         {planet.isTargetPlanet && (
           <AlignCenterHorizontally style={{ justifyContent: 'space-between' }}>
             <Smaller>
-              {energyNeeded > 0
-                ? `${formatNumber(energyLeftToClaimVictory)} needed to capture`
-                : <Green>This target is captured!</Green>}
+              {energyNeeded > 0 ? (
+                `${formatNumber(energyLeftToClaimVictory)} needed to capture`
+              ) : (
+                <Green>This target is captured!</Green>
+              )}
             </Smaller>
           </AlignCenterHorizontally>
         )}

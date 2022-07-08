@@ -53,9 +53,6 @@ export function SpaceshipsPane({ config, onUpdate }: LobbiesPaneProps) {
   });
   return (
     <>
-      <Row>
-        <span>Spaceships</span>
-      </Row>
       {spaceships}
       <Row>
         <Warning>{config.ARTIFACT_POINT_VALUES.warning}</Warning>

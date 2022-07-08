@@ -2204,6 +2204,8 @@ class GameManager extends EventEmitter {
       this.getNotificationsManager().txInitError('initializePlayer', e.message);
       throw e;
     }
+    this.refreshTwitters();
+
   }
 
   private async getSpaceships() {

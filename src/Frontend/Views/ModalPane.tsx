@@ -1,5 +1,12 @@
 import { ModalId } from '@darkforest_eth/types';
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import React, {
+  CSSProperties,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from 'react';
 import styled from 'styled-components';
 import { Btn } from '../Components/Btn';
 import { EmSpacer, Spacer, Title, Truncate } from '../Components/CoreUI';
@@ -174,7 +181,7 @@ export function ModalPane({
   }, [visible, modalManager, id]);
 
   let content;
-  if (showingHelp) {
+  if (showingInformationSection) {
     content = (
       <InformationSection hide={() => setShowingInformationSection(false)}>
         {renderedFrameHelp || (helpContent && helpContent())}
@@ -190,7 +197,25 @@ export function ModalPane({
 
   function getFrameTitle(args?: ModalFrame) {
     if (!args) return undefined;
-    return `${args.title}`;
+    let content = <>{args.title}</>;
+    if (showingHelp) {
+      content = (
+        <div>
+          <MaybeShortcutButton
+            slot='title'
+            size='small'
+            onClick={() => setShowingInformationSection(false)}
+            onShortcutPressed={() => setShowingInformationSection(false)}
+            shortcutKey={MODAL_BACK_SHORTCUT}
+            shortcutText={MODAL_BACK_SHORTCUT}
+          >
+            🠔
+          </MaybeShortcutButton>
+          {args.title} (help)
+        </div>
+      );
+    }
+    return content;
   }
 
   const modalTitleElement = typeof title === 'string' ? title : title(frames.length > 0);
@@ -238,20 +263,32 @@ export function ModalPane({
         <div slot='title' style={{ marginLeft: '8px', flexShrink: 0 }}>
           {helpContent !== undefined && !minimized && (
             <>
-              <Btn size='small' onClick={() => setShowingInformationSection((showing) => !showing)}>
-              ❔
+              <Btn
+                size='small'
+                onClick={() => setShowingInformationSection((showing) => !showing)}
+                style={{ fontFamily: 'serif' } as CSSStyleDeclaration & CSSProperties}
+              >
+                ❔
               </Btn>
               <Spacer width={4} />
             </>
           )}
-          <Btn size='small' onClick={() => setMinimized((minimized: boolean) => !minimized)}>
+          <Btn
+            size='small'
+            onClick={() => setMinimized((minimized: boolean) => !minimized)}
+            style={{ fontFamily: 'serif' } as CSSStyleDeclaration & CSSProperties}
+          >
             {minimized ? '🗖' : '🗕'}
           </Btn>
           {!hideClose && (
             <>
               <Spacer width={4} />
-              <Btn size='small' onClick={() => onClose()}>
-              🗙
+              <Btn
+                size='small'
+                onClick={() => onClose()}
+                style={{ fontFamily: 'serif' } as CSSStyleDeclaration & CSSProperties}
+              >
+                🗙
               </Btn>
             </>
           )}

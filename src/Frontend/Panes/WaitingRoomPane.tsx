@@ -15,6 +15,7 @@ import { getPlanetRank } from '../../Backend/Utils/Utils';
 import { Btn } from '../Components/Btn';
 import { CenterBackgroundSubtext, Spacer } from '../Components/CoreUI';
 import { Icon, IconType } from '../Components/Icons';
+import { AccountLabel } from '../Components/Labels/Labels';
 import { Row } from '../Components/Row';
 import { Green, Red, Sub } from '../Components/Text';
 import { TextPreview } from '../Components/TextPreview';
@@ -134,9 +135,8 @@ export function WaitingRoomPane({ visible, onClose }: { visible: boolean; onClos
       <Sub>
         {planet.owner === EMPTY_ADDRESS
           ? 'nobody'
-          : uiManager.getTwitter(planet.owner) || (
-              <TextPreview text={planet.owner} unFocusedWidth='100px' focusedWidth='100px' />
-            )}
+          : <AccountLabel ethAddress={planet.owner} />
+        }
         {planet.owner == player?.address && '(you)'}
       </Sub>
     ),
@@ -144,8 +144,8 @@ export function WaitingRoomPane({ visible, onClose }: { visible: boolean; onClos
     (planet: Planet, i: number) => {
       if(!confirmStart) return <></>
       const player = players[i];
-      if (!player || !player.ready) return <Red>N</Red>;
-      return <Green>Y</Green>;
+      if(started || (player && player.ready)) return <Green>Y</Green>;
+      return <Red>N</Red>;
     },
   ];
   let content;

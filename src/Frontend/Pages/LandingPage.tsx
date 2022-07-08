@@ -21,7 +21,7 @@ export const enum LandingPageZIndex {
 }
 
 const links = {
-  twitter: 'http://twitter.com/darkforest-eth',
+  twitter: 'http://twitter.com/darkforest_eth',
   email: 'mailto:zeroxhank@gmail.com',
   blog: 'https://blog.zkga.me/',
   discord: 'https://discord.gg/XxveJpwJ',
@@ -122,7 +122,7 @@ export default function LandingPage() {
         <Content>
           <TextContainer>
             <Badge>Dark Forest Arena 🏟️</Badge>
-            <Title>Playing is building</Title>
+            {/* <Title>Playing is building</Title> */}
             <Desc>Play dfdao's fast-paced, free version of the premier on-chain game.</Desc>
             <ArenaPortalButton onClick={() => history.push('/portal/home')}>
               Enter
@@ -132,9 +132,9 @@ export default function LandingPage() {
             <img src='/public/img/deathstar.png' style = {{maxWidth: '90%'}} />
           </ImgContainer>
         </Content>
-        <HideOnMobile>
+        {/* <HideOnMobile>
           <BgGrid src='/public/img/LandingPageGrid.svg' />
-        </HideOnMobile>
+        </HideOnMobile> */}
       </Container>
     </>
   );
