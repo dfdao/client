@@ -2,6 +2,7 @@ import { EthAddress, LiveMatch, LiveMatchEntry, ExtendedMatchEntry } from '@dark
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { Subber } from '../../Components/Text';
 import dfstyles from '../../Styles/dfstyles';
 import { GenericErrorBoundary } from '../GenericErrorBoundary';
 
@@ -48,7 +49,8 @@ export const FindMatch: React.FC<FindMatchProps> = ({ game, error, nPlayers }) =
   return (
     <GenericErrorBoundary errorMessage={"Couldn't load matches"}>
       <Container>
-        {game &&
+        {game ?
+          game.entries.length == 0 ? <Subber>No live games</Subber> :
           game.entries.map((entry: ExtendedMatchEntry) => (
             <MatchComponent
               creator={entry.creator}
@@ -57,7 +59,7 @@ export const FindMatch: React.FC<FindMatchProps> = ({ game, error, nPlayers }) =
               spotsTaken={entry.players ? entry.players.length : 0}
               matchId={entry.id}
             />
-          ))}
+          )) : <></>}
       </Container>
     </GenericErrorBoundary>
   );

@@ -11,7 +11,7 @@ export const loadLiveMatches = async (
 
   const query = `
     query {
-      arenas(first: 1000, where: {configHash: "${config}", gameOver: false, firstMover_not: null}) {
+      arenas(first: 1000, where: {configHash: "${config}", gameOver: false, ${multiplayer ? 'firstMover' : 'firstMover_not'}: null}) {
       firstMover {
         address
       },
@@ -37,7 +37,5 @@ export const loadLiveMatches = async (
     throw new Error(`error when fetching data, ${JSON.stringify(response)}`);
   }
 
-  const twitters = await getAllTwitters();
-  arenas.map((a: LiveMatchEntry) => (a.twitter = twitters[a.firstMover.address]));
   return { entries: arenas };
 };

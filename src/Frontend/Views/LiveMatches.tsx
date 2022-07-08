@@ -8,7 +8,7 @@ import { TwitterLink } from '../Components/Labels/Labels';
 import { Red, Subber } from '../Components/Text';
 import { TextPreview } from '../Components/TextPreview';
 import dfstyles from '../Styles/dfstyles';
-import { useLiveMatches } from '../Utils/AppHooks';
+import { useLiveMatches, useTwitters } from '../Utils/AppHooks';
 import { formatDuration } from '../Utils/TimeUtils';
 import { GenericErrorBoundary } from './GenericErrorBoundary';
 import { MinimalButton } from './Portal/PortalMainView';
@@ -38,7 +38,9 @@ export function LiveMatches({
 
 // pass in either an address, or a twitter handle. this function will render the appropriate
 // component
-function playerToEntry(playerAddress: string, playerTwitter: string | undefined) {
+function playerToEntry(playerAddress: string) {
+  const twitters = useTwitters();
+  const playerTwitter = twitters[playerAddress];
   return (
     <span
       style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '5px' }}
@@ -95,7 +97,7 @@ function LeaderboardTable({ rows }: { rows: Row[] }) {
         rows={rows}
         columns={[
           (row: Row, i) => {
-            return <Cell>{playerToEntry(row.address, row.twitter)}</Cell>;
+            return <Cell>{playerToEntry(row.address)}</Cell>;
           },
           (row: Row, i) => {
             return (
