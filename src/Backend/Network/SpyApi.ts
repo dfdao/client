@@ -11,10 +11,10 @@ export const loadLiveMatches = async (
 
   const query = `
     query {
-      arenas(first: 1000, where: {configHash: "${config}", gameOver: false, ${multiplayer ? 'firstMover' : 'firstMover_not'}: null}) {
+      arenas(first: 1000, orderBy: startTime, orderDirection: desc, where: {configHash: "${config}", gameOver: false, ${multiplayer ? 'firstMover' : 'firstMover_not'}: null}) {
       firstMover {
         address
-      },
+      },  
       ${multiplayerStats}
       creator,
       id

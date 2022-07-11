@@ -18,7 +18,7 @@ const LOCATION_ID_UB = bigInt(
   '21888242871839275222246405745257275088548364400416034343698204186575808495617'
 );
 
-const apiUrl = 'http://localhost:8000/subgraphs/name/df' //'https://9a46-143-244-168-87.ngrok.io/subgraphs/name/df-arena-v2';
+const apiUrl = 'https://9a46-143-244-168-87.ngrok.io/subgraphs/name/df-arena-v2';
 
 const competitiveConfig = '0xda4f1d3dd164e56d66f146827a08a7ffa6ae7844e49d51211ab9daf2c56483f5';
 
