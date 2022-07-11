@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { Subber } from '../../Components/Text';
 import dfstyles from '../../Styles/dfstyles';
+import { gameUrl } from '../../Utils/constants';
 import { formatStartTime } from '../../Utils/TimeUtils';
 import { GenericErrorBoundary } from '../GenericErrorBoundary';
 
@@ -44,7 +45,7 @@ export const MatchComponent: React.FC<MatchDetails> = ({
           Creation Time: {formatStartTime(startTime)}
         </div>
       </div>
-      <Link to={`https://arena.dfdao.xyz/play/${matchId}`}>
+      <Link to={`/play/${matchId}`}>
         <MatchButton>Join</MatchButton>
       </Link>
     </MatchContainer>

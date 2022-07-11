@@ -31,7 +31,6 @@ const mapSize = '125px';
 function ArenaCard({ arena }: { arena: ArenaData }) {
   const lastPlayed = new Date(arena.startTime * 1000);
   const formattedDate = `${lastPlayed.getMonth()}/${lastPlayed.getDate()}/${lastPlayed.getFullYear()}`;
-
   return (
     <Link
       to={`/portal/map/${arena.configHash}`}
