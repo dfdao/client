@@ -1,4 +1,5 @@
 import { ModalId } from '@darkforest_eth/types';
+import { IconType } from '@darkforest_eth/ui';
 import React, {
   CSSProperties,
   useCallback,
@@ -11,6 +12,7 @@ import styled from 'styled-components';
 import { Btn } from '../Components/Btn';
 import { EmSpacer, Spacer, Title, Truncate } from '../Components/CoreUI';
 import { PaneProps } from '../Components/GameWindowComponents';
+import { Icon } from '../Components/Icons';
 import { MaybeShortcutButton } from '../Components/MaybeShortcutButton';
 import { DarkForestModal, Modal, PositionChangedEvent } from '../Components/Modal';
 import dfstyles from '../Styles/dfstyles';
@@ -197,25 +199,7 @@ export function ModalPane({
 
   function getFrameTitle(args?: ModalFrame) {
     if (!args) return undefined;
-    let content = <>{args.title}</>;
-    if (showingHelp) {
-      content = (
-        <div>
-          <MaybeShortcutButton
-            slot='title'
-            size='small'
-            onClick={() => setShowingInformationSection(false)}
-            onShortcutPressed={() => setShowingInformationSection(false)}
-            shortcutKey={MODAL_BACK_SHORTCUT}
-            shortcutText={MODAL_BACK_SHORTCUT}
-          >
-            🠔
-          </MaybeShortcutButton>
-          {args.title} (help)
-        </div>
-      );
-    }
-    return content;
+    return <>{args.title}</>;
   }
 
   const modalTitleElement = typeof title === 'string' ? title : title(frames.length > 0);
@@ -263,12 +247,8 @@ export function ModalPane({
         <div slot='title' style={{ marginLeft: '8px', flexShrink: 0 }}>
           {helpContent !== undefined && !minimized && (
             <>
-              <Btn
-                size='small'
-                onClick={() => setShowingInformationSection((showing) => !showing)}
-                style={{ fontFamily: 'serif' } as CSSStyleDeclaration & CSSProperties}
-              >
-                ❔
+              <Btn size='small' onClick={() => setShowingInformationSection((showing) => !showing)}>
+                <ModalIcon><Icon type={IconType.Help} /></ModalIcon>
               </Btn>
               <Spacer width={4} />
             </>
@@ -278,17 +258,13 @@ export function ModalPane({
             onClick={() => setMinimized((minimized: boolean) => !minimized)}
             style={{ fontFamily: 'serif' } as CSSStyleDeclaration & CSSProperties}
           >
-            {minimized ? '🗖' : '🗕'}
+            <ModalIcon><Icon type = {minimized ? IconType.Maximize : IconType.Minimize}/></ModalIcon>
           </Btn>
           {!hideClose && (
             <>
               <Spacer width={4} />
-              <Btn
-                size='small'
-                onClick={() => onClose()}
-                style={{ fontFamily: 'serif' } as CSSStyleDeclaration & CSSProperties}
-              >
-                🗙
+              <Btn size='small' onClick={() => onClose()}>
+                <ModalIcon><Icon type={IconType.X} /></ModalIcon>
               </Btn>
             </>
           )}
@@ -299,3 +275,10 @@ export function ModalPane({
     );
   }
 }
+
+const ModalIcon = styled.span`
+  display: flex;
+  align-items: center;
+  justify-content:center;
+  padding: 5px 0px;
+`
