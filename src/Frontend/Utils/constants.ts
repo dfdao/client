@@ -40,7 +40,6 @@ export {
   OPTIMISM_GAS_LIMIT,
   LOCATION_ID_UB,
   apiUrl,
-  // gameUrl,
   roundEndTimestamp,
   roundStartTimestamp,
   competitiveConfig,
