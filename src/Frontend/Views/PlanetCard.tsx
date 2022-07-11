@@ -98,13 +98,16 @@ export function PlanetCard({
     if (!planet) {
       return 0;
     }
-    const energyRequired = gameManager.getContractConstants().CLAIM_VICTORY_ENERGY_PERCENT;
-    const planetEnergyPercent = Math.floor((planet.energy * 100) / planet.energyCap);
-    const percentNeeded =
-      energyRequired + planet.owner == EMPTY_ADDRESS
-        ? planetEnergyPercent
-        : 0 - planetEnergyPercent;
-    const energyNeeded = Math.ceil(((percentNeeded + 1) / 100) * planet.energyCap);
+    const percentRequired = gameManager.getContractConstants().CLAIM_VICTORY_ENERGY_PERCENT;
+    const percentHeld = Math.floor((planet.energy * 100) / planet.energyCap);
+    let percentNeeded;
+    if(planet.owner == EMPTY_ADDRESS){
+      percentNeeded = percentRequired + percentHeld;
+    } else {
+      percentNeeded = percentRequired - percentHeld;
+    }
+ 
+    const energyNeeded = Math.ceil((percentNeeded / 100) * planet.energyCap);
     return energyNeeded;
   }, [planet?.energy]);
 

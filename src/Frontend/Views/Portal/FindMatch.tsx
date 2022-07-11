@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { Subber } from '../../Components/Text';
 import dfstyles from '../../Styles/dfstyles';
-import { gameUrl } from '../../Utils/constants';
+// import { gameUrl } from '../../Utils/constants';
 import { formatStartTime } from '../../Utils/TimeUtils';
 import { GenericErrorBoundary } from '../GenericErrorBoundary';
 

@@ -1,3 +1,4 @@
+import { EMPTY_ADDRESS } from '@darkforest_eth/constants';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { loadRecentMaps, MapInfo } from '../../../Backend/Network/MapsApi';
@@ -14,7 +15,7 @@ export const PortalHomeView: React.FC<{}> = () => {
       .then((maps) => {
         if (!maps) return;
         const uniqueMaps = maps.filter(
-          (m, i) => maps.findIndex((m2) => m2.configHash == m.configHash) == i
+          (m, i) => m.configHash !== '0x00' && maps.findIndex((m2) => m2.configHash == m.configHash) == i
         );
         setPortalMaps(uniqueMaps);
       })
