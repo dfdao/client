@@ -28,7 +28,7 @@ import {
   SilverGrowthText,
   SpeedText,
 } from '../Components/Labels/PlanetLabels';
-import { Green, Smaller, Sub } from '../Components/Text';
+import { Green, Red, Smaller, Sub } from '../Components/Text';
 import { PlanetIcons } from '../Renderers/PlanetscapeRenderer/PlanetIcons';
 import dfstyles, { snips } from '../Styles/dfstyles';
 import { useAccount, useActiveArtifact, usePlanetArtifacts, useUIManager } from '../Utils/AppHooks';
@@ -93,7 +93,7 @@ export function PlanetCard({
   const spaceJunkEnabled = uiManager.getSpaceJunkEnabled();
   const isAbandoning = useEmitterValue(uiManager.isAbandoning$, uiManager.isAbandoning());
   const randomArtifacts = gameManager.getContractConstants().RANDOM_ARTIFACTS;
-  
+
   const energyLeftToClaimVictory = useMemo(() => {
     if (!planet) {
       return 0;
@@ -101,12 +101,12 @@ export function PlanetCard({
     const percentRequired = gameManager.getContractConstants().CLAIM_VICTORY_ENERGY_PERCENT;
     const percentHeld = Math.floor((planet.energy * 100) / planet.energyCap);
     let percentNeeded;
-    if(planet.owner == EMPTY_ADDRESS){
+    if (planet.owner == EMPTY_ADDRESS) {
       percentNeeded = percentRequired + percentHeld;
     } else {
       percentNeeded = percentRequired - percentHeld;
     }
- 
+
     const energyNeeded = Math.ceil((percentNeeded / 100) * planet.energyCap);
     return energyNeeded;
   }, [planet?.energy]);
@@ -120,7 +120,6 @@ export function PlanetCard({
     (gameManager.getContractConstants().CLAIM_VICTORY_ENERGY_PERCENT * planet.energyCap) / 100;
 
   const energyNeeded = energyRequired - planet.energy;
-  console.log(`energy NEeded ${energyNeeded} energy Required ${energyRequired}`);
   return (
     <>
       {standalone && (
@@ -143,9 +142,11 @@ export function PlanetCard({
           <AlignCenterHorizontally style={{ justifyContent: 'space-between' }}>
             <Smaller>
               {energyLeftToClaimVictory > 0 ? (
-                `${formatNumber(energyLeftToClaimVictory)} needed to capture`
+                <span>
+                  <Red>{formatNumber(energyLeftToClaimVictory)}</Red> needed to capture
+                </span>
               ) : (
-                <Green>This target is capturable!</Green>
+                <Green>This target has been captured!</Green>
               )}
             </Smaller>
           </AlignCenterHorizontally>

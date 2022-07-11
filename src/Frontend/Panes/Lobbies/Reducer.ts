@@ -2152,6 +2152,14 @@ export function ofLobbyPlanets(
     };
   }
 
+  if (currentValue.length > 30) {
+    return {
+      ...state[type],
+      displayValue,
+      warning: `Cannot create more than 30 admin planets`,
+    };
+  }
+
   if (currentValue[index]) {
     currentValue.splice(index, number, value);
     displayValue.splice(index, number, value);
