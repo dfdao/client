@@ -93,7 +93,7 @@ export function PlanetCard({
   const spaceJunkEnabled = uiManager.getSpaceJunkEnabled();
   const isAbandoning = useEmitterValue(uiManager.isAbandoning$, uiManager.isAbandoning());
   const randomArtifacts = gameManager.getContractConstants().RANDOM_ARTIFACTS;
-
+  
   const energyLeftToClaimVictory = useMemo(() => {
     if (!planet) {
       return 0;
@@ -117,6 +117,7 @@ export function PlanetCard({
     (gameManager.getContractConstants().CLAIM_VICTORY_ENERGY_PERCENT * planet.energyCap) / 100;
 
   const energyNeeded = energyRequired - planet.energy;
+  console.log(`energy NEeded ${energyNeeded} energy Required ${energyRequired}`);
   return (
     <>
       {standalone && (
@@ -138,10 +139,10 @@ export function PlanetCard({
         {planet.isTargetPlanet && (
           <AlignCenterHorizontally style={{ justifyContent: 'space-between' }}>
             <Smaller>
-              {energyNeeded > 0 ? (
+              {energyLeftToClaimVictory > 0 ? (
                 `${formatNumber(energyLeftToClaimVictory)} needed to capture`
               ) : (
-                <Green>This target is captured!</Green>
+                <Green>This target is capturable!</Green>
               )}
             </Smaller>
           </AlignCenterHorizontally>

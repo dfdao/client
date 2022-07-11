@@ -9,7 +9,7 @@ import { Red, Subber } from '../Components/Text';
 import { TextPreview } from '../Components/TextPreview';
 import dfstyles from '../Styles/dfstyles';
 import { useLiveMatches, useTwitters } from '../Utils/AppHooks';
-import { formatDuration } from '../Utils/TimeUtils';
+import { formatDuration, formatStartTime } from '../Utils/TimeUtils';
 import { GenericErrorBoundary } from './GenericErrorBoundary';
 import { MinimalButton } from './Portal/PortalMainView';
 import { Table } from './Table';
@@ -75,12 +75,15 @@ function LeaderboardTable({ rows }: { rows: Row[] }) {
   if (rows.length == 0) return <Subber>No players finished</Subber>;
 
   const [durations, setDurations] = useState<number[]>([]);
+  const [startTimes, setStartTimes] = useState<number[]>([]);
   useEffect(() => {
+    setStartTimes(rows.map(r => r.startTime));
+
     const interval = setInterval(() => {
-      const times: number[] = [];
-      rows.forEach((r) => times.push(Date.now() - r.startTime * 1000));
+      const times = rows.map((r) =>(Date.now() - r.startTime * 1000));
       setDurations(times);
     }, 1000);
+
     return () => clearInterval(interval);
   }, []);
 
@@ -91,6 +94,7 @@ function LeaderboardTable({ rows }: { rows: Row[] }) {
         headers={[
           <Cell key='player'>Player</Cell>,
           <Cell key='lobby'>Arena ID</Cell>,
+          <Cell key='start_time'>Start Time</Cell>,
           <Cell key='duration'>Duration</Cell>,
           <Cell key='go'></Cell>,
         ]}
@@ -105,6 +109,9 @@ function LeaderboardTable({ rows }: { rows: Row[] }) {
                 <TextPreview text={row.id} focusedWidth={'75px'} unFocusedWidth={'75px'} />
               </Cell>
             );
+          },
+          (row: Row, i) => {
+            return <Cell>{startTimes[i] ? formatStartTime(startTimes[i]) : 'loading...'}</Cell>;
           },
           (row: Row, i) => {
             return <Cell>{durations[i] ? formatDuration(durations[i]) : 'loading...'}</Cell>;

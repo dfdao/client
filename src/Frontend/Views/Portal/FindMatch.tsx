@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { Subber } from '../../Components/Text';
 import dfstyles from '../../Styles/dfstyles';
+import { formatStartTime } from '../../Utils/TimeUtils';
 import { GenericErrorBoundary } from '../GenericErrorBoundary';
 
 export interface FindMatchProps {
@@ -18,6 +19,7 @@ export interface MatchDetails {
   totalSpots: number;
   spotsTaken: number;
   matchId: string;
+  startTime: number;
 }
 
 export const MatchComponent: React.FC<MatchDetails> = ({
@@ -26,6 +28,7 @@ export const MatchComponent: React.FC<MatchDetails> = ({
   totalSpots,
   spotsTaken,
   matchId,
+  startTime
 }) => {
   return (
     <MatchContainer>
@@ -34,8 +37,11 @@ export const MatchComponent: React.FC<MatchDetails> = ({
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <span>{matchType}</span>
           <span style={{ color: dfstyles.colors.dfgreen }}>
-            {spotsTaken} / {totalSpots} spots available
+            {totalSpots - spotsTaken} / {totalSpots} spots available
           </span>
+        </div>
+        <div>
+          Creation Time: {formatStartTime(startTime)}
         </div>
       </div>
       <Link to={`https://arena.dfdao.xyz/play/${matchId}`}>
@@ -58,6 +64,7 @@ export const FindMatch: React.FC<FindMatchProps> = ({ game, error, nPlayers }) =
               totalSpots={nPlayers}
               spotsTaken={entry.players ? entry.players.length : 0}
               matchId={entry.id}
+              startTime={entry.startTime}
             />
           )) : <></>}
       </Container>

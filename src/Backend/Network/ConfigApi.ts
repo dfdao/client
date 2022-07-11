@@ -122,8 +122,9 @@ export async function loadConfigFromAddress(address: EthAddress): Promise<
 `;
   try {
     const rawData: GraphArena = (await getGraphQLData(query, apiUrl)).data.arena;
+    console.log('graph Data pre parse', rawData);
     const configData = convertGraphConfig(rawData);
-    console.log('rawData:', configData )
+    console.log('graphConfigData:', configData);
 
     return configData;
   } catch (e) {
@@ -131,12 +132,14 @@ export async function loadConfigFromAddress(address: EthAddress): Promise<
   }
 }
 
-const GraphPlanetType = ['PLANET', 'SILVER_MINE', 'RUINS', 'TRADING_POST', 'SILVER_BANK'];
+const GraphPlanetType = ['PLANET', 'ASTEROID', 'FOUNDRY', 'SPACETIME_RIP', 'QUASAR'];
 
 export function convertGraphConfig(arena: GraphArena): {
   config: LobbyInitializers;
   address: string;
 } {
+  if (!arena.config) throw new Error("Can't load arena config");
+
   const thresholds: number[] = arena.config.PLANET_LEVEL_THRESHOLDS;
   return {
     config: {
@@ -145,9 +148,10 @@ export function convertGraphConfig(arena: GraphArena): {
       PLANET_TYPE_WEIGHTS: _.chunk(arena.config.PLANET_TYPE_WEIGHTS, 50).map((block) =>
         _.chunk(block, 5)
       ) as any,
-      PLANET_LEVEL_THRESHOLDS: thresholds.find((i) => i == 0) !== undefined
-        ? [16_777_216, 4_194_292, 1_048_561, 262_128, 65_520, 16_368, 4_080, 1_008, 240, 48]
-        : arena.config.PLANET_LEVEL_THRESHOLDS,
+      PLANET_LEVEL_THRESHOLDS:
+        thresholds.find((i) => i == 0) !== undefined
+          ? [16_777_216, 4_194_292, 1_048_561, 262_128, 65_520, 16_368, 4_080, 1_008, 240, 48]
+          : arena.config.PLANET_LEVEL_THRESHOLDS,
       WHITELIST: [],
       ADMIN_PLANETS: arena.planets.map((planet: GraphPlanet) => {
         return {

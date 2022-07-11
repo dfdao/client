@@ -22,6 +22,7 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
   const isCompetitive = uiManager.getGameManager().isCompetitive();
   const gameManager = uiManager.getGameManager();
   const victoryThreshold = gameManager.getContractConstants().CLAIM_VICTORY_ENERGY_PERCENT;
+  const numForVictory = gameManager.getContractConstants().TARGETS_REQUIRED_FOR_VICTORY;
 
   const tutorialManager = TutorialManager.getInstance(uiManager);
 
@@ -66,7 +67,7 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
             </Green>.
             </>
           }
-          You need {uiManager.getAllTargetPlanets().length} to win.
+          You need {numForVictory} to win.
         </div>
         {isCompetitive && (
           <div>

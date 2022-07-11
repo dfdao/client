@@ -2,7 +2,8 @@ import { Initializers } from '@darkforest_eth/settings';
 import { EthAddress } from '@darkforest_eth/types';
 import { LobbyPlanet } from './LobbiesUtils';
 
-export const SAFE_UPPER_BOUNDS = Number.MAX_SAFE_INTEGER - 1;
+// MAX int32 for graph purposes.
+export const SAFE_UPPER_BOUNDS = 2147483647 - 1// Number.MAX_SAFE_INTEGER - 1;
 
 export class InvalidConfigError extends Error {
   key: string;

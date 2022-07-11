@@ -7,6 +7,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { ArenaPortalButton } from './PortalHomeView';
 import { loadRecentMaps, MapInfo } from '../../../Backend/Network/MapsApi';
 import { getConfigName } from '@darkforest_eth/procedural';
+import { formatDate } from '../../Utils/TimeUtils';
 
 const SidebarMap: React.FC<{
   configHash: string;
@@ -15,7 +16,7 @@ const SidebarMap: React.FC<{
   const history = useHistory();
   const lastPlayed = startTime && new Date(startTime * 1000);
   const formattedDate =
-    lastPlayed && `${lastPlayed.getMonth()}/${lastPlayed.getDate()}/${lastPlayed.getFullYear()}`;
+    lastPlayed && `${formatDate(lastPlayed)}`;
   return (
     <SidebarMapContainer onClick={() => history.push(`/portal/map/${configHash}`)}>
       <SidebarMapTitle>{getConfigName(configHash)}</SidebarMapTitle>

@@ -25,5 +25,5 @@ export async function loadRecentMaps(
 		}
 	}
 	`;
-  return (await getGraphQLData(query, apiUrl)).data.arenas;
+  return (await getGraphQLData(query, apiUrl)).data?.arenas;
 }

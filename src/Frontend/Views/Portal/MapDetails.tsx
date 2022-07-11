@@ -33,8 +33,9 @@ export function MapDetails({
     setLiveMatches(undefined);
     if (configHash) {
       if (numSpawnPlanets > 1) {
-        loadEloLeaderboard(configHash, numSpawnPlanets > 1 ? true : false)
+        loadEloLeaderboard(configHash, numSpawnPlanets > 1)
           .then((board) => {
+            console.log("BOARD", board);
             setLeaderboardError(undefined);
             setEloLeaderboard(board);
           })
@@ -47,7 +48,7 @@ export function MapDetails({
           })
           .catch((e) => setLeaderboardError(e));
       }
-      loadLiveMatches(configHash, numSpawnPlanets > 1 ? true : false)
+      loadLiveMatches(configHash, numSpawnPlanets > 1)
         .then((matches) => {
           setLiveMatchError(undefined);
           setLiveMatches(matches);
