@@ -42,7 +42,7 @@ export function AdminPermissionsPane({ config, onUpdate }: LobbiesPaneProps) {
       {/* <Row>
         <Warning>{config.ADMIN_CAN_ADD_PLANETS.warning}</Warning>
       </Row> */}
-      {/* <Row>
+      <Row>
         <Checkbox
           label='Allowlist enabled?'
           checked={config.WHITELIST_ENABLED.displayValue}
@@ -50,7 +50,7 @@ export function AdminPermissionsPane({ config, onUpdate }: LobbiesPaneProps) {
             onUpdate({ type: 'WHITELIST_ENABLED', value: e.target.checked })
           }
         />
-      </Row> */}
+      </Row>
       {/* <Row>
         <Warning>{config.WHITELIST_ENABLED.warning}</Warning>
       </Row> */}

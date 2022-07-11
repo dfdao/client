@@ -69,7 +69,7 @@ NO_ADMIN,
 PLANET_TYPE_WEIGHTS,
 # INIT_PLANETS,
 },
-planets(first: 20) {
+planets(first: 30) {
   x,
   y,
   locationDec,

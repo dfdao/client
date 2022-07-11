@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { Subber } from '../../Components/Text';
 import dfstyles from '../../Styles/dfstyles';
-// import { gameUrl } from '../../Utils/constants';
 import { formatStartTime } from '../../Utils/TimeUtils';
 import { GenericErrorBoundary } from '../GenericErrorBoundary';
 
@@ -29,7 +28,7 @@ export const MatchComponent: React.FC<MatchDetails> = ({
   totalSpots,
   spotsTaken,
   matchId,
-  startTime
+  startTime,
 }) => {
   return (
     <MatchContainer>
@@ -37,16 +36,24 @@ export const MatchComponent: React.FC<MatchDetails> = ({
         <span>By {creator}</span>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <span>{matchType}</span>
-          <span style={{ color: dfstyles.colors.dfgreen }}>
-            {totalSpots - spotsTaken} / {totalSpots} spots available
-          </span>
+          {totalSpots == spotsTaken ? (
+            <span style={{ color: dfstyles.colors.dfred }}>
+              {totalSpots - spotsTaken} / {totalSpots} spots available
+            </span>
+          ) : (
+            <span style={{ color: dfstyles.colors.dfgreen }}>
+              {totalSpots - spotsTaken} / {totalSpots} spots available
+            </span>
+          )}
         </div>
-        <div>
-          Creation Time: {formatStartTime(startTime)}
-        </div>
+        <div>Creation Time: {formatStartTime(startTime)}</div>
       </div>
       <Link to={`/play/${matchId}`}>
-        <MatchButton>Join</MatchButton>
+        {totalSpots == spotsTaken ? (
+          <MatchButton>View</MatchButton>
+        ) : (
+          <MatchButton>Join</MatchButton>
+        )}
       </Link>
     </MatchContainer>
   );
@@ -56,18 +63,24 @@ export const FindMatch: React.FC<FindMatchProps> = ({ game, error, nPlayers }) =
   return (
     <GenericErrorBoundary errorMessage={"Couldn't load matches"}>
       <Container>
-        {game ?
-          game.entries.length == 0 ? <Subber>No live games</Subber> :
-          game.entries.map((entry: ExtendedMatchEntry) => (
-            <MatchComponent
-              creator={entry.creator}
-              matchType='Solo'
-              totalSpots={nPlayers}
-              spotsTaken={entry.players ? entry.players.length : 0}
-              matchId={entry.id}
-              startTime={entry.startTime}
-            />
-          )) : <></>}
+        {game ? (
+          game.entries.length == 0 ? (
+            <Subber>No live games</Subber>
+          ) : (
+            game.entries.map((entry: ExtendedMatchEntry) => (
+              <MatchComponent
+                creator={entry.creator}
+                matchType='Solo'
+                totalSpots={nPlayers}
+                spotsTaken={entry.players ? entry.players.length : 0}
+                matchId={entry.id}
+                startTime={entry.startTime}
+              />
+            ))
+          )
+        ) : (
+          <></>
+        )}
       </Container>
     </GenericErrorBoundary>
   );
