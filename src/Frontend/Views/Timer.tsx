@@ -47,22 +47,11 @@ export function Timer({ account }: { account: EthAddress | undefined }) {
     }, []);
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-evenly',
-          alignItems: 'center',
-          // gridTemplateColumns: 'repeat(2, 50%)',
-          width: '100%',
-          textAlign: 'center',
-          marginTop: '7px',
-        }}
-      >
+      <>
         {account && <span style={{ gridColumn: '1' }}>Moves: {moves}</span>}
         <span style={{ gridColumn: '2' }}>{time}</span>
         {/* <span style={{ color, gridColumn: '3' }}>Score: {Math.round(score)}</span> */}
-      </div>
+      </>
     );
   }
 

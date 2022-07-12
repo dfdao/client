@@ -19,6 +19,8 @@ import { Gameover } from './Gameover';
 import { Timer } from './Timer';
 import { Play } from './Play';
 import { TargetPlanetVictory } from './TargetPlanetVictory';
+import { getConfigName } from '@darkforest_eth/procedural';
+import Button from '../Components/Button';
 
 const TopBarContainer = styled.div`
   z-index: ${DFZIndex.MenuBar};
@@ -225,21 +227,39 @@ export function TopBar({ twitterVerifyHook }: { twitterVerifyHook: Hook<boolean>
             </TooltipTrigger>
           </>
         )}
-        {uiManager.getSpaceJunkEnabled() && <SpaceJunk account={account} />}
+        <TooltipTrigger
+          name={TooltipName.Empty}
+          extraContent={<Text>This is the map configuration. Click to copy the hash.</Text>}
+        >
+          <Button
+            onClick={() => {
+              navigator.clipboard.writeText(uiManager.contractConstants.CONFIG_HASH).then(
+                () => {
+                  console.log('Async: Copying to clipboard was successful!');
+                },
+                (err) => {
+                  console.error('Async: Could not copy text: ', err);
+                }
+              );
+            }}
+          >
+            {getConfigName(uiManager.contractConstants.CONFIG_HASH)}
+          </Button>
+        </TooltipTrigger>
       </AlignCenterHorizontally>{' '}
-      {uiManager.contractConstants.TARGET_PLANETS ? (
-        <>
-          <Timer account={account} />
-          <AlignCenterHorizontally style={{ justifyContent: 'space-around', width: '100%', marginTop: '7px' }}>
-            <TargetPlanetVictory />
-          </AlignCenterHorizontally>
-        </>
-      ) : (
-        <AlignCenterHorizontally style={{ justifyContent: 'space-around', width: '100%', marginTop: '7px' }}>
-          <BoardPlacement account={account} />{' '}
-        </AlignCenterHorizontally>
-      )}
-      <NetworkHealth />
+      <AlignCenterHorizontally
+        style={{ justifyContent: 'space-evenly', width: '100%', marginTop: '7px' }}
+      >
+        {uiManager.getSpaceJunkEnabled() && <SpaceJunk account={account} />}
+        {uiManager.contractConstants.TARGET_PLANETS ? (
+          <>
+            <Timer account={account} />
+          </>
+        ) : (
+          <BoardPlacement account={account} />
+        )}
+      </AlignCenterHorizontally>
+      <TargetPlanetVictory />
       <Gameover />
       <Paused />
       {/* <Play /> */}
