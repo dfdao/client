@@ -73,6 +73,8 @@ export function lobbyPlanetsToInitPlanets(initializers: LobbyInitializers, plane
   planets.forEach((p) =>
   initPlanets.push(lobbyPlanetToInitPlanet(p, initializers))
   );
+  // SORT INIT PLANETS SO THEY HAVE SAME ORDER ON-CHAIN. THIS CAN BREAK CONFIG HASH OTHERWISE.
+  initPlanets.sort((a,b) => (a.location > b.location ? 1 : -1))
   return initPlanets;
 }
 

@@ -1,4 +1,4 @@
-import { EthAddress, GraphArena, GraphPlanet } from '@darkforest_eth/types';
+import { EthAddress, GraphArena, GraphPlanet, WorldCoords } from '@darkforest_eth/types';
 import { BigNumber } from 'ethers';
 import _ from 'lodash';
 import { LobbyPlanet } from '../../Frontend/Panes/Lobbies/LobbiesUtils';
@@ -31,7 +31,8 @@ query {
 }
 `;
   const rawData = await getGraphQLData(query, apiUrl);
-  return await convertGraphConfig(rawData.data.arenas[0]);
+  const res = await convertGraphConfig(rawData.data.arenas[0]);
+  return res;
 }
 
 export async function loadConfigFromAddress(address: EthAddress): Promise<
@@ -55,7 +56,6 @@ export async function loadConfigFromAddress(address: EthAddress): Promise<
   try {
     const rawData: GraphArena = (await getGraphQLData(query, apiUrl)).data.arena;
     const configData = convertGraphConfig(rawData);
-
     return configData;
   } catch (e) {
     console.log(e);
@@ -69,7 +69,6 @@ export function convertGraphConfig(arena: GraphArena): {
   address: string;
 } {
   if (!arena.config) throw new Error("Can't load arena config");
-
   const cf = arena.config;
   // const thresholds: number[] = arena.config.PLANET_LEVEL_THRESHOLDS;
   return {
@@ -176,7 +175,12 @@ export function convertGraphConfig(arena: GraphArena): {
           location: planet.locationDec,
           isTargetPlanet: planet.targetPlanet,
           isSpawnPlanet: planet.spawnPlanet,
-          blockedPlanetLocs: [],
+          blockedPlanetLocs: planet.blockedPlanetIds.map(i => {
+            return {
+              x: i.x,
+              y: i.y,
+            } as WorldCoords
+          }),
         } as LobbyPlanet;
       }),
       INIT_PLANETS: [],
