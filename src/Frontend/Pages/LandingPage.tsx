@@ -24,7 +24,7 @@ const links = {
   twitter: 'http://twitter.com/darkforest_eth',
   email: 'mailto:zeroxhank@gmail.com',
   blog: 'https://blog.zkga.me/',
-  discord: 'https://discord.gg/XxveJpwJ',
+  discord: 'https://discord.gg/WzYuegCh',
   github: 'https://github.com/darkforest-eth',
   wiki: 'https://dfwiki.net/wiki/Main_Page',
   plugins: 'https://plugins.zkga.me/',
