@@ -20,7 +20,7 @@ const LOCATION_ID_UB = bigInt(
 
 const apiUrl = 'https://9a46-143-244-168-87.ngrok.io/subgraphs/name/df-arena-v2';
 
-const competitiveConfig = '0x4ab73334ef9f0a9d117ba1c3df71839edafc3ccbf5863f997ff34f5fea8a3385';
+const competitiveConfig = '0xb03e4e860ff6f0351b5ef6d04061f3b9dddd81e1e77ce1a74f1c535b7aaa5224';
 
 const roundStartTimestamp = '2022-06-25T00:00:00.000Z';
 
@@ -105,7 +105,12 @@ planets(first: ${MAX_ADMIN_PLANETS}) {
   level,
   planetType,
   targetPlanet,
-  spawnPlanet
+  spawnPlanet,
+  blockedPlanetIds {
+    locationDec
+    x
+    y
+  }
 }`;
 
 

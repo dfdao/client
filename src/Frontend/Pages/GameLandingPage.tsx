@@ -1347,7 +1347,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
       connection: ethConnection,
       contractAddress,
     });
-
+    
     const createPlanetTxs = _.chunk(config.INIT_PLANETS, CHUNK_SIZE).map(async (chunk) => {
       const args = Promise.resolve([chunk]);
       const txIntent = {

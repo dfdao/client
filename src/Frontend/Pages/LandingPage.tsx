@@ -110,12 +110,12 @@ export default function LandingPage() {
           </div>
           <LinksContainer>
             {Object.entries(links).map(([link, href], key) => (
-              <>
+              <React.Fragment key={key}>
                 <NavLink key={key} to={href}>
                   {link}
                 </NavLink>
                 {key !== Object.entries(links).length - 1 && <p>{` | `}</p>}
-              </>
+              </React.Fragment>
             ))}
           </LinksContainer>
         </Nav>
