@@ -72,6 +72,7 @@ export function MapDetails({
         maxHeight: '100vh',
         overflowY: 'auto',
       }}
+      startSelected = {numSpawnPlanets >= 2 ? 1 : 0}
       tabTitles={['Leaderboard', numSpawnPlanets > 1 ? 'Join a Match' : 'Live Games', 'Config Details']}
       tabContents={(i) => {
         if (i === 0) {

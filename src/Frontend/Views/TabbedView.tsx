@@ -13,13 +13,15 @@ export function TabbedView({
   tabContents,
   style,
   buttonStyle,
+  startSelected = 0
 }: {
   tabTitles: string[];
   tabContents: (tabIndex: number) => React.ReactNode;
   style?: React.CSSProperties;
   buttonStyle?: React.CSSProperties;
+  startSelected? :number
 }) {
-  const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+  const [selectedTabIndex, setSelectedTabIndex] = useState(startSelected);
 
   return (
     <div style={style}>

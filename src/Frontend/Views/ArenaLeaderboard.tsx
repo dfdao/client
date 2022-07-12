@@ -54,9 +54,11 @@ export function EloLeaderboardWithData({ config }: { config: string }) {
 export function EloLeaderboardDisplay({
   leaderboard,
   error,
+  totalPlayers = true,
 }: {
   leaderboard: GraphConfigPlayer[] | undefined;
   error: Error | undefined;
+  totalPlayers?: boolean;
 }) {
   return (
     <GenericErrorBoundary errorMessage={errorMessage}>
@@ -64,7 +66,7 @@ export function EloLeaderboardDisplay({
         <StatsTableContainer>
           <StatsTable>
             {/* <CountDown /> */}
-            <TotalPlayers leaderboard={leaderboard} error={error} />
+            {totalPlayers && <TotalPlayers leaderboard={leaderboard} error={error} />}
           </StatsTable>
         </StatsTableContainer>
         {/* <Spacer height={8} /> */}

@@ -11,7 +11,7 @@ export const PortalHomeView: React.FC<{}> = () => {
   const [portalMaps, setPortalMaps] = useState<MapInfo[]>([]);
 
   useEffect(() => {
-    loadRecentMaps(20)
+    loadRecentMaps(10)
       .then((maps) => {
         if (!maps) return;
         const uniqueMaps = maps.filter(
@@ -34,8 +34,8 @@ export const PortalHomeView: React.FC<{}> = () => {
 
       <OfficialGameBanner configHash={competitiveConfig} />
       <Spacer height={24} />
+      <span style={{ fontSize: '1rem' }}>Latest Community Maps</span>
       <MoreMapsContainer>
-        <span style={{ fontSize: '1rem' }}>Latest Community Maps</span>
         <MoreGrid>
           {portalMaps.map((m, i) => (
             <MapGridDetail

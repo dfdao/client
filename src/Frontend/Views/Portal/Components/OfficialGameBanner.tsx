@@ -1,5 +1,6 @@
 import { getConfigName } from '@darkforest_eth/procedural';
 import { EthAddress, Leaderboard } from '@darkforest_eth/types';
+import dfstyles from '@darkforest_eth/ui/dist/styles';
 import React, { useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
@@ -51,16 +52,17 @@ export const OfficialGameBanner: React.FC<{
                 target='blank'
                 to={`/play/${lobbyAddress}?create=true`}
               >
-                <ArenaPortalButton>Play</ArenaPortalButton>
+                <ArenaPortalButton>New Game</ArenaPortalButton>
               </Link>
               <Link to={`/portal/map/${configHash}`}>
-                <ArenaPortalButton secondary>Map Details</ArenaPortalButton>
+                <ArenaPortalButton secondary>Join a Game</ArenaPortalButton>
               </Link>
             </div>
           </div>
           {eloLeaderboard && (
-            <div style={{ maxHeight: '25vh', overflowY: 'auto', marginBottom: '3rem' }}>
-              <EloLeaderboardDisplay leaderboard={eloLeaderboard} error={leaderboardError} />
+            <div style = {{textAlign: 'center', borderLeft: `solid 1px ${dfstyles.colors.subbertext}`}}>
+              Top Players
+              <EloLeaderboardDisplay leaderboard={eloLeaderboard} error={leaderboardError} totalPlayers = {false}/>
             </div>
           )}
         </Banner>
@@ -82,6 +84,10 @@ const Banner = styled.div`
   min-height: 270px;
   max-height: 25vh;
   overflow: hidden;
+  max-width: 1000px;
+  margin: 10px;
+  align-self: center;
+  gap: 10px;
 `;
 
 const BannerTitle = styled.span`
