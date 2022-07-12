@@ -3773,7 +3773,9 @@ class GameManager extends EventEmitter {
     return player?.moves;
   }
 
-  public getDeterministicArtifact(planet: LocatablePlanet) {
+  public getDeterministicArtifact(locationId: LocationId) {
+    const planet = this.getPlanetWithId(locationId) as LocatablePlanet;
+    if (!planet?.location) return null;
     return getDeterministicArtifact(planet);
   }
 }
