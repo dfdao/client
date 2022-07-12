@@ -84,8 +84,8 @@ export function WaitingRoomPane({ visible, onClose }: { visible: boolean; onClos
   const player = uiManager.getPlayer();
   const constants = uiManager.getGameManager().getContractConstants();
   const [players, setPlayers] = useState<Array<Player | undefined>>([]);
-  const confirmStart = uiManager.getGameManager().getContractConstants().CONFIRM_START 
-  
+  const confirmStart = uiManager.getGameManager().getContractConstants().CONFIRM_START;
+
   // refresh players every 10 seconds
   useEffect(() => {
     if (!uiManager) return;
@@ -104,6 +104,20 @@ export function WaitingRoomPane({ visible, onClose }: { visible: boolean; onClos
     };
   }, [uiManager]);
 
+  // Play audio when ready
+  useEffect(() => {
+    const audio = new Audio('../../../public/ready-alert.mp3');
+    const listener = () => {
+      if (started) {
+        audio.play();
+      }
+    };
+    audio.addEventListener('canplaythrough', listener);
+    return () => {
+      audio.pause(), audio.removeEventListener('canplaythrough', listener);
+    };
+  }, [started]);
+
   function HelpContent() {
     return (
       <div>
@@ -118,7 +132,7 @@ export function WaitingRoomPane({ visible, onClose }: { visible: boolean; onClos
     );
   }
 
-  const headers = ['', 'Planet', 'Owner', confirmStart ? 'Ready': ''];
+  const headers = ['', 'Planet', 'Owner', confirmStart ? 'Ready' : ''];
   const alignments: Array<'r' | 'c' | 'l'> = ['l', 'l', 'l', 'r'];
 
   const columns = [
@@ -133,18 +147,15 @@ export function WaitingRoomPane({ visible, onClose }: { visible: boolean; onClos
     //player
     (planet: Planet) => (
       <Sub>
-        {planet.owner === EMPTY_ADDRESS
-          ? 'nobody'
-          : <AccountLabel ethAddress={planet.owner} />
-        }
+        {planet.owner === EMPTY_ADDRESS ? 'nobody' : <AccountLabel ethAddress={planet.owner} />}
         {planet.owner == player?.address && '(you)'}
       </Sub>
     ),
     //ready
     (planet: Planet, i: number) => {
-      if(!confirmStart) return <></>
+      if (!confirmStart) return <></>;
       const player = players[i];
-      if(started || (player && player.ready)) return <Green>Y</Green>;
+      if (started || (player && player.ready)) return <Green>Y</Green>;
       return <Red>N</Red>;
     },
   ];
