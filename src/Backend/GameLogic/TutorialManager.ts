@@ -9,6 +9,7 @@ export const enum TutorialManagerEvent {
 }
 
 export const enum TutorialState {
+  Spectator,
   None,
   Security,
   SpawnPlanet,

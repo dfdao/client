@@ -41,7 +41,21 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
     const coords = uiManager.getHomeCoords();
     setHome(coords ? `(${coords.x}, ${coords.y})` : '');
   }, [uiManager]);
-
+  if (tutorialState === TutorialState.Spectator) {
+    return (
+      <div className='tutzoom'>
+        Welcome to Dark Forest Arena!
+        <br />
+        <br />
+        <div>You are spectating this game! Enjoy the show!</div>
+        <div style={{ gap: '5px' }}>
+          <Btn className='btn' onClick={() => tutorialManager.complete()}>
+            Exit
+          </Btn>
+        </div>
+      </div>
+    );
+  }
   if (tutorialState === TutorialState.None) {
     return (
       <div className='tutzoom'>
@@ -49,24 +63,24 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
         <br />
         <br />
         <div>
-          { uiManager.getSpawnPlanets().length == 1 ?
-          <>
-          Race against the clock to capture the Target Planet (it has a big 🎯 floating above it)
-          and{' '}
-          <Green>
-            claim victory when it contains at least <Gold>{victoryThreshold}%</Gold> energy!
-          </Green>
-          </>
-          : 
-          
+          {uiManager.getSpawnPlanets().length == 1 ? (
             <>
-           Battle your opponent to capture the Target Planet (it has a big 🎯 floating above it)
-            and{' '}
-            <Green>
-              claim victory when it contains at least <Gold>{victoryThreshold}%</Gold> energy!
-            </Green>.
+              Race against the clock to capture the Target Planet (it has a big 🎯 floating above
+              it) and{' '}
+              <Green>
+                claim victory when it contains at least <Gold>{victoryThreshold}%</Gold> energy!
+              </Green>
             </>
-          }
+          ) : (
+            <>
+              Battle your opponent to capture the Target Planet (it has a big 🎯 floating above it)
+              and{' '}
+              <Green>
+                claim victory when it contains at least <Gold>{victoryThreshold}%</Gold> energy!
+              </Green>
+              .
+            </>
+          )}
           You need {numForVictory} to win.
         </div>
         {isCompetitive && (
@@ -475,7 +489,11 @@ export function TutorialPane({ tutorialHook }: { tutorialHook: boolean }) {
   const uiManager = useUIManager();
   const tutorialManager = TutorialManager.getInstance(uiManager);
 
-  const [tutorialState, setTutorialState] = useState<TutorialState>(TutorialState.None);
+  const spectatorMode = uiManager.getGameManager().getIsSpectator();
+
+  const [tutorialState, setTutorialState] = useState<TutorialState>(
+    spectatorMode ? TutorialState.Spectator : TutorialState.None
+  );
   const tutorialOpen = tutorialHook;
   const [completed, setCompleted] = useBooleanSetting(uiManager, Setting.TutorialCompleted);
 
