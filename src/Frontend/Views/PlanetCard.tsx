@@ -146,7 +146,7 @@ export function PlanetCard({
                   <Red>{formatNumber(energyLeftToClaimVictory)}</Red> needed to capture
                 </span>
               ) : (
-                <Green>This target has been captured!</Green>
+                <Green>This target is capturable!</Green>
               )}
             </Smaller>
           </AlignCenterHorizontally>
