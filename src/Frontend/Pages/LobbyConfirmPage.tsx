@@ -1,3 +1,4 @@
+import { BLOCK_EXPLORER_URL } from '@darkforest_eth/constants';
 import { EthAddress } from '@darkforest_eth/types';
 import _ from 'lodash';
 import React from 'react';
@@ -44,7 +45,7 @@ export function LobbyConfirmPage({
   playerTwitter: string | undefined;
   validateAndCreateLobby: () => void;
 }) {
-  const blockscoutURL = `https://blockscout.com/poa/xdai/optimism/tx/${lobbyTx}`;
+  const blockscoutURL = `${BLOCK_EXPLORER_URL}/${lobbyTx}`;
   const url = `${window.location.origin}/play/${lobbyAdminTools?.address}`;
 
   const handleEnterUniverse = () => {

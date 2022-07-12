@@ -50,7 +50,7 @@ export function PortalSidebarView({ playerAddress }: { playerAddress: EthAddress
       <span>
         {recentlyPlayedMaps.length > 0
           ? 'Your recently created maps'
-          : 'Recently created maps will appear here'}
+          : 'Your recently created maps will appear here'}
       </span>
       {recentlyPlayedMaps.map((m) => (
         <SidebarMap key = {`index-${m.configHash}`}configHash={m.configHash} startTime={m.startTime} />

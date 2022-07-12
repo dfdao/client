@@ -3,7 +3,7 @@ import { BigNumber } from 'ethers';
 import _ from 'lodash';
 import { LobbyPlanet } from '../../Frontend/Panes/Lobbies/LobbiesUtils';
 import { LobbyInitializers } from '../../Frontend/Panes/Lobbies/Reducer';
-import { apiUrl } from '../../Frontend/Utils/constants';
+import { apiUrl, CONFIG_CONSTANTS } from '../../Frontend/Utils/constants';
 import { PlanetTypeWeights } from '../../_types/darkforest/api/ContractsAPITypes';
 import { getGraphQLData } from './GraphApi';
 
@@ -11,79 +11,6 @@ import { getGraphQLData } from './GraphApi';
 function toNum(num: BigNumber): number {
   return BigNumber.from(num).toNumber();
 }
-export const CONSTANTS = `config{
-  # START_PAUSED,
-ADMIN_CAN_ADD_PLANETS,
-TOKEN_MINT_END_TIMESTAMP,
-WORLD_RADIUS_LOCKED,
-WORLD_RADIUS_MIN,
-DISABLE_ZK_CHECKS,
-PLANETHASH_KEY,
-SPACETYPE_KEY,
-BIOMEBASE_KEY,
-PERLIN_MIRROR_X,
-PERLIN_MIRROR_Y,
-PERLIN_LENGTH_SCALE,
-MAX_NATURAL_PLANET_LEVEL,
-TIME_FACTOR_HUNDREDTHS,
-PERLIN_THRESHOLD_1,
-PERLIN_THRESHOLD_2,
-PERLIN_THRESHOLD_3,
-INIT_PERLIN_MAX,
-INIT_PERLIN_MIN,
-BIOME_THRESHOLD_1,
-BIOME_THRESHOLD_2,
-PLANET_LEVEL_THRESHOLDS,
-PLANET_RARITY,
-PLANET_TRANSFER_ENABLED,
-PHOTOID_ACTIVATION_DELAY,
-SPAWN_RIM_AREA,
-LOCATION_REVEAL_COOLDOWN,
-# CLAIM_PLANET_COOLDOWN,
-# PLANET_TYPE_WEIGHTS,
-SILVER_SCORE_VALUE,
-ARTIFACT_POINT_VALUES,
-SPACE_JUNK_ENABLED,
-SPACE_JUNK_LIMIT,
-PLANET_LEVEL_JUNK,
-ABANDON_SPEED_CHANGE_PERCENT,
-ABANDON_RANGE_CHANGE_PERCENT,
-CAPTURE_ZONES_ENABLED,
-CAPTURE_ZONE_COUNT,
-CAPTURE_ZONE_CHANGE_BLOCK_INTERVAL,
-CAPTURE_ZONE_RADIUS,
-CAPTURE_ZONE_PLANET_LEVEL_SCORE,
-CAPTURE_ZONE_HOLD_BLOCKS_REQUIRED,
-CAPTURE_ZONES_PER_5000_WORLD_RADIUS,
-MANUAL_SPAWN,
-TARGET_PLANETS,
-CLAIM_VICTORY_ENERGY_PERCENT,
-MODIFIERS,
-SPACESHIPS,
-RANDOM_ARTIFACTS,
-START_PAUSED,
-WHITELIST_ENABLED,
-CONFIRM_START,
-TARGETS_REQUIRED_FOR_VICTORY,
-BLOCK_CAPTURE,
-BLOCK_MOVES,
-TEAMS_ENABLED,
-NUM_TEAMS,
-RANKED,
-NO_ADMIN,
-PLANET_TYPE_WEIGHTS,
-# INIT_PLANETS,
-},
-planets(first: 30) {
-  x,
-  y,
-  locationDec,
-  perlin,
-  level,
-  planetType,
-  targetPlanet,
-  spawnPlanet
-}`;
 
 export async function loadConfigFromHash(config: string): Promise<
   | {
@@ -99,7 +26,7 @@ query {
         configHash,
         gameOver,
         startTime,
-        ${CONSTANTS}
+        ${CONFIG_CONSTANTS}
       }
 }
 `;
@@ -121,7 +48,7 @@ export async function loadConfigFromAddress(address: EthAddress): Promise<
         configHash,
         gameOver,
         startTime,
-        ${CONSTANTS}
+        ${CONFIG_CONSTANTS}
     }
   }
 `;

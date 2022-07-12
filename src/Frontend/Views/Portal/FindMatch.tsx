@@ -69,6 +69,7 @@ export const FindMatch: React.FC<FindMatchProps> = ({ game, error, nPlayers }) =
           ) : (
             game.entries.map((entry: ExtendedMatchEntry) => (
               <MatchComponent
+                key={entry.id}
                 creator={entry.creator}
                 matchType='Solo'
                 totalSpots={nPlayers}
