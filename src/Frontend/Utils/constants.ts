@@ -20,7 +20,7 @@ const LOCATION_ID_UB = bigInt(
 
 const apiUrl = 'https://9a46-143-244-168-87.ngrok.io/subgraphs/name/df-arena-v2';
 
-const competitiveConfig = '0xda4f1d3dd164e56d66f146827a08a7ffa6ae7844e49d51211ab9daf2c56483f5';
+const competitiveConfig = '0x4ab73334ef9f0a9d117ba1c3df71839edafc3ccbf5863f997ff34f5fea8a3385';
 
 const roundStartTimestamp = '2022-06-25T00:00:00.000Z';
 

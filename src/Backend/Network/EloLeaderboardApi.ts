@@ -37,7 +37,7 @@ const testData: { data: { configPlayers: GraphConfigPlayer[] }; error: undefined
 
 export async function loadEloLeaderboard(
   config: string = competitiveConfig,
-  isCompetitive: boolean
+  isCompetitive: boolean = false
 ): Promise<GraphConfigPlayer[]> {
   const QUERY = `
     query {
@@ -51,8 +51,6 @@ export async function loadEloLeaderboard(
     `;
 
   const rawData = await getGraphQLData(QUERY, apiUrl);
-  // const rawData = testData;
-  // console.log('data:', rawData.data);
 
   if (rawData.error) {
     throw new Error(rawData.error);

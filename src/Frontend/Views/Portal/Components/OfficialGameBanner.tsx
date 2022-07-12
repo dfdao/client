@@ -5,28 +5,30 @@ import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { loadArenaLeaderboard } from '../../../../Backend/Network/ArenaLeaderboardApi';
 import { loadConfigFromHash } from '../../../../Backend/Network/ConfigApi';
+import { GraphConfigPlayer, loadEloLeaderboard } from '../../../../Backend/Network/EloLeaderboardApi';
 import { loadRecentMaps } from '../../../../Backend/Network/MapsApi';
 import { Sub } from '../../../Components/Text';
-import { ArenaLeaderboardDisplay } from '../../ArenaLeaderboard';
+import { ArenaLeaderboardDisplay, EloLeaderboardDisplay } from '../../ArenaLeaderboard';
 import { ArenaPortalButton } from '../PortalHomeView';
 
 export const OfficialGameBanner: React.FC<{
   configHash: string;
 }> = ({ configHash }) => {
   const [leaderboardError, setLeaderboardError] = useState<Error | undefined>();
-  const [leaderboard, setLeaderboard] = useState<Leaderboard | undefined>();
+  const [eloLeaderboard, setEloLeaderboard] = useState<GraphConfigPlayer[] | undefined>();
   const [lobbyAddress, setLobbyAddress] = useState<EthAddress | undefined>();
 
   const history = useHistory();
 
   useEffect(() => {
-    setLeaderboard(undefined);
-    loadArenaLeaderboard(configHash, false)
-      .then((board) => {
-        setLeaderboardError(undefined);
-        setLeaderboard(board);
-      })
-      .catch((e) => setLeaderboardError(e));
+    setEloLeaderboard(undefined);
+    loadEloLeaderboard(configHash)
+    .then((board) => {
+      console.log("BOARD", board);
+      setLeaderboardError(undefined);
+      setEloLeaderboard(board);
+    })
+    .catch((e) => setLeaderboardError(e));
     loadRecentMaps(1, configHash).then((maps) => {
       setLobbyAddress(maps && maps.length > 0 ? maps[0].lobbyAddress : undefined);
     });
@@ -38,7 +40,7 @@ export const OfficialGameBanner: React.FC<{
         <Banner>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <Sub>Play the Grand Prix</Sub>
+              <Sub>Play the Galactic League</Sub>
               <BannerTitle>{getConfigName(configHash)}</BannerTitle>
             </div>
             <span>{configHash}</span>
@@ -56,9 +58,9 @@ export const OfficialGameBanner: React.FC<{
               </Link>
             </div>
           </div>
-          {leaderboard && (
+          {eloLeaderboard && (
             <div style={{ maxHeight: '25vh', overflowY: 'auto', marginBottom: '3rem' }}>
-              <ArenaLeaderboardDisplay leaderboard={leaderboard} error={leaderboardError} />
+              <EloLeaderboardDisplay leaderboard={eloLeaderboard} error={leaderboardError} />
             </div>
           )}
         </Banner>
