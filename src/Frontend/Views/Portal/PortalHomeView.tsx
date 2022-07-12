@@ -11,7 +11,7 @@ export const PortalHomeView: React.FC<{}> = () => {
   const [portalMaps, setPortalMaps] = useState<MapInfo[]>([]);
 
   useEffect(() => {
-    loadRecentMaps(20)
+    loadRecentMaps(4)
       .then((maps) => {
         if (!maps) return;
         const uniqueMaps = maps.filter(
