@@ -49,7 +49,7 @@ export function PortalSidebarView({ playerAddress }: { playerAddress: EthAddress
       </Link>
       <span>
         {recentlyPlayedMaps.length > 0
-          ? 'Recently created maps'
+          ? 'Your recently created maps'
           : 'Recently created maps will appear here'}
       </span>
       {recentlyPlayedMaps.map((m) => (
