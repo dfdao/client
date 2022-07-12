@@ -117,7 +117,7 @@ export function SpaceTypeBiomePane({ config, onUpdate }: LobbiesPaneProps) {
         <PortalTooltipTrigger
           name={TooltipName.Empty}
           extraContent={
-            'The first slider affects '
+            'Biomes affect artifact strength and rarity.'
           }
           style={{ width: '100%' }}
         >

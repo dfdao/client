@@ -3772,7 +3772,7 @@ class GameManager extends EventEmitter {
       });
     });
   }
-  public getIsSpecator() {
+  public getIsSpectator() {
     return this.spectator;
   }
 

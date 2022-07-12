@@ -8,6 +8,7 @@ import {
   rgbStr,
 } from '@darkforest_eth/procedural';
 import { engineConsts } from '@darkforest_eth/renderer';
+import { isUnconfirmedNotReadyTx, isUnconfirmedReadyTx } from '@darkforest_eth/serde';
 import { ModalName, Planet, PlanetType, Player, RGBVec } from '@darkforest_eth/types';
 import React, { useEffect, useState, useMemo } from 'react';
 import styled, { CSSProperties } from 'styled-components';
@@ -16,6 +17,7 @@ import { Btn } from '../Components/Btn';
 import { CenterBackgroundSubtext, Spacer } from '../Components/CoreUI';
 import { Icon, IconType } from '../Components/Icons';
 import { AccountLabel } from '../Components/Labels/Labels';
+import { LoadingSpinner } from '../Components/LoadingSpinner';
 import { Row } from '../Components/Row';
 import { Green, Red, Sub } from '../Components/Text';
 import { TextPreview } from '../Components/TextPreview';
@@ -79,13 +81,12 @@ const TableContainer = styled.div`
 
 export function WaitingRoomPane({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   const uiManager = useUIManager();
+  const objects = uiManager.getGameManager().getGameObjects();
   const started = useGameStarted();
   const spawnPlanets = uiManager.getSpawnPlanets();
   const player = uiManager.getPlayer();
-  const constants = uiManager.getGameManager().getContractConstants();
   const [players, setPlayers] = useState<Array<Player | undefined>>([]);
   const confirmStart = uiManager.getGameManager().getContractConstants().CONFIRM_START;
-
   // refresh players every 10 seconds
   useEffect(() => {
     if (!uiManager) return;
@@ -117,6 +118,15 @@ export function WaitingRoomPane({ visible, onClose }: { visible: boolean; onClos
       audio.pause(), audio.removeEventListener('canplaythrough', listener);
     };
   }, [started]);
+
+  const submitting = useMemo(() => {
+    const txs = uiManager.getGameManager().getGameObjects().transactions;
+    const submit = txs.hasTransaction(isUnconfirmedReadyTx) || txs.hasTransaction(isUnconfirmedNotReadyTx);
+    return submit;
+  }, [
+    objects.transactions.getTransactions(isUnconfirmedReadyTx),
+    objects.transactions.getTransactions(isUnconfirmedNotReadyTx),
+  ]);
 
   function HelpContent() {
     return (
@@ -186,13 +196,21 @@ export function WaitingRoomPane({ visible, onClose }: { visible: boolean; onClos
                 <ReadyContainer>
                   <Btn
                     size='stretch'
-                    onClick={() =>
-                      ready
-                        ? uiManager.getGameManager().notReady()
-                        : uiManager.getGameManager().ready()
-                    }
+                    active={submitting}
+                    disabled={submitting}
+                    onClick={async () => {
+                      if (ready) {
+                        await uiManager.getGameManager().notReady();
+                      } else {
+                        await uiManager.getGameManager().ready();
+                      }
+                    }}
                   >
-                    I'm {ready ? 'not ready' : 'ready'}
+                    {submitting ? (
+                      <LoadingSpinner initialText={'Submitting...'} />
+                    ) : (
+                      `I'm ${ready ? 'not ready' : 'ready'}`
+                    )}
                   </Btn>
                 </ReadyContainer>
               </>

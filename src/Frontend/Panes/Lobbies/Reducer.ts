@@ -1304,7 +1304,7 @@ export function ofWorldRadiusMin(
     };
   }
 
-  if (value < 1000) {
+  if (value < 1000 && !state.MANUAL_SPAWN.displayValue) {
     return {
       ...state[type],
       displayValue: value,
