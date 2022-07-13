@@ -10,7 +10,7 @@ import dfstyles from '../../Styles/dfstyles';
 import { useTwitters } from '../../Utils/AppHooks';
 import { truncateAddress } from './PortalUtils';
 
-function AccountDetails({ address }: { address: EthAddress }) {
+export function AccountDetails({ address }: { address: EthAddress }) {
   const twitters = useTwitters();
   const truncatedAddress = truncateAddress(address);
   return (

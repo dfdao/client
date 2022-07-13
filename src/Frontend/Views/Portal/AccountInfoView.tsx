@@ -3,9 +3,10 @@ import { EthAddress, RawAccount } from '@darkforest_eth/types';
 import { isAddress } from 'ethers/lib/utils';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import styled from 'styled-components';
 import { loadAccountData } from '../../../Backend/Network/AccountApi';
+import { TwitterLink } from '../../Components/Labels/Labels';
 import { TextPreview } from '../../Components/TextPreview';
 import { LobbyInitializers } from '../../Panes/Lobbies/Reducer';
 import { useTwitters } from '../../Utils/AppHooks';
@@ -33,7 +34,7 @@ function PlayerOverview({
         <>
           <Title>
             {twitters[playerAddress] ? (
-              twitters[playerAddress]
+              <TwitterLink twitter={twitters[playerAddress]} />
             ) : (
               <TextPreview text={playerAddress} focusedWidth={'250px'} unFocusedWidth={'250px'} />
             )}

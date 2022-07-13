@@ -4,7 +4,9 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { Subber } from '../../Components/Text';
 import dfstyles from '../../Styles/dfstyles';
+import { useTwitters } from '../../Utils/AppHooks';
 import { formatStartTime } from '../../Utils/TimeUtils';
+import { compPlayerToEntry } from '../ArenaLeaderboard';
 import { GenericErrorBoundary } from '../GenericErrorBoundary';
 
 export interface FindMatchProps {
@@ -30,10 +32,12 @@ export const MatchComponent: React.FC<MatchDetails> = ({
   matchId,
   startTime,
 }) => {
+  const twitters = useTwitters();
+
   return (
     <MatchContainer>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-        <span>By {creator}</span>
+        <span>{compPlayerToEntry(creator, twitters[creator], dfstyles.colors.dfyellow)}</span>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <span>{matchType}</span>
           {totalSpots == spotsTaken ? (
@@ -48,7 +52,7 @@ export const MatchComponent: React.FC<MatchDetails> = ({
         </div>
         <div>Creation Time: {formatStartTime(startTime)}</div>
       </div>
-      <Link to={`/play/${matchId}`}>
+      <Link to={`/play/${matchId}`} target='_blank'>
         {totalSpots == spotsTaken ? (
           <MatchButton>View</MatchButton>
         ) : (
@@ -71,7 +75,7 @@ export const FindMatch: React.FC<FindMatchProps> = ({ game, error, nPlayers }) =
               <MatchComponent
                 key={entry.id}
                 creator={entry.creator}
-                matchType='Solo'
+                matchType='1v1'
                 totalSpots={nPlayers}
                 spotsTaken={entry.players ? entry.players.length : 0}
                 matchId={entry.id}

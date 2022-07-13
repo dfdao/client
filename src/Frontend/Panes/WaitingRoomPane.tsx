@@ -83,6 +83,7 @@ export function WaitingRoomPane({ visible, onClose }: { visible: boolean; onClos
   const uiManager = useUIManager();
   const objects = uiManager.getGameManager().getGameObjects();
   const started = useGameStarted();
+  const startTime = uiManager.getGameManager().getStartTime();
   const spawnPlanets = uiManager.getSpawnPlanets();
   const player = uiManager.getPlayer();
   const [players, setPlayers] = useState<Array<Player | undefined>>([]);
@@ -109,7 +110,7 @@ export function WaitingRoomPane({ visible, onClose }: { visible: boolean; onClos
   useEffect(() => {
     const audio = new Audio('../../../public/ready-alert.mp3');
     const listener = () => {
-      if (started) {
+      if (started && startTime && Math.abs(startTime - Date.now()/1000) < 60) {
         audio.play();
       }
     };

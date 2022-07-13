@@ -91,7 +91,7 @@ function scoreToTime(score?: number | null) {
 
 // pass in either an address, or a twitter handle. this function will render the appropriate
 // component
-function compPlayerToEntry(
+export function compPlayerToEntry(
   playerAddress: string,
   playerTwitter: string | undefined,
   color: string
@@ -100,6 +100,7 @@ function compPlayerToEntry(
     <Link
       to={`/portal/account/${playerAddress}`}
       style={{ color: color, textDecoration: 'underline' }}
+      target="_blank"
     >
       {playerTwitter ? (
         `@${playerTwitter}`
