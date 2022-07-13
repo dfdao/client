@@ -114,13 +114,13 @@ export function PortalMainView({ playerAddress }: { playerAddress: EthAddress })
             </InputContainer>
           </TitleContainer>
           <TitleContainer>
-            <Button
+            {/* <Button
               onClick={() => {
                 setHelpOpen(true);
               }}
             >
               <Icon type={IconType.Help} />
-            </Button>
+            </Button> */}
             <Account address={playerAddress} />
           </TitleContainer>
         </TopBar>
