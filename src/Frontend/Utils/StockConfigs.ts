@@ -1005,7 +1005,7 @@ const grandPrixWeek4: LobbyInitializers = {
   NUM_TEAMS: 2,
   RANKED: false,
 };
-const competitive: LobbyInitializers = grandPrixWeek4;
+// const competitive: LobbyInitializers = grandPrixWeek4;
 
 const EloMap: LobbyInitializers = {
   ADMIN_CAN_ADD_PLANETS: true,
@@ -1390,7 +1390,7 @@ const EloMap: LobbyInitializers = {
   TEAMS_ENABLED: false,
   NUM_TEAMS: 2,
   RANKED: true,
-  INIT_PLANETS: []
+  INIT_PLANETS: [],
 };
 
 const grandPrixWeek5: LobbyInitializers = {
@@ -1404,7 +1404,6 @@ const grandPrixWeek5: LobbyInitializers = {
   PERLIN_LENGTH_SCALE: 2048,
   PERLIN_MIRROR_X: true,
   PERLIN_MIRROR_Y: false,
-  CLAIM_PLANET_COOLDOWN: 0,
   MAX_NATURAL_PLANET_LEVEL: 3,
   TIME_FACTOR_HUNDREDTHS: 1500,
   PERLIN_THRESHOLD_1: 14,
@@ -1504,6 +1503,7 @@ const grandPrixWeek5: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: true,
+      blockedPlanetLocs: [],
     },
     {
       x: -1050,
@@ -1512,6 +1512,7 @@ const grandPrixWeek5: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
+      blockedPlanetLocs: [],
     },
     {
       x: -1050,
@@ -1520,6 +1521,7 @@ const grandPrixWeek5: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
+      blockedPlanetLocs: [],
     },
     {
       x: 475,
@@ -1528,6 +1530,7 @@ const grandPrixWeek5: LobbyInitializers = {
       planetType: 1,
       isTargetPlanet: false,
       isSpawnPlanet: false,
+      blockedPlanetLocs: [],
     },
     {
       x: 475,
@@ -1536,6 +1539,7 @@ const grandPrixWeek5: LobbyInitializers = {
       planetType: 1,
       isTargetPlanet: false,
       isSpawnPlanet: false,
+      blockedPlanetLocs: [],
     },
     {
       x: -2000,
@@ -1544,6 +1548,7 @@ const grandPrixWeek5: LobbyInitializers = {
       planetType: 0,
       isTargetPlanet: false,
       isSpawnPlanet: false,
+      blockedPlanetLocs: [],
     },
     {
       x: 4500,
@@ -1552,10 +1557,18 @@ const grandPrixWeek5: LobbyInitializers = {
       planetType: 4,
       isTargetPlanet: true,
       isSpawnPlanet: false,
+      blockedPlanetLocs: [],
     },
   ],
   TOKEN_MINT_END_TIMESTAMP: 1682435240778,
   WHITELIST: [],
+  CONFIRM_START: true,
+  TARGETS_REQUIRED_FOR_VICTORY: 1,
+  BLOCK_CAPTURE: false,
+  BLOCK_MOVES: true,
+  TEAMS_ENABLED: false,
+  NUM_TEAMS: 2,
+  RANKED: true,
 };
 
 const competitive: LobbyInitializers = grandPrixWeek5;
