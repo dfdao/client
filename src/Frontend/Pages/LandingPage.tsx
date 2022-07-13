@@ -122,7 +122,7 @@ export default function LandingPage() {
         </Nav>
         <Content>
           <TextContainer>
-            <Badge>Dark Forest Arena 🏟️</Badge>
+            <Badge><HideSmall>Dark Forest Arena</HideSmall> 🏟️</Badge>
             {/* <Title>Playing is building</Title> */}
             {/* <Desc>Play dfdao's fast-paced, free version of the premier on-chain game.</Desc> */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -181,7 +181,7 @@ const NavLink = styled(Link)`
 `;
 
 const Badge = styled.div`
-  font-size: 2rem;
+  font-size: 3rem;
   // border-radius: 3rem;
   // background-color: ${dfstyles.colors.backgroundlighter};
   color: #fff;
@@ -225,6 +225,7 @@ justify-content:center;
 `;
 
 const Content = styled.div`
+  box-shadow 0px 0px 15px gray;
   justify-content: center;
   backdrop-filter: brightness(0.1) blur(5px);
   align-items: center;
@@ -297,7 +298,7 @@ export const BackgroundImage = styled.img`
   display: fixed;
   background-image: url(/public/img/deathstar.png);
   background-size: cover;
-  filter: blur(2px) brightness(0.9);
+  filter: blur(5px) brightness(0.9);
   background-position: 50%, 50%;
   // display: inline-block;
   position: fixed;
