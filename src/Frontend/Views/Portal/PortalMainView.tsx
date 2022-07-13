@@ -1,22 +1,30 @@
-import { EthAddress } from '@darkforest_eth/types';
+import { EthAddress, ModalName } from '@darkforest_eth/types';
+import { IconType } from '@darkforest_eth/ui';
 import React, { useEffect, useState } from 'react';
 import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { loadAccountData } from '../../../Backend/Network/AccountApi';
 import { loadRecentMaps } from '../../../Backend/Network/MapsApi';
+import { Btn } from '../../Components/Btn';
+import Button from '../../Components/Button';
 import { Dropdown, DropdownItem } from '../../Components/Dropdown';
+import { Icon } from '../../Components/Icons';
+import { Modal } from '../../Components/Modal';
 import dfstyles from '../../Styles/dfstyles';
 import { useTwitters } from '../../Utils/AppHooks';
+import { ModalPane } from '../ModalPane';
 import { Account } from './Account';
 import { AccountInfoView } from './AccountInfoView';
 import { MapInfoView } from './MapInfoView';
 import { PortalHomeView } from './PortalHomeView';
 import { truncateAddress, truncateString } from './PortalUtils';
 
+
 export function PortalMainView({ playerAddress }: { playerAddress: EthAddress }) {
   const [input, setInput] = useState<string>('');
   const [openSearch, setOpenSearch] = useState<boolean>(false);
   const [results, setResults] = useState<DropdownItem[]>([]);
+  const [helpOpen, setHelpOpen] = useState<boolean>(false);
   const history = useHistory();
   const twitters = useTwitters() as Object;
 
@@ -61,44 +69,76 @@ export function PortalMainView({ playerAddress }: { playerAddress: EthAddress })
     handleSearch();
   }, [input]);
 
+  function PortalHelp() {
+    if(!helpOpen) return <></>
+
+    return (
+      
+      <Modal
+        title = 'Help'
+        
+      >
+        <HelpWrapper>
+          <HelpInner>
+            <HelpClose onClick = {() => {setHelpOpen(false)}}>
+              <Icon type = {IconType.X}/>
+            </HelpClose>
+            <span>Hello</span>
+
+          </HelpInner>
+        </HelpWrapper>
+      </Modal>
+    )
+  }
+
   return (
-    <MainContainer>
-      <TopBar>
-        <TitleContainer>
-          <Title onClick={() => history.push('/portal/home')}>Home</Title>
-        </TitleContainer>
+    <>
+      <PortalHelp />
+      <MainContainer>
+        <TopBar>
+          <TitleContainer>
+            <Title onClick={() => history.push('/portal/home')}>Home</Title>
+          </TitleContainer>
 
-        <TitleContainer>
-          <InputContainer>
-            <PortalInput
-              placeholder={'Search for a map hash, twitter, or address'}
-              // TODO: fix type
-              onChange={(e: any) => setInput(e.target.value)}
-              onFocus={() => setOpenSearch(true)}
-              onBlur={() => setOpenSearch(false)}
-            />
-            <Dropdown items={results} open={input.length > 0 && openSearch} />
-          </InputContainer>
-        </TitleContainer>
-        <TitleContainer>
-          <Account address={playerAddress} />
-        </TitleContainer>
-      </TopBar>
-      <Switch>
-        <Redirect path='/portal/map' to={`/portal/home`} exact={true} />
+          <TitleContainer>
+            <InputContainer>
+              <PortalInput
+                placeholder={'Search for a map hash, twitter, or address'}
+                // TODO: fix type
+                onChange={(e: any) => setInput(e.target.value)}
+                onFocus={() => setOpenSearch(true)}
+                onBlur={() => setOpenSearch(false)}
+              />
+              <Dropdown items={results} open={input.length > 0 && openSearch} />
+            </InputContainer>
+          </TitleContainer>
+          <TitleContainer>
+            <Button
+              onClick={() => {
+                setHelpOpen(true);
+              }}
+            >
+              <Icon type={IconType.Help} />
+            </Button>
+            <Account address={playerAddress} />
+          </TitleContainer>
+        </TopBar>
+        <Switch>
+          <Redirect path='/portal/map' to={`/portal/home`} exact={true} />
 
-        <Route path={'/portal/home'} exact={true} component={PortalHomeView} />
-        <Route path={'/portal/map/:configHash'} component={MapInfoView} />
-        <Route path={'/portal/account/:account'} component={AccountInfoView} />
+          <Route path={'/portal/home'} exact={true} component={PortalHomeView} />
+          <Route path={'/portal/map/:configHash'} component={MapInfoView} />
+          <Route path={'/portal/account/:account'} component={AccountInfoView} />
 
-        <Route
-          path='/portal/*'
-          component={() => (
-            <TitleContainer style={{ justifyContent: 'center' }}>Page Not Found</TitleContainer>
-          )}
-        />
-      </Switch>
-    </MainContainer>
+          <Route
+            path='/portal/*'
+            component={() => (
+              <TitleContainer style={{ justifyContent: 'center' }}>Page Not Found</TitleContainer>
+            )}
+          />
+        </Switch>
+      </MainContainer>
+    </>
   );
 }
 
@@ -157,3 +197,40 @@ const PortalInput = styled.input`
   border: 1px solid ${dfstyles.colors.borderDarker};
   z-index: 1;
 `;
+
+const HelpWrapper = styled.div`
+  position: fixed;
+  left: 0;
+  top: 0;
+  background-color: rgba(0, 0, 0, 0.65);
+  height: 100vh;
+  width: 100vw;
+  z-index: 999;
+  display: flex;
+`;
+
+const HelpInner = styled.div`
+  margin: auto;
+  position: relative;
+  width: 75%;
+  height: 75%;
+  // text-align: center;
+  display: flex;
+  // align-items: center;
+  // justify-content: space-around;
+  background: ${dfstyles.colors.background};
+  border-radius: ${dfstyles.borderRadius};
+  border: 1px solid ${dfstyles.colors.borderDark} !important;
+  color: ${dfstyles.colors.text};
+  padding: 50px;
+
+`
+
+const HelpClose = styled.button `
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  color: white;
+  background: none;
+  border: 0;
+`
