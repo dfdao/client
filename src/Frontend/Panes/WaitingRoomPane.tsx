@@ -8,11 +8,12 @@ import {
   rgbStr,
 } from '@darkforest_eth/procedural';
 import { engineConsts } from '@darkforest_eth/renderer';
-import { isUnconfirmedNotReadyTx, isUnconfirmedReadyTx } from '@darkforest_eth/serde';
+import { address, isUnconfirmedNotReadyTx, isUnconfirmedReadyTx } from '@darkforest_eth/serde';
 import { ModalName, Planet, PlanetType, Player, RGBVec } from '@darkforest_eth/types';
 import React, { useEffect, useState, useMemo } from 'react';
 import styled, { CSSProperties } from 'styled-components';
 import { getPlanetRank } from '../../Backend/Utils/Utils';
+import { ContractsAPIEvent } from '../../_types/darkforest/api/ContractsAPITypes';
 import { Btn } from '../Components/Btn';
 import { CenterBackgroundSubtext, Spacer } from '../Components/CoreUI';
 import { Icon, IconType } from '../Components/Icons';
@@ -23,6 +24,7 @@ import { Green, Red, Sub } from '../Components/Text';
 import { TextPreview } from '../Components/TextPreview';
 import dfstyles from '../Styles/dfstyles';
 import { useGameStarted, useUIManager } from '../Utils/AppHooks';
+import { getReadyEvent } from '../Utils/helpers';
 import { ModalPane } from '../Views/ModalPane';
 import { PlanetLink } from '../Views/PlanetLink';
 import { SortableTable } from '../Views/SortableTable';
@@ -81,12 +83,14 @@ const TableContainer = styled.div`
 
 export function WaitingRoomPane({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   const uiManager = useUIManager();
-  const objects = uiManager.getGameManager().getGameObjects();
+  const gameManager = uiManager.getGameManager();
+  const objects = gameManager.getGameObjects();
   const started = useGameStarted();
+  const startTime = gameManager.getStartTime();
   const spawnPlanets = uiManager.getSpawnPlanets();
   const player = uiManager.getPlayer();
   const [players, setPlayers] = useState<Array<Player | undefined>>([]);
-  const confirmStart = uiManager.getGameManager().getContractConstants().CONFIRM_START;
+  const confirmStart = gameManager.getContractConstants().CONFIRM_START;
   // refresh players every 10 seconds
   useEffect(() => {
     if (!uiManager) return;
@@ -109,7 +113,7 @@ export function WaitingRoomPane({ visible, onClose }: { visible: boolean; onClos
   useEffect(() => {
     const audio = new Audio('../../../public/ready-alert.mp3');
     const listener = () => {
-      if (started) {
+      if (started && startTime && Math.abs(startTime - Date.now()/1000) < 60) {
         audio.play();
       }
     };
@@ -200,9 +204,13 @@ export function WaitingRoomPane({ visible, onClose }: { visible: boolean; onClos
                     disabled={submitting}
                     onClick={async () => {
                       if (ready) {
-                        await uiManager.getGameManager().notReady();
+                        const res = await uiManager.getGameManager().notReady();
                       } else {
-                        await uiManager.getGameManager().ready();
+                        const res = await uiManager.getGameManager().ready();
+                        const rct = await res.confirmedPromise
+                        const eventDetails = getReadyEvent(rct, gameManager.getContract());
+                        gameManager.getContractAPI().emit(ContractsAPIEvent.PlayerUpdate, address(eventDetails.player));
+                        console.log(`updated player`, eventDetails.player);
                       }
                     }}
                   >
