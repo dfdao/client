@@ -41,10 +41,11 @@ export const OfficialGameBanner: React.FC<{
   return (
     <>
       {lobbyAddress && (
-        <Banner>
+        <Banner onClick = {() => {history.push(`/portal/map/${configHash}`)}}>
+          <PrettyOverlayGradient src={'/public/img/deathstar.png'} />
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <BannerTitle>Play the Galactic League</BannerTitle>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <BannerTitle>Play Galactic League</BannerTitle>
+            {/* <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Link
                 style={{ minWidth: '250px' }}
                 target='blank'
@@ -55,9 +56,9 @@ export const OfficialGameBanner: React.FC<{
               <Link to={`/portal/map/${configHash}`}>
                 <ArenaPortalButton secondary>Join Game</ArenaPortalButton>
               </Link>
-            </div>
+            </div> */}
           </div>
-          {eloLeaderboard && (
+          {/* {eloLeaderboard && (
             <div
               style={{
                 textAlign: 'center',
@@ -73,34 +74,55 @@ export const OfficialGameBanner: React.FC<{
                 totalPlayers={false}
               />
             </div>
-          )}
+          )} */}
         </Banner>
       )}
     </>
   );
 };
 
-const Banner = styled.div`
+const Banner = styled.button`
+position: relative;
   width: 100%:
   height: 100%;
   background: #000;
   color: #fff;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   padding: 1rem;
   border-radius: 6px;
   min-height: 270px;
   max-height: 25vh;
   overflow: hidden;
-  max-width: 1000px;
+  width: min(1000px, calc(70% + 100px));
   margin: 10px;
   align-self: center;
   gap: 10px;
+  flex-direction: column;
+  border: solid 1px ${dfstyles.colors.border};
+
 `;
 
 const BannerTitle = styled.span`
   font-size: 1.5rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
+  position: absolute;
+  bottom: 0;
+  background: black;
+  border-radius: 0px 20px 0px 0px;
+  padding: 20px;
+  color: ${dfstyles.colors.text}
+  font-weight: 700;
+
+`;
+
+const PrettyOverlayGradient = styled.img`
+  width: 100%;
+  height: 100%;
+  display: inline-block;
+  object-fit: cover;
+  border-radius: 20px;
+  filter: brightness(0.8) blur(1px);
 `;

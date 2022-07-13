@@ -34,7 +34,7 @@ export const PortalHomeView: React.FC<{}> = () => {
 
       <OfficialGameBanner configHash={competitiveConfig} />
       <Spacer height={24} />
-      <span style={{ fontSize: '1rem' }}>Latest Community Maps</span>
+      <span style={{ fontSize: '1rem' }}>Explore Community Maps</span>
       <MoreMapsContainer>
         <MoreGrid>
           {portalMaps.map((m, i) => (

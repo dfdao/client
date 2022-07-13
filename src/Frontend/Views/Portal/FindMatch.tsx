@@ -37,7 +37,7 @@ export const MatchComponent: React.FC<MatchDetails> = ({
   return (
     <MatchContainer>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-        <span>{compPlayerToEntry(creator, twitters[creator], dfstyles.colors.dfyellow)}</span>
+        <span>{compPlayerToEntry(creator, twitters[creator])}</span>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <span>{matchType}</span>
           {totalSpots == spotsTaken ? (

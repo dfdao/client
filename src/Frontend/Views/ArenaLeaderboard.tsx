@@ -99,7 +99,7 @@ export function compPlayerToEntry(
   return (
     <Link
       to={`/portal/account/${playerAddress}`}
-      style={{ color: color, textDecoration: 'underline' }}
+      style={{ color: color, textDecoration: 'underline', fontWeight: 'bolder' }}
       target="_blank"
     >
       {playerTwitter ? (
