@@ -129,7 +129,7 @@ export default function LandingPage() {
               <ArenaPortalButton style={{ flex: '2' }} onClick={() => history.push('/portal/map')}>
                 Enter
               </ArenaPortalButton>
-              <ArenaPortalButton style = {{flex: '1'}} secondary onClick={() => window.open('https://arena.dfdao.xyz/','blank')}>
+              <ArenaPortalButton style = {{flex: '1'}} secondary onClick={() => window.open('https://medium.com/dfdao/%EF%B8%8F-the-galactic-league-%EF%B8%8F-aa17acc9c7d7','blank')}>
                 Learn More
               </ArenaPortalButton>
             </div>
