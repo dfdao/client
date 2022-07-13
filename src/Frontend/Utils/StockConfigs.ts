@@ -1105,7 +1105,7 @@ const EloMap: LobbyInitializers = {
   MODIFIERS: [100, 150, 100, 150, 75, 200, 100, 100],
   SPACESHIPS: [true, true, true, true, false],
   RANDOM_ARTIFACTS: false,
-  NO_ADMIN: true,
+  NO_ADMIN: false,
   WHITELIST_ENABLED: false,
   START_PAUSED: false,
   ADMIN_PLANETS: [

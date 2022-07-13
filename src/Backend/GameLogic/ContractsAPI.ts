@@ -634,7 +634,6 @@ export class ContractsAPI extends EventEmitter {
       START_PAUSED,
       BLOCK_CAPTURE,
       BLOCK_MOVES,
-
       TARGETS_REQUIRED_FOR_VICTORY: TARGETS_REQUIRED_FOR_VICTORY.toNumber(),
       TEAMS_ENABLED,
       NUM_TEAMS: NUM_TEAMS.toNumber(),

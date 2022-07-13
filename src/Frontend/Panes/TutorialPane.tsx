@@ -57,13 +57,14 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
     );
   }
   if (tutorialState === TutorialState.None) {
+    const isSinglePlayer = uiManager.getSpawnPlanets().length == 1 
     return (
       <div className='tutzoom'>
         Welcome to Dark Forest Arena!
         <br />
         <br />
         <div>
-          {uiManager.getSpawnPlanets().length == 1 ? (
+          {isSinglePlayer? (
             <>
               Race against the clock to capture the Target Planet (it has a big 🎯 floating above
               it) and{' '}
@@ -83,7 +84,7 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
           )}
           You need {numForVictory} to win.
         </div>
-        {isCompetitive && (
+        {isCompetitive && isSinglePlayer && (
           <div>
             <p>End the race in a certain time to earn Bronze, Silver, and Gold ranks.</p>
             <p>
