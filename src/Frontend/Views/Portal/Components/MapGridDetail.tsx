@@ -27,7 +27,7 @@ export const MapGridDetail: React.FC<{
 
   useEffect(() => {
     if (config) {
-      onMapChange(generateMinimapConfig(config, 20));
+      onMapChange(generateMinimapConfig(config, 18));
     } else {
       setMinimapConfig(undefined);
     }

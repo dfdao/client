@@ -38,7 +38,7 @@ function MapOverview({
     if (config) {
       const name = configHash ? getConfigName(configHash) : NONE;
       setMapName(name);
-      onMapChange(generateMinimapConfig(config, 5));
+      onMapChange(generateMinimapConfig(config, 4));
     } else {
       setMinimapConfig(undefined);
       setMapName(NONE);

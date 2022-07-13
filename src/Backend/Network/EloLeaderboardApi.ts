@@ -60,11 +60,12 @@ export async function loadEloLeaderboard(
 ): Promise<GraphConfigPlayer[]> {
   const QUERY = `
     query {
-        configPlayers(first:1000, where: {configHash: "${config}"}) {
+        configPlayers(first:1000, where: {configHash: "${config}", gamesFinished_gte:1}) {
             address,
             elo,
             wins,
             losses
+
         }
     }
     `;
