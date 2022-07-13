@@ -91,7 +91,7 @@ function Portal({ playerAddress }: { playerAddress: EthAddress }) {
     <>
       {twitters ? (
         <TwitterProvider value={twitters}>
-          <Background />
+          {/* <Background /> */}
           <PortalContainer>
             <HideSmall>
               <PortalSidebarView playerAddress={playerAddress} />
