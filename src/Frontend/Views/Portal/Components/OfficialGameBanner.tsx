@@ -60,7 +60,7 @@ export const OfficialGameBanner: React.FC<{
             </div>
           </div>
           {eloLeaderboard && (
-            <div style = {{textAlign: 'center', borderLeft: `solid 1px ${dfstyles.colors.subbertext}`}}>
+            <div style = {{textAlign: 'center', borderLeft: `solid 1px ${dfstyles.colors.subbertext}`, height: '100%'}}>
               Top Players
               <EloLeaderboardDisplay leaderboard={eloLeaderboard} error={leaderboardError} totalPlayers = {false}/>
             </div>

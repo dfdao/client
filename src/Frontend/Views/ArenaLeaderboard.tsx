@@ -507,6 +507,7 @@ const LeaderboardContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   overflow: hidden;
+  height: 100%;
 `;
 
 const StatsTableContainer = styled.div`
