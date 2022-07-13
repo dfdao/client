@@ -12,6 +12,7 @@ import { Icon } from '../../Components/Icons';
 import { Modal } from '../../Components/Modal';
 import dfstyles from '../../Styles/dfstyles';
 import { useTwitters } from '../../Utils/AppHooks';
+import { competitiveConfig } from '../../Utils/constants';
 import { ModalPane } from '../ModalPane';
 import { Account } from './Account';
 import { AccountInfoView } from './AccountInfoView';
@@ -124,7 +125,7 @@ export function PortalMainView({ playerAddress }: { playerAddress: EthAddress })
           </TitleContainer>
         </TopBar>
         <Switch>
-          <Redirect path='/portal/map' to={`/portal/home`} exact={true} />
+          <Redirect path='/portal/map' to={`/portal/map/${competitiveConfig}`} exact={true} />
 
           <Route path={'/portal/home'} exact={true} component={PortalHomeView} />
           <Route path={'/portal/map/:configHash'} component={MapInfoView} />

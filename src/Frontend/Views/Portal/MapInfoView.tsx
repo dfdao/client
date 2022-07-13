@@ -11,6 +11,7 @@ import { Minimap } from '../../Components/Minimap';
 import { TextPreview } from '../../Components/TextPreview';
 import { generateMinimapConfig, MinimapConfig } from '../../Panes/Lobbies/MinimapUtils';
 import { LobbyInitializers } from '../../Panes/Lobbies/Reducer';
+import { competitiveConfig } from '../../Utils/constants';
 
 import { MapDetails } from './MapDetails';
 import { ArenaPortalButton } from './PortalHomeView';
@@ -52,6 +53,7 @@ function MapOverview({
   return (
     <OverviewContainer>
       <div style={{ textAlign: 'center' }}>
+        {configHash == competitiveConfig && <span>Galactic League Official Map</span>}
         <MapTitle>{mapName}</MapTitle>
         <TextPreview text={configHash} focusedWidth={'200px'} unFocusedWidth={'200px'} />
       </div>
@@ -77,10 +79,10 @@ function MapOverview({
       )}
       <div style = {{display: 'flex', gap: '16px', justifyContent: 'center', width: '100%'}}>
         <Link style={{ minWidth: '250px' }} target='blank' to={`/arena/${lobbyAddress}/settings`}>
-          <ArenaPortalButton secondary>Remix map</ArenaPortalButton>
+          <ArenaPortalButton secondary>Remix Map</ArenaPortalButton>
         </Link>
         <Link style={{ minWidth: '250px' }} target='blank' to={`/play/${lobbyAddress}?create=true`}>
-          <ArenaPortalButton>New Game with this Map</ArenaPortalButton>
+          <ArenaPortalButton>Create Match</ArenaPortalButton>
         </Link>
       </div>
     </OverviewContainer>

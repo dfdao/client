@@ -124,12 +124,24 @@ export default function LandingPage() {
             <Badge>Dark Forest Arena 🏟️</Badge>
             {/* <Title>Playing is building</Title> */}
             <Desc>Play dfdao's fast-paced, free version of the premier on-chain game.</Desc>
-            <ArenaPortalButton onClick={() => history.push('/portal/home')}>
-              Enter
-            </ArenaPortalButton>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px'}}>
+              <ArenaPortalButton style = {{flex: '2'}} onClick={() => history.push('/portal/map')}>
+                Enter
+              </ArenaPortalButton>
+              <ArenaPortalButton style = {{flex: '1'}} secondary onClick={() => history.push('/portal/map')}>
+                Learn More
+              </ArenaPortalButton>
+            </div>
           </TextContainer>
           <ImgContainer>
-            <img src='/public/img/deathstar.png' style = {{maxWidth: '90%'}} />
+            <img
+              src='/public/round_art/galacticleague.jpg'
+              style={{
+                maxWidth: '90%',
+                transformStyle: 'preserve-3d',
+                transform: 'rotateY(358deg)',
+              }}
+            />
           </ImgContainer>
         </Content>
         {/* <HideOnMobile>
@@ -254,7 +266,9 @@ const TextContainer = styled.div`
   }
 `;
 
-const ImgContainer = styled.div``;
+const ImgContainer = styled.div`
+  perspective: 150px;
+`;
 
 const Title = styled.h1`
   font-family: 'Karla', sans-serif;

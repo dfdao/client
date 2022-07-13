@@ -94,7 +94,7 @@ function scoreToTime(score?: number | null) {
 export function compPlayerToEntry(
   playerAddress: string,
   playerTwitter: string | undefined,
-  color: string
+  color: string | undefined= `${dfstyles.colors.text}`
 ) {
   return (
     <Link
@@ -277,7 +277,7 @@ function ArenaLeaderboardTable({ rows }: { rows: Row[] }) {
             row: Row,
             i //rank
           ) => (
-            <Cell style={{ color: getRankColor([i, row.score]) }}>
+            <Cell>
               {row.score === undefined || row.score === null ? 'unranked' : i + 1 + '.'}
             </Cell>
           ),
@@ -285,7 +285,7 @@ function ArenaLeaderboardTable({ rows }: { rows: Row[] }) {
             // name
             const color = getRankColor([i, row.score]);
             return (
-              <Cell style={{ color }}>{compPlayerToEntry(row.address, row.twitter, color)}</Cell>
+              <Cell>{compPlayerToEntry(row.address, row.twitter)}</Cell>
             );
           },
           (row: Row, i) => {
@@ -326,7 +326,7 @@ function ArenaLeaderboardTable({ rows }: { rows: Row[] }) {
           (row: Row, i) => {
             // score
             return (
-              <Cell style={{ color: getRankColor([i, row.score]) }}>{scoreToTime(row.score)}</Cell>
+              <Cell>{scoreToTime(row.score)}</Cell>
             );
           },
         ]}
@@ -397,7 +397,7 @@ function EloLeaderboardTable({ rows }: { rows: EloRow[] }) {
           (row: EloRow, i) => {
             // name
             const color = getRankColor([i, row.score]);
-            return <Cell>{compPlayerToEntry(row.address, row.twitter, color)}</Cell>;
+            return <Cell>{compPlayerToEntry(row.address, row.twitter)}</Cell>;
           },
           (row: EloRow, i) => {
             // twitter
@@ -498,14 +498,14 @@ const TableContainer = styled.div`
   display: inline-block;
   border-radius: 2px 2px 0 0px;
   border-bottom: none;
-  padding: 16px;
+  padding: 4px;
   overflow: scroll;
 `;
 
 const LeaderboardContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  // justify-content: space-between;
   align-items: center;
   overflow: hidden;
   height: 100%;

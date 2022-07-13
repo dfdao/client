@@ -6,7 +6,10 @@ import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { loadArenaLeaderboard } from '../../../../Backend/Network/ArenaLeaderboardApi';
 import { loadConfigFromHash } from '../../../../Backend/Network/ConfigApi';
-import { GraphConfigPlayer, loadEloLeaderboard } from '../../../../Backend/Network/EloLeaderboardApi';
+import {
+  GraphConfigPlayer,
+  loadEloLeaderboard,
+} from '../../../../Backend/Network/EloLeaderboardApi';
 import { loadRecentMaps } from '../../../../Backend/Network/MapsApi';
 import { Sub } from '../../../Components/Text';
 import { ArenaLeaderboardDisplay, EloLeaderboardDisplay } from '../../ArenaLeaderboard';
@@ -24,12 +27,12 @@ export const OfficialGameBanner: React.FC<{
   useEffect(() => {
     setEloLeaderboard(undefined);
     loadEloLeaderboard(configHash)
-    .then((board) => {
-      console.log("BOARD", board);
-      setLeaderboardError(undefined);
-      setEloLeaderboard(board);
-    })
-    .catch((e) => setLeaderboardError(e));
+      .then((board) => {
+        console.log('BOARD', board);
+        setLeaderboardError(undefined);
+        setEloLeaderboard(board);
+      })
+      .catch((e) => setLeaderboardError(e));
     loadRecentMaps(1, configHash).then((maps) => {
       setLobbyAddress(maps && maps.length > 0 ? maps[0].lobbyAddress : undefined);
     });
@@ -40,29 +43,35 @@ export const OfficialGameBanner: React.FC<{
       {lobbyAddress && (
         <Banner>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <Sub>Play the Galactic League</Sub>
-              <BannerTitle>{getConfigName(configHash)}</BannerTitle>
-            </div>
-            <span>{configHash}</span>
-            {/* <span style={{}}>Official DFDAO Map</span> */}
+            <BannerTitle>Play the Galactic League</BannerTitle>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Link
                 style={{ minWidth: '250px' }}
                 target='blank'
                 to={`/play/${lobbyAddress}?create=true`}
               >
-                <ArenaPortalButton>New Game</ArenaPortalButton>
+                <ArenaPortalButton>Create Game</ArenaPortalButton>
               </Link>
               <Link to={`/portal/map/${configHash}`}>
-                <ArenaPortalButton secondary>Join a Game</ArenaPortalButton>
+                <ArenaPortalButton secondary>Join Game</ArenaPortalButton>
               </Link>
             </div>
           </div>
           {eloLeaderboard && (
-            <div style = {{textAlign: 'center', borderLeft: `solid 1px ${dfstyles.colors.subbertext}`, height: '100%'}}>
+            <div
+              style={{
+                textAlign: 'center',
+                borderLeft: `solid 1px ${dfstyles.colors.subbertext}`,
+                height: '100%',
+                padding: '20px 0px',
+              }}
+            >
               Top Players
-              <EloLeaderboardDisplay leaderboard={eloLeaderboard} error={leaderboardError} totalPlayers = {false}/>
+              <EloLeaderboardDisplay
+                leaderboard={eloLeaderboard}
+                error={leaderboardError}
+                totalPlayers={false}
+              />
             </div>
           )}
         </Banner>
