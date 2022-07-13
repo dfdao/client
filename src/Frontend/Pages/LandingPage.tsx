@@ -37,6 +37,7 @@ export default function LandingPage() {
   return (
     <>
       <Container>
+        <BackgroundImage />
         <Nav>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <Icon
@@ -123,26 +124,30 @@ export default function LandingPage() {
           <TextContainer>
             <Badge>Dark Forest Arena 🏟️</Badge>
             {/* <Title>Playing is building</Title> */}
-            <Desc>Play dfdao's fast-paced, free version of the premier on-chain game.</Desc>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px'}}>
-              <ArenaPortalButton style = {{flex: '2'}} onClick={() => history.push('/portal/map')}>
+            {/* <Desc>Play dfdao's fast-paced, free version of the premier on-chain game.</Desc> */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <ArenaPortalButton style={{ flex: '2' }} onClick={() => history.push('/portal/map')}>
                 Enter
               </ArenaPortalButton>
-              <ArenaPortalButton style = {{flex: '1'}} secondary onClick={() => history.push('/portal/map')}>
+              <ArenaPortalButton
+                style={{ flex: '1' }}
+                secondary
+                onClick={() => history.push('/portal/map')}
+              >
                 Learn More
               </ArenaPortalButton>
             </div>
           </TextContainer>
-          <ImgContainer>
+          {/* <ImgContainer>
             <img
               src='/public/round_art/galacticleague.jpg'
               style={{
                 maxWidth: '90%',
-                transformStyle: 'preserve-3d',
-                transform: 'rotateY(358deg)',
+                // transformStyle: 'preserve-3d',
+                // transform: 'rotateY(358deg)',
               }}
             />
-          </ImgContainer>
+          </ImgContainer> */}
         </Content>
         {/* <HideOnMobile>
           <BgGrid src='/public/img/LandingPageGrid.svg' />
@@ -181,8 +186,8 @@ const NavLink = styled(Link)`
 
 const Badge = styled.div`
   font-size: 2rem;
-  border-radius: 3rem;
-  background-color: ${dfstyles.colors.backgroundlighter};
+  // border-radius: 3rem;
+  // background-color: ${dfstyles.colors.backgroundlighter};
   color: #fff;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -207,6 +212,7 @@ const WallbreakersButton = styled.div`
 `;
 
 const Container = styled.div`
+justify-content:center;
   background: #111;
   color: #fff;
   display: flex;
@@ -223,17 +229,21 @@ const Container = styled.div`
 `;
 
 const Content = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1.5fr;
+  justify-content: center;
+  backdrop-filter: brightness(0.1) blur(5px);
   align-items: center;
   @media (max-width: 768px) {
     display: flex;
     flex-direction: column;
   }
   z-index: 2;
+  border-radius: 20px;
 `;
 
 const Nav = styled.div`
+  position: fixed;
+  top: 0;
+  backdrop-filter: brightness(0.2) blur(5px);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -255,6 +265,7 @@ const LinksContainer = styled.div`
 `;
 
 const TextContainer = styled.div`
+border-radius: 20px;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -267,7 +278,7 @@ const TextContainer = styled.div`
 `;
 
 const ImgContainer = styled.div`
-  perspective: 150px;
+  // perspective: 150px;
 `;
 
 const Title = styled.h1`
@@ -287,15 +298,16 @@ const Desc = styled.span`
 export const BackgroundImage = styled.img`
   width: 100vw;
   height: 100vh;
-  // background-image: url(/img/epicbattle.jpg);
+  display: fixed;
+  background-image: url(/public/img/deathstar.png);
   background-size: cover;
-  filter: blur(3px) brightness(0.7) saturate(1.5);
+  filter: blur(2px) brightness(0.9);
   background-position: 50%, 50%;
-  display: inline-block;
+  // display: inline-block;
   position: fixed;
   top: 0;
   left: 0;
-  z-index: -1;
+  // z-index: -1;
 `;
 
 const TRow = styled.tr`
