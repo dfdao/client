@@ -6,6 +6,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import styled from 'styled-components';
 import { loadConfigFromHash } from '../../../Backend/Network/ConfigApi';
+import { MythicLabel, MythicLabelText } from '../../Components/Labels/MythicLabel';
 import { LoadingSpinner } from '../../Components/LoadingSpinner';
 import { Minimap } from '../../Components/Minimap';
 import { TextPreview } from '../../Components/TextPreview';
@@ -53,7 +54,7 @@ function MapOverview({
   return (
     <OverviewContainer>
       <div style={{ textAlign: 'center' }}>
-        {configHash == competitiveConfig && <span>Galactic League Official Map</span>}
+        {configHash == competitiveConfig &&  <MythicLabelText text={`Galactic League Official Map`} />}
         <MapTitle>{mapName}</MapTitle>
         <TextPreview text={configHash} focusedWidth={'200px'} unFocusedWidth={'200px'} />
       </div>
