@@ -237,6 +237,7 @@ const Content = styled.div`
   border-radius: 20px;
 `;
 
+
 const Nav = styled.div`
   position: fixed;
   top: 0;

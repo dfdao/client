@@ -21,6 +21,7 @@ export function ArenaLeaderboardWithData({ config }: { config: string }) {
   return <ArenaLeaderboardDisplay leaderboard={arenaLeaderboard} error={arenaError} />;
 }
 
+
 export function ArenaLeaderboardDisplay({
   leaderboard,
   error,
