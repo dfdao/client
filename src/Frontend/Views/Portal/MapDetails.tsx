@@ -35,7 +35,6 @@ export function MapDetails({
       if (numSpawnPlanets > 1) {
         loadEloLeaderboard(configHash, numSpawnPlanets > 1)
           .then((board) => {
-            console.log("BOARD", board);
             setLeaderboardError(undefined);
             setEloLeaderboard(board);
           })

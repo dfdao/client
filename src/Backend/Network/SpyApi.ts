@@ -22,7 +22,6 @@ export const loadLiveMatches = async (
       }
     }`;
 
-  console.log(`query`, query);
   const response = await getGraphQLData(
     query,
     apiUrl
@@ -33,7 +32,6 @@ export const loadLiveMatches = async (
   }
 
   const { arenas } = response.data;
-  console.log('arena spy', arenas);
   if (arenas === null) {
     throw new Error(`error when fetching data, ${JSON.stringify(response)}`);
   }

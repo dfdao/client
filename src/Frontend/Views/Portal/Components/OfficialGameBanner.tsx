@@ -28,7 +28,6 @@ export const OfficialGameBanner: React.FC<{
     setEloLeaderboard(undefined);
     loadEloLeaderboard(configHash)
       .then((board) => {
-        console.log('BOARD', board);
         setLeaderboardError(undefined);
         setEloLeaderboard(board);
       })

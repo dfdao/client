@@ -21,6 +21,7 @@ export function ArenaLeaderboardWithData({ config }: { config: string }) {
   return <ArenaLeaderboardDisplay leaderboard={arenaLeaderboard} error={arenaError} />;
 }
 
+
 export function ArenaLeaderboardDisplay({
   leaderboard,
   error,
@@ -246,7 +247,7 @@ function TotalPlayers({
     return (
       <tbody style={{ fontSize: '1.25em' }}>
         <tr>
-          <td>Total races</td>
+          <td>Total matches</td>
           <td>{leaderboard.length}</td>
         </tr>
       </tbody>
