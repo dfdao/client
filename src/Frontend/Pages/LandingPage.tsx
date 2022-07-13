@@ -129,11 +129,7 @@ export default function LandingPage() {
               <ArenaPortalButton style={{ flex: '2' }} onClick={() => history.push('/portal/map')}>
                 Enter
               </ArenaPortalButton>
-              <ArenaPortalButton
-                style={{ flex: '1' }}
-                secondary
-                onClick={() => history.push('/portal/map')}
-              >
+              <ArenaPortalButton style = {{flex: '1'}} secondary onClick={() => window.open('https://arena.dfdao.xyz/','blank')}>
                 Learn More
               </ArenaPortalButton>
             </div>

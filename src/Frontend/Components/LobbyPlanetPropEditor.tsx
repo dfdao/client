@@ -241,14 +241,18 @@ export const PlanetPropEditor: React.FC<PlanetPropEditorProps> = ({
         key={`input-row-${index}`}
         style={value == 'blockedPlanetLocs' && blockEnabled ? { flexDirection: 'column' } : {}}
       >
-        <PortalTooltipTrigger
-          name={TooltipName.Empty}
-          extraContent={displayProperties[index].description}
-          style={{ width: '100%' }}
-        >
-          <LabeledInput>{displayProperties[index].title}</LabeledInput>
-        </PortalTooltipTrigger>
-
+        {
+          displayProperties[index] ?
+            <PortalTooltipTrigger
+            name={TooltipName.Empty}
+            extraContent={displayProperties[index].description}
+            style={{ width: '100%' }}
+          >
+            <LabeledInput>{displayProperties[index].title}</LabeledInput>
+          </PortalTooltipTrigger>
+          :
+          null
+        }
         {content}
       </InputRow>
     );
