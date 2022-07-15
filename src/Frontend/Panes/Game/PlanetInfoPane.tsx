@@ -1,13 +1,13 @@
 import { isLocatable } from '@darkforest_eth/gamelogic';
 import { LocationId, TooltipName } from '@darkforest_eth/types';
 import React from 'react';
-import { CenterBackgroundSubtext } from '../Components/CoreUI';
-import { AccountLabel } from '../Components/Labels/Labels';
-import { TextPreview } from '../Components/TextPreview';
-import dfstyles from '../Styles/dfstyles';
-import { usePlanet, useUIManager } from '../Utils/AppHooks';
-import { useEmitterValue } from '../Utils/EmitterHooks';
-import { TooltipTrigger } from './Tooltip';
+import { CenterBackgroundSubtext } from '../../Components/CoreUI';
+import { AccountLabel } from '../../Components/Labels/Labels';
+import { TextPreview } from '../../Components/TextPreview';
+import dfstyles from '../../Styles/dfstyles';
+import { usePlanet, useUIManager } from '../../Utils/AppHooks';
+import { useEmitterValue } from '../../Utils/EmitterHooks';
+import { TooltipTrigger } from '../Tooltip';
 
 /**
  * This pane contains misc info about the planet, which does not have a place in the main Planet Context Pane.

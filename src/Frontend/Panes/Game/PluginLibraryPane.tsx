@@ -4,17 +4,17 @@ import React, { useEffect, useState } from 'react';
 import { ReactSortable } from 'react-sortablejs';
 import styled from 'styled-components';
 import { v4 as uuidv4 } from 'uuid';
-import GameUIManager from '../../Backend/GameLogic/GameUIManager';
-import { SerializedPlugin } from '../../Backend/Plugins/SerializedPlugin';
-import { Btn } from '../Components/Btn';
-import { Link, Spacer, Truncate } from '../Components/CoreUI';
-import { PluginModal } from '../Components/PluginModal';
-import { RemoteModal } from '../Components/RemoteModal';
-import { Sub } from '../Components/Text';
-import dfstyles from '../Styles/dfstyles';
-import { useEmitterValue } from '../Utils/EmitterHooks';
-import { getBooleanSetting, setSetting, useBooleanSetting } from '../Utils/SettingsHooks';
-import { ModalPane } from '../Views/Game/ModalPane';
+import GameUIManager from '../../../Backend/GameLogic/GameUIManager';
+import { SerializedPlugin } from '../../../Backend/Plugins/SerializedPlugin';
+import { Btn } from '../../Components/Btn';
+import { Link, Spacer, Truncate } from '../../Components/CoreUI';
+import { PluginModal } from '../../Components/PluginModal';
+import { RemoteModal } from '../../Components/RemoteModal';
+import { Sub } from '../../Components/Text';
+import dfstyles from '../../Styles/dfstyles';
+import { useEmitterValue } from '../../Utils/EmitterHooks';
+import { getBooleanSetting, setSetting, useBooleanSetting } from '../../Utils/SettingsHooks';
+import { ModalPane } from '../../Views/Game/ModalPane';
 import { PluginEditorPane } from './PluginEditorPane';
 
 function HelpContent() {

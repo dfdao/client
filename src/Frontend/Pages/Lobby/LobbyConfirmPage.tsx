@@ -11,10 +11,10 @@ import { MythicLabelText } from '../../Components/Labels/MythicLabel';
 import { LoadingSpinner } from '../../Components/LoadingSpinner';
 import { Row } from '../../Components/Row';
 import { Sidebar } from '../../Components/Sidebar';
-import { MinimapPane } from '../../Panes/Lobbies/MinimapPane';
-import { MinimapConfig } from '../../Panes/Lobbies/MinimapUtils';
-import { PlanetListPane } from '../../Panes/Lobbies/PlanetListPane';
-import { LobbyConfigAction, LobbyConfigState } from '../../Panes/Lobbies/Reducer';
+import { MinimapPane } from '../../Panes/Lobby/MinimapPane';
+import { MinimapConfig } from '../../Panes/Lobby/MinimapUtils';
+import { PlanetListPane } from '../../Panes/Lobby/PlanetListPane';
+import { LobbyConfigAction, LobbyConfigState } from '../../Panes/Lobby/Reducer';
 
 export function LobbyConfirmPage({
   lobbyAdminTools,

@@ -1,16 +1,13 @@
 import { ModalName } from '@darkforest_eth/types';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Btn } from '../Components/Btn';
-import { Icon, IconType } from '../Components/Icons';
-import { Row } from '../Components/Row';
-import { Blue, Gold, Green, Red, White, Silver, Bronze } from '../Components/Text';
-import { TextPreview } from '../Components/TextPreview';
-import dfstyles from '../Styles/dfstyles';
-import { useAccount, useUIManager } from '../Utils/AppHooks';
-import { goldTime, silverTime, bronzeTime } from '../Utils/constants';
-import { formatDuration } from '../Utils/TimeUtils';
-import { ModalPane } from '../Views/Game/ModalPane';
+import { Btn } from '../../Components/Btn';
+import { Gold, Green, Red, White, Silver, Bronze } from '../../Components/Text';
+import { TextPreview } from '../../Components/TextPreview';
+import dfstyles from '../../Styles/dfstyles';
+import { useAccount, useUIManager } from '../../Utils/AppHooks';
+import { goldTime, silverTime, bronzeTime } from '../../Utils/constants';
+import { ModalPane } from '../../Views/Game/ModalPane';
 
 const StyledOnboardingContent = styled.div`
   width: 36em;

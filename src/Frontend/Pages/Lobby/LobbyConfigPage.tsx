@@ -5,20 +5,20 @@ import { Route, Switch, useHistory } from 'react-router-dom';
 import { ContractsAPI } from '../../../Backend/GameLogic/ContractsAPI';
 import { createAndInitArena } from '../../../Backend/Utils/Arena';
 import { LobbyAdminTools } from '../../../Backend/Utils/LobbyAdminTools';
-import { MinimapConfig } from '../../Panes/Lobbies/MinimapUtils';
+import { MinimapConfig } from '../../Panes/Lobby/MinimapUtils';
 import {
   InvalidConfigError,
   lobbyConfigInit,
   lobbyConfigReducer,
   LobbyInitializers,
   toInitializers,
-} from '../../Panes/Lobbies/Reducer';
+} from '../../Panes/Lobby/Reducer';
 import { LobbyMapSelectPage } from './LobbyMapSelectPage';
 import { LobbyWorldSettingsPage } from './LobbyWorldSettingsPage';
 import { LobbyConfirmPage } from './LobbyConfirmPage';
 import { LobbyMapEditor } from './LobbyMapEditor';
 import { getAllTwitters } from '../../../Backend/Network/UtilityServerAPI';
-import { DEFAULT_PLANET } from '../../Panes/Lobbies/LobbiesUtils';
+import { DEFAULT_PLANET } from '../../Panes/Lobby/LobbiesUtils';
 import { Toast } from '../../Components/Toast';
 import _ from 'lodash';
 

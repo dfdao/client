@@ -3,16 +3,16 @@ import { artifactName, getPlanetName } from '@darkforest_eth/procedural';
 import { Artifact, ArtifactTypeNames, LocationId } from '@darkforest_eth/types';
 import React from 'react';
 import styled from 'styled-components';
-import GameUIManager from '../../Backend/GameLogic/GameUIManager';
-import { CenterBackgroundSubtext, Truncate } from '../Components/CoreUI';
-import { ArtifactRarityLabelAnim } from '../Components/Labels/ArtifactLabels';
-import { Sub } from '../Components/Text';
-import { useUIManager } from '../Utils/AppHooks';
-import { ArtifactLink } from '../Views/Game/ArtifactLink';
-import { ModalHandle } from '../Views/Game/ModalPane';
-import { PlanetLink } from '../Views/Game/PlanetLink';
-import { SortableTable } from '../Views/SortableTable';
-import { TabbedView } from '../Views/TabbedView';
+import GameUIManager from '../../../Backend/GameLogic/GameUIManager';
+import { CenterBackgroundSubtext, Truncate } from '../../Components/CoreUI';
+import { ArtifactRarityLabelAnim } from '../../Components/Labels/ArtifactLabels';
+import { Sub } from '../../Components/Text';
+import { useUIManager } from '../../Utils/AppHooks';
+import { ArtifactLink } from '../../Views/Game/ArtifactLink';
+import { ModalHandle } from '../../Views/Game/ModalPane';
+import { PlanetLink } from '../../Views/Game/PlanetLink';
+import { SortableTable } from '../../Views/SortableTable';
+import { TabbedView } from '../../Views/TabbedView';
 
 const ArtifactsBody = styled.div`
   min-height: 200px;

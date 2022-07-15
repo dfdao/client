@@ -5,12 +5,12 @@ import { LocationId, Planet } from '@darkforest_eth/types';
 import { BigNumber } from 'ethers';
 import React from 'react';
 import styled from 'styled-components';
-import { Btn } from '../Components/Btn';
-import { CenterBackgroundSubtext, EmSpacer, Link } from '../Components/CoreUI';
-import { Sub } from '../Components/Text';
-import { useAccount, usePlanet, useUIManager } from '../Utils/AppHooks';
-import { useEmitterValue } from '../Utils/EmitterHooks';
-import { ModalHandle } from '../Views/Game/ModalPane';
+import { Btn } from '../../Components/Btn';
+import { CenterBackgroundSubtext, EmSpacer, Link } from '../../Components/CoreUI';
+import { Sub } from '../../Components/Text';
+import { useAccount, usePlanet, useUIManager } from '../../Utils/AppHooks';
+import { useEmitterValue } from '../../Utils/EmitterHooks';
+import { ModalHandle } from '../../Views/Game/ModalPane';
 
 const StyledHatPane = styled.div`
   & > div {

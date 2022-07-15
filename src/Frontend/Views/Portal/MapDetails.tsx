@@ -5,7 +5,7 @@ import { loadArenaLeaderboard } from '../../../Backend/Network/ArenaLeaderboardA
 import { GraphConfigPlayer, loadEloLeaderboard } from '../../../Backend/Network/EloLeaderboardApi';
 import { loadLiveMatches } from '../../../Backend/Network/SpyApi';
 import { Subber } from '../../Components/Text';
-import { LobbyInitializers } from '../../Panes/Lobbies/Reducer';
+import { LobbyInitializers } from '../../Panes/Lobby/Reducer';
 import { ArenaLeaderboardDisplay, EloLeaderboardDisplay } from '../Leaderboards/ArenaLeaderboard';
 import { LiveMatches } from '../Leaderboards/LiveMatches';
 import { TabbedView } from '../TabbedView';

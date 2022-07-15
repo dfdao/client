@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { snips } from '../Styles/dfstyles';
-import { DFZIndex } from '../Utils/constants';
+import { snips } from '../../Styles/dfstyles';
+import { DFZIndex } from '../../Utils/constants';
 
 const StyledHoverPane = styled.div`
   ${snips.absoluteTopLeft}

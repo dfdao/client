@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { snips } from '../Styles/dfstyles';
-import { useHoverPlanet, useSelectedPlanet, useUIManager } from '../Utils/AppHooks';
-import UIEmitter, { UIEmitterEvent } from '../Utils/UIEmitter';
-import { PlanetCard } from '../Views/Game/PlanetCard';
+import { snips } from '../../Styles/dfstyles';
+import { useHoverPlanet, useSelectedPlanet, useUIManager } from '../../Utils/AppHooks';
+import UIEmitter, { UIEmitterEvent } from '../../Utils/UIEmitter';
+import { PlanetCard } from '../../Views/Game/PlanetCard';
 import { HoverPane } from './HoverPane';
 
 /**

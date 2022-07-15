@@ -2,7 +2,7 @@ import { artifactName } from '@darkforest_eth/procedural';
 import { Artifact, LocationId } from '@darkforest_eth/types';
 import React, { useCallback, useEffect } from 'react';
 import { Link } from '../../Components/CoreUI';
-import { ArtifactDetailsPane } from '../../Panes/ArtifactDetailsPane';
+import { ArtifactDetailsPane } from '../../Panes/Game/ArtifactDetailsPane';
 import dfstyles from '../../Styles/dfstyles';
 import { useUIManager } from '../../Utils/AppHooks';
 import { ModalHandle } from './ModalPane';

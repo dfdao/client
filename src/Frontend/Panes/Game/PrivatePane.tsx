@@ -1,10 +1,10 @@
 import { ModalName } from '@darkforest_eth/types';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Sub } from '../Components/Text';
-import { TextPreview } from '../Components/TextPreview';
-import { useUIManager } from '../Utils/AppHooks';
-import { ModalPane } from '../Views/Game/ModalPane';
+import { Sub } from '../../Components/Text';
+import { TextPreview } from '../../Components/TextPreview';
+import { useUIManager } from '../../Utils/AppHooks';
+import { ModalPane } from '../../Views/Game/ModalPane';
 
 const StyledPrivatePane = styled.div`
   width: 36em;

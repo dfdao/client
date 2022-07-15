@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { Spacer } from '../../Components/CoreUI';
 import { ModalHandle } from '../../Views/Game/ModalPane';
-import { AllArtifacts } from '../ArtifactsList';
+import { AllArtifacts } from '../Game/ArtifactsList';
 
 export function ManageArtifactsPane({
   planet,

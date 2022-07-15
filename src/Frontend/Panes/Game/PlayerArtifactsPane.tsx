@@ -1,9 +1,9 @@
 import { RECOMMENDED_MODAL_WIDTH } from '@darkforest_eth/constants';
 import { ModalName } from '@darkforest_eth/types';
 import React from 'react';
-import { Spacer } from '../Components/CoreUI';
-import { useMyArtifactsList, useUIManager } from '../Utils/AppHooks';
-import { ModalHandle, ModalPane } from '../Views/Game/ModalPane';
+import { Spacer } from '../../Components/CoreUI';
+import { useMyArtifactsList, useUIManager } from '../../Utils/AppHooks';
+import { ModalHandle, ModalPane } from '../../Views/Game/ModalPane';
 import { AllArtifacts } from './ArtifactsList';
 
 function HelpContent() {

@@ -64,7 +64,7 @@ import {
 } from '@darkforest_eth/types';
 import { getLobbyCreatedEvent, lobbyPlanetsToInitPlanets } from '../../Utils/helpers';
 import _ from 'lodash';
-import { LobbyInitializers } from '../../Panes/Lobbies/Reducer';
+import { LobbyInitializers } from '../../Panes/Lobby/Reducer';
 import { loadConfigFromAddress } from '../../../Backend/Network/ConfigApi';
 
 const enum TerminalPromptStep {

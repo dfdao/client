@@ -1,9 +1,9 @@
 import { PlanetType, TooltipName } from '@darkforest_eth/types';
 import React from 'react';
-import { getPlanetRank, isFullRank } from '../../Backend/Utils/Utils';
-import { ScoreLabel, SilverLabel } from '../Components/Labels/KeywordLabels';
-import { Green, Red, Text, White } from '../Components/Text';
-import { useAccount, useSelectedPlanet, useUIManager } from '../Utils/AppHooks';
+import { getPlanetRank, isFullRank } from '../../../Backend/Utils/Utils';
+import { ScoreLabel, SilverLabel } from '../../Components/Labels/KeywordLabels';
+import { Green, Red, Text, White } from '../../Components/Text';
+import { useAccount, useSelectedPlanet, useUIManager } from '../../Utils/AppHooks';
 
 export function NetworkHealthPane() {
   return (

@@ -1,29 +1,29 @@
 import { ModalName, Planet, PlanetType } from '@darkforest_eth/types';
 import React, { useCallback, useEffect, useMemo } from 'react';
-import GameUIManager from '../../Backend/GameLogic/GameUIManager';
-import { Wrapper } from '../../Backend/Utils/Wrapper';
-import { CapturePlanetButton } from '../Components/CapturePlanetButton';
-import { TargetPlanetButton } from '../Components/TargetPlanetButton';
-import { VerticalSplit } from '../Components/CoreUI';
-import { MineArtifactButton } from '../Components/MineArtifactButton';
+import GameUIManager from '../../../Backend/GameLogic/GameUIManager';
+import { Wrapper } from '../../../Backend/Utils/Wrapper';
+import { CapturePlanetButton } from '../../Components/CapturePlanetButton';
+import { TargetPlanetButton } from '../../Components/TargetPlanetButton';
+import { VerticalSplit } from '../../Components/CoreUI';
+import { MineArtifactButton } from '../../Components/MineArtifactButton';
 import {
   OpenBroadcastPaneButton,
   OpenHatPaneButton,
   OpenManagePlanetArtifactsButton,
   OpenPlanetInfoButton,
   OpenUpgradeDetailsPaneButton,
-} from '../Components/OpenPaneButtons';
-import { snips } from '../Styles/dfstyles';
-import { useAccount, useSelectedPlanet, useUIManager } from '../Utils/AppHooks';
-import { useEmitterSubscribe } from '../Utils/EmitterHooks';
-import { useOnUp } from '../Utils/KeyEmitters';
-import { EXIT_PANE, TOGGLE_ABANDON, TOGGLE_SEND } from '../Utils/ShortcutConstants';
-import UIEmitter, { UIEmitterEvent } from '../Utils/UIEmitter';
-import { ModalHandle, ModalPane } from '../Views/Game/ModalPane';
-import { PlanetCard, PlanetCardTitle } from '../Views/Game/PlanetCard';
-import { getNotifsForPlanet, PlanetNotifications } from '../Views/PlanetNotifications';
-import { SendResources } from '../Views/Game/SendResources';
-import { WithdrawSilver } from '../Views/Game/WithdrawSilver';
+} from '../../Components/OpenPaneButtons';
+import { snips } from '../../Styles/dfstyles';
+import { useAccount, useSelectedPlanet, useUIManager } from '../../Utils/AppHooks';
+import { useEmitterSubscribe } from '../../Utils/EmitterHooks';
+import { useOnUp } from '../../Utils/KeyEmitters';
+import { EXIT_PANE, TOGGLE_ABANDON, TOGGLE_SEND } from '../../Utils/ShortcutConstants';
+import UIEmitter, { UIEmitterEvent } from '../../Utils/UIEmitter';
+import { ModalHandle, ModalPane } from '../../Views/Game/ModalPane';
+import { PlanetCard, PlanetCardTitle } from '../../Views/Game/PlanetCard';
+import { getNotifsForPlanet, PlanetNotifications } from '../../Views/PlanetNotifications';
+import { SendResources } from '../../Views/Game/SendResources';
+import { WithdrawSilver } from '../../Views/Game/WithdrawSilver';
 
 function PlanetContextPaneContent({
   modal,

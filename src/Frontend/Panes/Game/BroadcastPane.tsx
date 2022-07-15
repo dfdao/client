@@ -2,15 +2,15 @@ import { isUnconfirmedRevealTx } from '@darkforest_eth/serde';
 import { EthAddress, LocationId } from '@darkforest_eth/types';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Btn } from '../Components/Btn';
-import { CenterBackgroundSubtext, Spacer } from '../Components/CoreUI';
-import { LoadingSpinner } from '../Components/LoadingSpinner';
-import { Blue, White } from '../Components/Text';
-import { formatDuration, TimeUntil } from '../Components/TimeUntil';
-import dfstyles from '../Styles/dfstyles';
-import { usePlanet, useUIManager } from '../Utils/AppHooks';
-import { useEmitterValue } from '../Utils/EmitterHooks';
-import { ModalHandle } from '../Views/Game/ModalPane';
+import { Btn } from '../../Components/Btn';
+import { CenterBackgroundSubtext, Spacer } from '../../Components/CoreUI';
+import { LoadingSpinner } from '../../Components/LoadingSpinner';
+import { Blue, White } from '../../Components/Text';
+import { formatDuration, TimeUntil } from '../../Components/TimeUntil';
+import dfstyles from '../../Styles/dfstyles';
+import { usePlanet, useUIManager } from '../../Utils/AppHooks';
+import { useEmitterValue } from '../../Utils/EmitterHooks';
+import { ModalHandle } from '../../Views/Game/ModalPane';
 
 const BroadcastWrapper = styled.div`
   & .row {

@@ -1,6 +1,6 @@
 import React from 'react';
-import { useHoverArtifactId, useUIManager } from '../Utils/AppHooks';
-import { ArtifactCard } from './ArtifactCard';
+import { useHoverArtifactId, useUIManager } from '../../Utils/AppHooks';
+import { ArtifactCard } from '../Game/ArtifactCard';
 import { HoverPane } from './HoverPane';
 
 export function ArtifactHoverPane() {

@@ -10,16 +10,16 @@ import { Minimap } from '../../Components/Minimap';
 import { MinimapEditor } from '../../Components/MinimapEditor';
 import { InputRow, LabeledInput, PlanetPropEditor } from '../../Components/LobbyPlanetPropEditor';
 import { Sidebar } from '../../Components/Sidebar';
-import { ConfigDownload, DEFAULT_PLANET, LobbyPlanet } from '../../Panes/Lobbies/LobbiesUtils';
-import { KEY_ITEMS, MinimapKeys } from '../../Panes/Lobbies/MinimapPane';
-import { MinimapConfig } from '../../Panes/Lobbies/MinimapUtils';
-import { PlanetListPane } from '../../Panes/Lobbies/PlanetListPane';
+import { ConfigDownload, DEFAULT_PLANET, LobbyPlanet } from '../../Panes/Lobby/LobbiesUtils';
+import { KEY_ITEMS, MinimapKeys } from '../../Panes/Lobby/MinimapPane';
+import { MinimapConfig } from '../../Panes/Lobby/MinimapUtils';
+import { PlanetListPane } from '../../Panes/Lobby/PlanetListPane';
 import {
   LobbyAction,
   lobbyConfigInit,
   LobbyConfigState,
   LobbyInitializers,
-} from '../../Panes/Lobbies/Reducer';
+} from '../../Panes/Lobby/Reducer';
 import { useIsDown } from '../../Utils/KeyEmitters';
 import { Checkbox } from '../../Components/Input';
 import { Toast } from '../../Components/Toast';

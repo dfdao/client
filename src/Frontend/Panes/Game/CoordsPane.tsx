@@ -1,9 +1,9 @@
 import { SpaceType, WorldCoords } from '@darkforest_eth/types';
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import GameUIManager from '../../Backend/GameLogic/GameUIManager';
-import { useUIManager } from '../Utils/AppHooks';
-import UIEmitter, { UIEmitterEvent } from '../Utils/UIEmitter';
+import GameUIManager from '../../../Backend/GameLogic/GameUIManager';
+import { useUIManager } from '../../Utils/AppHooks';
+import UIEmitter, { UIEmitterEvent } from '../../Utils/UIEmitter';
 
 class CoordsText extends React.Component<
   {

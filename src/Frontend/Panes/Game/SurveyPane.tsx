@@ -1,24 +1,15 @@
-import { Leaderboard, ModalName, Setting } from '@darkforest_eth/types';
-import React, { CSSProperties, useEffect, useState } from 'react';
-import styled from 'styled-components';
-import TutorialManager, {
-  TutorialManagerEvent,
-  TutorialState,
-} from '../../Backend/GameLogic/TutorialManager';
-import { getRank, Rank } from '../../Backend/Utils/Rank';
-import { Hook } from '../../_types/global/GlobalTypes';
-import { Btn } from '../Components/Btn';
-import { Link } from '../Components/CoreUI';
-import { Icon, IconType } from '../Components/Icons';
-import { Row } from '../Components/Row';
-import { Bronze, Gold, Green, Red, Silver, White } from '../Components/Text';
-import dfstyles from '../Styles/dfstyles';
-import { useArenaLeaderboard, useEloLeaderboard, useUIManager } from '../Utils/AppHooks';
-import { bronzeTime, goldTime, silverTime } from '../Utils/constants';
-import { useBooleanSetting } from '../Utils/SettingsHooks';
-import { formatDuration } from '../Utils/TimeUtils';
-import { ModalPane } from '../Views/Game/ModalPane';
-import { LinkButton } from './Lobbies/LobbiesUtils';
+import { Leaderboard, ModalName } from '@darkforest_eth/types';
+import React from 'react';
+
+import { getRank, Rank } from '../../../Backend/Utils/Rank';
+import { Btn } from '../../Components/Btn';
+import { Link } from '../../Components/CoreUI';
+import { Row } from '../../Components/Row';
+import { Bronze, Gold, Green, Red, Silver, White } from '../../Components/Text';
+import { useArenaLeaderboard, useEloLeaderboard, useUIManager } from '../../Utils/AppHooks';
+import { bronzeTime, goldTime, silverTime } from '../../Utils/constants';
+import { formatDuration } from '../../Utils/TimeUtils';
+import { ModalPane } from '../../Views/Game/ModalPane';
 
 function getPlace(leaderboard: Leaderboard, time: number) {
   const entries = leaderboard.entries;

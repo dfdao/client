@@ -1,15 +1,15 @@
 import { RECOMMENDED_MODAL_WIDTH } from '@darkforest_eth/constants';
 import { ModalName } from '@darkforest_eth/types';
 import React, { useState } from 'react';
-import { Btn } from '../Components/Btn';
-import { Expand, Spacer } from '../Components/CoreUI';
-import { DarkForestTextInput, TextInput } from '../Components/Input';
-import { TwitterLink } from '../Components/Labels/Labels';
-import { LoadingSpinner } from '../Components/LoadingSpinner';
-import { Red } from '../Components/Text';
-import { usePlayer, useUIManager } from '../Utils/AppHooks';
-import { ModalPane } from '../Views/Game/ModalPane';
-import { TabbedView } from '../Views/TabbedView';
+import { Btn } from '../../Components/Btn';
+import { Expand, Spacer } from '../../Components/CoreUI';
+import { DarkForestTextInput, TextInput } from '../../Components/Input';
+import { TwitterLink } from '../../Components/Labels/Labels';
+import { LoadingSpinner } from '../../Components/LoadingSpinner';
+import { Red } from '../../Components/Text';
+import { usePlayer, useUIManager } from '../../Utils/AppHooks';
+import { ModalPane } from '../../Views/Game/ModalPane';
+import { TabbedView } from '../../Views/TabbedView';
 
 export function TwitterVerifyPane({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   const uiManager = useUIManager();

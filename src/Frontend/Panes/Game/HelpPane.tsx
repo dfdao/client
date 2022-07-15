@@ -1,12 +1,12 @@
 import { ArtifactRarity, ModalName, PlanetLevel } from '@darkforest_eth/types';
 import React from 'react';
 import styled from 'styled-components';
-import { EmSpacer, Link, Section, SectionHeader } from '../Components/CoreUI';
-import { ArtifactRarityLabel } from '../Components/Labels/ArtifactLabels';
-import { Gold, White } from '../Components/Text';
-import dfstyles from '../Styles/dfstyles';
-import { useUIManager } from '../Utils/AppHooks';
-import { ModalPane } from '../Views/Game/ModalPane';
+import { EmSpacer, Link, Section, SectionHeader } from '../../Components/CoreUI';
+import { ArtifactRarityLabel } from '../../Components/Labels/ArtifactLabels';
+import { Gold, White } from '../../Components/Text';
+import dfstyles from '../../Styles/dfstyles';
+import { useUIManager } from '../../Utils/AppHooks';
+import { ModalPane } from '../../Views/Game/ModalPane';
 
 const HelpContent = styled.div`
   width: 500px;

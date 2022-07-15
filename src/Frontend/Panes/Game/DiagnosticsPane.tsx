@@ -1,14 +1,14 @@
 import { RECOMMENDED_MODAL_WIDTH } from '@darkforest_eth/constants';
 import { Diagnostics, ModalName, Setting } from '@darkforest_eth/types';
 import React, { useEffect, useState } from 'react';
-import { Wrapper } from '../../Backend/Utils/Wrapper';
-import { EmSpacer, Separator, SpreadApart } from '../Components/CoreUI';
-import { DisplayGasPrices } from '../Components/DisplayGasPrices';
-import { TextPreview } from '../Components/TextPreview';
-import { useUIManager } from '../Utils/AppHooks';
-import { BooleanSetting } from '../Utils/SettingsHooks';
-import { ModalPane } from '../Views/Game/ModalPane';
-import { TabbedView } from '../Views/TabbedView';
+import { Wrapper } from '../../../Backend/Utils/Wrapper';
+import { EmSpacer, Separator, SpreadApart } from '../../Components/CoreUI';
+import { DisplayGasPrices } from '../../Components/DisplayGasPrices';
+import { TextPreview } from '../../Components/TextPreview';
+import { useUIManager } from '../../Utils/AppHooks';
+import { BooleanSetting } from '../../Utils/SettingsHooks';
+import { ModalPane } from '../../Views/Game/ModalPane';
+import { TabbedView } from '../../Views/TabbedView';
 
 export function DiagnosticsPane({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   const uiManager = useUIManager();

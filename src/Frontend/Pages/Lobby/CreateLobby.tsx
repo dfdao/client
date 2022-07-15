@@ -11,7 +11,7 @@ import { loadConfigFromAddress } from '../../../Backend/Network/ConfigApi';
 import { getAllTwitters } from '../../../Backend/Network/UtilityServerAPI';
 import { AddressTwitterMap } from '../../../_types/darkforest/api/UtilityServerAPITypes';
 import { InitRenderState, Wrapper } from '../../Components/GameLandingPageComponents';
-import { LobbyInitializers } from '../../Panes/Lobbies/Reducer';
+import { LobbyInitializers } from '../../Panes/Lobby/Reducer';
 import { TwitterProvider } from '../../Utils/AppHooks';
 import { listenForKeyboardEvents, unlinkKeyboardEvents } from '../../Utils/KeyEmitters';
 import { stockConfig } from '../../Utils/StockConfigs';

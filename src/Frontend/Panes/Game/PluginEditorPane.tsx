@@ -4,12 +4,12 @@ import * as React from 'react';
 import { useState } from 'react';
 import Editor from 'react-simple-code-editor';
 import styled from 'styled-components';
-import { PluginManager } from '../../Backend/GameLogic/PluginManager';
-import { PLUGIN_TEMPLATE } from '../../Backend/Plugins/PluginTemplate';
-import { Btn } from '../Components/Btn';
-import { Spacer } from '../Components/CoreUI';
-import { DarkForestTextInput, TextInput } from '../Components/Input';
-import dfstyles from '../Styles/dfstyles';
+import { PluginManager } from '../../../Backend/GameLogic/PluginManager';
+import { PLUGIN_TEMPLATE } from '../../../Backend/Plugins/PluginTemplate';
+import { Btn } from '../../Components/Btn';
+import { Spacer } from '../../Components/CoreUI';
+import { DarkForestTextInput, TextInput } from '../../Components/Input';
+import dfstyles from '../../Styles/dfstyles';
 require('prismjs/themes/prism-dark.css');
 
 /**

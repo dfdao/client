@@ -7,25 +7,25 @@ import {
 } from '@darkforest_eth/types';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import TutorialManager, { TutorialState } from '../../Backend/GameLogic/TutorialManager';
+import TutorialManager, { TutorialState } from '../../../Backend/GameLogic/TutorialManager';
 import {
   MiningPatternType,
   SpiralPattern,
   SwissCheesePattern,
   TowardsCenterPattern,
   TowardsCenterPatternV2,
-} from '../../Backend/Miner/MiningPatterns';
-import { EmSpacer, SelectFrom } from '../Components/CoreUI';
-import { Icon, IconType } from '../Components/Icons';
-import { MaybeShortcutButton } from '../Components/MaybeShortcutButton';
-import { Coords, Sub } from '../Components/Text';
-import dfstyles from '../Styles/dfstyles';
-import { useUIManager } from '../Utils/AppHooks';
-import { MIN_CHUNK_SIZE } from '../Utils/constants';
-import { MultiSelectSetting, useBooleanSetting } from '../Utils/SettingsHooks';
-import { TOGGLE_EXPLORE, TOGGLE_TARGETTING } from '../Utils/ShortcutConstants';
-import UIEmitter, { UIEmitterEvent } from '../Utils/UIEmitter';
-import { TooltipTrigger } from './Tooltip';
+} from '../../../Backend/Miner/MiningPatterns';
+import { EmSpacer, SelectFrom } from '../../Components/CoreUI';
+import { Icon, IconType } from '../../Components/Icons';
+import { MaybeShortcutButton } from '../../Components/MaybeShortcutButton';
+import { Coords, Sub } from '../../Components/Text';
+import dfstyles from '../../Styles/dfstyles';
+import { useUIManager } from '../../Utils/AppHooks';
+import { MIN_CHUNK_SIZE } from '../../Utils/constants';
+import { MultiSelectSetting, useBooleanSetting } from '../../Utils/SettingsHooks';
+import { TOGGLE_EXPLORE, TOGGLE_TARGETTING } from '../../Utils/ShortcutConstants';
+import UIEmitter, { UIEmitterEvent } from '../../Utils/UIEmitter';
+import { TooltipTrigger } from '../Tooltip';
 
 const StyledExplorePane = styled.div`
   background: ${dfstyles.colors.background};

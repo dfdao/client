@@ -1,9 +1,9 @@
 import { ModalName } from '@darkforest_eth/types';
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Hook } from '../../_types/global/GlobalTypes';
-import { BorderlessPane, EmSpacer } from '../Components/CoreUI';
-import { DFZIndex } from '../Utils/constants';
+import { Hook } from '../../../_types/global/GlobalTypes';
+import { BorderlessPane, EmSpacer } from '../../Components/CoreUI';
+import { DFZIndex } from '../../Utils/constants';
 import {
   TOGGLE_HELP_PANE,
   TOGGLE_PLUGINS_PANE,
@@ -11,8 +11,8 @@ import {
   TOGGLE_TRANSACTIONS_PANE,
   TOGGLE_YOUR_ARTIFACTS_PANE,
   TOGGLE_YOUR_PLANETS_DEX_PANE,
-} from '../Utils/ShortcutConstants';
-import { ModalToggleButton } from '../Views/ModalIcon';
+} from '../../Utils/ShortcutConstants';
+import { ModalToggleButton } from '../../Views/ModalIcon';
 
 export function SidebarPane({
   settingsHook,

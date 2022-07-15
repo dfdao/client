@@ -2,22 +2,22 @@ import { EthConnection } from '@darkforest_eth/network';
 import { AutoGasSetting, Chunk, ModalName, Setting } from '@darkforest_eth/types';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import TutorialManager from '../../Backend/GameLogic/TutorialManager';
-import { Btn } from '../Components/Btn';
-import { Section, SectionHeader, Spacer } from '../Components/CoreUI';
-import { DarkForestTextInput, TextInput } from '../Components/Input';
-import { Slider } from '../Components/Slider';
-import { Green, Red, Subber } from '../Components/Text';
-import Viewport, { getDefaultScroll } from '../Game/Viewport';
-import { useAccount, useUIManager } from '../Utils/AppHooks';
-import { useEmitterValue } from '../Utils/EmitterHooks';
+import TutorialManager from '../../../Backend/GameLogic/TutorialManager';
+import { Btn } from '../../Components/Btn';
+import { Section, SectionHeader, Spacer } from '../../Components/CoreUI';
+import { DarkForestTextInput, TextInput } from '../../Components/Input';
+import { Slider } from '../../Components/Slider';
+import { Green, Red, Subber } from '../../Components/Text';
+import Viewport, { getDefaultScroll } from '../../Game/Viewport';
+import { useAccount, useUIManager } from '../../Utils/AppHooks';
+import { useEmitterValue } from '../../Utils/EmitterHooks';
 import {
   BooleanSetting,
   ColorSetting,
   MultiSelectSetting,
   NumberSetting,
-} from '../Utils/SettingsHooks';
-import { ModalPane } from '../Views/Game/ModalPane';
+} from '../../Utils/SettingsHooks';
+import { ModalPane } from '../../Views/Game/ModalPane';
 
 const SCROLL_MIN = 0.0001 * 10000;
 const SCROLL_MAX = 0.01 * 10000;

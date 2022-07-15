@@ -4,18 +4,17 @@ import styled from 'styled-components';
 import TutorialManager, {
   TutorialManagerEvent,
   TutorialState,
-} from '../../Backend/GameLogic/TutorialManager';
-import { Hook } from '../../_types/global/GlobalTypes';
-import { Btn } from '../Components/Btn';
-import { Link } from '../Components/CoreUI';
-import { Icon, IconType } from '../Components/Icons';
-import { Bronze, Gold, Green, Red, Silver, White } from '../Components/Text';
-import { TextPreview } from '../Components/TextPreview';
-import dfstyles from '../Styles/dfstyles';
-import { useUIManager } from '../Utils/AppHooks';
-import { bronzeTime, goldTime, silverTime } from '../Utils/constants';
-import { useBooleanSetting } from '../Utils/SettingsHooks';
-import { formatDuration } from '../Utils/TimeUtils';
+} from '../../../Backend/GameLogic/TutorialManager';
+import { Btn } from '../../Components/Btn';
+import { Link } from '../../Components/CoreUI';
+import { Icon, IconType } from '../../Components/Icons';
+import { Bronze, Gold, Green, Red, Silver, White } from '../../Components/Text';
+import { TextPreview } from '../../Components/TextPreview';
+import dfstyles from '../../Styles/dfstyles';
+import { useUIManager } from '../../Utils/AppHooks';
+import { bronzeTime, goldTime, silverTime } from '../../Utils/constants';
+import { useBooleanSetting } from '../../Utils/SettingsHooks';
+import { formatDuration } from '../../Utils/TimeUtils';
 
 function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }) {
   const uiManager = useUIManager();

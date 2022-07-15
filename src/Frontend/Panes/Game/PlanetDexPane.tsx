@@ -10,14 +10,14 @@ import { engineConsts } from '@darkforest_eth/renderer';
 import { ModalName, Planet, PlanetType, RGBVec } from '@darkforest_eth/types';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { getPlanetRank } from '../../Backend/Utils/Utils';
-import { CenterBackgroundSubtext, Spacer } from '../Components/CoreUI';
-import { Icon, IconType } from '../Components/Icons';
-import { Sub } from '../Components/Text';
-import { useUIManager } from '../Utils/AppHooks';
-import { ModalPane } from '../Views/Game/ModalPane';
-import { PlanetLink } from '../Views/Game/PlanetLink';
-import { SortableTable } from '../Views/SortableTable';
+import { getPlanetRank } from '../../../Backend/Utils/Utils';
+import { CenterBackgroundSubtext, Spacer } from '../../Components/CoreUI';
+import { Icon, IconType } from '../../Components/Icons';
+import { Sub } from '../../Components/Text';
+import { useUIManager } from '../../Utils/AppHooks';
+import { ModalPane } from '../../Views/Game/ModalPane';
+import { PlanetLink } from '../../Views/Game/PlanetLink';
+import { SortableTable } from '../../Views/SortableTable';
 
 const StyledPlanetThumb = styled.div<{ iconColor?: string }>`
   width: 20px;

@@ -5,9 +5,9 @@ import styled from 'styled-components';
 import { LobbyAdminTools } from '../../../Backend/Utils/LobbyAdminTools';
 import { Spacer } from '../../Components/CoreUI';
 import { Minimap } from '../../Components/Minimap';
-import { ConfigUpload, Logo } from '../../Panes/Lobbies/LobbiesUtils';
-import { MinimapConfig } from '../../Panes/Lobbies/MinimapUtils';
-import { LobbyAction, lobbyConfigInit, LobbyInitializers } from '../../Panes/Lobbies/Reducer';
+import { ConfigUpload, Logo } from '../../Panes/Lobby/LobbiesUtils';
+import { MinimapConfig } from '../../Panes/Lobby/MinimapUtils';
+import { LobbyAction, lobbyConfigInit, LobbyInitializers } from '../../Panes/Lobby/Reducer';
 import { stockConfig } from '../../Utils/StockConfigs';
 import { Account } from '../../Views/Portal/Account';
 
