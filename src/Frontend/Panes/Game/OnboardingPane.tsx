@@ -45,12 +45,11 @@ const enum OnboardState {
 
 function OnboardMoney({ advance }: { advance: () => void }) {
   const uiManager = useUIManager();
-  const gameManager = uiManager.getGameManager();
   const account = useAccount(uiManager);
 
   const explorerAddressLink = `https://blockscout.com/poa/xdai/optimism/address/${account}`;
-  const isCompetitive = gameManager.isCompetitive();
-  const victoryThreshold = gameManager.getContractConstants().CLAIM_VICTORY_ENERGY_PERCENT;
+  const isCompetitive = uiManager.isCompetitive();
+  const victoryThreshold = uiManager.contractConstants.CLAIM_VICTORY_ENERGY_PERCENT;
   return (
     <StyledOnboardingContent>
       <p>

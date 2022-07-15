@@ -44,8 +44,8 @@ function getStyledRank(rank: Rank) {
 function SurveyPaneContent({ numSpawnPlanets }: { numSpawnPlanets: number }) {
   const uiManager = useUIManager();
   const time = uiManager.getGameDuration();
-  const isCompetitive = uiManager.getGameManager().isCompetitive();
-  const config = uiManager.getGameManager().getContractConstants().CONFIG_HASH;
+  const isCompetitive = uiManager.isCompetitive();
+  const config = uiManager.contractConstants.CONFIG_HASH;
   // const config = '0x8ea5aaee703231d3893553d7c2d287c2da33e2251811dce40cca2d768b3a7950'
   const { arenaLeaderboard, arenaError } = useArenaLeaderboard(false, config);
   const winners = uiManager.getWinners();
@@ -81,7 +81,7 @@ function SurveyPaneContent({ numSpawnPlanets }: { numSpawnPlanets: number }) {
     );
   }
 
-  if (uiManager.getGameManager().getSpawnPlanets.length == 1) {
+  if (uiManager.getSpawnPlanets().length == 1) {
     return (
       <div>
         <Row>
@@ -128,7 +128,7 @@ function SurveyPaneContent({ numSpawnPlanets }: { numSpawnPlanets: number }) {
 
 export function SurveyPane({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   const uiManager = useUIManager();
-  const numSpawnPlanets = uiManager.getGameManager().getSpawnPlanets().length;
+  const numSpawnPlanets = uiManager.getSpawnPlanets().length;
   if (numSpawnPlanets == 0 || !uiManager.getGameover()) return <></>;
   return (
     <ModalPane

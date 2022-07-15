@@ -50,10 +50,6 @@ export function PlanetCardTitle({
   planet: Wrapper<Planet | undefined>;
   small?: boolean;
 }) {
-  const uiManager = useUIManager();
-  const account = useAccount(uiManager);
-  const gameManager = uiManager.getGameManager();
-
   if (!planet.value) return <></>;
   if (small) return <>{getPlanetName(planet.value)}</>;
 
@@ -86,19 +82,18 @@ export function PlanetCard({
   standalone?: boolean;
 }) {
   const uiManager = useUIManager();
-  const gameManager = uiManager.getGameManager();
   const active = useActiveArtifact(p, uiManager);
   const planet = p.value;
   const artifacts = usePlanetArtifacts(p, uiManager);
   const spaceJunkEnabled = uiManager.getSpaceJunkEnabled();
   const isAbandoning = useEmitterValue(uiManager.isAbandoning$, uiManager.isAbandoning());
-  const randomArtifacts = gameManager.getContractConstants().RANDOM_ARTIFACTS;
+  const randomArtifacts = uiManager.contractConstants.RANDOM_ARTIFACTS;
 
   const energyLeftToClaimVictory = useMemo(() => {
     if (!planet) {
       return 0;
     }
-    const percentRequired = gameManager.getContractConstants().CLAIM_VICTORY_ENERGY_PERCENT;
+    const percentRequired = uiManager.contractConstants.CLAIM_VICTORY_ENERGY_PERCENT;
     const percentHeld = Math.floor((planet.energy * 100) / planet.energyCap);
     let percentNeeded;
     if (planet.owner == EMPTY_ADDRESS) {
@@ -117,7 +112,7 @@ export function PlanetCard({
   const triedFinding = planet.hasTriedFindingArtifact;
 
   const energyRequired =
-    (gameManager.getContractConstants().CLAIM_VICTORY_ENERGY_PERCENT * planet.energyCap) / 100;
+    (uiManager.contractConstants.CLAIM_VICTORY_ENERGY_PERCENT * planet.energyCap) / 100;
 
   const energyNeeded = energyRequired - planet.energy;
   return (

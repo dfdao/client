@@ -7,14 +7,14 @@ import { TooltipTrigger } from '../../Panes/Tooltip';
 import { useGameover, usePaused, useUIManager } from '../../Utils/AppHooks';
 
 export function Play() {
-  const gameManager = useUIManager().getGameManager();
-  const CONFIRM_START = gameManager.getContractConstants().CONFIRM_START;
+  const uiManager = useUIManager();
+  const CONFIRM_START = uiManager.contractConstants.CONFIRM_START;
   const paused = usePaused();
   const hidePlay = !(paused && CONFIRM_START);
 
   const ready = () => {
     console.log('marking ready...');
-    gameManager.ready();
+    uiManager.getGameManager().ready();
   };
 
   return (

@@ -182,7 +182,7 @@ export function GameWindowLayout({
       </div>
 
       {/* <OnboardingPane
-        isCompetitive={uiManager.getGameManager().isCompetitive()}
+        isCompetitive={uiManager.isCompetitive()}
         visible={onboardingVisible}
         onClose={(openTutorial: boolean) => {
           setOnboardingVisible(false);

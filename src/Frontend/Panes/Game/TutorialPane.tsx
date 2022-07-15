@@ -18,10 +18,9 @@ import { formatDuration } from '../../Utils/TimeUtils';
 
 function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }) {
   const uiManager = useUIManager();
-  const isCompetitive = uiManager.getGameManager().isCompetitive();
-  const gameManager = uiManager.getGameManager();
-  const victoryThreshold = gameManager.getContractConstants().CLAIM_VICTORY_ENERGY_PERCENT;
-  const numForVictory = gameManager.getContractConstants().TARGETS_REQUIRED_FOR_VICTORY;
+  const isCompetitive = uiManager.isCompetitive();
+  const victoryThreshold = uiManager.contractConstants.CLAIM_VICTORY_ENERGY_PERCENT;
+  const numForVictory = uiManager.contractConstants.TARGETS_REQUIRED_FOR_VICTORY;
 
   const tutorialManager = TutorialManager.getInstance(uiManager);
 
@@ -345,10 +344,8 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
       </div>
     );
   } else if (tutorialState === TutorialState.HowToGetScore) {
-    const isCompetitive = uiManager.getGameManager().isCompetitive();
-    const victoryThreshold = uiManager
-      .getGameManager()
-      .getContractConstants().CLAIM_VICTORY_ENERGY_PERCENT;
+    const isCompetitive = uiManager.isCompetitive();
+    const victoryThreshold = uiManager.contractConstants.CLAIM_VICTORY_ENERGY_PERCENT;
     return (
       <div className='tutzoom'>
         <White>It's a{isCompetitive ? ' Grand Prix!' : 'n Arena Battle!'}</White>
