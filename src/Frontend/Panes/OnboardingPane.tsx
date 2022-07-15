@@ -10,7 +10,7 @@ import dfstyles from '../Styles/dfstyles';
 import { useAccount, useUIManager } from '../Utils/AppHooks';
 import { goldTime, silverTime, bronzeTime } from '../Utils/constants';
 import { formatDuration } from '../Utils/TimeUtils';
-import { ModalPane } from '../Views/ModalPane';
+import { ModalPane } from '../Views/Game/ModalPane';
 
 const StyledOnboardingContent = styled.div`
   width: 36em;

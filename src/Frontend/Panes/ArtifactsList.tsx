@@ -8,9 +8,9 @@ import { CenterBackgroundSubtext, Truncate } from '../Components/CoreUI';
 import { ArtifactRarityLabelAnim } from '../Components/Labels/ArtifactLabels';
 import { Sub } from '../Components/Text';
 import { useUIManager } from '../Utils/AppHooks';
-import { ArtifactLink } from '../Views/ArtifactLink';
-import { ModalHandle } from '../Views/ModalPane';
-import { PlanetLink } from '../Views/PlanetLink';
+import { ArtifactLink } from '../Views/Game/ArtifactLink';
+import { ModalHandle } from '../Views/Game/ModalPane';
+import { PlanetLink } from '../Views/Game/PlanetLink';
 import { SortableTable } from '../Views/SortableTable';
 import { TabbedView } from '../Views/TabbedView';
 

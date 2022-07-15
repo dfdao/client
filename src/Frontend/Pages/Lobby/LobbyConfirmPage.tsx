@@ -4,17 +4,17 @@ import _ from 'lodash';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { LobbyAdminTools } from '../../Backend/Utils/LobbyAdminTools';
-import { CopyableInput } from '../Components/CopyableInput';
-import { Link, Spacer } from '../Components/CoreUI';
-import { MythicLabelText } from '../Components/Labels/MythicLabel';
-import { LoadingSpinner } from '../Components/LoadingSpinner';
-import { Row } from '../Components/Row';
-import { Sidebar } from '../Components/Sidebar';
-import { MinimapPane } from '../Panes/Lobbies/MinimapPane';
-import { MinimapConfig } from '../Panes/Lobbies/MinimapUtils';
-import { PlanetListPane } from '../Panes/Lobbies/PlanetListPane';
-import { LobbyConfigAction, LobbyConfigState } from '../Panes/Lobbies/Reducer';
+import { LobbyAdminTools } from '../../../Backend/Utils/LobbyAdminTools';
+import { CopyableInput } from '../../Components/CopyableInput';
+import { Link, Spacer } from '../../Components/CoreUI';
+import { MythicLabelText } from '../../Components/Labels/MythicLabel';
+import { LoadingSpinner } from '../../Components/LoadingSpinner';
+import { Row } from '../../Components/Row';
+import { Sidebar } from '../../Components/Sidebar';
+import { MinimapPane } from '../../Panes/Lobbies/MinimapPane';
+import { MinimapConfig } from '../../Panes/Lobbies/MinimapUtils';
+import { PlanetListPane } from '../../Panes/Lobbies/PlanetListPane';
+import { LobbyConfigAction, LobbyConfigState } from '../../Panes/Lobbies/Reducer';
 
 export function LobbyConfirmPage({
   lobbyAdminTools,

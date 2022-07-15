@@ -7,7 +7,7 @@ import { DisplayGasPrices } from '../Components/DisplayGasPrices';
 import { TextPreview } from '../Components/TextPreview';
 import { useUIManager } from '../Utils/AppHooks';
 import { BooleanSetting } from '../Utils/SettingsHooks';
-import { ModalPane } from '../Views/ModalPane';
+import { ModalPane } from '../Views/Game/ModalPane';
 import { TabbedView } from '../Views/TabbedView';
 
 export function DiagnosticsPane({ visible, onClose }: { visible: boolean; onClose: () => void }) {

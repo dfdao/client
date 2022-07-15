@@ -1,16 +1,16 @@
 import { Planet, TooltipName } from '@darkforest_eth/types';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { getEmojiMessage } from '../../Backend/GameLogic/ArrivalUtils';
-import { Wrapper } from '../../Backend/Utils/Wrapper';
-import { Btn } from '../Components/Btn';
-import { LoadingSpinner } from '../Components/LoadingSpinner';
-import { Row } from '../Components/Row';
-import { Sub } from '../Components/Text';
-import { TooltipTrigger } from '../Panes/Tooltip';
-import dfstyles from '../Styles/dfstyles';
-import { useUIManager } from '../Utils/AppHooks';
-import { EmojiPicker } from './EmojiPicker';
+import { getEmojiMessage } from '../../../Backend/GameLogic/ArrivalUtils';
+import { Wrapper } from '../../../Backend/Utils/Wrapper';
+import { Btn } from '../../Components/Btn';
+import { LoadingSpinner } from '../../Components/LoadingSpinner';
+import { Row } from '../../Components/Row';
+import { Sub } from '../../Components/Text';
+import { TooltipTrigger } from '../../Panes/Tooltip';
+import dfstyles from '../../Styles/dfstyles';
+import { useUIManager } from '../../Utils/AppHooks';
+import { EmojiPicker } from '../EmojiPicker';
 
 const TextWrapper = styled.span`
   width: 120px;

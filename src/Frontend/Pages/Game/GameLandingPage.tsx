@@ -13,23 +13,23 @@ import { utils, Wallet } from 'ethers';
 import { reverse } from 'lodash';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { RouteComponentProps, useHistory } from 'react-router-dom';
-import { makeContractsAPI } from '../../Backend/GameLogic/ContractsAPI';
-import GameManager, { GameManagerEvent } from '../../Backend/GameLogic/GameManager';
-import GameUIManager from '../../Backend/GameLogic/GameUIManager';
-import TutorialManager, { TutorialState } from '../../Backend/GameLogic/TutorialManager';
+import { makeContractsAPI } from '../../../Backend/GameLogic/ContractsAPI';
+import GameManager, { GameManagerEvent } from '../../../Backend/GameLogic/GameManager';
+import GameUIManager from '../../../Backend/GameLogic/GameUIManager';
+import TutorialManager, { TutorialState } from '../../../Backend/GameLogic/TutorialManager';
 import {
   addAccount,
   getAccounts,
   getActive,
   resetActive,
   setActive,
-} from '../../Backend/Network/AccountManager';
+} from '../../../Backend/Network/AccountManager';
 import {
   getEthConnection,
   loadDiamondContract,
   loadFaucetContract,
   loadInitContract,
-} from '../../Backend/Network/Blockchain';
+} from '../../../Backend/Network/Blockchain';
 import {
   callRegisterAndWaitForConfirmation,
   EmailResponse,
@@ -37,35 +37,35 @@ import {
   requestFaucet,
   submitInterestedEmail,
   submitPlayerEmail,
-} from '../../Backend/Network/UtilityServerAPI';
-import { getWhitelistArgs } from '../../Backend/Utils/WhitelistSnarkArgsHelper';
-import { ZKArgIdx } from '../../_types/darkforest/api/ContractsAPITypes';
+} from '../../../Backend/Network/UtilityServerAPI';
+import { getWhitelistArgs } from '../../../Backend/Utils/WhitelistSnarkArgsHelper';
+import { ZKArgIdx } from '../../../_types/darkforest/api/ContractsAPITypes';
 import {
   GameWindowWrapper,
   InitRenderState,
   TerminalToggler,
   TerminalWrapper,
   Wrapper,
-} from '../Components/GameLandingPageComponents';
-import { MythicLabelText } from '../Components/Labels/MythicLabel';
-import { TextPreview } from '../Components/TextPreview';
-import { TopLevelDivProvider, UIManagerProvider } from '../Utils/AppHooks';
-import { Incompatibility, unsupportedFeatures } from '../Utils/BrowserChecks';
-import { TerminalTextStyle } from '../Utils/TerminalTypes';
-import UIEmitter, { UIEmitterEvent } from '../Utils/UIEmitter';
-import { GameWindowLayout } from '../Views/GameWindowLayout';
-import { Terminal, TerminalHandle } from '../Views/Terminal';
-import { stockConfig } from '../Utils/StockConfigs';
+} from '../../Components/GameLandingPageComponents';
+import { MythicLabelText } from '../../Components/Labels/MythicLabel';
+import { TextPreview } from '../../Components/TextPreview';
+import { TopLevelDivProvider, UIManagerProvider } from '../../Utils/AppHooks';
+import { Incompatibility, unsupportedFeatures } from '../../Utils/BrowserChecks';
+import { TerminalTextStyle } from '../../Utils/TerminalTypes';
+import UIEmitter, { UIEmitterEvent } from '../../Utils/UIEmitter';
+import { GameWindowLayout } from '../../Views/GameWindowLayout';
+import { Terminal, TerminalHandle } from '../../Views/Terminal';
+import { stockConfig } from '../../Utils/StockConfigs';
 import {
   ContractMethodName,
   EthAddress,
   LocationId,
   UnconfirmedCreateLobby,
 } from '@darkforest_eth/types';
-import { getLobbyCreatedEvent, lobbyPlanetsToInitPlanets } from '../Utils/helpers';
+import { getLobbyCreatedEvent, lobbyPlanetsToInitPlanets } from '../../Utils/helpers';
 import _ from 'lodash';
-import { LobbyInitializers } from '../Panes/Lobbies/Reducer';
-import { loadConfigFromAddress } from '../../Backend/Network/ConfigApi';
+import { LobbyInitializers } from '../../Panes/Lobbies/Reducer';
+import { loadConfigFromAddress } from '../../../Backend/Network/ConfigApi';
 
 const enum TerminalPromptStep {
   NONE,

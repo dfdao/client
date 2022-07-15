@@ -6,7 +6,7 @@ import { ArtifactRarityLabel } from '../Components/Labels/ArtifactLabels';
 import { Gold, White } from '../Components/Text';
 import dfstyles from '../Styles/dfstyles';
 import { useUIManager } from '../Utils/AppHooks';
-import { ModalPane } from '../Views/ModalPane';
+import { ModalPane } from '../Views/Game/ModalPane';
 
 const HelpContent = styled.div`
   width: 500px;

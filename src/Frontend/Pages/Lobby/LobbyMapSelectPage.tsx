@@ -2,15 +2,14 @@ import { EthAddress, WorldCoords } from '@darkforest_eth/types';
 import React, { CSSProperties, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { LobbyAdminTools } from '../../Backend/Utils/LobbyAdminTools';
-import { Spacer } from '../Components/CoreUI';
-import { Minimap } from '../Components/Minimap';
-import { Toast } from '../Components/Toast';
-import { ConfigUpload, Logo } from '../Panes/Lobbies/LobbiesUtils';
-import { MinimapConfig } from '../Panes/Lobbies/MinimapUtils';
-import { LobbyAction, lobbyConfigInit, LobbyInitializers } from '../Panes/Lobbies/Reducer';
-import { stockConfig } from '../Utils/StockConfigs';
-import { Account } from '../Views/Portal/Account';
+import { LobbyAdminTools } from '../../../Backend/Utils/LobbyAdminTools';
+import { Spacer } from '../../Components/CoreUI';
+import { Minimap } from '../../Components/Minimap';
+import { ConfigUpload, Logo } from '../../Panes/Lobbies/LobbiesUtils';
+import { MinimapConfig } from '../../Panes/Lobbies/MinimapUtils';
+import { LobbyAction, lobbyConfigInit, LobbyInitializers } from '../../Panes/Lobbies/Reducer';
+import { stockConfig } from '../../Utils/StockConfigs';
+import { Account } from '../../Views/Portal/Account';
 
 export const LobbyMapSelectPage: React.FC<{
   address : EthAddress;

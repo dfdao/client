@@ -29,7 +29,7 @@ import { TextPreview } from '../Components/TextPreview';
 import { TimeUntil } from '../Components/TimeUntil';
 import dfstyles from '../Styles/dfstyles';
 import { useArtifact, useUIManager } from '../Utils/AppHooks';
-import { ModalHandle } from '../Views/ModalPane';
+import { ModalHandle } from '../Views/Game/ModalPane';
 import { ArtifactActions } from './ManagePlanetArtifacts/ArtifactActions';
 import { TooltipTrigger } from './Tooltip';
 

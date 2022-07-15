@@ -2,17 +2,17 @@ import { isUnconfirmedWithdrawSilverTx } from '@darkforest_eth/serde';
 import { Planet, PlanetType, TooltipName } from '@darkforest_eth/types';
 import React, { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { Wrapper } from '../../Backend/Utils/Wrapper';
-import { Hook } from '../../_types/global/GlobalTypes';
-import { Btn } from '../Components/Btn';
-import { CenterBackgroundSubtext } from '../Components/CoreUI';
-import { DarkForestNumberInput, NumberInput } from '../Components/Input';
-import { LoadingSpinner } from '../Components/LoadingSpinner';
-import { Row } from '../Components/Row';
-import { Red } from '../Components/Text';
-import { TooltipTrigger } from '../Panes/Tooltip';
-import dfstyles from '../Styles/dfstyles';
-import { useUIManager } from '../Utils/AppHooks';
+import { Wrapper } from '../../../Backend/Utils/Wrapper';
+import { Hook } from '../../../_types/global/GlobalTypes';
+import { Btn } from '../../Components/Btn';
+import { CenterBackgroundSubtext } from '../../Components/CoreUI';
+import { DarkForestNumberInput, NumberInput } from '../../Components/Input';
+import { LoadingSpinner } from '../../Components/LoadingSpinner';
+import { Row } from '../../Components/Row';
+import { Red } from '../../Components/Text';
+import { TooltipTrigger } from '../../Panes/Tooltip';
+import dfstyles from '../../Styles/dfstyles';
+import { useUIManager } from '../../Utils/AppHooks';
 
 const StyledSilverInput = styled.div`
   width: fit-content;

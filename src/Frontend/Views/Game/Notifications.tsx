@@ -6,10 +6,10 @@ import NotificationManager, {
   NotificationInfo,
   NotificationManagerEvent,
   NotificationType,
-} from '../Game/NotificationManager';
-import dfstyles, { snips } from '../Styles/dfstyles';
-import { useUIManager } from '../Utils/AppHooks';
-import { DFZIndex } from '../Utils/constants';
+} from '../../Game/NotificationManager';
+import dfstyles, { snips } from '../../Styles/dfstyles';
+import { useUIManager } from '../../Utils/AppHooks';
+import { DFZIndex } from '../../Utils/constants';
 
 /**
  * React component which represents a single notification. Can be hovered over for more info, or

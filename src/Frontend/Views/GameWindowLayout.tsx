@@ -33,9 +33,9 @@ import { useSelectedPlanet, useUIManager } from '../Utils/AppHooks';
 import { useOnUp } from '../Utils/KeyEmitters';
 import { useBooleanSetting } from '../Utils/SettingsHooks';
 import { TOGGLE_DIAGNOSTICS_PANE } from '../Utils/ShortcutConstants';
-import { NotificationsPane } from './Notifications';
-import { SidebarPane } from './SidebarPane';
-import { TopBar } from './TopBar';
+import { NotificationsPane } from './Game/Notifications';
+import { SidebarPane } from '../Panes/SidebarPane';
+import { TopBar } from './Game/TopBar';
 import GameManager from '../../Backend/GameLogic/GameManager';
 
 export function GameWindowLayout({

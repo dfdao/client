@@ -2,17 +2,17 @@ import { Leaderboard } from '@darkforest_eth/types';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { GraphConfigPlayer } from '../../Backend/Network/EloLeaderboardApi';
-import { getRank, Rank } from '../../Backend/Utils/Rank';
-import { Gnosis, Star, Twitter } from '../Components/Icons';
-import { Red, Subber } from '../Components/Text';
-import { TextPreview } from '../Components/TextPreview';
-import dfstyles from '../Styles/dfstyles';
-import { useArenaLeaderboard, useEloLeaderboard, useTwitters } from '../Utils/AppHooks';
-import { roundEndTimestamp, roundStartTimestamp } from '../Utils/constants';
-import { formatDuration } from '../Utils/TimeUtils';
-import { GenericErrorBoundary } from './GenericErrorBoundary';
-import { Table } from './Table';
+import { GraphConfigPlayer } from '../../../Backend/Network/EloLeaderboardApi';
+import { getRank, Rank } from '../../../Backend/Utils/Rank';
+import { Gnosis, Star, Twitter } from '../../Components/Icons';
+import { Red, Subber } from '../../Components/Text';
+import { TextPreview } from '../../Components/TextPreview';
+import dfstyles from '../../Styles/dfstyles';
+import { useArenaLeaderboard, useEloLeaderboard, useTwitters } from '../../Utils/AppHooks';
+import { roundEndTimestamp, roundStartTimestamp } from '../../Utils/constants';
+import { formatDuration } from '../../Utils/TimeUtils';
+import { GenericErrorBoundary } from '../GenericErrorBoundary';
+import { Table } from '../Table';
 
 const errorMessage = 'Error Loading Leaderboard';
 

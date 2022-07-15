@@ -16,7 +16,7 @@ import {
   TOGGLE_PLANET_INFO_PANE,
   TOGGLE_UPGRADES_PANE,
 } from '../Utils/ShortcutConstants';
-import { ModalHandle } from '../Views/ModalPane';
+import { ModalHandle } from '../Views/Game/ModalPane';
 import { MaybeShortcutButton } from './MaybeShortcutButton';
 
 export function OpenPaneButton({

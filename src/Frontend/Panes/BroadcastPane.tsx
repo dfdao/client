@@ -10,7 +10,7 @@ import { formatDuration, TimeUntil } from '../Components/TimeUntil';
 import dfstyles from '../Styles/dfstyles';
 import { usePlanet, useUIManager } from '../Utils/AppHooks';
 import { useEmitterValue } from '../Utils/EmitterHooks';
-import { ModalHandle } from '../Views/ModalPane';
+import { ModalHandle } from '../Views/Game/ModalPane';
 
 const BroadcastWrapper = styled.div`
   & .row {

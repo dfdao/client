@@ -4,21 +4,21 @@ import { address } from '@darkforest_eth/serde';
 import { ArtifactRarity, EthAddress } from '@darkforest_eth/types';
 import React, { useCallback, useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-import { ContractsAPI, makeContractsAPI } from '../../Backend/GameLogic/ContractsAPI';
-import { Account, getActive, logOut } from '../../Backend/Network/AccountManager';
-import { getEthConnection } from '../../Backend/Network/Blockchain';
-import { loadConfigFromAddress } from '../../Backend/Network/ConfigApi';
-import { getAllTwitters } from '../../Backend/Network/UtilityServerAPI';
-import { AddressTwitterMap } from '../../_types/darkforest/api/UtilityServerAPITypes';
-import { InitRenderState, Wrapper } from '../Components/GameLandingPageComponents';
-import { LobbyInitializers } from '../Panes/Lobbies/Reducer';
-import { TwitterProvider } from '../Utils/AppHooks';
-import { listenForKeyboardEvents, unlinkKeyboardEvents } from '../Utils/KeyEmitters';
-import { stockConfig } from '../Utils/StockConfigs';
-import { CadetWormhole } from '../Views/CadetWormhole';
-import LoadingPage from './LoadingPage';
+import { ContractsAPI, makeContractsAPI } from '../../../Backend/GameLogic/ContractsAPI';
+import { Account, getActive, logOut } from '../../../Backend/Network/AccountManager';
+import { getEthConnection } from '../../../Backend/Network/Blockchain';
+import { loadConfigFromAddress } from '../../../Backend/Network/ConfigApi';
+import { getAllTwitters } from '../../../Backend/Network/UtilityServerAPI';
+import { AddressTwitterMap } from '../../../_types/darkforest/api/UtilityServerAPITypes';
+import { InitRenderState, Wrapper } from '../../Components/GameLandingPageComponents';
+import { LobbyInitializers } from '../../Panes/Lobbies/Reducer';
+import { TwitterProvider } from '../../Utils/AppHooks';
+import { listenForKeyboardEvents, unlinkKeyboardEvents } from '../../Utils/KeyEmitters';
+import { stockConfig } from '../../Utils/StockConfigs';
+import { CadetWormhole } from '../../Views/CadetWormhole';
+import LoadingPage from '../LoadingPage';
 import { LobbyConfigPage } from './LobbyConfigPage';
-import { PortalLandingPage, sendDrip } from './PortalLandingPage';
+import { PortalLandingPage, sendDrip } from '../Portal/PortalLandingPage';
 
 type ErrorState =
   | { type: 'invalidAddress' }

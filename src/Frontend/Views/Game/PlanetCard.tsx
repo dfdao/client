@@ -10,11 +10,11 @@ import {
 } from '@darkforest_eth/types';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
-import { Wrapper } from '../../Backend/Utils/Wrapper';
-import { StatIdx } from '../../_types/global/GlobalTypes';
-import { AlignCenterHorizontally, EmSpacer, InlineBlock, SpreadApart } from '../Components/CoreUI';
-import { Icon, IconType } from '../Components/Icons';
-import { AccountLabel } from '../Components/Labels/Labels';
+import { Wrapper } from '../../../Backend/Utils/Wrapper';
+import { StatIdx } from '../../../_types/global/GlobalTypes';
+import { AlignCenterHorizontally, EmSpacer, InlineBlock, SpreadApart } from '../../Components/CoreUI';
+import { Icon, IconType } from '../../Components/Icons';
+import { AccountLabel } from '../../Components/Labels/Labels';
 import {
   DefenseText,
   EnergyGrowthText,
@@ -27,20 +27,20 @@ import {
   RangeText,
   SilverGrowthText,
   SpeedText,
-} from '../Components/Labels/PlanetLabels';
-import { Green, Red, Smaller, Sub } from '../Components/Text';
-import { PlanetIcons } from '../Renderers/PlanetscapeRenderer/PlanetIcons';
-import dfstyles, { snips } from '../Styles/dfstyles';
-import { useAccount, useActiveArtifact, usePlanetArtifacts, useUIManager } from '../Utils/AppHooks';
-import { useEmitterValue } from '../Utils/EmitterHooks';
+} from '../../Components/Labels/PlanetLabels';
+import { Green, Red, Smaller, Sub } from '../../Components/Text';
+import { PlanetIcons } from '../../Renderers/PlanetscapeRenderer/PlanetIcons';
+import dfstyles, { snips } from '../../Styles/dfstyles';
+import { useAccount, useActiveArtifact, usePlanetArtifacts, useUIManager } from '../../Utils/AppHooks';
+import { useEmitterValue } from '../../Utils/EmitterHooks';
 import { SelectArtifactRow } from './ArtifactRow';
-import { Halved, PlanetActiveArtifact, RowTip, TimesTwo, TitleBar } from './PlanetCardComponents';
+import { Halved, PlanetActiveArtifact, RowTip, TimesTwo, TitleBar } from '../PlanetCardComponents';
 import {
   ArtifactRarityBiomeTypeText,
   ArtifactRarityLabelAnim,
-} from '../Components/Labels/ArtifactLabels';
-import { getDeterministicArtifact } from '../../Backend/Utils/Utils';
-import { ArtifactBiomeLabelAnimSimple } from '../Components/Labels/BiomeLabels';
+} from '../../Components/Labels/ArtifactLabels';
+import { getDeterministicArtifact } from '../../../Backend/Utils/Utils';
+import { ArtifactBiomeLabelAnimSimple } from '../../Components/Labels/BiomeLabels';
 import { EMPTY_ADDRESS } from '@darkforest_eth/constants';
 
 export function PlanetCardTitle({

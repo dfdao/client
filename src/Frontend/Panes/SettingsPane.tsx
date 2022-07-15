@@ -17,7 +17,7 @@ import {
   MultiSelectSetting,
   NumberSetting,
 } from '../Utils/SettingsHooks';
-import { ModalPane } from '../Views/ModalPane';
+import { ModalPane } from '../Views/Game/ModalPane';
 
 const SCROLL_MIN = 0.0001 * 10000;
 const SCROLL_MAX = 0.01 * 10000;

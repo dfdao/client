@@ -6,8 +6,8 @@ import { GraphConfigPlayer, loadEloLeaderboard } from '../../../Backend/Network/
 import { loadLiveMatches } from '../../../Backend/Network/SpyApi';
 import { Subber } from '../../Components/Text';
 import { LobbyInitializers } from '../../Panes/Lobbies/Reducer';
-import { ArenaLeaderboardDisplay, EloLeaderboardDisplay } from '../ArenaLeaderboard';
-import { LiveMatches } from '../LiveMatches';
+import { ArenaLeaderboardDisplay, EloLeaderboardDisplay } from '../Leaderboards/ArenaLeaderboard';
+import { LiveMatches } from '../Leaderboards/LiveMatches';
 import { TabbedView } from '../TabbedView';
 import { ConfigDetails } from './ConfigDetails';
 import { FindMatch } from './FindMatch';

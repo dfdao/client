@@ -1,10 +1,10 @@
 import { AutoGasSetting, TooltipName } from '@darkforest_eth/types';
 import React from 'react';
-import { Spread } from '../Components/CoreUI';
-import { Sub, Text } from '../Components/Text';
-import { TooltipTrigger } from '../Panes/Tooltip';
-import { useUIManager } from '../Utils/AppHooks';
-import { useEmitterValue } from '../Utils/EmitterHooks';
+import { Spread } from '../../Components/CoreUI';
+import { Sub, Text } from '../../Components/Text';
+import { TooltipTrigger } from '../../Panes/Tooltip';
+import { useUIManager } from '../../Utils/AppHooks';
+import { useEmitterValue } from '../../Utils/EmitterHooks';
 
 export function NetworkHealth() {
   const uiManager = useUIManager();

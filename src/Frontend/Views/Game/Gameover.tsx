@@ -1,11 +1,11 @@
 import { EthAddress, TooltipName } from '@darkforest_eth/types';
 import React from 'react';
 import styled from 'styled-components';
-import { AccountLabel } from '../Components/Labels/Labels';
-import { Gold } from '../Components/Text';
-import { TextPreview } from '../Components/TextPreview';
-import { TooltipTrigger } from '../Panes/Tooltip';
-import { useGameover, useUIManager } from '../Utils/AppHooks';
+import { AccountLabel } from '../../Components/Labels/Labels';
+import { Gold } from '../../Components/Text';
+import { TextPreview } from '../../Components/TextPreview';
+import { TooltipTrigger } from '../../Panes/Tooltip';
+import { useGameover, useUIManager } from '../../Utils/AppHooks';
 
 function prettyTime(seconds: number): string {
   const h = Math.floor(seconds / 3600);

@@ -2,28 +2,28 @@ import { EthAddress, WorldCoords } from '@darkforest_eth/types';
 import React, { useMemo, useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled, { css } from 'styled-components';
-import { LobbyAdminTools } from '../../Backend/Utils/LobbyAdminTools';
-import { Spacer } from '../Components/CoreUI';
-import { LoadingSpinner } from '../Components/LoadingSpinner';
-import { LobbyCreationPlanetInspector } from '../Components/LobbyCreationPlanetInspector';
-import { Minimap } from '../Components/Minimap';
-import { MinimapEditor } from '../Components/MinimapEditor';
-import { InputRow, LabeledInput, PlanetPropEditor } from '../Components/LobbyPlanetPropEditor';
-import { Sidebar } from '../Components/Sidebar';
-import { ConfigDownload, DEFAULT_PLANET, LobbyPlanet } from '../Panes/Lobbies/LobbiesUtils';
-import { KEY_ITEMS, MinimapKeys } from '../Panes/Lobbies/MinimapPane';
-import { MinimapConfig } from '../Panes/Lobbies/MinimapUtils';
-import { PlanetListPane } from '../Panes/Lobbies/PlanetListPane';
+import { LobbyAdminTools } from '../../../Backend/Utils/LobbyAdminTools';
+import { Spacer } from '../../Components/CoreUI';
+import { LoadingSpinner } from '../../Components/LoadingSpinner';
+import { LobbyCreationPlanetInspector } from '../../Components/LobbyCreationPlanetInspector';
+import { Minimap } from '../../Components/Minimap';
+import { MinimapEditor } from '../../Components/MinimapEditor';
+import { InputRow, LabeledInput, PlanetPropEditor } from '../../Components/LobbyPlanetPropEditor';
+import { Sidebar } from '../../Components/Sidebar';
+import { ConfigDownload, DEFAULT_PLANET, LobbyPlanet } from '../../Panes/Lobbies/LobbiesUtils';
+import { KEY_ITEMS, MinimapKeys } from '../../Panes/Lobbies/MinimapPane';
+import { MinimapConfig } from '../../Panes/Lobbies/MinimapUtils';
+import { PlanetListPane } from '../../Panes/Lobbies/PlanetListPane';
 import {
   LobbyAction,
   lobbyConfigInit,
   LobbyConfigState,
   LobbyInitializers,
-} from '../Panes/Lobbies/Reducer';
-import { useIsDown } from '../Utils/KeyEmitters';
-import { Checkbox } from '../Components/Input';
-import { Toast } from '../Components/Toast';
-import dfstyles from '../Styles/dfstyles';
+} from '../../Panes/Lobbies/Reducer';
+import { useIsDown } from '../../Utils/KeyEmitters';
+import { Checkbox } from '../../Components/Input';
+import { Toast } from '../../Components/Toast';
+import dfstyles from '../../Styles/dfstyles';
 
 export const LobbyMapEditor: React.FC<{
   updateConfig: React.Dispatch<LobbyAction>;

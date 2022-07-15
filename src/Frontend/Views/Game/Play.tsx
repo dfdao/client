@@ -1,10 +1,10 @@
 import { TooltipName } from '@darkforest_eth/types';
 import React from 'react';
 import styled from 'styled-components';
-import { Btn } from '../Components/Btn';
-import Button from '../Components/Button';
-import { TooltipTrigger } from '../Panes/Tooltip';
-import { useGameover, usePaused, useUIManager } from '../Utils/AppHooks';
+import { Btn } from '../../Components/Btn';
+import Button from '../../Components/Button';
+import { TooltipTrigger } from '../../Panes/Tooltip';
+import { useGameover, usePaused, useUIManager } from '../../Utils/AppHooks';
 
 export function Play() {
   const gameManager = useUIManager().getGameManager();

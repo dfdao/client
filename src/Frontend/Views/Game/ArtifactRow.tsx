@@ -2,10 +2,10 @@ import { isSpaceShip } from '@darkforest_eth/gamelogic';
 import { Artifact } from '@darkforest_eth/types';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import styled, { css } from 'styled-components';
-import { ArtifactImage } from '../Components/ArtifactImage';
-import { Spacer } from '../Components/CoreUI';
-import dfstyles from '../Styles/dfstyles';
-import { useUIManager } from '../Utils/AppHooks';
+import { ArtifactImage } from '../../Components/ArtifactImage';
+import { Spacer } from '../../Components/CoreUI';
+import dfstyles from '../../Styles/dfstyles';
+import { useUIManager } from '../../Utils/AppHooks';
 
 const RowWrapper = styled.div`
   width: 100%;

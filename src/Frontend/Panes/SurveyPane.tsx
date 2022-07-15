@@ -17,7 +17,7 @@ import { useArenaLeaderboard, useEloLeaderboard, useUIManager } from '../Utils/A
 import { bronzeTime, goldTime, silverTime } from '../Utils/constants';
 import { useBooleanSetting } from '../Utils/SettingsHooks';
 import { formatDuration } from '../Utils/TimeUtils';
-import { ModalPane } from '../Views/ModalPane';
+import { ModalPane } from '../Views/Game/ModalPane';
 import { LinkButton } from './Lobbies/LobbiesUtils';
 
 function getPlace(leaderboard: Leaderboard, time: number) {

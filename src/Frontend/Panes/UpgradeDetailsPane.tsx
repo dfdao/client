@@ -14,7 +14,7 @@ import { LoadingSpinner } from '../Components/LoadingSpinner';
 import { Gold, Red, Sub, Subber } from '../Components/Text';
 import { useAccount, usePlanet, useUIManager } from '../Utils/AppHooks';
 import { useEmitterValue } from '../Utils/EmitterHooks';
-import { ModalHandle } from '../Views/ModalPane';
+import { ModalHandle } from '../Views/Game/ModalPane';
 import { TabbedView } from '../Views/TabbedView';
 import { UpgradePreview } from '../Views/UpgradePreview';
 

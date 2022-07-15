@@ -8,7 +8,7 @@ import { TwitterLink } from '../Components/Labels/Labels';
 import { LoadingSpinner } from '../Components/LoadingSpinner';
 import { Red } from '../Components/Text';
 import { usePlayer, useUIManager } from '../Utils/AppHooks';
-import { ModalPane } from '../Views/ModalPane';
+import { ModalPane } from '../Views/Game/ModalPane';
 import { TabbedView } from '../Views/TabbedView';
 
 export function TwitterVerifyPane({ visible, onClose }: { visible: boolean; onClose: () => void }) {

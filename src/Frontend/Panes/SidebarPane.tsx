@@ -12,7 +12,7 @@ import {
   TOGGLE_YOUR_ARTIFACTS_PANE,
   TOGGLE_YOUR_PLANETS_DEX_PANE,
 } from '../Utils/ShortcutConstants';
-import { ModalToggleButton } from './ModalIcon';
+import { ModalToggleButton } from '../Views/ModalIcon';
 
 export function SidebarPane({
   settingsHook,

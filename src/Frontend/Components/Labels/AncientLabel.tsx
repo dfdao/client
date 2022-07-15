@@ -1,7 +1,7 @@
 import React from 'react';
 /* ancient label */
 import styled, { css, keyframes } from 'styled-components';
-import { ANCIENT_BLUE, ANCIENT_PURPLE } from '../Styles/Colors';
+import { ANCIENT_BLUE, ANCIENT_PURPLE } from '../../Styles/Colors';
 
 const shakeAndFlash = keyframes`
 0%   { 

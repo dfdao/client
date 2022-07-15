@@ -1,17 +1,17 @@
 import { ArtifactRarity, Leaderboard } from '@darkforest_eth/types';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Spacer } from '../Components/CoreUI';
-import { TwitterLink } from '../Components/Labels/Labels';
-import { LoadingSpinner } from '../Components/LoadingSpinner';
-import { Red } from '../Components/Text';
-import { TextPreview } from '../Components/TextPreview';
-import { RarityColors } from '../Styles/Colors';
-import dfstyles from '../Styles/dfstyles';
-import { useLeaderboard } from '../Utils/AppHooks';
-import { formatDuration } from '../Utils/TimeUtils';
-import { GenericErrorBoundary } from './GenericErrorBoundary';
-import { Table } from './Table';
+import { Spacer } from '../../Components/CoreUI';
+import { TwitterLink } from '../../Components/Labels/Labels';
+import { LoadingSpinner } from '../../Components/LoadingSpinner';
+import { Red } from '../../Components/Text';
+import { TextPreview } from '../../Components/TextPreview';
+import { RarityColors } from '../../Styles/Colors';
+import dfstyles from '../../Styles/dfstyles';
+import { useLeaderboard } from '../../Utils/AppHooks';
+import { formatDuration } from '../../Utils/TimeUtils';
+import { GenericErrorBoundary } from '../GenericErrorBoundary';
+import { Table } from '../Table';
 
 export function LeadboardDisplay() {
   const { leaderboard, error } = useLeaderboard();

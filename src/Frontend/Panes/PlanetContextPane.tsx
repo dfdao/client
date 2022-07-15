@@ -19,11 +19,11 @@ import { useEmitterSubscribe } from '../Utils/EmitterHooks';
 import { useOnUp } from '../Utils/KeyEmitters';
 import { EXIT_PANE, TOGGLE_ABANDON, TOGGLE_SEND } from '../Utils/ShortcutConstants';
 import UIEmitter, { UIEmitterEvent } from '../Utils/UIEmitter';
-import { ModalHandle, ModalPane } from '../Views/ModalPane';
-import { PlanetCard, PlanetCardTitle } from '../Views/PlanetCard';
+import { ModalHandle, ModalPane } from '../Views/Game/ModalPane';
+import { PlanetCard, PlanetCardTitle } from '../Views/Game/PlanetCard';
 import { getNotifsForPlanet, PlanetNotifications } from '../Views/PlanetNotifications';
-import { SendResources } from '../Views/SendResources';
-import { WithdrawSilver } from '../Views/WithdrawSilver';
+import { SendResources } from '../Views/Game/SendResources';
+import { WithdrawSilver } from '../Views/Game/WithdrawSilver';
 
 function PlanetContextPaneContent({
   modal,

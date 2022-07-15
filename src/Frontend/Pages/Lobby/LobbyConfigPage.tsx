@@ -2,24 +2,24 @@ import { EthConnection } from '@darkforest_eth/network';
 import { EthAddress } from '@darkforest_eth/types';
 import React, { useEffect, useMemo, useReducer, useState } from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
-import { ContractsAPI } from '../../Backend/GameLogic/ContractsAPI';
-import { createAndInitArena } from '../../Backend/Utils/Arena';
-import { LobbyAdminTools } from '../../Backend/Utils/LobbyAdminTools';
-import { MinimapConfig } from '../Panes/Lobbies/MinimapUtils';
+import { ContractsAPI } from '../../../Backend/GameLogic/ContractsAPI';
+import { createAndInitArena } from '../../../Backend/Utils/Arena';
+import { LobbyAdminTools } from '../../../Backend/Utils/LobbyAdminTools';
+import { MinimapConfig } from '../../Panes/Lobbies/MinimapUtils';
 import {
   InvalidConfigError,
   lobbyConfigInit,
   lobbyConfigReducer,
   LobbyInitializers,
   toInitializers,
-} from '../Panes/Lobbies/Reducer';
+} from '../../Panes/Lobbies/Reducer';
 import { LobbyMapSelectPage } from './LobbyMapSelectPage';
 import { LobbyWorldSettingsPage } from './LobbyWorldSettingsPage';
 import { LobbyConfirmPage } from './LobbyConfirmPage';
 import { LobbyMapEditor } from './LobbyMapEditor';
-import { getAllTwitters } from '../../Backend/Network/UtilityServerAPI';
-import { DEFAULT_PLANET } from '../Panes/Lobbies/LobbiesUtils';
-import { Toast } from '../Components/Toast';
+import { getAllTwitters } from '../../../Backend/Network/UtilityServerAPI';
+import { DEFAULT_PLANET } from '../../Panes/Lobbies/LobbiesUtils';
+import { Toast } from '../../Components/Toast';
 import _ from 'lodash';
 
 type Status = 'waitingForCreate' | 'creating' | 'created' | 'errored' | undefined;

@@ -1,18 +1,18 @@
 import { LiveMatch } from '@darkforest_eth/types';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Btn } from '../Components/Btn';
-import { Link } from '../Components/CoreUI';
-import { Gnosis } from '../Components/Icons';
-import { TwitterLink } from '../Components/Labels/Labels';
-import { Red, Subber } from '../Components/Text';
-import { TextPreview } from '../Components/TextPreview';
-import dfstyles from '../Styles/dfstyles';
-import { useLiveMatches, useTwitters } from '../Utils/AppHooks';
-import { formatDuration, formatStartTime } from '../Utils/TimeUtils';
-import { GenericErrorBoundary } from './GenericErrorBoundary';
-import { MinimalButton } from './Portal/PortalMainView';
-import { Table } from './Table';
+import { Btn } from '../../Components/Btn';
+import { Link } from '../../Components/CoreUI';
+import { Gnosis } from '../../Components/Icons';
+import { TwitterLink } from '../../Components/Labels/Labels';
+import { Red, Subber } from '../../Components/Text';
+import { TextPreview } from '../../Components/TextPreview';
+import dfstyles from '../../Styles/dfstyles';
+import { useLiveMatches, useTwitters } from '../../Utils/AppHooks';
+import { formatDuration, formatStartTime } from '../../Utils/TimeUtils';
+import { GenericErrorBoundary } from '../GenericErrorBoundary';
+import { MinimalButton } from '../Portal/PortalMainView';
+import { Table } from '../Table';
 
 const errorMessage = 'Error Loading Leaderboard';
 export function LiveMatchesDisplay({ config }: { config: string }) {

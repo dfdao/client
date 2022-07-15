@@ -1,13 +1,13 @@
 import { EthConnection } from '@darkforest_eth/network';
 import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
-import { Account, getAccounts } from '../../Backend/Network/AccountManager';
-import { getEthConnection } from '../../Backend/Network/Blockchain';
-import ReaderDataStore from '../../Backend/Storage/ReaderDataStore';
-import LandingPageCanvas from '../Renderers/LandingPageCanvas';
-import dfstyles from '../Styles/dfstyles';
-import { useUIManager } from '../Utils/AppHooks';
-import { TerminalHandle } from './Terminal';
+import { Account, getAccounts } from '../../../Backend/Network/AccountManager';
+import { getEthConnection } from '../../../Backend/Network/Blockchain';
+import ReaderDataStore from '../../../Backend/Storage/ReaderDataStore';
+import LandingPageCanvas from '../../Renderers/LandingPageCanvas';
+import dfstyles from '../../Styles/dfstyles';
+import { useUIManager } from '../../Utils/AppHooks';
+import { TerminalHandle } from '../Terminal';
 
 const ShareWrapper = styled.div`
   width: 100%;

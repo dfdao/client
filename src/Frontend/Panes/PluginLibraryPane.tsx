@@ -14,7 +14,7 @@ import { Sub } from '../Components/Text';
 import dfstyles from '../Styles/dfstyles';
 import { useEmitterValue } from '../Utils/EmitterHooks';
 import { getBooleanSetting, setSetting, useBooleanSetting } from '../Utils/SettingsHooks';
-import { ModalPane } from '../Views/ModalPane';
+import { ModalPane } from '../Views/Game/ModalPane';
 import { PluginEditorPane } from './PluginEditorPane';
 
 function HelpContent() {

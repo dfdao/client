@@ -10,7 +10,7 @@ import { CenterBackgroundSubtext, EmSpacer, Link } from '../Components/CoreUI';
 import { Sub } from '../Components/Text';
 import { useAccount, usePlanet, useUIManager } from '../Utils/AppHooks';
 import { useEmitterValue } from '../Utils/EmitterHooks';
-import { ModalHandle } from '../Views/ModalPane';
+import { ModalHandle } from '../Views/Game/ModalPane';
 
 const StyledHatPane = styled.div`
   & > div {

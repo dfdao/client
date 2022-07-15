@@ -9,17 +9,17 @@ import React, {
   useState,
 } from 'react';
 import styled from 'styled-components';
-import { Btn } from '../Components/Btn';
-import { EmSpacer, Spacer, Title, Truncate } from '../Components/CoreUI';
-import { PaneProps } from '../Components/GameWindowComponents';
-import { Icon } from '../Components/Icons';
-import { MaybeShortcutButton } from '../Components/MaybeShortcutButton';
-import { DarkForestModal, Modal, PositionChangedEvent } from '../Components/Modal';
-import dfstyles from '../Styles/dfstyles';
-import { useUIManager } from '../Utils/AppHooks';
-import { useEmitterValue } from '../Utils/EmitterHooks';
-import { MODAL_BACK_SHORTCUT } from '../Utils/ShortcutConstants';
-import { DFErrorBoundary } from './DFErrorBoundary';
+import { Btn } from '../../Components/Btn';
+import { EmSpacer, Spacer, Title, Truncate } from '../../Components/CoreUI';
+import { PaneProps } from '../../Components/GameWindowComponents';
+import { Icon } from '../../Components/Icons';
+import { MaybeShortcutButton } from '../../Components/MaybeShortcutButton';
+import { DarkForestModal, Modal, PositionChangedEvent } from '../../Components/Modal';
+import dfstyles from '../../Styles/dfstyles';
+import { useUIManager } from '../../Utils/AppHooks';
+import { useEmitterValue } from '../../Utils/EmitterHooks';
+import { MODAL_BACK_SHORTCUT } from '../../Utils/ShortcutConstants';
+import { DFErrorBoundary } from '../DFErrorBoundary';
 
 function InformationSection({ children, hide }: { children: React.ReactNode; hide: () => void }) {
   return (

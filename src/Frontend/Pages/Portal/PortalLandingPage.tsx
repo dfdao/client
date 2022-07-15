@@ -14,15 +14,15 @@ import {
   getActive,
   resetActive,
   logOut,
-} from '../../Backend/Network/AccountManager';
-import { getEthConnection, loadFaucetContract } from '../../Backend/Network/Blockchain';
-import { requestFaucet } from '../../Backend/Network/UtilityServerAPI';
-import { InitRenderState, TerminalWrapper } from '../Components/GameLandingPageComponents';
-import { MythicLabelText } from '../Components/Labels/MythicLabel';
-import { TextPreview } from '../Components/TextPreview';
-import { TerminalTextStyle } from '../Utils/TerminalTypes';
-import { Terminal, TerminalHandle } from '../Views/Terminal';
-import LoadingPage from './LoadingPage';
+} from '../../../Backend/Network/AccountManager';
+import { getEthConnection, loadFaucetContract } from '../../../Backend/Network/Blockchain';
+import { requestFaucet } from '../../../Backend/Network/UtilityServerAPI';
+import { InitRenderState, TerminalWrapper } from '../../Components/GameLandingPageComponents';
+import { MythicLabelText } from '../../Components/Labels/MythicLabel';
+import { TextPreview } from '../../Components/TextPreview';
+import { TerminalTextStyle } from '../../Utils/TerminalTypes';
+import { Terminal, TerminalHandle } from '../../Views/Terminal';
+import LoadingPage from '../LoadingPage';
 
 class PortalPageTerminal {
   private ethConnection: EthConnection;
