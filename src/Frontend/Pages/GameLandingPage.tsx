@@ -563,7 +563,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
 
       try {
         if (!ethConnection || !contractAddress || !creationManager) throw new Error('cannot create planets');
-        await creationManager.createPlanets({config});
+        await creationManager.bulkCreateInitPlanets({config});
         terminal.current?.println('planets created.', TerminalTextStyle.Green);
         setStep(TerminalPromptStep.PLANETS_CREATED);
       } catch (e) {

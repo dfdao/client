@@ -182,9 +182,17 @@ export class ArenaCreationManager {
     createdPlanet.revealTx = tx?.hash;
   }
 
-  public async bulkCreateAndReveal(planets: LobbyPlanet[], initializers: LobbyInitializers) {
+  // to do: simplify planet creation so either only create lobby planets 
+  // or only create init planets
+  public async bulkCreateLobbyPlanets({config, planets} :
+    {
+      config: LobbyInitializers;
+      planets?: LobbyPlanet[];
+    }) {
     // make create Planet args
-    const initPlanets = this.lobbyPlanetsToInitPlanets(initializers, planets);
+    const planetsToCreate = planets || config.ADMIN_PLANETS;
+    const initPlanets = this.lobbyPlanetsToInitPlanets(config, planetsToCreate);
+
 
     const args = Promise.resolve([initPlanets]);
     const txIntent = {
@@ -199,17 +207,20 @@ export class ArenaCreationManager {
 
     await tx.confirmedPromise;
 
-    planets.map((p) => this.createdPlanets.push({ ...p, createTx: tx?.hash, revealTx: tx?.hash }));
+    planetsToCreate.map((p) => this.createdPlanets.push({ ...p, createTx: tx?.hash, revealTx: tx?.hash }));
   }
 
-  public async createPlanets({
+  public async bulkCreateInitPlanets({
     config,
+    planets,
     CHUNK_SIZE = 10,
   }: {
     config: LobbyInitializers;
+    planets?: InitPlanet[];
     CHUNK_SIZE?: number;
   }) {
-    const createPlanetTxs = _.chunk(config.INIT_PLANETS, CHUNK_SIZE).map(async (chunk) => {
+    const planetsToCreate = planets || config.INIT_PLANETS;
+    const createPlanetTxs = _.chunk(planetsToCreate, CHUNK_SIZE).map(async (chunk) => {
       const args = Promise.resolve([chunk]);
       const txIntent = {
         methodName: 'bulkCreateAndReveal' as ContractMethodName,

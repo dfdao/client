@@ -102,7 +102,7 @@ export function LobbyConfigPage({
     while (i < planets.length) {
       try {
         const chunk = planets.slice(i, i + BULK_CREATE_CHUNK_SIZE);
-        await arenaCreationManager.bulkCreateAndReveal(chunk, initializers);
+        await arenaCreationManager.bulkCreateLobbyPlanets({config: initializers, planets: chunk});
         updateConfig({
           type: 'ADMIN_PLANETS',
           value: undefined,
