@@ -4,7 +4,7 @@ import _ from 'lodash';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { LobbyAdminTools } from '../../Backend/Utils/LobbyAdminTools';
+import { ArenaCreationManager } from '../../Backend/GameLogic/ArenaCreationManager';
 import { CopyableInput } from '../Components/CopyableInput';
 import { Link, Spacer } from '../Components/CoreUI';
 import { MythicLabelText } from '../Components/Labels/MythicLabel';
@@ -17,13 +17,12 @@ import { PlanetListPane } from '../Panes/Lobbies/PlanetListPane';
 import { LobbyConfigAction, LobbyConfigState } from '../Panes/Lobbies/Reducer';
 
 export function LobbyConfirmPage({
-  lobbyAdminTools,
+  arenaCreationManager,
   minimapConfig,
   config,
   onUpdate,
   createDisabled,
   root,
-  ownerAddress,
   lobbyTx,
   onError,
   created,
@@ -32,12 +31,11 @@ export function LobbyConfirmPage({
   validateAndCreateLobby,
 }: {
   config: LobbyConfigState;
-  lobbyAdminTools: LobbyAdminTools | undefined;
+  arenaCreationManager: ArenaCreationManager;
   createDisabled: boolean;
   root: string;
   minimapConfig: MinimapConfig | undefined;
   onUpdate: (action: LobbyConfigAction) => void;
-  ownerAddress: EthAddress;
   lobbyTx: string | undefined;
   onError: (msg: string) => void;
   created: false | EthAddress | undefined;
@@ -46,7 +44,7 @@ export function LobbyConfirmPage({
   validateAndCreateLobby: () => void;
 }) {
   const blockscoutURL = `${BLOCK_EXPLORER_URL}/${lobbyTx}`;
-  const url = `${window.location.origin}/play/${lobbyAdminTools?.address}`;
+  const url = `${window.location.origin}/play/${arenaCreationManager?.address}`;
 
   const handleEnterUniverse = () => {
     if (config.ADMIN_PLANETS.displayValue && config.ADMIN_PLANETS.displayValue.length > 0) {
@@ -63,7 +61,7 @@ export function LobbyConfirmPage({
     }
     if (
       config.MANUAL_SPAWN.displayValue &&
-      !lobbyAdminTools?.planets.find((p) => p.isSpawnPlanet)
+      !arenaCreationManager?.planets.find((p) => p.isSpawnPlanet)
     ) {
       const confirmed = confirm(
         'Warning: Manual spawn is active but no spawn planets have been created. Nobody will be able to spawn into the game!\nDo you want to continue?'
@@ -72,7 +70,7 @@ export function LobbyConfirmPage({
     }
     if (
       config.TARGET_PLANETS.displayValue &&
-      !lobbyAdminTools?.planets.find((p) => p.isTargetPlanet)
+      !arenaCreationManager?.planets.find((p) => p.isTargetPlanet)
     ) {
       const confirmed = confirm(
         'Warning: Target planets are active but no target planets have been created.\nDo you want to continue?'
@@ -91,9 +89,9 @@ export function LobbyConfirmPage({
   const totalStagedPlanets = config.ADMIN_PLANETS.displayValue?.length ?? 0;
 
   const numCreatedSpawnPlanets =
-    lobbyAdminTools?.planets.filter((p) => p.isSpawnPlanet).length ?? 0;
+    arenaCreationManager?.planets.filter((p) => p.isSpawnPlanet).length ?? 0;
   const numCreatedTargetPlanets =
-    lobbyAdminTools?.planets.filter((p) => p.isTargetPlanet).length ?? 0;
+    arenaCreationManager?.planets.filter((p) => p.isTargetPlanet).length ?? 0;
   const history = useHistory();
 
   const { innerHeight: height } = window;
@@ -110,7 +108,7 @@ export function LobbyConfirmPage({
           config={config}
           onUpdate={onUpdate}
           onPlanetSelect={(planet) => {}}
-          lobbyAdminTools={lobbyAdminTools}
+          arenaCreationManager={arenaCreationManager}
         />
       </Sidebar>
       <MainContent>
@@ -119,7 +117,7 @@ export function LobbyConfirmPage({
           <MinimapPane
             minimapConfig={minimapConfig}
             onUpdate={onUpdate}
-            created={!!lobbyAdminTools}
+            created={!!arenaCreationManager}
             displayConfig={{
               size: {
                 width: mapSize,
@@ -194,7 +192,7 @@ export function LobbyConfirmPage({
                 label='Share with your friends'
                 displayValue={url}
                 copyText={`👋 ${
-                  playerTwitter || ownerAddress?.slice(0, 6)
+                  playerTwitter || arenaCreationManager.address.slice(0, 6)
                 } has challenged you to a Dark Forest Arena battle! ☄️😤\n\nClick the link to play:\n⚔️ ${url} ⚔️`}
                 onCopyError={onError}
               />

@@ -7,7 +7,6 @@ import { apiUrl, CONFIG_CONSTANTS } from '../../Frontend/Utils/constants';
 import { PlanetTypeWeights } from '../../_types/darkforest/api/ContractsAPITypes';
 import { getGraphQLData } from './GraphApi';
 
-
 function toNum(num: BigNumber): number {
   return BigNumber.from(num).toNumber();
 }
@@ -31,17 +30,14 @@ query {
 }
 `;
   const rawData = await getGraphQLData(query, apiUrl);
-  const res = await convertGraphConfig(rawData.data.arenas[0]);
+  const res = convertGraphConfig(rawData.data.arenas[0]);
   return res;
 }
 
-export async function loadConfigFromAddress(address: EthAddress): Promise<
-  | {
-      config: LobbyInitializers;
-      address: string;
-    }
-  | undefined
-> {
+export async function loadConfigFromAddress(address: EthAddress): Promise<{
+  config: LobbyInitializers;
+  address: string;
+}> {
   const query = `
   query {
     arena(id: "${address}") {
@@ -59,6 +55,7 @@ export async function loadConfigFromAddress(address: EthAddress): Promise<
     return configData;
   } catch (e) {
     console.log(e);
+    throw new Error('could not fetch config data from the graph');
   }
 }
 
@@ -100,7 +97,7 @@ export function convertGraphConfig(arena: GraphArena): {
         toNum(cf.CAPTURE_ZONE_PLANET_LEVEL_SCORE[6]),
         toNum(cf.CAPTURE_ZONE_PLANET_LEVEL_SCORE[7]),
         toNum(cf.CAPTURE_ZONE_PLANET_LEVEL_SCORE[8]),
-        toNum(cf.CAPTURE_ZONE_PLANET_LEVEL_SCORE[9])
+        toNum(cf.CAPTURE_ZONE_PLANET_LEVEL_SCORE[9]),
       ],
       CAPTURE_ZONE_RADIUS: toNum(cf.CAPTURE_ZONE_RADIUS),
       CAPTURE_ZONES_PER_5000_WORLD_RADIUS: toNum(cf.CAPTURE_ZONES_PER_5000_WORLD_RADIUS),
@@ -175,11 +172,11 @@ export function convertGraphConfig(arena: GraphArena): {
           location: planet.locationDec,
           isTargetPlanet: planet.targetPlanet,
           isSpawnPlanet: planet.spawnPlanet,
-          blockedPlanetLocs: planet.blockedPlanetIds.map(i => {
+          blockedPlanetLocs: planet.blockedPlanetIds.map((i) => {
             return {
               x: i.x,
               y: i.y,
-            } as WorldCoords
+            } as WorldCoords;
           }),
         } as LobbyPlanet;
       }),

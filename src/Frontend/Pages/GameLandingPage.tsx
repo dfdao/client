@@ -62,10 +62,10 @@ import {
   LocationId,
   UnconfirmedCreateLobby,
 } from '@darkforest_eth/types';
-import { getLobbyCreatedEvent, lobbyPlanetsToInitPlanets } from '../Utils/helpers';
 import _ from 'lodash';
 import { LobbyInitializers } from '../Panes/Lobbies/Reducer';
 import { loadConfigFromAddress } from '../../Backend/Network/ConfigApi';
+import { ArenaCreationManager } from '../../Backend/GameLogic/ArenaCreationManager';
 
 const enum TerminalPromptStep {
   NONE,
@@ -529,7 +529,15 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
         terminal.current?.println('');
         terminal.current?.print('Creating new arena instance... ');
         try {
-          await createLobby();
+          const creationManager = await ArenaCreationManager.create(ethConnection, defaultAddress);
+          const fetchedConfig = await fetchConfig();
+          const {owner, lobby} = await creationManager.createAndInitArena(fetchedConfig);
+          setConfig(fetchedConfig);
+
+          if (owner == playerAddress) {
+            history.push({ pathname: `${lobby}`, state: { contract: lobby } });
+            setContractAddress(lobby);
+          }
           terminal.current?.println('arena created.', TerminalTextStyle.Green);
           setStep(TerminalPromptStep.ARENA_CREATED);
         } catch (e) {
@@ -552,14 +560,9 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
       terminal.current?.print('Adding custom planets... ');
 
       try {
-        if (!ethConnection || !defaultAddress) throw new Error('cannot create arena');
-
-        const contractsAPI = await makeContractsAPI({
-          connection: ethConnection,
-          contractAddress: defaultAddress,
-        });
- 
-        await createPlanets();
+        if (!ethConnection || !contractAddress) throw new Error('cannot create planets');
+        const creationManager = await ArenaCreationManager.create(ethConnection, contractAddress);
+        await creationManager.createPlanets({config});
         terminal.current?.println('planets created.', TerminalTextStyle.Green);
         setStep(TerminalPromptStep.PLANETS_CREATED);
       } catch (e) {
@@ -694,10 +697,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
 
         // TODO(#2329): isWhitelisted should just check the contractOwner
         if (!isWhitelisted && playerAddress !== adminAddress) {
-          terminal.current?.print(
-            'You are not allowed to play this game. ',
-            TerminalTextStyle.Red
-          );
+          terminal.current?.print('You are not allowed to play this game. ', TerminalTextStyle.Red);
           setStep(TerminalPromptStep.TERMINATED);
           return;
         }
@@ -1095,9 +1095,9 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
       const numTeams = gameUIManager.getGameManager().getContractConstants().NUM_TEAMS;
       // console.log(`teamsEnabled: ${teamsEnabled}, numTeams: ${numTeams}`)
       let team = 0;
-      if(teamsEnabled && numTeams !== undefined) {
-        terminal.current?.println('')
-        terminal.current?.println('This is a team game!')
+      if (teamsEnabled && numTeams !== undefined) {
+        terminal.current?.println('');
+        terminal.current?.println('This is a team game!');
         for (let i = 1; i <= numTeams; i += 1) {
           terminal.current?.print(`(${i}): `, TerminalTextStyle.Sub);
           terminal.current?.println(`Team ${i}`);
@@ -1260,86 +1260,16 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
     [step, ethConnection]
   );
 
-  async function fetchConfig() {
-    if (!contractAddress) return;
+  async function fetchConfig(): Promise<LobbyInitializers> {
+    if (!contractAddress) throw new Error('No contract address!');
     try {
       const newConfig = await loadConfigFromAddress(contractAddress);
-      return newConfig?.config;
+      return newConfig.config;
     } catch (e) {
       console.error('failed to load config', e);
+      throw new Error(e);
     }
   }
-  async function createLobby() {
-    if (!ethConnection || !defaultAddress) throw new Error('cannot create arena');
-
-    const contractsAPI = await makeContractsAPI({
-      connection: ethConnection,
-      contractAddress: defaultAddress,
-    });
-    const playerAddress = ethConnection.getAddress();
-
-    const fetchedConfig = await fetchConfig();
-
-    if(!fetchedConfig) throw new Error('cannot find config');
-
-    if (fetchedConfig.ADMIN_PLANETS.length > 0) {
-      fetchedConfig.INIT_PLANETS = lobbyPlanetsToInitPlanets(fetchedConfig, fetchedConfig.ADMIN_PLANETS);
-    }
-
-    setConfig(fetchedConfig);
-    
-    /* Don't want to submit ADMIN_PLANET as initdata because they aren't used */
-    // @ts-expect-error The Operand of a delete must be optional
-    delete fetchedConfig.ADMIN_PLANETS;
-
-    // console.log('config', config);
-
-    const initContract = await ethConnection.loadContract<DFArenaInitialize>(
-      INIT_ADDRESS,
-      loadInitContract
-    );
-
-    const artifactBaseURI = '';
-    const initInterface = initContract.interface;
-    const initAddress = INIT_ADDRESS;
-    const initFunctionCall = initInterface.encodeFunctionData('init', [
-      fetchedConfig,
-      {
-        allowListEnabled: fetchedConfig.WHITELIST_ENABLED,
-        artifactBaseURI,
-        allowedAddresses: fetchedConfig.WHITELIST,
-      },
-    ]);
-    const txIntent: UnconfirmedCreateLobby = {
-      methodName: 'createLobby',
-      contract: contractsAPI.contract,
-      args: Promise.resolve([initAddress, initFunctionCall]),
-    };
-
-    const tx = await contractsAPI.submitTransaction(txIntent, {
-      // The createLobby function costs somewhere around 12mil gas
-      gasLimit: '15000000',
-    });
-
-    const lobbyReceipt = await tx.confirmedPromise;
-    console.log(`created arena with ${lobbyReceipt.gasUsed} gas`);
-
-    const { owner, lobby } = getLobbyCreatedEvent(lobbyReceipt, contractsAPI.contract);
-
-    const diamond = await ethConnection.loadContract<DarkForest>(lobby, loadDiamondContract);
-
-    const startTx = await diamond.start();
-    const startRct = startTx.wait();
-    console.log(`initialized arena with ${(await startRct).gasUsed} gas`);
-
-
-    if (owner === playerAddress) {
-      history.push({ pathname: `${lobby}`, state: { contract: lobby } });
-      setContractAddress(lobby);
-    }
-  }
-
-
   async function createPlanets() {
     if (!ethConnection || !contractAddress) throw new Error('cannot create planets');
 
