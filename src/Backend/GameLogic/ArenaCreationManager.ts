@@ -1,3 +1,4 @@
+import { EMPTY_ADDRESS } from '@darkforest_eth/constants';
 import { INIT_ADDRESS } from '@darkforest_eth/contracts';
 import { DarkForest, DFArenaInitialize } from '@darkforest_eth/contracts/typechain';
 import { fakeHash, mimcHash, modPBigInt, perlin } from '@darkforest_eth/hashing';
@@ -47,14 +48,16 @@ export type CreatedPlanet = LobbyPlanet & {
 };
 
 export class ArenaCreationManager {
-  private readonly lobbyAddress: EthAddress;
+  private readonly parentAddress: EthAddress;
   private readonly contract: ContractsAPI;
   private readonly connection: EthConnection;
+  private arenaAddress: EthAddress | undefined;
   private whitelistedAddresses: EthAddress[];
   private createdPlanets: CreatedPlanet[];
+  private created : boolean = false;
 
-  private constructor(lobbyAddress: EthAddress, contract: ContractsAPI, connection: EthConnection) {
-    this.lobbyAddress = lobbyAddress;
+  private constructor(parentAddress: EthAddress, contract: ContractsAPI, connection: EthConnection) {
+    this.parentAddress = parentAddress;
     this.contract = contract;
     this.connection = connection;
     this.whitelistedAddresses = [];
@@ -63,10 +66,7 @@ export class ArenaCreationManager {
 
   public async createAndInitArena(config: LobbyInitializers) {
     if (config.ADMIN_PLANETS) {
-      config.INIT_PLANETS = this.lobbyPlanetsToInitPlanets(
-        config,
-        config.ADMIN_PLANETS
-      );
+      config.INIT_PLANETS = this.lobbyPlanetsToInitPlanets(config, config.ADMIN_PLANETS);
     }
 
     /* Don't want to submit ADMIN_PLANET as initdata because not used */
@@ -113,6 +113,8 @@ export class ArenaCreationManager {
       const startTx = await diamond.start({ gasLimit: OPTIMISM_GAS_LIMIT });
       const startRct = await startTx.wait();
       console.log(`initialized arena with ${startRct.gasUsed} gas`);
+      this.created = true;
+      this.arenaAddress = lobby;
       return { owner, lobby, startTx };
     } catch (e) {
       console.log(e);
@@ -187,7 +189,7 @@ export class ArenaCreationManager {
     const args = Promise.resolve([initPlanets]);
     const txIntent = {
       methodName: 'bulkCreateAndReveal' as ContractMethodName,
-      contract: this.contract.contract,
+      contract: this.lobbyContract(),
       args: args,
     };
 
@@ -211,7 +213,7 @@ export class ArenaCreationManager {
       const args = Promise.resolve([chunk]);
       const txIntent = {
         methodName: 'bulkCreateAndReveal' as ContractMethodName,
-        contract: this.contract.contract,
+        contract: this.lobbyContract(),
         args: args,
       };
 
@@ -278,7 +280,10 @@ export class ArenaCreationManager {
     };
   }
 
-  public lobbyPlanetsToInitPlanets(initializers: LobbyInitializers, planets: LobbyPlanet[]) : InitPlanet[] {
+  public lobbyPlanetsToInitPlanets(
+    initializers: LobbyInitializers,
+    planets: LobbyPlanet[]
+  ): InitPlanet[] {
     const initPlanets: InitPlanet[] = [];
     planets.forEach((p) => initPlanets.push(this.lobbyPlanetToInitPlanet(p, initializers)));
     // SORT INIT PLANETS SO THEY HAVE SAME ORDER ON-CHAIN. THIS CAN BREAK CONFIG HASH OTHERWISE.
@@ -389,6 +394,11 @@ export class ArenaCreationManager {
     }
   }
 
+  private lobbyContract() {
+    if(!this.arenaAddress) throw new Error('no lobby created');
+    return this.connection.getContract<DarkForest>(this.arenaAddress);
+  }
+
   get planets() {
     return this.createdPlanets;
   }
@@ -397,8 +407,21 @@ export class ArenaCreationManager {
     return this.whitelistedAddresses;
   }
 
-  get address() {
-    return this.lobbyAddress;
+  get account(): EthAddress {
+    const address = this.connection.getAddress();
+    return address || EMPTY_ADDRESS;
+  }
+
+  getParentAddress() {
+    return this.parentAddress
+  }
+
+  getArenaAddress() {
+    return this.arenaAddress;
+  }
+  
+  get arenaCreated() {
+    return this.created;
   }
 
   static async create(

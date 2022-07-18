@@ -34,12 +34,11 @@ export function LobbyConfigPage({
   const [lobbyTx, setLobbyTx] = useState<string | undefined>();
   const [status, setStatus] = useState<Status>(undefined);
   const [error, setError] = useState<string | undefined>(undefined);
-  const [playerTwitter, setPlayerTwitter] = useState<string | undefined>();
 
   const createDisabled = status === 'creating' || status === 'created';
   const creating =
-    status === 'creating' || (status === 'created' && !arenaCreationManager?.address);
-  const created = status === 'created' && arenaCreationManager?.address;
+    status === 'creating' || (status === 'created' && !arenaCreationManager.arenaCreated);
+  const created = status === 'created' && arenaCreationManager.arenaCreated;
 
   // once admin tools are created, create and reveal
   useEffect(() => {
@@ -47,10 +46,10 @@ export function LobbyConfigPage({
       await bulkCreateAndRevealPlanets();
       setStatus('created');
     }
-    if (arenaCreationManager && !created) {
+    if (arenaCreationManager.arenaCreated && !created) {
       doCreateReveal();
     }
-  }, [arenaCreationManager]);
+  }, [arenaCreationManager.arenaCreated]);
 
   // set error when theres an admin planets warning
   useEffect(() => {
@@ -58,6 +57,39 @@ export function LobbyConfigPage({
       setError(config.ADMIN_PLANETS.warning);
     }
   }, [config.ADMIN_PLANETS.warning]);
+
+  const onMapChange = useMemo(() => {
+    return _.debounce((config: MinimapConfig) => setMinimapConfig(config), 500);
+  }, [setMinimapConfig]);
+
+  // update entire map if something in map changes
+  useEffect(() => {
+    onMapChange({
+      worldRadius: config.WORLD_RADIUS_MIN.currentValue,
+      key: config.SPACETYPE_KEY.currentValue,
+      scale: config.PERLIN_LENGTH_SCALE.currentValue,
+      mirrorX: config.PERLIN_MIRROR_X.currentValue,
+      mirrorY: config.PERLIN_MIRROR_Y.currentValue,
+      perlinThreshold1: config.PERLIN_THRESHOLD_1.currentValue,
+      perlinThreshold2: config.PERLIN_THRESHOLD_2.currentValue,
+      perlinThreshold3: config.PERLIN_THRESHOLD_3.currentValue,
+      stagedPlanets: config.ADMIN_PLANETS.currentValue || [],
+      createdPlanets: arenaCreationManager?.planets || [],
+      dot: 4,
+    });
+  }, [
+    onMapChange,
+    config.WORLD_RADIUS_MIN.currentValue,
+    config.SPACETYPE_KEY.currentValue,
+    config.PERLIN_LENGTH_SCALE.currentValue,
+    config.PERLIN_MIRROR_X.currentValue,
+    config.PERLIN_MIRROR_Y.currentValue,
+    config.PERLIN_THRESHOLD_1.currentValue,
+    config.PERLIN_THRESHOLD_2.currentValue,
+    config.PERLIN_THRESHOLD_3.currentValue,
+    config.ADMIN_PLANETS.currentValue,
+    arenaCreationManager,
+  ]);
 
   async function bulkCreateAndRevealPlanets() {
     if (!config.ADMIN_PLANETS.currentValue) {
@@ -96,7 +128,8 @@ export function LobbyConfigPage({
     try {
       setStatus('creating');
       const initializers = toInitializers(config);
-      await arenaCreationManager.createAndInitArena(initializers);
+      const { owner, lobby, startTx } = await arenaCreationManager.createAndInitArena(initializers);
+      setLobbyTx(startTx.hash);
     } catch (err) {
       setStatus('errored');
       console.error(err);
@@ -107,39 +140,6 @@ export function LobbyConfigPage({
       }
     }
   }
-
-  const onMapChange = useMemo(() => {
-    return _.debounce((config: MinimapConfig) => setMinimapConfig(config), 500);
-  }, [setMinimapConfig]);
-
-  // update entire map if something in map changes
-  useEffect(() => {
-    onMapChange({
-      worldRadius: config.WORLD_RADIUS_MIN.currentValue,
-      key: config.SPACETYPE_KEY.currentValue,
-      scale: config.PERLIN_LENGTH_SCALE.currentValue,
-      mirrorX: config.PERLIN_MIRROR_X.currentValue,
-      mirrorY: config.PERLIN_MIRROR_Y.currentValue,
-      perlinThreshold1: config.PERLIN_THRESHOLD_1.currentValue,
-      perlinThreshold2: config.PERLIN_THRESHOLD_2.currentValue,
-      perlinThreshold3: config.PERLIN_THRESHOLD_3.currentValue,
-      stagedPlanets: config.ADMIN_PLANETS.currentValue || [],
-      createdPlanets: arenaCreationManager?.planets || [],
-      dot: 4,
-    });
-  }, [
-    onMapChange,
-    config.WORLD_RADIUS_MIN.currentValue,
-    config.SPACETYPE_KEY.currentValue,
-    config.PERLIN_LENGTH_SCALE.currentValue,
-    config.PERLIN_MIRROR_X.currentValue,
-    config.PERLIN_MIRROR_Y.currentValue,
-    config.PERLIN_THRESHOLD_1.currentValue,
-    config.PERLIN_THRESHOLD_2.currentValue,
-    config.PERLIN_THRESHOLD_3.currentValue,
-    config.ADMIN_PLANETS.currentValue,
-    arenaCreationManager,
-  ]);
 
   return (
     <>
@@ -154,7 +154,7 @@ export function LobbyConfigPage({
       <Switch>
         <Route path={root} exact={true}>
           <LobbyMapSelectPage
-            address={arenaCreationManager.address}
+            address={arenaCreationManager.getParentAddress()}
             startingConfig={startingConfig}
             updateConfig={updateConfig}
             createDisabled={createDisabled}
@@ -174,7 +174,6 @@ export function LobbyConfigPage({
             onError={setError}
             created={created}
             creating={creating}
-            playerTwitter={playerTwitter}
             validateAndCreateLobby={validateAndCreateLobby}
           />
         </Route>

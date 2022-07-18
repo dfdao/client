@@ -105,21 +105,14 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
       }
       if (configContractAddress && !startingConfig) {
         loadConfigFromAddress(configContractAddress)
-          .then((config) => {
-            if (!config) {
-              setStartingConfig(stockConfig.vanilla);
-            } else {
-              setStartingConfig(config.config);
-            }
-            return;
-          })
+          .then((config) => setStartingConfig(config.config))
           .catch((e) => {
             console.log(e);
-            setErrorState({ type: 'contractLoad' });
+            setStartingConfig(stockConfig.vanilla);
           });
       }
     }
-  }, [connection, contractAddress, account]);
+  }, [connection, contractAddress, startingConfig]);
 
   if (errorState) {
     switch (errorState.type) {

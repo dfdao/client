@@ -15,6 +15,7 @@ import { MinimapPane } from '../Panes/Lobbies/MinimapPane';
 import { MinimapConfig } from '../Panes/Lobbies/MinimapUtils';
 import { PlanetListPane } from '../Panes/Lobbies/PlanetListPane';
 import { LobbyConfigAction, LobbyConfigState } from '../Panes/Lobbies/Reducer';
+import { useTwitters } from '../Utils/AppHooks';
 
 export function LobbyConfirmPage({
   arenaCreationManager,
@@ -27,7 +28,6 @@ export function LobbyConfirmPage({
   onError,
   created,
   creating,
-  playerTwitter,
   validateAndCreateLobby,
 }: {
   config: LobbyConfigState;
@@ -38,14 +38,13 @@ export function LobbyConfirmPage({
   onUpdate: (action: LobbyConfigAction) => void;
   lobbyTx: string | undefined;
   onError: (msg: string) => void;
-  created: false | EthAddress | undefined;
+  created: boolean;
   creating: boolean;
-  playerTwitter: string | undefined;
   validateAndCreateLobby: () => void;
 }) {
   const blockscoutURL = `${BLOCK_EXPLORER_URL}/${lobbyTx}`;
-  const url = `${window.location.origin}/play/${arenaCreationManager?.address}`;
-
+  const url = `${window.location.origin}/play/${arenaCreationManager.getArenaAddress()}`;
+  const twitters = useTwitters();
   const handleEnterUniverse = () => {
     if (config.ADMIN_PLANETS.displayValue && config.ADMIN_PLANETS.displayValue.length > 0) {
       const confirmed = confirm(
@@ -192,7 +191,7 @@ export function LobbyConfirmPage({
                 label='Share with your friends'
                 displayValue={url}
                 copyText={`👋 ${
-                  playerTwitter || arenaCreationManager.address.slice(0, 6)
+                  twitters[arenaCreationManager.account] || arenaCreationManager.account.slice(0, 6)
                 } has challenged you to a Dark Forest Arena battle! ☄️😤\n\nClick the link to play:\n⚔️ ${url} ⚔️`}
                 onCopyError={onError}
               />

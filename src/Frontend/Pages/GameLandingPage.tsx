@@ -108,6 +108,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
   );
   const [step, setStep] = useState(TerminalPromptStep.NONE);
   const [config, setConfig] = useState<LobbyInitializers>(stockConfig.competitive);
+  const [creationManager, setCreationManager] = useState<ArenaCreationManager>();
   const params = new URLSearchParams(location.search);
   const useZkWhitelist = params.has('zkWhitelist');
   const selectedAddress = params.get('account');
@@ -529,15 +530,16 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
         terminal.current?.println('');
         terminal.current?.print('Creating new arena instance... ');
         try {
-          const creationManager = await ArenaCreationManager.create(ethConnection, defaultAddress);
+          const newCreationManager = await ArenaCreationManager.create(ethConnection, defaultAddress);
           const fetchedConfig = await fetchConfig();
-          const {owner, lobby} = await creationManager.createAndInitArena(fetchedConfig);
-          setConfig(fetchedConfig);
-
+          const {owner, lobby} = await newCreationManager.createAndInitArena(fetchedConfig);
+        
           if (owner == playerAddress) {
             history.push({ pathname: `${lobby}`, state: { contract: lobby } });
             setContractAddress(lobby);
           }
+          setConfig(fetchedConfig);
+          setCreationManager(newCreationManager);
           terminal.current?.println('arena created.', TerminalTextStyle.Green);
           setStep(TerminalPromptStep.ARENA_CREATED);
         } catch (e) {
@@ -560,8 +562,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
       terminal.current?.print('Adding custom planets... ');
 
       try {
-        if (!ethConnection || !contractAddress) throw new Error('cannot create planets');
-        const creationManager = await ArenaCreationManager.create(ethConnection, contractAddress);
+        if (!ethConnection || !contractAddress || !creationManager) throw new Error('cannot create planets');
         await creationManager.createPlanets({config});
         terminal.current?.println('planets created.', TerminalTextStyle.Green);
         setStep(TerminalPromptStep.PLANETS_CREATED);
@@ -577,7 +578,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
         return;
       }
     },
-    [ethConnection, contractAddress]
+    [ethConnection, contractAddress, creationManager]
   );
 
   // TODO: Check that the config hash matches the competitive hash to ensure the game will be counted

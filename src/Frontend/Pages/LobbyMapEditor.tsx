@@ -213,7 +213,7 @@ export const LobbyMapEditor: React.FC<{
               )
             }
             disabled={createDisabled}
-            address={arenaCreationManager.address}
+            address={arenaCreationManager.getParentAddress()}
             onError={onError}
             config={config}
           />
