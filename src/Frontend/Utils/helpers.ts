@@ -3,7 +3,6 @@ import { address } from '@darkforest_eth/serde';
 import { EthAddress } from '@darkforest_eth/types';
 import { keccak256, toUtf8Bytes } from 'ethers/lib/utils';
 import { TransactionReceipt } from '@ethersproject/providers';
-
 // THIS IS BAD BECAUSE NOT TYPE SAFE
 export function getReadyEvent(
   readyReceipt: TransactionReceipt,

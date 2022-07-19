@@ -1,8 +1,8 @@
 import { EthAddress, GraphArena, GraphPlanet, WorldCoords } from '@darkforest_eth/types';
 import { BigNumber } from 'ethers';
 import _ from 'lodash';
-import { LobbyPlanet } from '../../Frontend/Panes/Lobbies/LobbiesUtils';
-import { LobbyInitializers } from '../../Frontend/Panes/Lobbies/Reducer';
+import { LobbyPlanet } from '../../Frontend/Panes/Lobby/LobbiesUtils';
+import { LobbyInitializers } from '../../Frontend/Panes/Lobby/Reducer';
 import { apiUrl, CONFIG_CONSTANTS } from '../../Frontend/Utils/constants';
 import { PlanetTypeWeights } from '../../_types/darkforest/api/ContractsAPITypes';
 import { getGraphQLData } from './GraphApi';
@@ -20,7 +20,7 @@ export async function loadConfigFromHash(config: string): Promise<
 > {
   const query = `
 query {
-    arenas(first:1, where: {configHash: "${config}"}) {
+    arenas(first:5, where: {configHash: "${config}"}) {
         lobbyAddress,
         configHash,
         gameOver,
@@ -30,7 +30,9 @@ query {
 }
 `;
   const rawData = await getGraphQLData(query, apiUrl);
-  const res = convertGraphConfig(rawData.data.arenas[0]);
+  // @ts-expect-error
+  const hasPlanets = rawData.data.arenas.filter(a => a.planets.length > 0);
+  const res = convertGraphConfig(hasPlanets[0]);
   return res;
 }
 
