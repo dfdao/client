@@ -5,15 +5,15 @@ import { address } from '@darkforest_eth/serde';
 import { EthAddress } from '@darkforest_eth/types';
 import { utils, Wallet } from 'ethers';
 import React, { useEffect, useRef, useState } from 'react';
-import { addAccount, getAccounts } from '../../Backend/Network/AccountManager';
-import { getEthConnection, loadFaucetContract } from '../../Backend/Network/Blockchain';
-import { requestFaucet } from '../../Backend/Network/UtilityServerAPI';
-import { InitRenderState, TerminalWrapper } from '../Components/GameLandingPageComponents';
-import { MythicLabelText } from '../Components/Labels/MythicLabel';
-import { TextPreview } from '../Components/TextPreview';
-import { TerminalTextStyle } from '../Utils/TerminalTypes';
-import { DarkForestTips } from '../Views/DarkForestTips';
-import { Terminal, TerminalHandle } from '../Views/Terminal';
+import { addAccount, getAccounts } from '../../../Backend/Network/AccountManager';
+import { getEthConnection, loadFaucetContract } from '../../../Backend/Network/Blockchain';
+import { requestFaucet } from '../../../Backend/Network/UtilityServerAPI';
+import { InitRenderState, TerminalWrapper } from '../../Components/GameLandingPageComponents';
+import { MythicLabelText } from '../../Components/Labels/MythicLabel';
+import { TextPreview } from '../../Components/TextPreview';
+import { TerminalTextStyle } from '../../Utils/TerminalTypes';
+import { DarkForestTips } from '../../Views/DarkForestTips';
+import { Terminal, TerminalHandle } from '../../Views/Terminal';
 
 class LobbyPageTerminal {
   private ethConnection: EthConnection;
