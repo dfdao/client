@@ -35,7 +35,7 @@ function App() {
             <Redirect path='/play' to={`/play/${defaultAddress}`} push={true} exact={true} />
             <Route path='/play/:contract' component={GameLandingPage} />
             <Redirect path='/portal' to={`/portal/map`} push={true} exact={true} />
-            <Route path='/portal' component={PortalPage}/>
+            <Route path='/portal' component={PortalPage} />
             <Route path='/events' component={EventsPage} />
             <Route path='/' exact component={LandingPage} />
             <Redirect path='/arena' to={`/arena/${defaultAddress}`} push={true} exact={true} />

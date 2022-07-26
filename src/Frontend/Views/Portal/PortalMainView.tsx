@@ -10,6 +10,7 @@ import Button from '../../Components/Button';
 import { Dropdown, DropdownItem } from '../../Components/Dropdown';
 import { Icon } from '../../Components/Icons';
 import { Modal } from '../../Components/Modal';
+import { PortalHistoryView } from './PortalHistoryView';
 import dfstyles from '../../Styles/dfstyles';
 import { useTwitters } from '../../Utils/AppHooks';
 import { competitiveConfig } from '../../Utils/constants';
@@ -19,7 +20,6 @@ import { AccountInfoView } from './AccountInfoView';
 import { MapInfoView } from './MapInfoView';
 import { PortalHomeView } from './PortalHomeView';
 import { truncateAddress, truncateString } from './PortalUtils';
-
 
 export function PortalMainView({ playerAddress }: { playerAddress: EthAddress }) {
   const [input, setInput] = useState<string>('');
@@ -71,25 +71,25 @@ export function PortalMainView({ playerAddress }: { playerAddress: EthAddress })
   }, [input]);
 
   function PortalHelp() {
-    if(!helpOpen) return <></>
+    if (!helpOpen) return <></>;
 
+    // FIXME: What is this?
     return (
-      
-      <Modal
-        title = 'Help'
-        
-      >
+      <Modal title='Help'>
         <HelpWrapper>
           <HelpInner>
-            <HelpClose onClick = {() => {setHelpOpen(false)}}>
-              <Icon type = {IconType.X}/>
+            <HelpClose
+              onClick={() => {
+                setHelpOpen(false);
+              }}
+            >
+              <Icon type={IconType.X} />
             </HelpClose>
             <span>Hello</span>
-
           </HelpInner>
         </HelpWrapper>
       </Modal>
-    )
+    );
   }
 
   return (
@@ -130,6 +130,7 @@ export function PortalMainView({ playerAddress }: { playerAddress: EthAddress })
           <Route path={'/portal/home'} exact={true} component={PortalHomeView} />
           <Route path={'/portal/map/:configHash'} component={MapInfoView} />
           <Route path={'/portal/account/:account'} component={AccountInfoView} />
+          <Route path={'/portal/history'} component={PortalHistoryView} />
 
           <Route
             path='/portal/*'
@@ -224,14 +225,13 @@ const HelpInner = styled.div`
   border: 1px solid ${dfstyles.colors.borderDark} !important;
   color: ${dfstyles.colors.text};
   padding: 50px;
+`;
 
-`
-
-const HelpClose = styled.button `
+const HelpClose = styled.button`
   position: absolute;
   top: 20px;
   right: 20px;
   color: white;
   background: none;
   border: 0;
-`
+`;
