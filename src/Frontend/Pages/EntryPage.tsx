@@ -355,7 +355,7 @@ export function EntryPage() {
               <Redirect path='/play' to={`/play/${defaultAddress}`} push={true} exact={true} />
               <Route path='/play/:contract' component={GameLandingPage} />
               <Redirect path='/portal' to={`/portal/map`} push={true} exact={true} />
-              <Route path='/portal/map' component={PortalPage} />
+              <Route path='/portal' component={PortalPage} />
               <Redirect path='/arena' to={`/arena/${defaultAddress}`} push={true} exact={true} />
               <Route path='/arena/:contract' component={CreateLobby} />
               <Route path='*' component={NotFoundPage} />
