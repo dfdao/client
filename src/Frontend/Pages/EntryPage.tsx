@@ -19,7 +19,7 @@ import {
 import { getEthConnection, loadFaucetContract } from '../../Backend/Network/Blockchain';
 import { getAllTwitters, requestFaucet } from '../../Backend/Network/UtilityServerAPI';
 import { AddressTwitterMap } from '../../_types/darkforest/api/UtilityServerAPITypes';
-import { InitRenderState, TerminalWrapper } from '../Components/GameLandingPageComponents';
+import { InitRenderState, TerminalWrapper, Wrapper } from '../Components/GameLandingPageComponents';
 import { MythicLabelText } from '../Components/Labels/MythicLabel';
 import { TextPreview } from '../Components/TextPreview';
 import { AccountProvider, EthConnectionProvider, TwitterProvider } from '../Utils/AppHooks';
@@ -358,10 +358,14 @@ export function EntryPage() {
     return <LoadingPage />;
   } else if (loadingStatus == 'creating') {
     return (
-      <TerminalWrapper initRender={InitRenderState.NONE} terminalEnabled={false}>
-        {loadingStatus}
-        <Terminal ref={terminal} promptCharacter={'$'} />
-      </TerminalWrapper>
+      <Wrapper initRender={InitRenderState.NONE} terminalEnabled={false}>
+        <TerminalWrapper initRender={InitRenderState.NONE} terminalEnabled={false}>
+          <Terminal ref={terminal} promptCharacter={'$'} />
+        </TerminalWrapper>
+
+        {/* this div is here so the styling matches gamelandingpage styling*/}
+        <div></div>
+      </Wrapper>
     );
   } else
     return (
