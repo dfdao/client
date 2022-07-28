@@ -36,7 +36,7 @@ import { GameWindowLayout } from '../../Views/GameWindowLayout';
 import { Terminal, TerminalHandle } from '../../Views/Terminal';
 import { stockConfig } from '../../Utils/StockConfigs';
 import { EthAddress } from '@darkforest_eth/types';
-import { loadConfigFromAddress } from '../../../Backend/Network/ConfigApi';
+import { loadConfigFromAddress } from '../../../Backend/Network/GraphApi/ConfigApi';
 import { ArenaCreationManager } from '../../../Backend/GameLogic/ArenaCreationManager';
 import { LobbyInitializers } from '../../Panes/Lobby/Reducer';
 import _ from 'lodash';

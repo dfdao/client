@@ -5,7 +5,7 @@ import dfstyles from '../../Styles/dfstyles';
 import { Text } from '../../Components/Text';
 import { Link, useHistory } from 'react-router-dom';
 import { ArenaPortalButton } from './PortalHomeView';
-import { loadRecentMaps, MapInfo } from '../../../Backend/Network/MapsApi';
+import { loadRecentMaps, MapInfo } from '../../../Backend/Network/GraphApi/MapsApi';
 import { getConfigName } from '@darkforest_eth/procedural';
 import { formatDate } from '../../Utils/TimeUtils';
 import { useEthConnection } from '../../Utils/AppHooks';

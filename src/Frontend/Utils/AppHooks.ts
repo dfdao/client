@@ -15,10 +15,13 @@ import {
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import GameUIManager from '../../Backend/GameLogic/GameUIManager';
 import { Account } from '../../Backend/Network/AccountManager';
-import { loadArenaLeaderboard } from '../../Backend/Network/ArenaLeaderboardApi';
-import { GraphConfigPlayer, loadEloLeaderboard } from '../../Backend/Network/EloLeaderboardApi';
-import { loadLeaderboard } from '../../Backend/Network/LeaderboardApi';
-import { loadLiveMatches } from '../../Backend/Network/SpyApi';
+import { loadArenaLeaderboard } from '../../Backend/Network/GraphApi/ArenaLeaderboardApi';
+import {
+  GraphConfigPlayer,
+  loadEloLeaderboard,
+} from '../../Backend/Network/GraphApi/EloLeaderboardApi';
+import { loadLeaderboard } from '../../Backend/Network/GraphApi/LeaderboardApi';
+import { loadLiveMatches } from '../../Backend/Network/GraphApi/SpyApi';
 import { Wrapper } from '../../Backend/Utils/Wrapper';
 import { ContractsAPIEvent } from '../../_types/darkforest/api/ContractsAPITypes';
 import { AddressTwitterMap } from '../../_types/darkforest/api/UtilityServerAPITypes';

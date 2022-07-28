@@ -3,7 +3,7 @@ import { address } from '@darkforest_eth/serde';
 import { EthAddress } from '@darkforest_eth/types';
 import React, { useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-import { loadConfigFromAddress } from '../../../Backend/Network/ConfigApi';
+import { loadConfigFromAddress } from '../../../Backend/Network/GraphApi/ConfigApi';
 import { LobbyInitializers } from '../../Panes/Lobby/Reducer';
 import { useEthConnection } from '../../Utils/AppHooks';
 import { stockConfig } from '../../Utils/StockConfigs';
