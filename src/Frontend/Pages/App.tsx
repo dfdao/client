@@ -4,10 +4,10 @@ import { createGlobalStyle } from 'styled-components';
 import { Theme } from '../Components/Theme';
 import { LandingPageBackground } from '../Renderers/LandingPageCanvas';
 import dfstyles from '../Styles/dfstyles';
+import { EntryPage } from './EntryPage';
 import { EventsPage } from './EventsPage';
 import { GifMaker } from './GifMaker';
 import LandingPage from './LandingPage';
-import { PortalLandingPage } from './Portal/PortalLandingPage';
 import { ShareArtifact } from './ShareArtifact';
 import { SharePlanet } from './SharePlanet';
 import { TestArtifactImages } from './TestArtifactImages';
@@ -39,7 +39,7 @@ function App() {
             {!isProd && <Route path='/gifs' component={GifMaker} />}
             {!isProd && <Route path='/bg' component={LandingPageBackground} />}
 
-            <Route path='*' component={PortalLandingPage} />
+            <Route path='*' component={EntryPage} />
           </Switch>
         </Router>
       </Theme>

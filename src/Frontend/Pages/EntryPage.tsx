@@ -15,25 +15,25 @@ import {
   getActive,
   resetActive,
   logOut,
-} from '../../../Backend/Network/AccountManager';
-import { getEthConnection, loadFaucetContract } from '../../../Backend/Network/Blockchain';
-import { getAllTwitters, requestFaucet } from '../../../Backend/Network/UtilityServerAPI';
-import { AddressTwitterMap } from '../../../_types/darkforest/api/UtilityServerAPITypes';
-import { InitRenderState, TerminalWrapper } from '../../Components/GameLandingPageComponents';
-import { MythicLabelText } from '../../Components/Labels/MythicLabel';
-import { TextPreview } from '../../Components/TextPreview';
-import { AccountProvider, EthConnectionProvider, TwitterProvider } from '../../Utils/AppHooks';
-import { Incompatibility, unsupportedFeatures } from '../../Utils/BrowserChecks';
-import { TerminalTextStyle } from '../../Utils/TerminalTypes';
-import { Terminal, TerminalHandle } from '../../Views/Terminal';
-import { GameLandingPage } from '../Game/GameLandingPage';
-import LoadingPage from '../LoadingPage';
-import { CreateLobby } from '../Lobby/CreateLobby';
-import { NotFoundPage } from '../NotFoundPage';
-import { PortalPage } from './PortalPage';
+} from '../../Backend/Network/AccountManager';
+import { getEthConnection, loadFaucetContract } from '../../Backend/Network/Blockchain';
+import { getAllTwitters, requestFaucet } from '../../Backend/Network/UtilityServerAPI';
+import { AddressTwitterMap } from '../../_types/darkforest/api/UtilityServerAPITypes';
+import { InitRenderState, TerminalWrapper } from '../Components/GameLandingPageComponents';
+import { MythicLabelText } from '../Components/Labels/MythicLabel';
+import { TextPreview } from '../Components/TextPreview';
+import { AccountProvider, EthConnectionProvider, TwitterProvider } from '../Utils/AppHooks';
+import { Incompatibility, unsupportedFeatures } from '../Utils/BrowserChecks';
+import { TerminalTextStyle } from '../Utils/TerminalTypes';
+import { Terminal, TerminalHandle } from '../Views/Terminal';
+import { GameLandingPage } from './Game/GameLandingPage';
+import LoadingPage from './LoadingPage';
+import { CreateLobby } from './Lobby/CreateLobby';
+import { NotFoundPage } from './NotFoundPage';
+import { PortalPage } from './Portal/PortalPage';
 
 const defaultAddress = address(CONTRACT_ADDRESS);
-class PortalPageTerminal {
+class EntryPageTerminal {
   private ethConnection: EthConnection;
   private terminal: TerminalHandle;
   private accountSet: (account: Account) => void;
@@ -63,6 +63,7 @@ class PortalPageTerminal {
   }
 
   public async checkCompatibility() {
+    console.log('checking compatibility');
     const issues = await unsupportedFeatures();
 
     if (issues.includes(Incompatibility.MobileOrTablet)) {
@@ -287,11 +288,11 @@ export async function sendDrip(connection: EthConnection, address: EthAddress) {
 }
 
 type LoadingStatus = 'loading' | 'creating' | 'complete';
-export function PortalLandingPage() {
+export function EntryPage() {
   const terminal = useRef<TerminalHandle>();
 
   const [loadingStatus, setLoadingStatus] = useState<LoadingStatus>('loading');
-  const [controller, setController] = useState<PortalPageTerminal | undefined>();
+  const [controller, setController] = useState<EntryPageTerminal | undefined>();
 
   const [twitters, setTwitters] = useState<AddressTwitterMap | undefined>();
   const [connection, setConnection] = useState<EthConnection | undefined>();
@@ -340,7 +341,7 @@ export function PortalLandingPage() {
   useEffect(() => {
     console.log(!!controller, !!connection, !!terminal.current);
     if (!controller && connection && terminal.current) {
-      const newController = new PortalPageTerminal(
+      const newController = new EntryPageTerminal(
         connection,
         terminal.current,
         async (account: Account) => {
@@ -348,7 +349,7 @@ export function PortalLandingPage() {
           setLoadingStatus('complete');
         }
       );
-      newController.chooseAccount();
+      newController.checkCompatibility();
       setController(newController);
     }
   }, [terminal, connection, controller, loadingStatus]);
