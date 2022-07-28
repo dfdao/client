@@ -276,6 +276,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
         terminal.current?.println('Player whitelisted.');
         terminal.current?.println('');
         terminal.current?.println(`Welcome, player ${playerAddress}.`);
+        setStep(TerminalPromptStep.FETCHING_ETH_DATA);
       } catch (e) {
         console.error(`error connecting to whitelist: ${e}`);
         terminal.current?.println(
