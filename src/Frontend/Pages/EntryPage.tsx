@@ -16,8 +16,8 @@ import {
   resetActive,
   logOut,
 } from '../../Backend/Network/AccountManager';
-import { getEthConnection, loadFaucetContract } from '../../Backend/Network/Blockchain';
-import { getAllTwitters, requestFaucet } from '../../Backend/Network/UtilityServerAPI';
+import { getEthConnection } from '../../Backend/Network/Blockchain';
+import { getAllTwitters, sendDrip } from '../../Backend/Network/UtilityServerAPI';
 import { AddressTwitterMap } from '../../_types/darkforest/api/UtilityServerAPITypes';
 import { InitRenderState, TerminalWrapper, Wrapper } from '../Components/GameLandingPageComponents';
 import { MythicLabelText } from '../Components/Labels/MythicLabel';
@@ -263,27 +263,6 @@ class EntryPageTerminal {
         'An error occurred in faucet. Please try again with an account that has XDAI.'
       );
     }
-  }
-}
-
-export async function sendDrip(connection: EthConnection, address: EthAddress) {
-  // If drip fails
-  try {
-    const currBalance = weiToEth(await connection.loadBalance(address));
-    const faucet = await connection.loadContract<DFArenaFaucet>(FAUCET_ADDRESS, loadFaucetContract);
-    const nextAccessTimeSeconds = (await faucet.getNextAccessTime(address)).toNumber();
-    const nowSeconds = Date.now() / 1000;
-
-    if (currBalance > 0.005 || nowSeconds < nextAccessTimeSeconds) {
-      return;
-    }
-    const success = await requestFaucet(address);
-
-    if (!success) {
-      throw new Error('An error occurred in faucet. Try again with an account that has XDAI');
-    }
-  } catch (e) {
-    throw new Error('An error occurred in faucet. Try again with an account that has XDAI');
   }
 }
 

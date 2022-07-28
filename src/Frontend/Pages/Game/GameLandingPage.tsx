@@ -276,50 +276,6 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
         terminal.current?.println('Player whitelisted.');
         terminal.current?.println('');
         terminal.current?.println(`Welcome, player ${playerAddress}.`);
-
-        const currBalance = weiToEth(await ethConnection.loadBalance(playerAddress));
-        const faucet = await ethConnection.loadContract<DFArenaFaucet>(
-          FAUCET_ADDRESS,
-          loadFaucetContract
-        );
-        const nextAccessTimeSeconds = (await faucet.getNextAccessTime(playerAddress)).toNumber();
-        const nowSeconds = Date.now() / 1000;
-        console.log(
-          `You can receive another drip in ${Math.floor(
-            (nextAccessTimeSeconds - nowSeconds) / 60 / 60
-          )} hours`
-        );
-        if (currBalance < 0.005 && nowSeconds > nextAccessTimeSeconds) {
-          terminal.current?.println(`Getting xDAI from faucet...`, TerminalTextStyle.Blue);
-          const success = await requestFaucet(playerAddress);
-          if (success) {
-            const newBalance = weiToEth(await ethConnection.loadBalance(playerAddress));
-            terminal.current?.println(
-              `Your balance has increased by ${newBalance - currBalance}.`,
-              TerminalTextStyle.Green
-            );
-            await new Promise((r) => setTimeout(r, 1500));
-          } else {
-            terminal.current?.println(
-              'An error occurred in faucet. Try again with an account that has XDAI',
-              TerminalTextStyle.Red
-            );
-
-            terminal.current?.printLink(
-              'or click here to manually get Optimism xDAI\n',
-              () => {
-                window.open(
-                  'https://www.xdaichain.com/for-developers/optimism-optimistic-rollups-on-gc'
-                );
-              },
-              TerminalTextStyle.Blue
-            );
-            terminal.current?.println('');
-            return;
-          }
-        }
-
-        setStep(TerminalPromptStep.FETCHING_ETH_DATA);
       } catch (e) {
         console.error(`error connecting to whitelist: ${e}`);
         terminal.current?.println(
