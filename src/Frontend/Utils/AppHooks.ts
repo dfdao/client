@@ -42,7 +42,7 @@ export function useOverlayContainer(): HTMLDivElement | null {
  * Get the currently used account on the client.
  * @param uiManager instance of GameUIManager
  */
-export function useAccount(uiManager: GameUIManager): EthAddress | undefined {
+export function useAddress(uiManager: GameUIManager): EthAddress | undefined {
   const account = useMemo(() => uiManager.getAccount(), [uiManager]);
 
   return account;
