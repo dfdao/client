@@ -41,7 +41,7 @@ export function MapDetails({
           .catch((e) => setLeaderboardError(e));
       } else {
         loadArenaLeaderboard(configHash, numSpawnPlanets > 1 ? true : false)
-          .then((board) => {
+          .then((board: Leaderboard) => {
             setLeaderboardError(undefined);
             setLeaderboard(board);
           })
@@ -71,8 +71,12 @@ export function MapDetails({
         maxHeight: '100vh',
         overflowY: 'auto',
       }}
-      startSelected = {numSpawnPlanets >= 2 ? 1 : 0}
-      tabTitles={['Leaderboard', numSpawnPlanets > 1 ? 'Join a Match' : 'Live Games', 'Config Details']}
+      startSelected={numSpawnPlanets >= 2 ? 1 : 0}
+      tabTitles={[
+        'Leaderboard',
+        numSpawnPlanets > 1 ? 'Join a Match' : 'Live Games',
+        'Config Details',
+      ]}
       tabContents={(i) => {
         if (i === 0) {
           return numSpawnPlanets > 1 ? (

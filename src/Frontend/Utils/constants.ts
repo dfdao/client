@@ -20,6 +20,9 @@ const LOCATION_ID_UB = bigInt(
 
 const apiUrl = 'https://9a46-143-244-168-87.ngrok.io/subgraphs/name/df-arena-v2';
 
+export const ARENA_V1_SUBGRAPH =
+  'https://graph-optimism.gnosischain.com/subgraphs/name/dfdao/arena-v1/graphql';
+
 const competitiveConfig = '0x568297442f966cc66f2be7ced683e35ea2ca1e68b4f26dd5424158244da40bcc';
 
 const roundStartTimestamp = '2022-07-13T00:00:00.000Z';

@@ -2,9 +2,10 @@ import { getConfigName } from '@darkforest_eth/procedural';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { loadConfigFromHash } from '../../../Backend/Network/ConfigApi';
-import { loadRecentMaps } from '../../../Backend/Network/MapsApi';
+import { loadArenaLeaderboard } from '../../../Backend/Network/ArenaLeaderboardApi';
+import { Link } from '../../Components/CoreUI';
 import dfstyles from '../../Styles/dfstyles';
+import { useTwitters } from '../../Utils/AppHooks';
 import { formatStartTime } from '../../Utils/TimeUtils';
 
 export interface TimelineProps {
@@ -15,42 +16,50 @@ export interface RoundHistoryItem {
   configHash: string;
   name: string;
   startTime: number;
+  winner: string;
 }
 
 const MOCK_CONFIG_HASHES: string[] = [
-  '0xfe719a3cfccf2bcfa23f71f0af80a931eda4f4197331828d728b7505a6156930',
-  '0x12c40c98747fc86ccdccc3a716ffa089497d7de3bb5a967ed8b36a1d521c54bc',
-  '0x8123f44f417f2064b9f01c864b52fd71bd676031c8db5ccb033d1e97cdb9c2b2',
-  '0xb0a84c922647980d3ad4661a4f9bded19c8d24a9c993be48a3ba3745f9cb30ad',
-  '0xc5f9565c1e6f0373d19429b21ccbe22e0a846064b0943a2bc4bba8f633b41eb8',
-  '0x47f985b6b03252584163bcce2f8c459d053fabfa3e191ede4d104ba023ac5836',
-  '0x2d042b4eba16c40ab0aba07432db21490f4058fd1739e96ad6a4b7b8b469acc9',
-  '0x53e199c93ef7c310f9e49f4cb43bdce9a041dcaac0961ed0f7cb9a52b3097b94',
+  '0x6cc6954ecdfefd966e52e5911555a778770e412c3f4393a8b6033ea95688519e',
+  '0x38329f176da42d2c89b7e424175e8b0ab3c9008cb0d98f947857884d76c6d9d2',
+  '0x58975a691f8765ef71b7ffd9f6d64fa3d22aa1bb046265984a07fb30f7ddad33',
+  '0xa5270a267313d923a05a95b11d2be9b7d9e7c5194bf9d5d9f3ee28366a7809c4',
+  '0xc8b6b767570b2e39b622c6d5a8c4ac65a61d50a94f4312ac171483c95b2ec996',
+  '0x568297442f966cc66f2be7ced683e35ea2ca1e68b4f26dd5424158244da40bcc',
 ];
 
 export const PortalHistoryView: React.FC<{}> = ({}) => {
   const [rounds, setRounds] = useState<RoundHistoryItem[]>([]);
   const history = useHistory();
+  const twitters = useTwitters() as Object;
 
   useEffect(() => {
-    MOCK_CONFIG_HASHES.forEach(async (configHash) => {
-      loadRecentMaps(1, configHash).then((res) => {
-        if (!res) return;
-        if (res.length === 0) return;
-        const map = res[0];
-        setRounds((prevRounds) =>
-          [
-            ...prevRounds,
-            {
-              configHash,
-              name: getConfigName(configHash),
-              startTime: map.startTime ?? 0,
-            },
-          ].sort((a, b) => b.startTime - a.startTime)
-        );
+    MOCK_CONFIG_HASHES.forEach((configHash) => {
+      loadArenaLeaderboard(configHash, true).then((res) => {
+        console.log(`RES-${configHash}`, res);
+        // if (!res) return;
+        // if (res.length === 0) return;
+        // const map = res[0];
+        // console.log(map);
+        // const roundToAdd = {
+        //   configHash: configHash,
+        //   name: getConfigName(configHash),
+        //   startTime: map.startTime ?? 0,
+        //   winner: map.winners ? (map.winners.length > 0 ? map.winners[0] : '') : '',
+        // } as RoundHistoryItem;
+        // setRounds((prevRounds) => [...prevRounds, roundToAdd]);
       });
     });
   }, []);
+
+  const addressToTwitter = (address: string) => {
+    const foundTwitter = Object.entries(twitters).find((t) => t[1] == address.toLowerCase().trim());
+    if (foundTwitter) {
+      return foundTwitter[0];
+    } else {
+      return address;
+    }
+  };
 
   return (
     <Container>
@@ -60,6 +69,7 @@ export const PortalHistoryView: React.FC<{}> = ({}) => {
           <tr>
             <TimelineHeader>Started</TimelineHeader>
             <TimelineHeader>Name</TimelineHeader>
+            <TimelineHeader>Winner</TimelineHeader>
           </tr>
         </thead>
         <tbody>
@@ -71,6 +81,15 @@ export const PortalHistoryView: React.FC<{}> = ({}) => {
             >
               <TimelineItem>{formatStartTime(historyItem.startTime)}</TimelineItem>
               <TimelineItem>{historyItem.name}</TimelineItem>
+              <TimelineItem>
+                {historyItem.winner !== '' ? (
+                  <Link to={`https://twitter.com/${addressToTwitter(historyItem.winner)}`}>
+                    {addressToTwitter(historyItem.winner)}
+                  </Link>
+                ) : (
+                  'None'
+                )}
+              </TimelineItem>
               <TimelineItem>
                 <HoverIcon />
               </TimelineItem>
@@ -103,6 +122,7 @@ const TimelineContainer = styled.table`
   display: block;
   border-spacing: 0;
   font-size: 1rem;
+  overflow-y: auto;
 `;
 
 const TimelineRow = styled.tr`
