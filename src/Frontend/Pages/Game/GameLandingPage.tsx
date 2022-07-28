@@ -48,7 +48,7 @@ import {
 } from '../../Components/GameLandingPageComponents';
 import { MythicLabelText } from '../../Components/Labels/MythicLabel';
 import { TextPreview } from '../../Components/TextPreview';
-import { TopLevelDivProvider, UIManagerProvider } from '../../Utils/AppHooks';
+import { TopLevelDivProvider, UIManagerProvider, useEthConnection } from '../../Utils/AppHooks';
 import { Incompatibility, unsupportedFeatures } from '../../Utils/BrowserChecks';
 import { TerminalTextStyle } from '../../Utils/TerminalTypes';
 import UIEmitter, { UIEmitterEvent } from '../../Utils/UIEmitter';
@@ -96,7 +96,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
   const [gameManager, setGameManager] = useState<GameManager | undefined>();
   const [terminalVisible, setTerminalVisible] = useState(true);
   const [initRenderState, setInitRenderState] = useState(InitRenderState.NONE);
-  const [ethConnection, setEthConnection] = useState<EthConnection | undefined>();
+  const ethConnection = useEthConnection();
   const [contractAddress, setContractAddress] = useState<EthAddress | undefined>(
     match.params.contract ? address(match.params.contract) : undefined
   );
@@ -110,15 +110,6 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
   const isLobby = contractAddress !== address(CONTRACT_ADDRESS);
   const CHUNK_SIZE = 5;
   const defaultAddress = address(CONTRACT_ADDRESS);
-
-  useEffect(() => {
-    getEthConnection()
-      .then((ethConnection) => setEthConnection(ethConnection))
-      .catch((e) => {
-        alert('error connecting to blockchain');
-        console.log(e);
-      });
-  }, []);
 
   const isProd = process.env.NODE_ENV === 'production';
 

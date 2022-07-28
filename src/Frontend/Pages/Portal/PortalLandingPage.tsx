@@ -1,10 +1,11 @@
-import { FAUCET_ADDRESS } from '@darkforest_eth/contracts';
+import { CONTRACT_ADDRESS, FAUCET_ADDRESS } from '@darkforest_eth/contracts';
 import { DFArenaFaucet } from '@darkforest_eth/contracts/typechain';
 import { EthConnection, ThrottledConcurrentQueue, weiToEth } from '@darkforest_eth/network';
 import { address } from '@darkforest_eth/serde';
 import { EthAddress } from '@darkforest_eth/types';
 import { utils, Wallet } from 'ethers';
 import React, { useEffect, useRef, useState } from 'react';
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import { active } from 'sortablejs';
 import {
   Account,
@@ -16,24 +17,32 @@ import {
   logOut,
 } from '../../../Backend/Network/AccountManager';
 import { getEthConnection, loadFaucetContract } from '../../../Backend/Network/Blockchain';
-import { requestFaucet } from '../../../Backend/Network/UtilityServerAPI';
+import { getAllTwitters, requestFaucet } from '../../../Backend/Network/UtilityServerAPI';
+import { AddressTwitterMap } from '../../../_types/darkforest/api/UtilityServerAPITypes';
 import { InitRenderState, TerminalWrapper } from '../../Components/GameLandingPageComponents';
 import { MythicLabelText } from '../../Components/Labels/MythicLabel';
 import { TextPreview } from '../../Components/TextPreview';
+import { AccountProvider, EthConnectionProvider, TwitterProvider } from '../../Utils/AppHooks';
+import { Incompatibility, unsupportedFeatures } from '../../Utils/BrowserChecks';
 import { TerminalTextStyle } from '../../Utils/TerminalTypes';
 import { Terminal, TerminalHandle } from '../../Views/Terminal';
+import { GameLandingPage } from '../Game/GameLandingPage';
 import LoadingPage from '../LoadingPage';
+import { CreateLobby } from '../Lobby/CreateLobby';
+import { NotFoundPage } from '../NotFoundPage';
+import { PortalPage } from './PortalPage';
 
+const defaultAddress = address(CONTRACT_ADDRESS);
 class PortalPageTerminal {
   private ethConnection: EthConnection;
   private terminal: TerminalHandle;
-  private accountSet: (account: EthAddress) => void;
+  private accountSet: (account: Account) => void;
   private balancesEth: number[];
 
   public constructor(
     ethConnection: EthConnection,
     terminal: TerminalHandle,
-    accountSet: (account: EthAddress) => void
+    accountSet: (account: Account) => void
   ) {
     this.ethConnection = ethConnection;
     this.terminal = terminal;
@@ -53,6 +62,38 @@ class PortalPageTerminal {
     this.balancesEth = balances.map(weiToEth);
   }
 
+  public async checkCompatibility() {
+    const issues = await unsupportedFeatures();
+
+    if (issues.includes(Incompatibility.MobileOrTablet)) {
+      this.terminal.println(
+        'ERROR: Mobile or tablet device detected. Please use desktop.',
+        TerminalTextStyle.Red
+      );
+    }
+
+    if (issues.includes(Incompatibility.NoIDB)) {
+      this.terminal.println(
+        'ERROR: IndexedDB not found. Try using a different browser.',
+        TerminalTextStyle.Red
+      );
+    }
+
+    if (issues.includes(Incompatibility.UnsupportedBrowser)) {
+      this.terminal.println(
+        'ERROR: Browser unsupported. Try Brave, Firefox, or Chrome.',
+        TerminalTextStyle.Red
+      );
+    }
+
+    if (issues.length > 0) {
+      this.terminal.print(`${issues.length.toString()} errors found. `, TerminalTextStyle.Red);
+      this.terminal.println('Please resolve them and refresh the page.');
+      return;
+    } else {
+      await this.chooseAccount();
+    }
+  }
   public async chooseAccount() {
     this.terminal.printElement(<MythicLabelText text='Welcome to Dark Forest Arena' />);
     this.terminal.newline();
@@ -186,9 +227,9 @@ class PortalPageTerminal {
       await this.drip(account.address);
       await this.ethConnection.setAccount(account.privateKey);
       setActive(account);
-      this.accountSet(account.address);
+      this.accountSet(account);
     } catch (e) {
-      console.log('set account aborted')
+      console.log('set account aborted');
       console.log(e);
       await this.chooseAccount();
     }
@@ -245,43 +286,98 @@ export async function sendDrip(connection: EthConnection, address: EthAddress) {
   }
 }
 
-export function PortalLandingPage({
-  onReady,
-  connection,
-}: {
-  onReady: (connection: EthConnection) => void;
-  connection: EthConnection;
-}) {
+type LoadingStatus = 'loading' | 'creating' | 'complete';
+export function PortalLandingPage() {
   const terminal = useRef<TerminalHandle>();
+
+  const [loadingStatus, setLoadingStatus] = useState<LoadingStatus>('loading');
   const [controller, setController] = useState<PortalPageTerminal | undefined>();
 
+  const [twitters, setTwitters] = useState<AddressTwitterMap | undefined>();
+  const [connection, setConnection] = useState<EthConnection | undefined>();
+
+  /* get all twitters on page load*/
   useEffect(() => {
+    getAllTwitters().then((t) => setTwitters(t));
+  }, []);
+
+  /* set connection on page load*/
+  useEffect(() => {
+    async function getConnection() {
+      try {
+        const connection = await getEthConnection();
+        setConnection(connection);
+      } catch (e) {
+        alert('error connecting to blockchain');
+        console.log(e);
+      }
+    }
+    getConnection();
+  }, []);
+
+  /* once connection is set, get active player from local storage and set account */
+  useEffect(() => {
+    async function setPlayer(ethConnection: EthConnection) {
+      const active = getActive();
+      try {
+        if (!!active) {
+          await sendDrip(ethConnection, active.address);
+          await ethConnection.setAccount(active.privateKey);
+          setLoadingStatus('complete');
+        } else {
+          setLoadingStatus('creating');
+        }
+      } catch (e) {
+        alert('Unable to connect to active account. Please login into another.');
+        logOut();
+      }
+    }
+    if (connection) {
+      setPlayer(connection);
+    }
+  }, [connection]);
+
+  useEffect(() => {
+    console.log(!!controller, !!connection, !!terminal.current);
     if (!controller && connection && terminal.current) {
       const newController = new PortalPageTerminal(
         connection,
         terminal.current,
-        (account: EthAddress) => {
-          if (connection) {
-            onReady(connection);
-          } else {
-            alert('Unable to make a connection to blockchain');
-          }
+        async (account: Account) => {
+          await connection.setAccount(account.privateKey);
+          setLoadingStatus('complete');
         }
       );
       newController.chooseAccount();
       setController(newController);
     }
-  }, [terminal, connection, controller, onReady]);
+  }, [terminal, connection, controller, loadingStatus]);
 
-  return (
-    <>
-      {connection ? (
-        <TerminalWrapper initRender={InitRenderState.NONE} terminalEnabled={false}>
-          <Terminal ref={terminal} promptCharacter={'$'} />
-        </TerminalWrapper>
-      ) : (
-        <LoadingPage />
-      )}
-    </>
-  );
+  if (!connection || !twitters || loadingStatus == 'loading') {
+    return <LoadingPage />;
+  } else if (loadingStatus == 'creating') {
+    return (
+      <TerminalWrapper initRender={InitRenderState.NONE} terminalEnabled={false}>
+        {loadingStatus}
+        <Terminal ref={terminal} promptCharacter={'$'} />
+      </TerminalWrapper>
+    );
+  } else
+    return (
+      <EthConnectionProvider value={connection}>
+        <TwitterProvider value={twitters}>
+          <Router>
+            <Switch>
+              <Redirect path='/play' to={`/play/${defaultAddress}`} push={true} exact={true} />
+              <Route path='/play/:contract' component={GameLandingPage} />
+              <Redirect path='/portal' to={`/portal/map`} push={true} exact={true} />
+              <Route path='/portal/map' component={PortalPage} />
+              <Redirect path='/arena' to={`/arena/${defaultAddress}`} push={true} exact={true} />
+              <Route path='/arena/:contract' component={CreateLobby} />
+              <Route path='*' component={NotFoundPage} />
+            </Switch>
+          </Router>
+        </TwitterProvider>
+      </EthConnectionProvider>
+    );
 }

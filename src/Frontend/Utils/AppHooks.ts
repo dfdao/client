@@ -1,4 +1,5 @@
 import { getActivatedArtifact, isActivated } from '@darkforest_eth/gamelogic';
+import { EthConnection } from '@darkforest_eth/network';
 import {
   Artifact,
   ArtifactId,
@@ -13,6 +14,7 @@ import {
 } from '@darkforest_eth/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import GameUIManager from '../../Backend/GameLogic/GameUIManager';
+import { Account } from '../../Backend/Network/AccountManager';
 import { loadArenaLeaderboard } from '../../Backend/Network/ArenaLeaderboardApi';
 import { GraphConfigPlayer, loadEloLeaderboard } from '../../Backend/Network/EloLeaderboardApi';
 import { loadLeaderboard } from '../../Backend/Network/LeaderboardApi';
@@ -24,6 +26,12 @@ import { ModalHandle } from '../Views/Game/ModalPane';
 import { createDefinedContext } from './createDefinedContext';
 import { useEmitterSubscribe, useEmitterValue, useWrappedEmitter } from './EmitterHooks';
 import { usePoll } from './Hooks';
+
+export const { useDefinedContext: useEthConnection, provider: EthConnectionProvider } =
+  createDefinedContext<EthConnection>();
+
+export const { useDefinedContext: useAccount, provider: AccountProvider } =
+  createDefinedContext<Account>();
 
 export const { useDefinedContext: useUIManager, provider: UIManagerProvider } =
   createDefinedContext<GameUIManager>();
@@ -271,7 +279,6 @@ export function useEloLeaderboard(
   return { eloLeaderboard, eloError };
 }
 
-
 export function useLiveMatches(
   config: string | undefined = undefined,
   poll: number | undefined = undefined
@@ -374,5 +381,3 @@ export function useGameover() {
   const ui = useUIManager();
   return useEmitterValue(ui.getGameover$(), ui.getGameover());
 }
-
-
