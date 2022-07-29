@@ -1,11 +1,10 @@
-import { EMPTY_ADDRESS } from '@darkforest_eth/constants';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { loadRecentMaps, MapInfo } from '../../../Backend/Network/MapsApi';
 import { Spacer } from '../../Components/CoreUI';
-import { competitiveConfig } from '../../Utils/constants';
+import { competitiveConfig, tutorialConfig } from '../../Utils/constants';
 import { MapGridDetail } from './Components/MapGridDetail';
-import { OfficialGameBanner } from './Components/OfficialGameBanner';
+import { OfficialGameBanner, TutorialBanner } from './Components/Banners';
 
 export const PortalHomeView: React.FC<{}> = () => {
   const [portalMaps, setPortalMaps] = useState<MapInfo[]>([]);
@@ -32,7 +31,11 @@ export const PortalHomeView: React.FC<{}> = () => {
         Play our official map, discover community-created matches, or view data about other players.
       </span>
 
-      <OfficialGameBanner configHash={competitiveConfig} />
+      <BannersContainer>
+        <OfficialGameBanner configHash={competitiveConfig} />
+        <TutorialBanner configHash={tutorialConfig} />
+      </BannersContainer>
+      
       <Spacer height={24} />
       <span style={{ fontSize: '1rem' }}>Explore Community Maps</span>
       <MoreMapsContainer>
@@ -58,6 +61,11 @@ const Container = styled.div`
   overflow-y: auto;
   height: 100%;
   overflow: hidden;
+`;
+
+const BannersContainer = styled.div`
+  display: flex;
+  gap: 10px;
 `;
 
 // TODO: Replace this with LobbyButton when #68 is merged
