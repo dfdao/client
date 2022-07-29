@@ -1,10 +1,7 @@
-import { EMPTY_ADDRESS } from '@darkforest_eth/constants';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { loadRecentMaps, MapInfo } from '../../../Backend/Network/MapsApi';
-import { Spacer } from '../../Components/CoreUI';
-import { competitiveConfig } from '../../Utils/constants';
-import { MapGridDetail } from './Components/MapGridDetail';
+import { competitiveConfig, tutorialConfig } from '../../Utils/constants';
 import { OfficialGameBanner } from './Components/OfficialGameBanner';
 
 export const PortalHomeView: React.FC<{}> = () => {
@@ -30,33 +27,15 @@ export const PortalHomeView: React.FC<{}> = () => {
     <Container>
       <Content>
         <span style={{ fontSize: '3em', gridColumn: '1/7' }}>Welcome to Dark Forest Arena!</span>
-        <OfficialGameBanner configHash={competitiveConfig} style={{ gridColumn: '1 / 4' }} />
-        <OfficialGameBanner configHash={competitiveConfig} style={{ gridColumn: '4 / 7' }} />
         <OfficialGameBanner
-          configHash={competitiveConfig}
-          style={{ gridColumn: '1 / 3', gridRow: '3 /4' }}
-        />
-        <OfficialGameBanner
-          configHash={competitiveConfig}
-          style={{ gridColumn: '3 / 5', gridRow: '3/4' }}
-        />
-        <OfficialGameBanner
-          configHash={competitiveConfig}
-          style={{ gridColumn: '5 / 7', gridRow: '3/4' }}
+          title='Play Galactic League'
+          description='Race the clock to finish fastest!'
+          disabled
+          style={{ gridColumn: '1 / 4' }}
+          link={`/portal/map/${competitiveConfig}`}
+          imageUrl='/public/img/deathstar.png'
         />
       </Content>
-      {/* <MoreMapsContainer>
-        <MoreGrid>
-          {portalMaps.map((m, i) => (
-            <MapGridDetail
-              configHash={m.configHash}
-              creator={m.creator}
-              lobbyAddress={m.lobbyAddress ?? undefined}
-              key={i}
-            />
-          ))}
-        </MoreGrid>
-      </MoreMapsContainer> */}
     </Container>
   );
 };
@@ -78,6 +57,11 @@ const Content = styled.div`
   height: 100%;
   width: 100%;
 `;
+const BannersContainer = styled.div`
+  display: flex;
+  gap: 10px;
+`;
+
 // TODO: Replace this with LobbyButton when #68 is merged
 export const ArenaPortalButton = styled.button<{ secondary?: boolean }>`
   padding: 8px 16px;

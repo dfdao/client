@@ -13,73 +13,31 @@ import {
 import { loadRecentMaps } from '../../../../Backend/Network/MapsApi';
 
 export const OfficialGameBanner: React.FC<{
-  configHash: string;
+  title?: string;
+  description?: string;
+  disabled?: boolean;
+  link: string;
+  imageUrl: string;
   style?: React.CSSProperties;
-}> = ({ configHash, style }) => {
-  const [leaderboardError, setLeaderboardError] = useState<Error | undefined>();
-  const [eloLeaderboard, setEloLeaderboard] = useState<GraphConfigPlayer[] | undefined>();
-  const [lobbyAddress, setLobbyAddress] = useState<EthAddress | undefined>();
-
+}> = ({ title, description, disabled = false, link, imageUrl, style }) => {
   const history = useHistory();
-
-  useEffect(() => {
-    setEloLeaderboard(undefined);
-    loadEloLeaderboard(configHash)
-      .then((board) => {
-        setLeaderboardError(undefined);
-        setEloLeaderboard(board);
-      })
-      .catch((e) => setLeaderboardError(e));
-    loadRecentMaps(1, configHash).then((maps) => {
-      setLobbyAddress(maps && maps.length > 0 ? maps[0].lobbyAddress : undefined);
-    });
-  }, [configHash]);
-
   return (
-    <>
-      {lobbyAddress && (
-        <Banner
-          style={style}
-          onClick={() => {
-            history.push(`/portal/map/${configHash}`);
-          }}
-        >
-          <PrettyOverlayGradient src={'/public/img/deathstar.png'} />
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <BannerTitle>Play Galactic League</BannerTitle>
-            {/* <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Link
-                style={{ minWidth: '250px' }}
-                target='blank'
-                to={`/play/${lobbyAddress}?create=true`}
-              >
-                <ArenaPortalButton>Create Game</ArenaPortalButton>
-              </Link>
-              <Link to={`/portal/map/${configHash}`}>
-                <ArenaPortalButton secondary>Join Game</ArenaPortalButton>
-              </Link>
-            </div> */}
-          </div>
-          {/* {eloLeaderboard && (
-            <div
-              style={{
-                textAlign: 'center',
-                borderLeft: `solid 1px ${dfstyles.colors.subbertext}`,
-                height: '100%',
-                padding: '20px 0px',
-              }}
-            >
-              Top Players
-              <EloLeaderboardDisplay
-                leaderboard={eloLeaderboard}
-                error={leaderboardError}
-                totalPlayers={false}
-              />
-            </div>
-          )} */}
-        </Banner>
+    <Banner
+      disabled={disabled}
+      style={style}
+      onClick={() => {
+        history.push(link);
+      }}
+    >
+      <PrettyOverlayGradient src={imageUrl} />
+      {title && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <BannerTitleContainer>
+            <Title>{title}</Title> <span>{description}</span>{' '}
+          </BannerTitleContainer>
+        </div>
       )}
-    </>
+    </Banner>
   );
 };
 
@@ -94,9 +52,15 @@ const Banner = styled.button`
   border: solid 1px ${dfstyles.colors.border};
 `;
 
-const BannerTitle = styled.span`
-  font-size: 1.5rem;
+const Title = styled.span`
   text-transform: uppercase;
+  font-size: 1.5rem;
+`;
+
+const BannerTitleContainer = styled.span`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   letter-spacing: 0.06em;
   position: absolute;
   bottom: 0;
