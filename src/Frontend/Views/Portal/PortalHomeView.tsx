@@ -24,49 +24,49 @@ export const PortalHomeView: React.FC<{}> = () => {
   }, []);
 
   return (
-    <Content>
-      <span style={{ fontSize: '3em', gridColumn: '1/7' }}>Welcome to Dark Forest Arena!</span>
-      <OfficialGameBanner
-        title='Play Galactic League'
-        description='Race the clock to finish fastest!'
-        disabled
-        style={{ gridColumn: '1 / 4' }}
-        link={`/portal/map/${competitiveConfig}`}
-        imageUrl='/public/img/deathstar.png'
-      />
-      <OfficialGameBanner
-        title='Find a match'
-        description='Use on-chain matchmaking to join a game'
-        disabled
-        style={{ gridColumn: '4 / 7' }}
-        link={`/portal/map/${competitiveConfig}`}
-        imageUrl='/public/img/deathstar.png'
-      />
-      <OfficialGameBanner
-        title='Tutorial'
-        description='Learn to play'
-        disabled
-        style={{ gridColumn: '1 / 3', gridRow: '3/4' }}
-        link={`/portal/map/${tutorialConfig}`}
-        imageUrl='/public/img/tutorial-banner.png'
-      />
-      <OfficialGameBanner
-        title='Create a map'
-        description='Design the Dark Forest round of your dreams'
-        disabled
-        style={{ gridColumn: '3 / 5', gridRow: '3/4' }}
-        link={`/arena`}
-        imageUrl='/public/img/deathstar.png'
-      />
-      <OfficialGameBanner
-        title='Community Maps'
-        description='Explore maps created by other players'
-        disabled
-        style={{ gridColumn: '5 / 7', gridRow: '3/4' }}
-        link={`/portal/map/${competitiveConfig}`}
-        imageUrl='/public/img/deathstar.png'
-      />
-    </Content>
+    <Container>
+      <Content>
+        <span style={{ fontSize: '3em', gridColumn: '1/7' }}>Welcome to Dark Forest Arena!</span>
+        <OfficialGameBanner
+          title='Play Galactic League'
+          description='Race the clock to finish fastest!'
+          style={{ gridColumn: '1 / 4' }}
+          link={`/portal/map/${competitiveConfig}`}
+          imageUrl='/public/img/deathstar.png'
+        />
+        <OfficialGameBanner
+          title='Find a match (IP)'
+          description='Use on-chain matchmaking to join a game'
+          disabled
+          style={{ gridColumn: '4 / 7' }}
+          link={`/portal/map/${competitiveConfig}`}
+          imageUrl='/public/img/deathstar.png'
+        />
+        <OfficialGameBanner
+          title='Tutorial (IP)'
+          description='Learn to play'
+          disabled
+          style={{ gridColumn: '1 / 3', gridRow: '3/4' }}
+          link={`/portal/map/${tutorialConfig}`}
+          imageUrl='/public/img/tutorial-banner.png'
+        />
+        <OfficialGameBanner
+          title='Create a map'
+          description='Design the round of your dreams'
+          style={{ gridColumn: '3 / 5', gridRow: '3/4' }}
+          link={`/arena`}
+          imageUrl='/public/img/deathstar.png'
+        />
+        <OfficialGameBanner
+          title='Community Maps (IP)'
+          description='Explore maps created by others'
+          disabled
+          style={{ gridColumn: '5 / 7', gridRow: '3/4' }}
+          link={`/portal/map/${competitiveConfig}`}
+          imageUrl='/public/img/deathstar.png'
+        />
+      </Content>
+    </Container>
   );
 };
 const Content = styled.div`
@@ -78,11 +78,14 @@ const Content = styled.div`
   grid-gap: 16px;
   padding: 24px;
   height: 100%;
-  width: 100%;
+  width: 70%;
 `;
-const BannersContainer = styled.div`
+const Container = styled.div`
   display: flex;
   gap: 10px;
+  width: 100%;
+  justify-content: center;
+  height: calc(100vh - 56px);
 `;
 
 // TODO: Replace this with LobbyButton when #68 is merged
