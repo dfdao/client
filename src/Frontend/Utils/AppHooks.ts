@@ -298,7 +298,6 @@ export function useConfigFromHash(configHash?: string) {
             setConfig(undefined);
             return;
           }
-          console.log(c);
           setConfig(c.config);
           setLobbyAddress(address(c.address));
         })

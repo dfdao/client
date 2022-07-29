@@ -3,9 +3,11 @@ import styled from 'styled-components';
 import { competitiveConfig, tutorialConfig } from '../../Utils/constants';
 import { loadRecentMaps, MapInfo } from '../../../Backend/Network/GraphApi/MapsApi';
 import { OfficialGameBanner } from './Components/OfficialGameBanner';
+import { useConfigFromHash } from '../../Utils/AppHooks';
 
 export const PortalHomeView: React.FC<{}> = () => {
   const [portalMaps, setPortalMaps] = useState<MapInfo[]>([]);
+  const { lobbyAddress: tutorialLobbyAddress } = useConfigFromHash(tutorialConfig)
 
   useEffect(() => {
     loadRecentMaps(10)
@@ -47,7 +49,7 @@ export const PortalHomeView: React.FC<{}> = () => {
         description='Learn to play'
         disabled
         style={{ gridColumn: '1 / 3', gridRow: '3/4' }}
-        link={`/portal/map/${tutorialConfig}`}
+        link={`/play/${tutorialLobbyAddress}?create=true`}
         imageUrl='/public/img/tutorial-banner.png'
       />
       <OfficialGameBanner
