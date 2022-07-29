@@ -4,21 +4,19 @@ import { generateMinimapConfig, MinimapConfig } from '../../../Panes/Lobby/Minim
 import { debounce } from 'lodash';
 import styled from 'styled-components';
 import { Link, useHistory } from 'react-router-dom';
-import { LobbyInitializers } from '../../../Panes/Lobby/Reducer';
 import { LoadingSpinner } from '../../../Components/LoadingSpinner';
 import { Minimap } from '../../../Components/Minimap';
 import { getConfigName } from '@darkforest_eth/procedural';
-import { loadConfigFromHash } from '../../../../Backend/Network/ConfigApi';
 import { truncateAddress } from '../PortalUtils';
 import { Spacer } from '../../../Components/CoreUI';
+import { useConfigFromHash } from '../../../Utils/AppHooks';
 
 export const MapGridDetail: React.FC<{
   configHash: string;
   creator: EthAddress;
   lobbyAddress?: EthAddress;
 }> = ({ configHash, creator, lobbyAddress }) => {
-  const [error, setError] = useState<boolean>(false);
-  const [config, setConfig] = useState<LobbyInitializers | undefined>();
+  const {config, error} = useConfigFromHash(configHash);
   const [minimapConfig, setMinimapConfig] = useState<MinimapConfig | undefined>();
 
   const onMapChange = useMemo(() => {
@@ -34,21 +32,6 @@ export const MapGridDetail: React.FC<{
   }, [config, onMapChange]);
 
   const history = useHistory();
-
-  useEffect(() => {
-    loadConfigFromHash(configHash)
-      .then((c) => {
-        if (!c) {
-          setConfig(undefined);
-          return;
-        }
-        setConfig(c.config);
-      })
-      .catch((e) => {
-        setError(true);
-        console.log(e);
-      });
-  }, [configHash]);
 
   return (
     <DetailContainer onClick={() => history.push(`/portal/map/${configHash}`)}>

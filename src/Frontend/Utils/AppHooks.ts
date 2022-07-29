@@ -1,4 +1,5 @@
 import { getActivatedArtifact, isActivated } from '@darkforest_eth/gamelogic';
+import { address } from '@darkforest_eth/serde';
 import {
   Artifact,
   ArtifactId,
@@ -14,12 +15,14 @@ import {
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import GameUIManager from '../../Backend/GameLogic/GameUIManager';
 import { loadArenaLeaderboard } from '../../Backend/Network/ArenaLeaderboardApi';
+import { loadConfigFromHash } from '../../Backend/Network/ConfigApi';
 import { GraphConfigPlayer, loadEloLeaderboard } from '../../Backend/Network/EloLeaderboardApi';
 import { loadLeaderboard } from '../../Backend/Network/LeaderboardApi';
 import { loadLiveMatches } from '../../Backend/Network/SpyApi';
 import { Wrapper } from '../../Backend/Utils/Wrapper';
 import { ContractsAPIEvent } from '../../_types/darkforest/api/ContractsAPITypes';
 import { AddressTwitterMap } from '../../_types/darkforest/api/UtilityServerAPITypes';
+import { LobbyInitializers } from '../Panes/Lobby/Reducer';
 import { ModalHandle } from '../Views/Game/ModalPane';
 import { createDefinedContext } from './createDefinedContext';
 import { useEmitterSubscribe, useEmitterValue, useWrappedEmitter } from './EmitterHooks';
@@ -271,6 +274,32 @@ export function useEloLeaderboard(
   return { eloLeaderboard, eloError };
 }
 
+export function useConfigFromHash(configHash?: string) {
+  const [config, setConfig] = useState<LobbyInitializers | undefined>();
+  const [lobbyAddress, setLobbyAddress] = useState<EthAddress | undefined>();
+  const [error, setError] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (configHash) {
+      loadConfigFromHash(configHash)
+        .then((c) => {
+          if (!c) {
+            setConfig(undefined);
+            return;
+          }
+          console.log(c);
+          setConfig(c.config);
+          setLobbyAddress(address(c.address));
+        })
+        .catch((e) => {
+          setError(true);
+          console.log(e);
+        });
+    }
+  }, [configHash]);
+
+  return { config, lobbyAddress, error };
+}
 
 export function useLiveMatches(
   config: string | undefined = undefined,
@@ -374,5 +403,3 @@ export function useGameover() {
   const ui = useUIManager();
   return useEmitterValue(ui.getGameover$(), ui.getGameover());
 }
-
-
