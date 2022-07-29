@@ -14,7 +14,8 @@ import { loadRecentMaps } from '../../../../Backend/Network/MapsApi';
 
 export const OfficialGameBanner: React.FC<{
   configHash: string;
-}> = ({ configHash }) => {
+  style?: React.CSSProperties;
+}> = ({ configHash, style }) => {
   const [leaderboardError, setLeaderboardError] = useState<Error | undefined>();
   const [eloLeaderboard, setEloLeaderboard] = useState<GraphConfigPlayer[] | undefined>();
   const [lobbyAddress, setLobbyAddress] = useState<EthAddress | undefined>();
@@ -37,7 +38,12 @@ export const OfficialGameBanner: React.FC<{
   return (
     <>
       {lobbyAddress && (
-        <Banner onClick = {() => {history.push(`/portal/map/${configHash}`)}}>
+        <Banner
+          style={style}
+          onClick={() => {
+            history.push(`/portal/map/${configHash}`);
+          }}
+        >
           <PrettyOverlayGradient src={'/public/img/deathstar.png'} />
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <BannerTitle>Play Galactic League</BannerTitle>
@@ -78,26 +84,14 @@ export const OfficialGameBanner: React.FC<{
 };
 
 const Banner = styled.button`
-position: relative;
-  width: 100%:
+  position: relative;
+  width: 100%;
   height: 100%;
   background: #000;
   color: #fff;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
   padding: 1rem;
   border-radius: 6px;
-  min-height: 270px;
-  max-height: 25vh;
-  overflow: hidden;
-  width: min(1000px, calc(70% + 100px));
-  margin: 10px;
-  align-self: center;
-  gap: 10px;
-  flex-direction: column;
   border: solid 1px ${dfstyles.colors.border};
-
 `;
 
 const BannerTitle = styled.span`

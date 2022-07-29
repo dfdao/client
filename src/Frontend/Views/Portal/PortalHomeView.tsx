@@ -15,7 +15,8 @@ export const PortalHomeView: React.FC<{}> = () => {
       .then((maps) => {
         if (!maps) return;
         const uniqueMaps = maps.filter(
-          (m, i) => m.configHash !== '0x00' && maps.findIndex((m2) => m2.configHash == m.configHash) == i
+          (m, i) =>
+            m.configHash !== '0x00' && maps.findIndex((m2) => m2.configHash == m.configHash) == i
         );
         setPortalMaps(uniqueMaps);
       })
@@ -27,15 +28,24 @@ export const PortalHomeView: React.FC<{}> = () => {
 
   return (
     <Container>
-      <span style = {{fontSize: '3em'}}>Welcome to Dark Forest Arena!</span>
-      <span style = {{fontSize: '1.5em'}}>
-        Play our official map, discover community-created matches, or view data about other players.
-      </span>
-
-      <OfficialGameBanner configHash={competitiveConfig} />
-      <Spacer height={24} />
-      <span style={{ fontSize: '1rem' }}>Explore Community Maps</span>
-      <MoreMapsContainer>
+      <Content>
+        <span style={{ fontSize: '3em', gridColumn: '1/7' }}>Welcome to Dark Forest Arena!</span>
+        <OfficialGameBanner configHash={competitiveConfig} style={{ gridColumn: '1 / 4' }} />
+        <OfficialGameBanner configHash={competitiveConfig} style={{ gridColumn: '4 / 7' }} />
+        <OfficialGameBanner
+          configHash={competitiveConfig}
+          style={{ gridColumn: '1 / 3', gridRow: '3 /4' }}
+        />
+        <OfficialGameBanner
+          configHash={competitiveConfig}
+          style={{ gridColumn: '3 / 5', gridRow: '3/4' }}
+        />
+        <OfficialGameBanner
+          configHash={competitiveConfig}
+          style={{ gridColumn: '5 / 7', gridRow: '3/4' }}
+        />
+      </Content>
+      {/* <MoreMapsContainer>
         <MoreGrid>
           {portalMaps.map((m, i) => (
             <MapGridDetail
@@ -46,20 +56,28 @@ export const PortalHomeView: React.FC<{}> = () => {
             />
           ))}
         </MoreGrid>
-      </MoreMapsContainer>
+      </MoreMapsContainer> */}
     </Container>
   );
 };
 
 const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin: 1rem;
   overflow-y: auto;
   height: 100%;
-  overflow: hidden;
 `;
 
+const Content = styled.div`
+  display: grid;
+  overflow-y: auto;
+  height: 100%;
+
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: 50px repeat(2, calc(50% - 40px));
+  grid-gap: 16px;
+  padding: 24px;
+  height: 100%;
+  width: 100%;
+`;
 // TODO: Replace this with LobbyButton when #68 is merged
 export const ArenaPortalButton = styled.button<{ secondary?: boolean }>`
   padding: 8px 16px;
