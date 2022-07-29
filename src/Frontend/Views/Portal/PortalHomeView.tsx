@@ -24,34 +24,57 @@ export const PortalHomeView: React.FC<{}> = () => {
   }, []);
 
   return (
-    <Container>
-      <Content>
-        <span style={{ fontSize: '3em', gridColumn: '1/7' }}>Welcome to Dark Forest Arena!</span>
-        <OfficialGameBanner
-          title='Play Galactic League'
-          description='Race the clock to finish fastest!'
-          disabled
-          style={{ gridColumn: '1 / 4' }}
-          link={`/portal/map/${competitiveConfig}`}
-          imageUrl='/public/img/deathstar.png'
-        />
-      </Content>
-    </Container>
+    <Content>
+      <span style={{ fontSize: '3em', gridColumn: '1/7' }}>Welcome to Dark Forest Arena!</span>
+      <OfficialGameBanner
+        title='Play Galactic League'
+        description='Race the clock to finish fastest!'
+        disabled
+        style={{ gridColumn: '1 / 4' }}
+        link={`/portal/map/${competitiveConfig}`}
+        imageUrl='/public/img/deathstar.png'
+      />
+      <OfficialGameBanner
+        title='Find a match'
+        description='Use on-chain matchmaking to join a game'
+        disabled
+        style={{ gridColumn: '4 / 7' }}
+        link={`/portal/map/${competitiveConfig}`}
+        imageUrl='/public/img/deathstar.png'
+      />
+      <OfficialGameBanner
+        title='Tutorial'
+        description='Learn to play'
+        disabled
+        style={{ gridColumn: '1 / 3', gridRow: '3/4' }}
+        link={`/portal/map/${tutorialConfig}`}
+        imageUrl='/public/img/tutorial-banner.png'
+      />
+      <OfficialGameBanner
+        title='Create a map'
+        description='Design the Dark Forest round of your dreams'
+        disabled
+        style={{ gridColumn: '3 / 5', gridRow: '3/4' }}
+        link={`/arena`}
+        imageUrl='/public/img/deathstar.png'
+      />
+      <OfficialGameBanner
+        title='Community Maps'
+        description='Explore maps created by other players'
+        disabled
+        style={{ gridColumn: '5 / 7', gridRow: '3/4' }}
+        link={`/portal/map/${competitiveConfig}`}
+        imageUrl='/public/img/deathstar.png'
+      />
+    </Content>
   );
 };
-
-const Container = styled.div`
-  overflow-y: auto;
-  height: 100%;
-`;
-
 const Content = styled.div`
   display: grid;
-  overflow-y: auto;
   height: 100%;
-
+  overflow: hidden;
   grid-template-columns: repeat(6, 1fr);
-  grid-template-rows: 50px repeat(2, calc(50% - 40px));
+  grid-template-rows: 50px calc(60% - 40px) calc(40% - 40px);
   grid-gap: 16px;
   padding: 24px;
   height: 100%;
@@ -66,8 +89,6 @@ const BannersContainer = styled.div`
 export const ArenaPortalButton = styled.button<{ secondary?: boolean }>`
   padding: 8px 16px;
   border-radius: 3px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   border: ${({ secondary }) => (!secondary ? '2px solid #2EE7BA' : '1px solid #5F5F5F')};

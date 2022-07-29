@@ -29,11 +29,9 @@ export const OfficialGameBanner: React.FC<{
     >
       <PrettyOverlayGradient src={imageUrl} />
       {title && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <BannerTitleContainer>
-            <Title>{title}</Title> <span>{description}</span>{' '}
-          </BannerTitleContainer>
-        </div>
+        <BannerTitleContainer>
+          <Title>{title}</Title> <span>{description}</span>{' '}
+        </BannerTitleContainer>
       )}
     </Banner>
   );
@@ -56,6 +54,7 @@ const Title = styled.span`
 `;
 
 const BannerTitleContainer = styled.span`
+  text-align: left;
   display: flex;
   flex-direction: column;
   gap: 8px;

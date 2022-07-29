@@ -30,38 +30,38 @@ export function PortalMainView() {
 
   useEffect(() => {
     async function handleSearch() {
-      if (input.length > 0) {
-        let results: DropdownItem[] = [];
-        const lower = input.trim().toLowerCase();
-        // check twitters
-        const foundTwitter = Object.entries(twitters).find((t) => t[1] == lower);
-        if (foundTwitter) {
-          results.push({
-            label: `Twitter -${foundTwitter[0]}`,
-            action: () => history.push(`/portal/account/${foundTwitter[0]}`),
-          });
-        }
-        // check config hashes
-        const configHashes = await loadRecentMaps(1, lower, undefined);
-        if (configHashes && configHashes.length > 0) {
-          results.push({
-            label: `Map - ${truncateString(configHashes[0].configHash, 8)}`,
-            action: () => history.push(`/portal/map/${configHashes[0].configHash}`),
-          });
-        }
-        // check accounts
-        const accounts = await loadAccountData(lower as EthAddress);
-        if (accounts) {
-          results.push({
-            label: `Address - ${truncateAddress(lower as EthAddress)}`,
-            action: () => history.push(`/portal/account/${lower}`),
-          });
-        }
-        if (results.length > 0) {
-          setResults(results);
-        } else {
-          setResults([{ label: 'No results found.', action: () => {} }]);
-        }
+      if (input.length == 0) {
+        setResults([{ label: 'No results found.', action: () => {} }]);
+        return;
+      }
+      let results: DropdownItem[] = [];
+      const lower = input.trim().toLowerCase();
+      // check twitters
+      const foundTwitter = Object.entries(twitters).find((t) => t[1] == lower);
+      if (foundTwitter) {
+        results.push({
+          label: `Twitter -${foundTwitter[0]}`,
+          action: () => history.push(`/portal/account/${foundTwitter[0]}`),
+        });
+      }
+      // check config hashes
+      const configHashes = await loadRecentMaps(1, lower, undefined);
+      if (configHashes && configHashes.length > 0) {
+        results.push({
+          label: `Map - ${truncateString(configHashes[0].configHash, 8)}`,
+          action: () => history.push(`/portal/map/${configHashes[0].configHash}`),
+        });
+      }
+      // check accounts
+      const accounts = await loadAccountData(lower as EthAddress);
+      if (accounts) {
+        results.push({
+          label: `Address - ${truncateAddress(lower as EthAddress)}`,
+          action: () => history.push(`/portal/account/${lower}`),
+        });
+      }
+      if (results.length > 0) {
+        setResults(results);
       } else {
         setResults([{ label: 'No results found.', action: () => {} }]);
       }
@@ -112,13 +112,6 @@ export function PortalMainView() {
             </InputContainer>
           </TitleContainer>
           <TitleContainer>
-            {/* <Button
-              onClick={() => {
-                setHelpOpen(true);
-              }}
-            >
-              <Icon type={IconType.Help} />
-            </Button> */}
             <Account />
           </TitleContainer>
         </TopBar>
