@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { loadRecentMaps, MapInfo } from '../../../Backend/Network/MapsApi';
 import { competitiveConfig, tutorialConfig } from '../../Utils/constants';
+import { loadRecentMaps, MapInfo } from '../../../Backend/Network/GraphApi/MapsApi';
 import { OfficialGameBanner } from './Components/OfficialGameBanner';
 
 export const PortalHomeView: React.FC<{}> = () => {
