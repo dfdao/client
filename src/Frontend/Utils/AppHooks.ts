@@ -1,5 +1,6 @@
 import { getActivatedArtifact, isActivated } from '@darkforest_eth/gamelogic';
 import { address } from '@darkforest_eth/serde';
+import { EthConnection } from '@darkforest_eth/network';
 import {
   Artifact,
   ArtifactId,
@@ -14,11 +15,15 @@ import {
 } from '@darkforest_eth/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import GameUIManager from '../../Backend/GameLogic/GameUIManager';
-import { loadArenaLeaderboard } from '../../Backend/Network/ArenaLeaderboardApi';
-import { loadConfigFromHash } from '../../Backend/Network/ConfigApi';
-import { GraphConfigPlayer, loadEloLeaderboard } from '../../Backend/Network/EloLeaderboardApi';
-import { loadLeaderboard } from '../../Backend/Network/LeaderboardApi';
-import { loadLiveMatches } from '../../Backend/Network/SpyApi';
+import { loadConfigFromHash } from '../../Backend/Network/GraphApi/ConfigApi';
+import { Account } from '../../Backend/Network/AccountManager';
+import { loadArenaLeaderboard } from '../../Backend/Network/GraphApi/ArenaLeaderboardApi';
+import {
+  GraphConfigPlayer,
+  loadEloLeaderboard,
+} from '../../Backend/Network/GraphApi/EloLeaderboardApi';
+import { loadLeaderboard } from '../../Backend/Network/GraphApi/LeaderboardApi';
+import { loadLiveMatches } from '../../Backend/Network/GraphApi/SpyApi';
 import { Wrapper } from '../../Backend/Utils/Wrapper';
 import { ContractsAPIEvent } from '../../_types/darkforest/api/ContractsAPITypes';
 import { AddressTwitterMap } from '../../_types/darkforest/api/UtilityServerAPITypes';
@@ -27,6 +32,12 @@ import { ModalHandle } from '../Views/Game/ModalPane';
 import { createDefinedContext } from './createDefinedContext';
 import { useEmitterSubscribe, useEmitterValue, useWrappedEmitter } from './EmitterHooks';
 import { usePoll } from './Hooks';
+
+export const { useDefinedContext: useEthConnection, provider: EthConnectionProvider } =
+  createDefinedContext<EthConnection>();
+
+export const { useDefinedContext: useAccount, provider: AccountProvider } =
+  createDefinedContext<Account>();
 
 export const { useDefinedContext: useUIManager, provider: UIManagerProvider } =
   createDefinedContext<GameUIManager>();
@@ -45,7 +56,7 @@ export function useOverlayContainer(): HTMLDivElement | null {
  * Get the currently used account on the client.
  * @param uiManager instance of GameUIManager
  */
-export function useAccount(uiManager: GameUIManager): EthAddress | undefined {
+export function useAddress(uiManager: GameUIManager): EthAddress | undefined {
   const account = useMemo(() => uiManager.getAccount(), [uiManager]);
 
   return account;

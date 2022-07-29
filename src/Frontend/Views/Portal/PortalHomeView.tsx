@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { loadRecentMaps, MapInfo } from '../../../Backend/Network/MapsApi';
-import { Spacer } from '../../Components/CoreUI';
 import { competitiveConfig, tutorialConfig } from '../../Utils/constants';
-import { MapGridDetail } from './Components/MapGridDetail';
-import { OfficialGameBanner, TutorialBanner } from './Components/Banners';
+import { loadRecentMaps, MapInfo } from '../../../Backend/Network/GraphApi/MapsApi';
+import { OfficialGameBanner } from './Components/OfficialGameBanner';
 
 export const PortalHomeView: React.FC<{}> = () => {
   const [portalMaps, setPortalMaps] = useState<MapInfo[]>([]);
@@ -14,7 +12,8 @@ export const PortalHomeView: React.FC<{}> = () => {
       .then((maps) => {
         if (!maps) return;
         const uniqueMaps = maps.filter(
-          (m, i) => m.configHash !== '0x00' && maps.findIndex((m2) => m2.configHash == m.configHash) == i
+          (m, i) =>
+            m.configHash !== '0x00' && maps.findIndex((m2) => m2.configHash == m.configHash) == i
         );
         setPortalMaps(uniqueMaps);
       })
@@ -25,44 +24,62 @@ export const PortalHomeView: React.FC<{}> = () => {
   }, []);
 
   return (
-    <Container>
-      <span style = {{fontSize: '3em'}}>Welcome to Dark Forest Arena!</span>
-      <span style = {{fontSize: '1.5em'}}>
-        Play our official map, discover community-created matches, or view data about other players.
-      </span>
-
-      <BannersContainer>
-        <OfficialGameBanner configHash={competitiveConfig} />
-        <TutorialBanner configHash={tutorialConfig} />
-      </BannersContainer>
-      
-      <Spacer height={24} />
-      <span style={{ fontSize: '1rem' }}>Explore Community Maps</span>
-      <MoreMapsContainer>
-        <MoreGrid>
-          {portalMaps.map((m, i) => (
-            <MapGridDetail
-              configHash={m.configHash}
-              creator={m.creator}
-              lobbyAddress={m.lobbyAddress ?? undefined}
-              key={i}
-            />
-          ))}
-        </MoreGrid>
-      </MoreMapsContainer>
-    </Container>
+    <Content>
+      <span style={{ fontSize: '3em', gridColumn: '1/7' }}>Welcome to Dark Forest Arena!</span>
+      <OfficialGameBanner
+        title='Play Galactic League'
+        description='Race the clock to finish fastest!'
+        disabled
+        style={{ gridColumn: '1 / 4' }}
+        link={`/portal/map/${competitiveConfig}`}
+        imageUrl='/public/img/deathstar.png'
+      />
+      <OfficialGameBanner
+        title='Find a match'
+        description='Use on-chain matchmaking to join a game'
+        disabled
+        style={{ gridColumn: '4 / 7' }}
+        link={`/portal/map/${competitiveConfig}`}
+        imageUrl='/public/img/deathstar.png'
+      />
+      <OfficialGameBanner
+        title='Tutorial'
+        description='Learn to play'
+        disabled
+        style={{ gridColumn: '1 / 3', gridRow: '3/4' }}
+        link={`/portal/map/${tutorialConfig}`}
+        imageUrl='/public/img/tutorial-banner.png'
+      />
+      <OfficialGameBanner
+        title='Create a map'
+        description='Design the Dark Forest round of your dreams'
+        disabled
+        style={{ gridColumn: '3 / 5', gridRow: '3/4' }}
+        link={`/arena`}
+        imageUrl='/public/img/deathstar.png'
+      />
+      <OfficialGameBanner
+        title='Community Maps'
+        description='Explore maps created by other players'
+        disabled
+        style={{ gridColumn: '5 / 7', gridRow: '3/4' }}
+        link={`/portal/map/${competitiveConfig}`}
+        imageUrl='/public/img/deathstar.png'
+      />
+    </Content>
   );
 };
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin: 1rem;
-  overflow-y: auto;
+const Content = styled.div`
+  display: grid;
   height: 100%;
   overflow: hidden;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: 50px calc(60% - 40px) calc(40% - 40px);
+  grid-gap: 16px;
+  padding: 24px;
+  height: 100%;
+  width: 100%;
 `;
-
 const BannersContainer = styled.div`
   display: flex;
   gap: 10px;
@@ -72,8 +89,6 @@ const BannersContainer = styled.div`
 export const ArenaPortalButton = styled.button<{ secondary?: boolean }>`
   padding: 8px 16px;
   border-radius: 3px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   border: ${({ secondary }) => (!secondary ? '2px solid #2EE7BA' : '1px solid #5F5F5F')};

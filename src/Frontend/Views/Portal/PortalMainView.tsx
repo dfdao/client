@@ -3,8 +3,8 @@ import { IconType } from '@darkforest_eth/ui';
 import React, { useEffect, useState } from 'react';
 import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { loadAccountData } from '../../../Backend/Network/AccountApi';
-import { loadRecentMaps } from '../../../Backend/Network/MapsApi';
+import { loadAccountData } from '../../../Backend/Network/GraphApi/AccountApi';
+import { loadRecentMaps } from '../../../Backend/Network/GraphApi/MapsApi';
 import { Btn } from '../../Components/Btn';
 import Button from '../../Components/Button';
 import { Dropdown, DropdownItem } from '../../Components/Dropdown';
@@ -20,8 +20,7 @@ import { MapInfoView } from './MapInfoView';
 import { PortalHomeView } from './PortalHomeView';
 import { truncateAddress, truncateString } from './PortalUtils';
 
-
-export function PortalMainView({ playerAddress }: { playerAddress: EthAddress }) {
+export function PortalMainView() {
   const [input, setInput] = useState<string>('');
   const [openSearch, setOpenSearch] = useState<boolean>(false);
   const [results, setResults] = useState<DropdownItem[]>([]);
@@ -31,38 +30,38 @@ export function PortalMainView({ playerAddress }: { playerAddress: EthAddress })
 
   useEffect(() => {
     async function handleSearch() {
-      if (input.length > 0) {
-        let results: DropdownItem[] = [];
-        const lower = input.trim().toLowerCase();
-        // check twitters
-        const foundTwitter = Object.entries(twitters).find((t) => t[1] == lower);
-        if (foundTwitter) {
-          results.push({
-            label: `Twitter -${foundTwitter[0]}`,
-            action: () => history.push(`/portal/account/${foundTwitter[0]}`),
-          });
-        }
-        // check config hashes
-        const configHashes = await loadRecentMaps(1, lower, undefined);
-        if (configHashes && configHashes.length > 0) {
-          results.push({
-            label: `Map - ${truncateString(configHashes[0].configHash, 8)}`,
-            action: () => history.push(`/portal/map/${configHashes[0].configHash}`),
-          });
-        }
-        // check accounts
-        const accounts = await loadAccountData(lower as EthAddress);
-        if (accounts) {
-          results.push({
-            label: `Address - ${truncateAddress(lower as EthAddress)}`,
-            action: () => history.push(`/portal/account/${lower}`),
-          });
-        }
-        if (results.length > 0) {
-          setResults(results);
-        } else {
-          setResults([{ label: 'No results found.', action: () => {} }]);
-        }
+      if (input.length == 0) {
+        setResults([{ label: 'No results found.', action: () => {} }]);
+        return;
+      }
+      let results: DropdownItem[] = [];
+      const lower = input.trim().toLowerCase();
+      // check twitters
+      const foundTwitter = Object.entries(twitters).find((t) => t[1] == lower);
+      if (foundTwitter) {
+        results.push({
+          label: `Twitter -${foundTwitter[0]}`,
+          action: () => history.push(`/portal/account/${foundTwitter[0]}`),
+        });
+      }
+      // check config hashes
+      const configHashes = await loadRecentMaps(1, lower, undefined);
+      if (configHashes && configHashes.length > 0) {
+        results.push({
+          label: `Map - ${truncateString(configHashes[0].configHash, 8)}`,
+          action: () => history.push(`/portal/map/${configHashes[0].configHash}`),
+        });
+      }
+      // check accounts
+      const accounts = await loadAccountData(lower as EthAddress);
+      if (accounts) {
+        results.push({
+          label: `Address - ${truncateAddress(lower as EthAddress)}`,
+          action: () => history.push(`/portal/account/${lower}`),
+        });
+      }
+      if (results.length > 0) {
+        setResults(results);
       } else {
         setResults([{ label: 'No results found.', action: () => {} }]);
       }
@@ -71,25 +70,24 @@ export function PortalMainView({ playerAddress }: { playerAddress: EthAddress })
   }, [input]);
 
   function PortalHelp() {
-    if(!helpOpen) return <></>
+    if (!helpOpen) return <></>;
 
     return (
-      
-      <Modal
-        title = 'Help'
-        
-      >
+      <Modal title='Help'>
         <HelpWrapper>
           <HelpInner>
-            <HelpClose onClick = {() => {setHelpOpen(false)}}>
-              <Icon type = {IconType.X}/>
+            <HelpClose
+              onClick={() => {
+                setHelpOpen(false);
+              }}
+            >
+              <Icon type={IconType.X} />
             </HelpClose>
             <span>Hello</span>
-
           </HelpInner>
         </HelpWrapper>
       </Modal>
-    )
+    );
   }
 
   return (
@@ -114,14 +112,7 @@ export function PortalMainView({ playerAddress }: { playerAddress: EthAddress })
             </InputContainer>
           </TitleContainer>
           <TitleContainer>
-            {/* <Button
-              onClick={() => {
-                setHelpOpen(true);
-              }}
-            >
-              <Icon type={IconType.Help} />
-            </Button> */}
-            <Account address={playerAddress} />
+            <Account />
           </TitleContainer>
         </TopBar>
         <Switch>
@@ -224,14 +215,13 @@ const HelpInner = styled.div`
   border: 1px solid ${dfstyles.colors.borderDark} !important;
   color: ${dfstyles.colors.text};
   padding: 50px;
+`;
 
-`
-
-const HelpClose = styled.button `
+const HelpClose = styled.button`
   position: absolute;
   top: 20px;
   right: 20px;
   color: white;
   background: none;
   border: 0;
-`
+`;
