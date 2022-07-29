@@ -54,7 +54,6 @@ const PaneContainer = styled.div`
   background: rgba(255, 255, 255, 0.04);
   border-radius: 3px;
   gap: 8px;
-  cursor: pointer;
   justify-self: flex-end;
 `;
 

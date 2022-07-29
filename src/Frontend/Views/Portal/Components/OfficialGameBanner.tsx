@@ -27,12 +27,18 @@ export const OfficialGameBanner: React.FC<{
       ? {
           cursor: 'not-allowed',
         }
-      : { borderWidth: '3px' };
+      : { boxShadow: '0 0 0 4px white' };
   }, [hovering]);
 
   return (
     <div
-      style={{ ...hoveringStyle, ...style, display: 'block' }}
+      style={{
+        borderRadius: '6px',
+        boxSizing: 'border-box',
+        ...hoveringStyle,
+        ...style,
+        display: 'block',
+      }}
       onMouseEnter={() => setHovering(true)}
       onMouseLeave={() => setHovering(false)}
     >
@@ -63,8 +69,8 @@ const Banner = styled.button`
   background: #000;
   color: #fff;
   padding: 1rem;
-  border-radius: 6px;
   border: solid 1px ${dfstyles.colors.border};
+  border-radius: 6px;
 `;
 
 const Title = styled.span`
