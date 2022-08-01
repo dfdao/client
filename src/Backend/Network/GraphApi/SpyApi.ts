@@ -16,7 +16,8 @@ export const loadAllLiveMatches = async (): Promise<LiveMatch> => {
       id
       startTime,
       configHash,
-      }
+      planets{spawnPlanet}  
+    }
     }`;
 
   const response = await getGraphQLData(query, apiUrl);
