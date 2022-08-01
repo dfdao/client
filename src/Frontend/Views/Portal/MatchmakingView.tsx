@@ -1,7 +1,7 @@
 import { LiveMatch } from '@darkforest_eth/types';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { loadAllLiveMatches, loadLiveMatches } from '../../../Backend/Network/GraphApi/SpyApi';
+import { loadLiveMatches } from '../../../Backend/Network/GraphApi/SpyApi';
 import { FindMatch } from './FindMatch';
 
 export function MatchmakingView() {
@@ -9,7 +9,7 @@ export function MatchmakingView() {
   const [liveMatchError, setLiveMatchError] = useState<Error | undefined>();
 
   useEffect(() => {
-    loadAllLiveMatches()
+    loadLiveMatches()
       .then((matches) => {
         setLiveMatchError(undefined);
         setLiveMatches(matches);

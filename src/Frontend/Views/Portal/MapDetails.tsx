@@ -50,7 +50,7 @@ export function MapDetails({
           })
           .catch((e) => setLeaderboardError(e));
       }
-      loadLiveMatches(configHash, numSpawnPlanets > 1)
+      loadLiveMatches(configHash)
         .then((matches) => {
           setLiveMatchError(undefined);
           setLiveMatches(matches);

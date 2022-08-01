@@ -12,6 +12,7 @@ import { getConfigName } from '@darkforest_eth/procedural';
 import { Btn } from '../../Components/Btn';
 import { Row } from '../../Components/Row';
 import _ from 'lodash';
+import Button from '../../Components/Button';
 
 export interface FindMatchProps {
   game: LiveMatch | undefined;
@@ -44,9 +45,9 @@ export const MatchComponent: React.FC<MatchDetails> = ({
   return (
     <MatchContainer>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-        <Btn size='large' onClick={() => history.push(`map/${configHash}`)}>
+        <Button onClick={() => history.push(`map/${configHash}`)}>
           {getConfigName(configHash)}
-        </Btn>
+        </Button>
         <span>By: {compPlayerToEntry(creator, twitters[creator])}</span>
         {players && players.length > 0 && (
           <span>
