@@ -81,7 +81,11 @@ export const MapGridDetail: React.FC<{
         <>
           <span>By {twitters[creator] ? `@${twitters[creator]}` : truncateAddress(creator)}</span>
           <span>Lobby: {truncateAddress(lobbyAddress)}</span>
-          {nGames && nGames > 0 && <span>{nGames} games</span>}
+          {nGames && nGames > 0 && (
+            <span>
+              {nGames} game{nGames > 1 && 's'}
+            </span>
+          )}
           <Link
             style={{ minWidth: '250px' }}
             target='blank'
