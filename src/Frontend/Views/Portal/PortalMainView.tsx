@@ -100,20 +100,19 @@ export function PortalMainView() {
           </TitleContainer>
 
           <TitleContainer>
-            <InputContainer>
+            <InputContainer style={{ width: '100%' }}>
               <PortalInput
                 placeholder={'Search for a map hash, twitter, or address'}
                 // TODO: fix type
                 onChange={(e: any) => setInput(e.target.value)}
                 onFocus={() => setOpenSearch(true)}
                 onBlur={() => setOpenSearch(false)}
+                style={{ width: '100%' }}
               />
               <Dropdown items={results} open={input.length > 0 && openSearch} />
             </InputContainer>
           </TitleContainer>
-          <TitleContainer>
-            <Account />
-          </TitleContainer>
+          <Account />
         </TopBar>
         <Switch>
           <Redirect path='/portal/map' to={`/portal/map/${competitiveConfig}`} exact={true} />
@@ -153,7 +152,8 @@ const MainContainer = styled.div`
 const TopBar = styled.div`
   height: 56px;
   max-height: 56px;
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   justify-content: space-between;
   align-items: center;
   width: 100%;

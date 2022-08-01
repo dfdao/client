@@ -1,7 +1,7 @@
 import { getConfigName } from '@darkforest_eth/procedural';
 import { EthAddress, Leaderboard } from '@darkforest_eth/types';
 import dfstyles from '@darkforest_eth/ui/dist/styles';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import {
@@ -18,22 +18,47 @@ export const OfficialGameBanner: React.FC<{
   imageUrl: string;
   style?: React.CSSProperties;
 }> = ({ title, description, disabled = false, link, imageUrl, style }) => {
+  const [hovering, setHovering] = useState<boolean>(false);
   const history = useHistory();
+
+  const hoveringStyle: React.CSSProperties = useMemo(() => {
+    if (!hovering) return {};
+    return disabled
+      ? {
+          cursor: 'not-allowed',
+        }
+      : { boxShadow: '0 0 0 4px white' };
+  }, [hovering]);
+
   return (
-    <Banner
-      disabled={disabled}
-      style={style}
-      onClick={() => {
-        history.push(link);
+    <div
+      style={{
+        borderRadius: '6px',
+        boxSizing: 'border-box',
+        ...hoveringStyle,
+        ...style,
+        display: 'block',
       }}
+      onMouseEnter={() => setHovering(true)}
+      onMouseLeave={() => setHovering(false)}
     >
-      <PrettyOverlayGradient src={imageUrl} />
-      {title && (
-        <BannerTitleContainer>
-          <Title>{title}</Title> <span>{description}</span>{' '}
-        </BannerTitleContainer>
-      )}
-    </Banner>
+      <Banner
+        disabled={disabled}
+        onClick={() => {
+          history.push(link);
+        }}
+      >
+        <PrettyOverlayGradient
+          src={imageUrl}
+          style={disabled ? { filter: 'brightness(0.8) blur(2px) grayscale(1)' } : {}}
+        />
+        {title && (
+          <BannerTitleContainer>
+            <Title>{title}</Title> <span>{description}</span>
+          </BannerTitleContainer>
+        )}
+      </Banner>
+    </div>
   );
 };
 
@@ -44,8 +69,8 @@ const Banner = styled.button`
   background: #000;
   color: #fff;
   padding: 1rem;
-  border-radius: 6px;
   border: solid 1px ${dfstyles.colors.border};
+  border-radius: 6px;
 `;
 
 const Title = styled.span`
