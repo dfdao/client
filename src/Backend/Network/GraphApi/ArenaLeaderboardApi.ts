@@ -11,7 +11,6 @@ import {
   roundStartTimestamp,
   competitiveConfig,
   apiUrl,
-  ARENA_V1_SUBGRAPH,
 } from '../../Frontend/Utils/constants';
 import { getGraphQLData } from '../GraphApi';
 import { getAllTwitters } from '../UtilityServerAPI';
@@ -20,7 +19,6 @@ export async function loadArenaLeaderboard(
   config: string = competitiveConfig,
   isCompetitive: boolean
 ): Promise<Leaderboard> {
-  console.log('CONFIG', config);
   const QUERY = `
 query {
   arenas(first:1000, where: {configHash: "${config}"}) {
@@ -36,23 +34,12 @@ query {
   }
 }
 `;
-  console.log('QUERY', QUERY);
   const rawData = await getGraphQLData(QUERY, apiUrl);
-  const rawDataV1 = await getGraphQLData(QUERY, ARENA_V1_SUBGRAPH);
 
   if (rawData.error) {
     throw new Error(rawData.error);
   }
-  if (rawDataV1.error) {
-    throw new Error(rawDataV1.error);
-  }
-
-  // merge rawData.data.arenas and rawDataV1.data.arenas
-  const merged = rawData.data.arenas.concat(rawDataV1.data.arenas);
-
-  // const ret = await convertData(rawData.data.arenas, config == competitiveConfig);
-  const ret = await convertData(merged, isCompetitive);
-
+  const ret = await convertData(rawData.data.arenas, config == competitiveConfig);
   return ret;
 }
 
@@ -72,7 +59,6 @@ export interface GraphArena {
 }
 
 async function convertData(arenas: GraphArena[], isCompetitive: boolean): Promise<Leaderboard> {
-  console.log('ARENAS', arenas);
   let entries: LeaderboardEntry[] = [];
   const twitters = await getAllTwitters();
 
