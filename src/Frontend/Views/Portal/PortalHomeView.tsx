@@ -17,7 +17,7 @@ export const PortalHomeView: React.FC<{}> = () => {
           imageUrl='/public/img/deathstar.png'
         />
         <OfficialGameBanner
-          title='Find a match (IP)'
+          title='Find a match'
           description='Use on-chain matchmaking to join a game'
           style={{ gridColumn: '4 / 7' }}
           link='/portal/matchmaking'
