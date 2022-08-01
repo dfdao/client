@@ -14,7 +14,8 @@ export const loadAllLiveMatches = async (): Promise<LiveMatch> => {
       players {address}, 
       creator,
       id
-      startTime
+      startTime,
+      configHash,
       }
     }`;
 
@@ -47,7 +48,8 @@ export const loadLiveMatches = async (
       ${multiplayerStats}
       creator,
       id
-      startTime
+      startTime,
+      configHash
       }
     }`;
 

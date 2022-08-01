@@ -1,6 +1,6 @@
 import { EthAddress, LiveMatch, LiveMatchEntry, ExtendedMatchEntry } from '@darkforest_eth/types';
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { Subber } from '../../Components/Text';
 import dfstyles from '../../Styles/dfstyles';
@@ -8,6 +8,8 @@ import { useTwitters } from '../../Utils/AppHooks';
 import { formatStartTime } from '../../Utils/TimeUtils';
 import { compPlayerToEntry } from '../Leaderboards/ArenaLeaderboard';
 import { GenericErrorBoundary } from '../GenericErrorBoundary';
+import { getConfigName } from '@darkforest_eth/procedural';
+import Button from '../../Components/Button';
 
 export interface FindMatchProps {
   game: LiveMatch | undefined;
@@ -16,6 +18,7 @@ export interface FindMatchProps {
 }
 
 export interface MatchDetails {
+  configHash: string;
   creator: EthAddress;
   matchType: 'Solo' | '1v1';
   totalSpots: number;
@@ -26,6 +29,7 @@ export interface MatchDetails {
 }
 
 export const MatchComponent: React.FC<MatchDetails> = ({
+  configHash,
   creator,
   matchType,
   totalSpots,
@@ -35,16 +39,26 @@ export const MatchComponent: React.FC<MatchDetails> = ({
   players,
 }) => {
   const twitters = useTwitters();
+  const history = useHistory();
 
   return (
     <MatchContainer>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+        <Button
+          onClick={() => history.push(`map/${configHash}`)}
+          style={{ fontSize: '1.5rem', textDecoration: 'underline' }}
+        >
+          {getConfigName(configHash)}
+        </Button>
         <span>By: {compPlayerToEntry(creator, twitters[creator])}</span>
-        {players &&
-          players.length > 0 && <span>Players: </span> &&
-          players.map((p) => (
-            <span key={p.address}>{compPlayerToEntry(p.address, twitters[p.address])}</span>
-          ))}
+        {players && players.length > 0 && (
+          <span>
+            Players:{' '}
+            {players.map((p) => (
+              <span key={p.address}>{compPlayerToEntry(p.address, twitters[p.address])}</span>
+            ))}
+          </span>
+        )}
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <span>{matchType}</span>
           {totalSpots == spotsTaken ? (
@@ -80,6 +94,7 @@ export const FindMatch: React.FC<FindMatchProps> = ({ game, error, nPlayers }) =
           ) : (
             game.entries.map((entry: ExtendedMatchEntry) => (
               <MatchComponent
+                configHash={entry.configHash}
                 key={entry.id}
                 creator={entry.creator}
                 matchType='1v1'
