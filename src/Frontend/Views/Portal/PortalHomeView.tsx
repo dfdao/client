@@ -18,11 +18,10 @@ export const PortalHomeView: React.FC<{}> = () => {
           historyLink='/portal/history'
         />
         <OfficialGameBanner
-          title='Find a match (IP)'
+          title='Find a match'
           description='Use on-chain matchmaking to join a game'
-          disabled
           style={{ gridColumn: '4 / 7' }}
-          link={`/portal/map/${competitiveConfig}`}
+          link='/portal/matchmaking'
           imageUrl='/public/img/deathstar.png'
         />
         <OfficialGameBanner
@@ -41,11 +40,10 @@ export const PortalHomeView: React.FC<{}> = () => {
           imageUrl='/public/img/deathstar.png'
         />
         <OfficialGameBanner
-          title='Community Maps (IP)'
+          title='Community Maps'
           description='Explore maps created by others'
-          disabled
           style={{ gridColumn: '5 / 7', gridRow: '3/4' }}
-          link={`/portal/map/${competitiveConfig}`}
+          link={`/portal/community`}
           imageUrl='/public/img/deathstar.png'
         />
       </Content>

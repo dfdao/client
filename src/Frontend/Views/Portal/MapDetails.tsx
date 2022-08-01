@@ -50,7 +50,7 @@ export function MapDetails({
           })
           .catch((e) => setLeaderboardError(e));
       }
-      loadLiveMatches(configHash, numSpawnPlanets > 1)
+      loadLiveMatches(configHash)
         .then((matches) => {
           setLiveMatchError(undefined);
           setLiveMatches(matches);
@@ -90,9 +90,7 @@ export function MapDetails({
         }
         if (i === 1) {
           if (numSpawnPlanets > 1 && !hasWhitelist) {
-            return (
-              <FindMatch game={liveMatches} error={liveMatchError} nPlayers={numSpawnPlanets} />
-            );
+            return <FindMatch game={liveMatches} />;
           } else {
             return (
               <>
