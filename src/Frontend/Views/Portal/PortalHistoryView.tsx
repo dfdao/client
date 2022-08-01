@@ -2,7 +2,6 @@ import { getConfigName } from '@darkforest_eth/procedural';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { loadArenaLeaderboard } from '../../../Backend/Network/ArenaLeaderboardApi';
 import { Link } from '../../Components/CoreUI';
 import dfstyles from '../../Styles/dfstyles';
 import { useTwitters } from '../../Utils/AppHooks';
@@ -19,35 +18,30 @@ export interface RoundHistoryItem {
   winner: string;
 }
 
-const MOCK_CONFIG_HASHES: string[] = [
-  '0x6cc6954ecdfefd966e52e5911555a778770e412c3f4393a8b6033ea95688519e',
-  '0x38329f176da42d2c89b7e424175e8b0ab3c9008cb0d98f947857884d76c6d9d2',
-  '0x58975a691f8765ef71b7ffd9f6d64fa3d22aa1bb046265984a07fb30f7ddad33',
-  '0xa5270a267313d923a05a95b11d2be9b7d9e7c5194bf9d5d9f3ee28366a7809c4',
-  '0xc8b6b767570b2e39b622c6d5a8c4ac65a61d50a94f4312ac171483c95b2ec996',
-  '0x568297442f966cc66f2be7ced683e35ea2ca1e68b4f26dd5424158244da40bcc',
-];
-
 export const PortalHistoryView: React.FC<{}> = ({}) => {
   const [rounds, setRounds] = useState<RoundHistoryItem[]>([]);
   const history = useHistory();
   const twitters = useTwitters() as Object;
 
   useEffect(() => {
-    MOCK_CONFIG_HASHES.forEach((configHash) => {
-      loadArenaLeaderboard(configHash, true).then((res) => {
-        console.log(`RES-${configHash}`, res);
-        // if (!res) return;
-        // if (res.length === 0) return;
-        // const map = res[0];
-        // console.log(map);
-        // const roundToAdd = {
-        //   configHash: configHash,
-        //   name: getConfigName(configHash),
-        //   startTime: map.startTime ?? 0,
-        //   winner: map.winners ? (map.winners.length > 0 ? map.winners[0] : '') : '',
-        // } as RoundHistoryItem;
-        // setRounds((prevRounds) => [...prevRounds, roundToAdd]);
+    async function getRoundHistory() {
+      const rounds = await fetch('http://localhost:3000/rounds', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const roundText = await rounds.text();
+      return JSON.parse(roundText).body;
+    }
+    getRoundHistory().then((rounds) => {
+      rounds.forEach((round: any) => {
+        const roundToAdd = {
+          configHash: round.configHash,
+          name: getConfigName(round.configHash),
+          startTime: round.startTime,
+          endTIme: round.endTime,
+          winner: round.winner,
+        };
+        setRounds((prevRounds) => [...prevRounds, roundToAdd]);
       });
     });
   }, []);
@@ -73,28 +67,30 @@ export const PortalHistoryView: React.FC<{}> = ({}) => {
           </tr>
         </thead>
         <tbody>
-          {rounds.map((historyItem: RoundHistoryItem) => (
-            <TimelineRow
-              onClick={() => {
-                history.push(`/portal/map/${historyItem.configHash}`);
-              }}
-            >
-              <TimelineItem>{formatStartTime(historyItem.startTime)}</TimelineItem>
-              <TimelineItem>{historyItem.name}</TimelineItem>
-              <TimelineItem>
-                {historyItem.winner !== '' ? (
-                  <Link to={`https://twitter.com/${addressToTwitter(historyItem.winner)}`}>
-                    {addressToTwitter(historyItem.winner)}
-                  </Link>
-                ) : (
-                  'None'
-                )}
-              </TimelineItem>
-              <TimelineItem>
-                <HoverIcon />
-              </TimelineItem>
-            </TimelineRow>
-          ))}
+          {rounds
+            .filter((round) => round.startTime < Date.now())
+            .map((historyItem: RoundHistoryItem) => (
+              <TimelineRow
+                onClick={() => {
+                  history.push(`/portal/map/${historyItem.configHash}`);
+                }}
+              >
+                <TimelineItem>{formatStartTime(historyItem.startTime)}</TimelineItem>
+                <TimelineItem>{historyItem.name}</TimelineItem>
+                <TimelineItem>
+                  {historyItem.winner !== '' ? (
+                    <Link to={`https://twitter.com/${addressToTwitter(historyItem.winner)}`}>
+                      {addressToTwitter(historyItem.winner)}
+                    </Link>
+                  ) : (
+                    'None'
+                  )}
+                </TimelineItem>
+                <TimelineItem>
+                  <HoverIcon />
+                </TimelineItem>
+              </TimelineRow>
+            ))}
         </tbody>
       </TimelineContainer>
     </Container>

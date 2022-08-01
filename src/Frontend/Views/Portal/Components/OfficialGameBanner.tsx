@@ -120,5 +120,5 @@ const PrettyOverlayGradient = styled.img`
   display: inline-block;
   object-fit: cover;
   border-radius: 20px;
-  filter: brightness(0.8) blur(2px);
+  filter: brightness(1) blur(2px);
 `;
