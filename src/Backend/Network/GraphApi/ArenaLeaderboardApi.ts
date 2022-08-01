@@ -13,8 +13,8 @@ import {
   apiUrl,
   ARENA_V1_SUBGRAPH,
 } from '../../Frontend/Utils/constants';
-import { getGraphQLData } from './GraphApi';
-import { getAllTwitters } from './UtilityServerAPI';
+import { getGraphQLData } from '../GraphApi';
+import { getAllTwitters } from '../UtilityServerAPI';
 
 export async function loadArenaLeaderboard(
   config: string = competitiveConfig,
