@@ -9,6 +9,7 @@ import {
   loadEloLeaderboard,
 } from '../../../../Backend/Network/GraphApi/EloLeaderboardApi';
 import { loadRecentMaps } from '../../../../Backend/Network/GraphApi/MapsApi';
+import { MinimalButton } from '../PortalMainView';
 
 export const OfficialGameBanner: React.FC<{
   title?: string;
@@ -16,8 +17,9 @@ export const OfficialGameBanner: React.FC<{
   disabled?: boolean;
   link: string;
   imageUrl: string;
+  historyLink?: string;
   style?: React.CSSProperties;
-}> = ({ title, description, disabled = false, link, imageUrl, style }) => {
+}> = ({ title, description, disabled = false, link, imageUrl, style, historyLink }) => {
   const [hovering, setHovering] = useState<boolean>(false);
   const history = useHistory();
 
@@ -54,7 +56,19 @@ export const OfficialGameBanner: React.FC<{
         />
         {title && (
           <BannerTitleContainer>
-            <Title>{title}</Title> <span>{description}</span>
+            <Title>{title}</Title>
+            <span>{description}</span>
+            {historyLink && (
+              <Link to={historyLink}>
+                <MinimalButton
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                >
+                  Previous rounds
+                </MinimalButton>
+              </Link>
+            )}
           </BannerTitleContainer>
         )}
       </Banner>
