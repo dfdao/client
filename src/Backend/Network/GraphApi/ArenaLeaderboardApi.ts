@@ -11,7 +11,7 @@ import {
   roundStartTimestamp,
   competitiveConfig,
   apiUrl,
-} from '../../Frontend/Utils/constants';
+} from '../../../Frontend/Utils/constants';
 import { getGraphQLData } from '../GraphApi';
 import { getAllTwitters } from '../UtilityServerAPI';
 
