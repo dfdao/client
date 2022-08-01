@@ -12,6 +12,7 @@ import { loadConfigFromHash } from '../../../../Backend/Network/GraphApi/ConfigA
 import { truncateAddress } from '../PortalUtils';
 import { Spacer } from '../../../Components/CoreUI';
 import dfstyles from '@darkforest_eth/ui/dist/styles';
+import { useTwitters } from '../../../Utils/AppHooks';
 
 export const MapGridDetail: React.FC<{
   configHash: string;
@@ -22,6 +23,7 @@ export const MapGridDetail: React.FC<{
   const [error, setError] = useState<boolean>(false);
   const [config, setConfig] = useState<LobbyInitializers | undefined>();
   const [minimapConfig, setMinimapConfig] = useState<MinimapConfig | undefined>();
+  const twitters = useTwitters();
 
   const onMapChange = useMemo(() => {
     return debounce((config: MinimapConfig) => configHash && setMinimapConfig(config), 500);
@@ -60,8 +62,8 @@ export const MapGridDetail: React.FC<{
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            width: '300px',
-            height: '300px',
+            width: '100px',
+            height: '100px',
           }}
         >
           <LoadingSpinner initialText='Loading...' />
@@ -77,7 +79,7 @@ export const MapGridDetail: React.FC<{
       <ConfigTitle>{getConfigName(configHash)}</ConfigTitle>
       {lobbyAddress && (
         <>
-          <span>By {truncateAddress(creator)}</span>
+          <span>By {twitters[creator] ? `@${twitters[creator]}` : truncateAddress(creator)}</span>
           <span>Lobby: {truncateAddress(lobbyAddress)}</span>
           {nGames && nGames > 0 && <span>{nGames} games</span>}
           <Link
