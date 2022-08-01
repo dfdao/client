@@ -40,6 +40,7 @@ query {
   if (rawData.error) {
     throw new Error(rawData.error);
   }
+  console.log(rawData.data.arenas);
 
   const ret = await convertData(rawData.data.arenas, config == competitiveConfig);
 
@@ -86,15 +87,15 @@ async function convertData(arenas: GraphArena[], isCompetitive: boolean): Promis
     if (!entry) {
       entries.push({
         ethAddress: winnerAddress,
-        score: arena.duration,
+        score: undefined,
         twitter: twitters[winnerAddress],
         moves: arena.winners[0].moves,
         startTime: arena.startTime,
         endTime: arena.endTime,
         time: arena.duration,
       });
-    } else if (entry.score && entry.score > arena.duration) {
-      entry.score = arena.duration;
+    } else if (entry.time && entry.time > arena.duration) {
+      entry.time = arena.duration;
     }
   }
 
