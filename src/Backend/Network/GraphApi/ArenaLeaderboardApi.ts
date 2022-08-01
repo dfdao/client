@@ -40,8 +40,6 @@ query {
   if (rawData.error) {
     throw new Error(rawData.error);
   }
-  console.log(rawData.data.arenas);
-
   const ret = await convertData(rawData.data.arenas, config == competitiveConfig);
 
   return ret;

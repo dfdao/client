@@ -15,6 +15,19 @@ import { TabbedView } from '../TabbedView';
 import { ConfigDetails } from './ConfigDetails';
 import { FindMatch } from './FindMatch';
 
+export const getRoundID = async (configHash: string): Promise<number> => {
+  const searchParams = new URLSearchParams({
+    configHash: configHash,
+  });
+  const selectedRoundID = await fetch(`http://localhost:3000/rounds?${searchParams}`, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  });
+  const fetchedText = await selectedRoundID.text();
+  const fetchedId = JSON.parse(fetchedText).body[0].id;
+  return fetchedId;
+};
+
 export function MapDetails({
   configHash,
   config,
@@ -27,11 +40,22 @@ export function MapDetails({
   const [leaderboardError, setLeaderboardError] = useState<Error | undefined>();
   const [liveMatches, setLiveMatches] = useState<LiveMatch | undefined>();
   const [liveMatchError, setLiveMatchError] = useState<Error | undefined>();
+  const [description, setDescription] = useState<string>('');
 
   const numSpawnPlanets = config?.ADMIN_PLANETS.filter((p) => p.isSpawnPlanet).length ?? 0;
   const hasWhitelist = config?.WHITELIST_ENABLED ?? true;
 
   useEffect(() => {
+    async function getConfigDescription(configHash: string) {
+      const roundId = await getRoundID(configHash);
+      const res = await fetch(`http://localhost:3000/rounds/${roundId}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const text = await res.text();
+      return JSON.parse(text).body.description;
+    }
+
     setLeaderboard(undefined);
     setLiveMatches(undefined);
     if (configHash) {
@@ -59,6 +83,11 @@ export function MapDetails({
           console.log(e);
           setLiveMatchError(e);
         });
+      getConfigDescription(configHash).then((x) => {
+        if (x) {
+          setDescription(x);
+        }
+      });
     }
   }, [configHash]);
 
