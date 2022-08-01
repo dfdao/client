@@ -47,7 +47,6 @@ export const PortalHomeView: React.FC<{}> = () => {
         <OfficialGameBanner
           title='Tutorial (IP)'
           description='Learn to play'
-          disabled
           style={{ gridColumn: '1 / 3', gridRow: '3/4' }}
           link={`/play/${tutorialLobbyAddress}?create=true`}
           imageUrl='/public/img/tutorial-banner.png'
