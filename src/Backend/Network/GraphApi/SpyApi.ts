@@ -3,12 +3,12 @@ import { apiUrl } from '../../../Frontend/Utils/constants';
 import { getGraphQLData } from '../GraphApi';
 
 export const loadLiveMatches = async (config?: string): Promise<LiveMatch> => {
-  const twoDaysAgo = Math.round((Date.now() - 1000 * 60 * 60 * 24 * 2) / 1000);
+  const startTime = Math.round((Date.now() - 1000 * 60 * 60 * 24 * 7) / 1000);
 
   const configHash = config ? `configHash: "${config}",` : '';
   const query = `
     query {
-      arenas(first: 1000, orderBy: startTime, orderDirection: desc, where: {startTime_gt: ${twoDaysAgo}, ${configHash} gameOver: false}) {
+      arenas(first: 1000, orderBy: startTime, orderDirection: desc, where: {startTime_gt: ${startTime}, ${configHash} gameOver: false}) {
       firstMover {
         address
       },  
