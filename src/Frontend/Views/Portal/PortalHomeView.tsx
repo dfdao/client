@@ -49,7 +49,7 @@ export const PortalHomeView: React.FC<{}> = () => {
           description='Learn to play'
           disabled
           style={{ gridColumn: '1 / 3', gridRow: '3/4' }}
-          link={`/portal/map/${tutorialConfig}`}
+          link={`/play/${tutorialLobbyAddress}?create=true`}
           imageUrl='/public/img/tutorial-banner.png'
         />
         <OfficialGameBanner
