@@ -1,18 +1,33 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
+import { TimeUntil } from '../../Components/TimeUntil';
 import { competitiveConfig, tutorialConfig } from '../../Utils/constants';
-import { loadRecentMaps, MapInfo } from '../../../Backend/Network/GraphApi/MapsApi';
 import { OfficialGameBanner } from './Components/OfficialGameBanner';
 
 export const PortalHomeView: React.FC<{}> = () => {
+  const current = false;
+  const nextRound = new Date('August 5, 2022 03:24:00').getTime();
+  const title = current ? 'Race the Grand Prix' : "Practice Last Week's Grand Prix";
+  const description = current ? (
+    <>
+      This round ends in <TimeUntil timestamp={nextRound} ifPassed='zero seconds!' />
+    </>
+  ) : (
+    <>
+      Next round starts in <TimeUntil timestamp={nextRound} ifPassed='zero seconds!' />
+    </>
+  );
+  const link = `/portal/map/${competitiveConfig}`;
+
   return (
     <Container>
       <Content>
         <span style={{ fontSize: '3em', gridColumn: '1/7' }}>Welcome to Dark Forest Arena!</span>
         <OfficialGameBanner
-          title='Play Galactic League'
+          title={title}
+          description={description}
           style={{ gridColumn: '1 / 5', gridRow: '2/4' }}
-          link={`/portal/map/${competitiveConfig}`}
+          link={link}
           imageUrl='/public/img/deathstar.png'
         />
         <OfficialGameBanner
