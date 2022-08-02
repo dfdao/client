@@ -34,15 +34,12 @@ query {
   }
 }
 `;
-
   const rawData = await getGraphQLData(QUERY, apiUrl);
 
   if (rawData.error) {
     throw new Error(rawData.error);
   }
-
   const ret = await convertData(rawData.data.arenas, config == competitiveConfig);
-
   return ret;
 }
 
@@ -50,7 +47,7 @@ interface winners {
   address: string;
   moves: number;
 }
-interface GraphArena {
+export interface GraphArena {
   winners: winners[];
   creator: string;
   duration: number | null;
@@ -86,15 +83,15 @@ async function convertData(arenas: GraphArena[], isCompetitive: boolean): Promis
     if (!entry) {
       entries.push({
         ethAddress: winnerAddress,
-        score: arena.duration,
+        score: undefined,
         twitter: twitters[winnerAddress],
         moves: arena.winners[0].moves,
         startTime: arena.startTime,
         endTime: arena.endTime,
         time: arena.duration,
       });
-    } else if (entry.score && entry.score > arena.duration) {
-      entry.score = arena.duration;
+    } else if (entry.time && entry.time > arena.duration) {
+      entry.time = arena.duration;
     }
   }
 

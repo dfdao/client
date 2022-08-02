@@ -20,7 +20,7 @@ const LOCATION_ID_UB = bigInt(
 
 const apiUrl = 'https://9a46-143-244-168-87.ngrok.io/subgraphs/name/df-arena-v2';
 
-const competitiveConfig = '0x568297442f966cc66f2be7ced683e35ea2ca1e68b4f26dd5424158244da40bcc';
+const competitiveConfig = '0xfe719a3cfccf2bcfa23f71f0af80a931eda4f4197331828d728b7505a6156930';
 
 const tutorialConfig = '0xdccc97271cde9ad566db3a1e1d3d12220b04b595134bb7039b5606fdc57d82a1';
 
