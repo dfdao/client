@@ -1,10 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { TimeUntil } from '../../Components/TimeUntil';
 import { competitiveConfig, tutorialConfig } from '../../Utils/constants';
 import { OfficialGameBanner } from './Components/OfficialGameBanner';
 
 export const PortalHomeView: React.FC<{}> = () => {
+  useEffect(() => {
+    const fetchRounds = async () => {
+      await fetch(`${process.env.DFDAO_WEBSERVER_URL}/rounds`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    };
+    // fetchRounds();
+  }, []);
+
   const current = false;
   const nextRound = new Date('August 5, 2022 03:24:00').getTime();
   const title = current ? 'Race the Grand Prix' : "Practice Last Week's Grand Prix";
