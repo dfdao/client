@@ -92,9 +92,10 @@ export function MapDetails({
   }, [configHash]);
 
   return (
-    <TabbedView
+    <div
       style={{
         display: 'flex',
+        flexShrink: 1,
         flexDirection: 'column',
         height: '100%',
         flex: '1 1 50%',
@@ -103,36 +104,71 @@ export function MapDetails({
         maxHeight: '100vh',
         overflowY: 'auto',
       }}
-      startSelected={numSpawnPlanets >= 2 ? 1 : 0}
-      tabTitles={[
-        'Leaderboard',
-        numSpawnPlanets > 1 ? 'Join a Match' : 'Live Games',
-        'Config Details',
-      ]}
-      tabContents={(i) => {
-        if (i === 0) {
-          return numSpawnPlanets > 1 ? (
-            <EloLeaderboardDisplay leaderboard={eloLeaderboard} error={leaderboardError} />
-          ) : (
-            <ArenaLeaderboardDisplay leaderboard={leaderboard} error={leaderboardError} />
-          );
-        }
-        if (i === 1) {
-          if (numSpawnPlanets > 1 && !hasWhitelist) {
-            return <FindMatch game={liveMatches} />;
-          } else {
-            return (
-              <>
-                <LiveMatches game={liveMatches} error={liveMatchError} />{' '}
-                <Subber style={{ textAlign: 'end' }}>
-                  by <a href={'https://twitter.com/bulmenisaurus'}>Bulmenisaurus</a>
-                </Subber>
-              </>
+    >
+      {description.length > 0 && (
+        <div
+          style={{
+            margin: '2rem auto',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '4px',
+            textAlign: 'center',
+          }}
+        >
+          <span style={{ color: '#fff' }}>Description</span>
+          <span
+            style={{
+              maxWidth: '66%',
+              margin: '0 auto',
+              textAlign: 'center',
+              opacity: '70%',
+            }}
+          >
+            {description}
+          </span>
+        </div>
+      )}
+      <TabbedView
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100%',
+          // flex: '1 1 50%',
+          width: '100%',
+          maxHeight: '100vh',
+          overflowY: 'auto',
+        }}
+        startSelected={numSpawnPlanets >= 2 ? 1 : 0}
+        tabTitles={[
+          'Leaderboard',
+          numSpawnPlanets > 1 ? 'Join a Match' : 'Live Games',
+          'Config Details',
+        ]}
+        tabContents={(i) => {
+          if (i === 0) {
+            return numSpawnPlanets > 1 ? (
+              <EloLeaderboardDisplay leaderboard={eloLeaderboard} error={leaderboardError} />
+            ) : (
+              <ArenaLeaderboardDisplay leaderboard={leaderboard} error={leaderboardError} />
             );
           }
-        }
-        return <ConfigDetails config={config} />;
-      }}
-    />
+          if (i === 1) {
+            if (numSpawnPlanets > 1 && !hasWhitelist) {
+              return <FindMatch game={liveMatches} />;
+            } else {
+              return (
+                <>
+                  <LiveMatches game={liveMatches} error={liveMatchError} />{' '}
+                  <Subber style={{ textAlign: 'end' }}>
+                    by <a href={'https://twitter.com/bulmenisaurus'}>Bulmenisaurus</a>
+                  </Subber>
+                </>
+              );
+            }
+          }
+          return <ConfigDetails config={config} />;
+        }}
+      />
+    </div>
   );
 }
