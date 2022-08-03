@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { TimeUntil } from '../../Components/TimeUntil';
 import { competitiveConfig, tutorialConfig } from '../../Utils/constants';
 import { OfficialGameBanner } from './Components/OfficialGameBanner';
+import { useConfigFromHash } from '../../Utils/AppHooks';
 
 const dummyData = [
   {
@@ -81,6 +82,7 @@ export const PortalHomeView: React.FC<{}> = () => {
   );
   const link = `/portal/map/${roundConfig}`;
 
+  const { lobbyAddress: tutorialLobbyAddress } = useConfigFromHash(tutorialConfig);
   return (
     <Container>
       <Content>
@@ -107,9 +109,9 @@ export const PortalHomeView: React.FC<{}> = () => {
         />
         <OfficialGameBanner
           title='Tutorial (IP)'
-          disabled
+          description='Learn to play'
           style={{ gridColumn: '1 / 3', gridRow: '4/5' }}
-          link={`/portal/map/${tutorialConfig}`}
+          link={`/play/${tutorialLobbyAddress}?create=true`}
           imageUrl='/public/img/tutorial-banner.png'
         />
         <OfficialGameBanner
