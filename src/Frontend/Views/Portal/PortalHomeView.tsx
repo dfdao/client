@@ -1,35 +1,85 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { TimeUntil } from '../../Components/TimeUntil';
 import { competitiveConfig, tutorialConfig } from '../../Utils/constants';
 import { OfficialGameBanner } from './Components/OfficialGameBanner';
 
+const dummyData = [
+  {
+    description: 'fjkgdsahghdkflhkaasdfsdf',
+    startTime: 1659383103265,
+    endTime: 1659555903265,
+    configHash: '0x55911a7c9a236e6cdc1f4e8b63362668eff237a9d0d3c242ff1f5c27901b079d',
+    id: 2,
+  },
+  {
+    description: 'A short description of the round ruleset. Blah blah blah. Rules rules rules.',
+    startTime: 1659713036400,
+    endTime: 1660577036400,
+    configHash: '0xfe719a3cfccf2bcfa23f71f0af80a931eda4f4197331828d728b7505a6156930',
+    id: 3,
+  },
+];
+
 export const PortalHomeView: React.FC<{}> = () => {
+  const [rounds, setRounds] = useState<
+    {
+      description: string;
+      startTime: number;
+      endTime: number;
+      configHash: string;
+      id: number;
+    }[]
+  >();
+
+  const [current, setCurrent] = useState<boolean>(false);
+  const [finalTime, setFinalTime] = useState<number>();
+  const [roundConfig, setRoundConfig] = useState<string>();
   useEffect(() => {
     const fetchRounds = async () => {
-      await fetch(`${process.env.DFDAO_WEBSERVER_URL}/rounds`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      // await fetch(`${process.env.DFDAO_WEBSERVER_URL}/rounds`, {
+      //   method: 'GET',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      // });
+      const data = dummyData.sort((a, b) => a.startTime - b.endTime);
+
+      setRounds(data);
+      const now = Date.now();
+      console.log(now);
+      for (const round of data) {
+        if (round.startTime > now) {
+          setFinalTime(round.startTime);
+          setRoundConfig(round.configHash);
+          return;
+        }
+
+        if (round.startTime < now && round.endTime > now) {
+          setFinalTime(round.endTime);
+          setCurrent(true);
+          setRoundConfig(round.configHash);
+          return;
+        }
+      }
     };
-    // fetchRounds();
+
+    fetchRounds();
   }, []);
 
-  const current = false;
-  const nextRound = new Date('August 5, 2022 03:24:00').getTime();
   const title = current ? 'Race the Grand Prix' : "Practice Last Week's Grand Prix";
-  const description = current ? (
+  const description = !finalTime ? (
+    <>No round scheduled</>
+  ) : current ? (
     <>
-      This round ends in <TimeUntil timestamp={nextRound} ifPassed='zero seconds!' />
+      This round ends in <TimeUntil timestamp={finalTime} ifPassed='zero seconds!' />
     </>
   ) : (
     <>
-      Next round starts in <TimeUntil timestamp={nextRound} ifPassed='zero seconds!' />
+      Next round starts in <TimeUntil timestamp={finalTime} ifPassed='zero seconds!' />
     </>
   );
-  const link = `/portal/map/${competitiveConfig}`;
+  const link = `/portal/map/${roundConfig}`;
 
   return (
     <Container>
