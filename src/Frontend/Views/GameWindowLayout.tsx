@@ -94,7 +94,8 @@ export function GameWindowLayout({
   const [waitingRoomVisible, setWaitingRoomVisible] = useState(!uiManager.gameStarted && uiManager.contractConstants.MANUAL_SPAWN);
 
   const isTutorialWorld = uiManager.contractConstants.CONFIG_HASH === tutorialConfig;
-  const [showTutorial] = useBooleanSetting(uiManager, Setting.ShowTutorial, isTutorialWorld);
+  const [showTutorialSetting] = useBooleanSetting(uiManager, Setting.ShowTutorial);
+  const showTutorial = isTutorialWorld || showTutorialSetting;
   const [showSpectatorInfo] = useBooleanSetting(uiManager, Setting.ShowSpectatorInfo);
   const selected = useSelectedPlanet(uiManager).value;
   const [selectedPlanetVisible, setSelectedPlanetVisible] = useState<boolean>(!!selected);
