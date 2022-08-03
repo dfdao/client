@@ -38,18 +38,20 @@ export const PortalHomeView: React.FC<{}> = () => {
   const [roundConfig, setRoundConfig] = useState<string>();
   useEffect(() => {
     const fetchRounds = async () => {
-      // await fetch(`${process.env.DFDAO_WEBSERVER_URL}/rounds`, {
+      // const data = await fetch(`${process.env.DFDAO_WEBSERVER_URL}/rounds`, {
       //   method: 'GET',
       //   headers: {
       //     'Content-Type': 'application/json',
       //   },
       // });
-      const data = dummyData.sort((a, b) => a.startTime - b.endTime);
+      const data = dummyData;
 
-      setRounds(data);
+      const sortedData = data.sort((a, b) => a.startTime - b.endTime);
+
+      setRounds(sortedData);
       const now = Date.now();
-      console.log(now);
-      for (const round of data) {
+
+      for (const round of sortedData) {
         if (round.startTime > now) {
           setFinalTime(round.startTime);
           setRoundConfig(round.configHash);
@@ -67,7 +69,6 @@ export const PortalHomeView: React.FC<{}> = () => {
 
     fetchRounds();
   }, []);
-
   const title = current ? 'Race the Grand Prix' : "Practice Last Week's Grand Prix";
   const description = !finalTime ? (
     <>No round scheduled</>

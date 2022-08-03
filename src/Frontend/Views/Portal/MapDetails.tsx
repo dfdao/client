@@ -19,7 +19,7 @@ export const getRoundID = async (configHash: string): Promise<number> => {
   const searchParams = new URLSearchParams({
     configHash: configHash,
   });
-  const selectedRoundID = await fetch(`http://localhost:3000/rounds?${searchParams}`, {
+  const selectedRoundID = await fetch(`${process.env.DF_WEBSERVER_URL}/rounds?${searchParams}`, {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' },
   });
@@ -48,7 +48,7 @@ export function MapDetails({
   useEffect(() => {
     async function getConfigDescription(configHash: string) {
       const roundId = await getRoundID(configHash);
-      const res = await fetch(`http://localhost:3000/rounds/${roundId}`, {
+      const res = await fetch(`${process.env.DFDAO_WEBSERVER_URL}/rounds/${roundId}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
