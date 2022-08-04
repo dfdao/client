@@ -4,72 +4,43 @@ import { TimeUntil } from '../../Components/TimeUntil';
 import { competitiveConfig, tutorialConfig } from '../../Utils/constants';
 import { OfficialGameBanner } from './Components/OfficialGameBanner';
 import { useConfigFromHash } from '../../Utils/AppHooks';
-
-const dummyData = [
-  {
-    description: 'fjkgdsahghdkflhkaasdfsdf',
-    startTime: 1659383103265,
-    endTime: 1659555903265,
-    configHash: '0x55911a7c9a236e6cdc1f4e8b63362668eff237a9d0d3c242ff1f5c27901b079d',
-    id: 2,
-  },
-  {
-    description: 'A short description of the round ruleset. Blah blah blah. Rules rules rules.',
-    startTime: 1659713036400,
-    endTime: 1660577036400,
-    configHash: '0xfe719a3cfccf2bcfa23f71f0af80a931eda4f4197331828d728b7505a6156930',
-    id: 3,
-  },
-];
+import useSWR, { useSWRConfig } from 'swr';
+import { fetcher } from '../../../Backend/Network/UtilityServerAPI';
 
 export const PortalHomeView: React.FC<{}> = () => {
-  const [rounds, setRounds] = useState<
-    {
-      description: string;
-      startTime: number;
-      endTime: number;
-      configHash: string;
-      id: number;
-    }[]
-  >();
+  const { data: adminData, error } = useSWR(`${process.env.DFDAO_WEBSERVER_URL}/rounds`, fetcher);
+  let finalTime = undefined;
+  let roundConfig = undefined;
+  let current = undefined;
 
-  const [current, setCurrent] = useState<boolean>(false);
-  const [finalTime, setFinalTime] = useState<number>();
-  const [roundConfig, setRoundConfig] = useState<string>();
-  useEffect(() => {
-    const fetchRounds = async () => {
-      // const data = await fetch(`${process.env.DFDAO_WEBSERVER_URL}/rounds`, {
-      //   method: 'GET',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      // });
-      const data = dummyData;
+  if (adminData) {
+    console.log(adminData);
+    const data = adminData as any[];
+    const sortedData: any[] = data.sort((a, b) => a.startTime - b.endTime);
 
-      const sortedData = data.sort((a, b) => a.startTime - b.endTime);
-
-      setRounds(sortedData);
-      const now = Date.now();
-
-      for (const round of sortedData) {
-        if (round.startTime > now) {
-          setFinalTime(round.startTime);
-          setRoundConfig(round.configHash);
-          return;
-        }
-
-        if (round.startTime < now && round.endTime > now) {
-          setFinalTime(round.endTime);
-          setCurrent(true);
-          setRoundConfig(round.configHash);
-          return;
-        }
+    const now = Date.now();
+    for (const round of sortedData) {
+      // if we get here, there is no current round.
+      if (round.startTime > now) {
+        finalTime = round.startTime;
+        break;
       }
-    };
+      // set the round config up to the current round
+      roundConfig = round.configHash;
 
-    fetchRounds();
-  }, []);
-  const title = current ? 'Race the Grand Prix' : "Practice Last Week's Grand Prix";
+      if (round.startTime < now && round.endTime > now) {
+        finalTime = round.endTime;
+        current = true;
+        break;
+      }
+    }
+  }
+
+  const title = !roundConfig
+    ? 'No rounds stored'
+    : current
+    ? 'Race the Grand Prix'
+    : "Practice Last Week's Grand Prix";
   const description = !finalTime ? (
     <>No round scheduled</>
   ) : current ? (
@@ -93,6 +64,7 @@ export const PortalHomeView: React.FC<{}> = () => {
           description={description}
           style={{ gridColumn: '1 / 5', gridRow: '2/4' }}
           link={link}
+          disabled={!roundConfig}
           imageUrl='/public/img/deathstar.png'
         />
         <OfficialGameBanner
