@@ -33,7 +33,7 @@ export const PortalHistoryView: React.FC<{}> = ({}) => {
         configHash: round.configHash,
         name: getConfigName(round.configHash),
         startTime: round.startTime,
-        endTIme: round.endTime,
+        endTime: round.endTime,
         winner: round.winner,
       };
     });
