@@ -41,7 +41,6 @@ export const PortalHistoryView: React.FC<{}> = ({}) => {
     }
   }, [adminData]);
 
-  console.log(rounds);
   const addressToTwitter = (address: string) => {
     const foundTwitter = Object.entries(twitters).find((t) => t[1] == address.toLowerCase().trim());
     if (foundTwitter) {
