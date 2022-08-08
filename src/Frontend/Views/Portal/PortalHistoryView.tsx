@@ -1,5 +1,5 @@
 import { getConfigName } from '@darkforest_eth/procedural';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import useSWR from 'swr';
@@ -24,20 +24,23 @@ export interface RoundHistoryItem {
 export const PortalHistoryView: React.FC<{}> = ({}) => {
   const history = useHistory();
   const twitters = useTwitters() as Object;
-
   const { data: adminData, error } = useSWR(`${process.env.DFDAO_WEBSERVER_URL}/rounds`, fetcher);
-  let rounds = undefined;
-  if (adminData) {
-    rounds = adminData.map((round: any) => {
-      return {
-        configHash: round.configHash,
-        name: getConfigName(round.configHash),
-        startTime: round.startTime,
-        endTime: round.endTime,
-        winner: round.winner,
-      };
-    });
-  }
+  const rounds = useMemo(() => {
+    if (adminData) {
+      return adminData.map((round: RoundHistoryItem & { endTime: number }) => {
+        return {
+          configHash: round.configHash,
+          name: getConfigName(round.configHash),
+          startTime: round.startTime,
+          endTime: round.endTime,
+          winner: round.winner,
+        };
+      });
+    } else {
+      return [];
+    }
+  }, [adminData]);
+
   console.log(rounds);
   const addressToTwitter = (address: string) => {
     const foundTwitter = Object.entries(twitters).find((t) => t[1] == address.toLowerCase().trim());
