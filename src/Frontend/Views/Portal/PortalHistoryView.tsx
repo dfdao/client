@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import useSWR from 'swr';
 import { fetcher } from '../../../Backend/Network/UtilityServerAPI';
 import { Link } from '../../Components/CoreUI';
+import { MythicLabelText } from '../../Components/Labels/MythicLabel';
 import dfstyles from '../../Styles/dfstyles';
 import { useTwitters } from '../../Utils/AppHooks';
 import { formatStartTime } from '../../Utils/TimeUtils';
@@ -49,7 +50,9 @@ export const PortalHistoryView: React.FC<{}> = ({}) => {
 
   return (
     <Container>
-      <Header>Previous Grand Prix Rounds</Header>
+      <Header>
+        <MythicLabelText text='Previous Grand Prix Rounds'></MythicLabelText>
+      </Header>
       {error ? (
         <span>Unable to load Grand Prix round history.</span>
       ) : (
@@ -72,7 +75,7 @@ export const PortalHistoryView: React.FC<{}> = ({}) => {
                       history.push(`/portal/map/${historyItem.configHash}`);
                     }}
                   >
-                    <TimelineItem>{formatStartTime(historyItem.startTime)}</TimelineItem>
+                    <TimelineItem>{formatStartTime(historyItem.startTime / 1000)}</TimelineItem>
                     <TimelineItem>{historyItem.name}</TimelineItem>
                     <TimelineItem>
                       {historyItem.winner !== undefined && historyItem.winner !== '' ? (
