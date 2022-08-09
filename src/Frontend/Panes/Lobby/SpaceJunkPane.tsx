@@ -1,4 +1,4 @@
-import { TooltipName } from '@darkforest_eth/types';
+import { TooltipName } from '@dfdao/types';
 import _ from 'lodash';
 import React from 'react';
 import {
@@ -116,18 +116,20 @@ export function SpaceJunkPane({ config, onUpdate }: LobbiesPaneProps) {
   return (
     <>
       <Row>
-      <PortalTooltipTrigger
+        <PortalTooltipTrigger
           name={TooltipName.Empty}
-          extraContent={'If enabled, space junk accrues as players capture planets. Players must abandon planets to reduce their total.'}
+          extraContent={
+            'If enabled, space junk accrues as players capture planets. Players must abandon planets to reduce their total.'
+          }
           style={{ width: '100%' }}
         >
-        <Checkbox
-          label='Space junk enabled?'
-          checked={config.SPACE_JUNK_ENABLED.displayValue}
-          onChange={(e: Event & React.ChangeEvent<DarkForestCheckbox>) => {
-            onUpdate({ type: 'SPACE_JUNK_ENABLED', value: e.target.checked });
-          }}
-        />
+          <Checkbox
+            label='Space junk enabled?'
+            checked={config.SPACE_JUNK_ENABLED.displayValue}
+            onChange={(e: Event & React.ChangeEvent<DarkForestCheckbox>) => {
+              onUpdate({ type: 'SPACE_JUNK_ENABLED', value: e.target.checked });
+            }}
+          />
         </PortalTooltipTrigger>
       </Row>
       <Row>

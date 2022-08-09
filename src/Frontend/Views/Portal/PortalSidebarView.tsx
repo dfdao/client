@@ -1,4 +1,4 @@
-import { EthAddress } from '@darkforest_eth/types';
+import { EthAddress } from '@dfdao/types';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import dfstyles from '../../Styles/dfstyles';
@@ -6,7 +6,7 @@ import { Text } from '../../Components/Text';
 import { Link, useHistory } from 'react-router-dom';
 import { ArenaPortalButton } from './PortalHomeView';
 import { loadRecentMaps, MapInfo } from '../../../Backend/Network/GraphApi/MapsApi';
-import { getConfigName } from '@darkforest_eth/procedural';
+import { getConfigName } from '@dfdao/procedural';
 import { formatDate } from '../../Utils/TimeUtils';
 import { useEthConnection } from '../../Utils/AppHooks';
 

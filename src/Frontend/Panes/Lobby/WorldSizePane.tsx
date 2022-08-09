@@ -1,4 +1,4 @@
-import { TooltipName } from '@darkforest_eth/types';
+import { TooltipName } from '@dfdao/types';
 import React from 'react';
 import {
   Checkbox,
@@ -14,18 +14,18 @@ export function WorldSizePane({ config, onUpdate }: LobbiesPaneProps) {
   return (
     <>
       <Row>
-      <PortalTooltipTrigger
-        name={TooltipName.Empty}
-        extraContent={'When unlocked, the world expands whenever a new player spawns.'}
-        style={{ width: '100%' }}
-      >
-        <Checkbox
-          label='World radius locked?'
-          checked={config.WORLD_RADIUS_LOCKED.displayValue}
-          onChange={(e: Event & React.ChangeEvent<DarkForestCheckbox>) =>
-            onUpdate({ type: 'WORLD_RADIUS_LOCKED', value: e.target.checked })
-          }
-        />
+        <PortalTooltipTrigger
+          name={TooltipName.Empty}
+          extraContent={'When unlocked, the world expands whenever a new player spawns.'}
+          style={{ width: '100%' }}
+        >
+          <Checkbox
+            label='World radius locked?'
+            checked={config.WORLD_RADIUS_LOCKED.displayValue}
+            onChange={(e: Event & React.ChangeEvent<DarkForestCheckbox>) =>
+              onUpdate({ type: 'WORLD_RADIUS_LOCKED', value: e.target.checked })
+            }
+          />
         </PortalTooltipTrigger>
       </Row>
       <Row>

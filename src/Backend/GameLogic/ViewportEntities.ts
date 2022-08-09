@@ -1,5 +1,5 @@
-import { MAX_PLANET_LEVEL, MIN_PLANET_LEVEL } from '@darkforest_eth/constants';
-import { isLocatable } from '@darkforest_eth/gamelogic';
+import { MAX_PLANET_LEVEL, MIN_PLANET_LEVEL } from '@dfdao/constants';
+import { isLocatable } from '@dfdao/gamelogic';
 import {
   Chunk,
   LocatablePlanet,
@@ -8,7 +8,7 @@ import {
   PlanetRenderInfo,
   Radii,
   WorldCoords,
-} from '@darkforest_eth/types';
+} from '@dfdao/types';
 import Viewport from '../../Frontend/Game/Viewport';
 import { planetLevelToAnimationSpeed, sinusoidalAnimation } from '../Utils/Animation';
 import GameManager from './GameManager';
@@ -121,14 +121,14 @@ export class ViewportEntities {
     const radii = this.getPlanetRadii(Viewport.getInstance());
     const planetsToRemove = new Set(Array.from(this.cachedPlanets.keys()));
     const player = this.uiManager.getAccount();
-    if(!player) return;
+    if (!player) return;
     newPlanetsInViewport.forEach((planet: LocatablePlanet) => {
       planetsToRemove.delete(planet.locationId);
 
       const newPlanetInfo: PlanetRenderInfo = {
         planet: planet,
         radii: radii.get(planet.planetLevel) as Radii,
-        blocked: this.gameManager.playerMoveBlocked(player, planet.locationId)
+        blocked: this.gameManager.playerMoveBlocked(player, planet.locationId),
       };
 
       if (!planet.emojiBobAnimation) {

@@ -11,7 +11,7 @@ import {
   RevealedCoords,
   Transaction,
   WorldLocation,
-} from '@darkforest_eth/types';
+} from '@dfdao/types';
 import { IDBPDatabase, openDB } from 'idb';
 import stringify from 'json-stable-stringify';
 import _ from 'lodash';
@@ -59,7 +59,7 @@ interface PersistentChunkStoreConfig {
   db: IDBPDatabase;
   contractAddress: EthAddress;
   account: EthAddress;
-  configHash?: string
+  configHash?: string;
 }
 
 export const MODAL_POSITIONS_KEY = 'modal_positions';
@@ -74,7 +74,7 @@ class PersistentChunkStore implements ChunkStore {
   private confirmedTxHashes: Set<string>;
   private account: EthAddress;
   private contractAddress: EthAddress;
-  private configHash?: string; 
+  private configHash?: string;
 
   constructor({ db, account, contractAddress, configHash }: PersistentChunkStoreConfig) {
     this.db = db;
@@ -103,10 +103,12 @@ class PersistentChunkStore implements ChunkStore {
   static async create({
     account,
     contractAddress,
-    configHash
+    configHash,
   }: Omit<PersistentChunkStoreConfig, 'db'>): Promise<PersistentChunkStore> {
     console.log('chunk config hash', configHash);
-    const dbString = configHash ? `darkforest-${configHash}-${account}` : `darkforest-${contractAddress}-${account}`;
+    const dbString = configHash
+      ? `darkforest-${configHash}-${account}`
+      : `darkforest-${contractAddress}-${account}`;
     const db = await openDB(dbString, 1, {
       upgrade(db) {
         db.createObjectStore(ObjectStore.DEFAULT);
@@ -117,7 +119,12 @@ class PersistentChunkStore implements ChunkStore {
       },
     });
 
-    const localStorageManager = new PersistentChunkStore({ db, account, contractAddress, configHash });
+    const localStorageManager = new PersistentChunkStore({
+      db,
+      account,
+      contractAddress,
+      configHash,
+    });
 
     await localStorageManager.loadChunks();
 
@@ -138,7 +145,9 @@ class PersistentChunkStore implements ChunkStore {
     key: string,
     objStore: ObjectStore = ObjectStore.DEFAULT
   ): Promise<string | undefined> {
-    const dbStr = this.configHash ? `${this.configHash}-${this.account}-${key}` : `${this.contractAddress}-${this.account}-${key}`
+    const dbStr = this.configHash
+      ? `${this.configHash}-${this.account}-${key}`
+      : `${this.contractAddress}-${this.account}-${key}`;
     return await this.db.get(objStore, dbStr);
   }
 
@@ -151,14 +160,18 @@ class PersistentChunkStore implements ChunkStore {
   private async setKey(
     key: string,
     value: string,
-    objStore: ObjectStore = ObjectStore.DEFAULT,
+    objStore: ObjectStore = ObjectStore.DEFAULT
   ): Promise<void> {
-    const dbStr = this.configHash ? `${this.configHash}-${this.account}-${key}` : `${this.contractAddress}-${this.account}-${key}`
+    const dbStr = this.configHash
+      ? `${this.configHash}-${this.account}-${key}`
+      : `${this.contractAddress}-${this.account}-${key}`;
     await this.db.put(objStore, value, dbStr);
   }
 
   private async removeKey(key: string, objStore: ObjectStore = ObjectStore.DEFAULT): Promise<void> {
-    const dbStr = this.configHash ? `${this.configHash}-${this.account}-${key}` : `${this.contractAddress}-${this.account}-${key}`
+    const dbStr = this.configHash
+      ? `${this.configHash}-${this.account}-${key}`
+      : `${this.contractAddress}-${this.account}-${key}`;
     await this.db.delete(objStore, dbStr);
   }
 

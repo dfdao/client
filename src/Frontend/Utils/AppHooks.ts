@@ -1,6 +1,6 @@
-import { getActivatedArtifact, isActivated } from '@darkforest_eth/gamelogic';
-import { address } from '@darkforest_eth/serde';
-import { EthConnection } from '@darkforest_eth/network';
+import { getActivatedArtifact, isActivated } from '@dfdao/gamelogic';
+import { address } from '@dfdao/serde';
+import { EthConnection } from '@dfdao/network';
 import {
   Artifact,
   ArtifactId,
@@ -12,7 +12,7 @@ import {
   Player,
   Transaction,
   TransactionId,
-} from '@darkforest_eth/types';
+} from '@dfdao/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import GameUIManager from '../../Backend/GameLogic/GameUIManager';
 import { loadConfigFromHash } from '../../Backend/Network/GraphApi/ConfigApi';

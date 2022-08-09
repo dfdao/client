@@ -1,6 +1,6 @@
-import { getConfigName } from '@darkforest_eth/procedural';
-import { EthAddress, Leaderboard } from '@darkforest_eth/types';
-import dfstyles from '@darkforest_eth/ui/dist/styles';
+import { getConfigName } from '@dfdao/procedural';
+import { EthAddress, Leaderboard } from '@dfdao/types';
+import dfstyles from '@dfdao/ui/dist/styles';
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';

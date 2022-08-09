@@ -1,5 +1,5 @@
-import { Renderer } from '@darkforest_eth/renderer';
-import { CursorState, ModalManagerEvent, Setting } from '@darkforest_eth/types';
+import { Renderer } from '@dfdao/renderer';
+import { CursorState, ModalManagerEvent, Setting } from '@dfdao/types';
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useUIManager } from '../Utils/AppHooks';
@@ -105,9 +105,9 @@ export default function ControllableCanvas() {
     // TODO: Store this as it changes and re-initialize to that if stored
     const homePlanet = gameUIManager.getHomePlanet();
     let defaultWorldUnits = 1000;
-    if(homePlanet) {
-      const radius = gameUIManager.getRadiusOfPlanetLevel(homePlanet.planetLevel)
-      defaultWorldUnits = radius *10;
+    if (homePlanet) {
+      const radius = gameUIManager.getRadiusOfPlanetLevel(homePlanet.planetLevel);
+      defaultWorldUnits = radius * 10;
     }
     Viewport.initialize(gameUIManager, defaultWorldUnits, canvas);
     Renderer.initialize(

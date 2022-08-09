@@ -5,7 +5,7 @@ import { SelectFrom } from './CoreUI';
 import Select from 'react-select';
 import { Checkbox, NumberInput, DarkForestCheckbox, DarkForestNumberInput } from './Input';
 import styled from 'styled-components';
-import { TooltipName, WorldCoords } from '@darkforest_eth/types';
+import { TooltipName, WorldCoords } from '@dfdao/types';
 import stringify from 'json-stable-stringify';
 import dfstyles from '../Styles/dfstyles';
 import { PortalTooltipTrigger, TooltipTrigger } from '../Panes/Tooltip';
@@ -41,24 +41,57 @@ const displayProperties: TitleInfo[] = [
   { title: 'y', description: <span>The position of the planet on the y-axis</span> },
   {
     title: 'Level',
-    description:
-    <span>Larger planets have more energy and can send resources farther. But they take more energy to capture.</span>,
+    description: (
+      <span>
+        Larger planets have more energy and can send resources farther. But they take more energy to
+        capture.
+      </span>
+    ),
   },
   {
     title: 'Type',
     description: (
-      <div style ={{display: 'flex', flexDirection: 'column'}}>
-        <Sub><White>Planets</White> are the most basic type of celestial body.</Sub>
-        <Sub><White>Asteroid Fields</White> have half the defense of a planet, but produce silver.</Sub>
-        <Sub><White>Foundries</White> contain artifacts that can be discovered by players.</Sub>
-        <Sub><White>Spacetime Rips</White> withdraw and deposit artifacts and points.</Sub>
-        <Sub><White>Quasars</White> have no energy regen but store lots of energy and silver.</Sub>
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <Sub>
+          <White>Planets</White> are the most basic type of celestial body.
+        </Sub>
+        <Sub>
+          <White>Asteroid Fields</White> have half the defense of a planet, but produce silver.
+        </Sub>
+        <Sub>
+          <White>Foundries</White> contain artifacts that can be discovered by players.
+        </Sub>
+        <Sub>
+          <White>Spacetime Rips</White> withdraw and deposit artifacts and points.
+        </Sub>
+        <Sub>
+          <White>Quasars</White> have no energy regen but store lots of energy and silver.
+        </Sub>
       </div>
     ),
   },
-  { title: 'Target?', description: <span>If target planets are active, you must capture and fill a target planet with energy to win.</span> },
-  { title: 'Spawn?', description: <span>If spawn planets are active, players can only spawn on admin-created Spawn planets.</span> },
-  { title: 'Blocked Spawns', description: <span>The player who initializes on a blocked spawn planet cannot move to this planet.</span> },
+  {
+    title: 'Target?',
+    description: (
+      <span>
+        If target planets are active, you must capture and fill a target planet with energy to win.
+      </span>
+    ),
+  },
+  {
+    title: 'Spawn?',
+    description: (
+      <span>
+        If spawn planets are active, players can only spawn on admin-created Spawn planets.
+      </span>
+    ),
+  },
+  {
+    title: 'Blocked Spawns',
+    description: (
+      <span>The player who initializes on a blocked spawn planet cannot move to this planet.</span>
+    ),
+  },
 ];
 
 export const PlanetPropEditor: React.FC<PlanetPropEditorProps> = ({
@@ -241,18 +274,15 @@ export const PlanetPropEditor: React.FC<PlanetPropEditorProps> = ({
         key={`input-row-${index}`}
         style={value == 'blockedPlanetLocs' && blockEnabled ? { flexDirection: 'column' } : {}}
       >
-        {
-          displayProperties[index] ?
-            <PortalTooltipTrigger
+        {displayProperties[index] ? (
+          <PortalTooltipTrigger
             name={TooltipName.Empty}
             extraContent={displayProperties[index].description}
             style={{ width: '100%' }}
           >
             <LabeledInput>{displayProperties[index].title}</LabeledInput>
           </PortalTooltipTrigger>
-          :
-          null
-        }
+        ) : null}
         {content}
       </InputRow>
     );

@@ -1,6 +1,6 @@
-import { perlin } from "@darkforest_eth/hashing";
-import { SpaceType, WorldCoords } from "@darkforest_eth/types";
-import { DrawMessage, MinimapConfig, PlanetType } from "../../Frontend/Panes/Lobby/MinimapUtils";
+import { perlin } from '@dfdao/hashing';
+import { SpaceType, WorldCoords } from '@dfdao/types';
+import { DrawMessage, MinimapConfig, PlanetType } from '../../Frontend/Panes/Lobby/MinimapUtils';
 
 const ctx = self as unknown as Worker;
 
@@ -24,7 +24,7 @@ function spaceTypeFromPerlin(perlin: number, config: MinimapConfig): SpaceType {
 // https://github.com/darkforest-eth/plugins/blob/358a386356b9145005f17045d9f4ce22661d99a1/content/utilities/mini-map/plugin.js
 function generate(config: MinimapConfig): DrawMessage {
   const data = [];
-  const step = config.worldRadius * config.dot / 100;
+  const step = (config.worldRadius * config.dot) / 100;
 
   const radius = config.worldRadius;
 
@@ -38,7 +38,7 @@ function generate(config: MinimapConfig): DrawMessage {
     return false;
   };
 
-  const checkStagedPlanet = (x: number, y: number) : PlanetType => {
+  const checkStagedPlanet = (x: number, y: number): PlanetType => {
     let s = Math.round(step / 2);
     const stagedPlanet = config.stagedPlanets.find(
       (planet) => x - s <= planet.x && planet.x < x + s && y - s <= planet.y && planet.y < y + s
@@ -60,12 +60,12 @@ function generate(config: MinimapConfig): DrawMessage {
       if (!checkBounds(0, 0, i, j, radius)) {
         continue;
       }
-        // store coordinate and space type
+      // store coordinate and space type
       data.push({
         x: i,
         y: j,
         type: spaceTypeFromPerlin(spaceTypePerlin({ x: i, y: j }, config), config),
-        planet: checkStagedPlanet(i, j)
+        planet: checkStagedPlanet(i, j),
       });
     }
   }

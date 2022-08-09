@@ -1,5 +1,5 @@
-import { ModalId } from '@darkforest_eth/types';
-import { IconType } from '@darkforest_eth/ui';
+import { ModalId } from '@dfdao/types';
+import { IconType } from '@dfdao/ui';
 import React, {
   CSSProperties,
   useCallback,
@@ -248,7 +248,9 @@ export function ModalPane({
           {helpContent !== undefined && !minimized && (
             <>
               <Btn size='small' onClick={() => setShowingInformationSection((showing) => !showing)}>
-                <ModalIcon><Icon type={IconType.Help} /></ModalIcon>
+                <ModalIcon>
+                  <Icon type={IconType.Help} />
+                </ModalIcon>
               </Btn>
               <Spacer width={4} />
             </>
@@ -258,13 +260,17 @@ export function ModalPane({
             onClick={() => setMinimized((minimized: boolean) => !minimized)}
             style={{ fontFamily: 'serif' } as CSSStyleDeclaration & CSSProperties}
           >
-            <ModalIcon><Icon type = {minimized ? IconType.Maximize : IconType.Minimize}/></ModalIcon>
+            <ModalIcon>
+              <Icon type={minimized ? IconType.Maximize : IconType.Minimize} />
+            </ModalIcon>
           </Btn>
           {!hideClose && (
             <>
               <Spacer width={4} />
               <Btn size='small' onClick={() => onClose()}>
-                <ModalIcon><Icon type={IconType.X} /></ModalIcon>
+                <ModalIcon>
+                  <Icon type={IconType.X} />
+                </ModalIcon>
               </Btn>
             </>
           )}
@@ -279,6 +285,6 @@ export function ModalPane({
 const ModalIcon = styled.span`
   display: flex;
   align-items: center;
-  justify-content:center;
+  justify-content: center;
   padding: 5px 0px;
-`
+`;

@@ -1,5 +1,5 @@
-import { formatNumber, isAncient, isLocatable } from '@darkforest_eth/gamelogic';
-import { getPlanetName } from '@darkforest_eth/procedural';
+import { formatNumber, isAncient, isLocatable } from '@dfdao/gamelogic';
+import { getPlanetName } from '@dfdao/procedural';
 import {
   ArtifactRarityNames,
   ArtifactTypeNames,
@@ -7,12 +7,17 @@ import {
   Planet,
   PlanetType,
   TooltipName,
-} from '@darkforest_eth/types';
+} from '@dfdao/types';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { Wrapper } from '../../../Backend/Utils/Wrapper';
 import { StatIdx } from '../../../_types/global/GlobalTypes';
-import { AlignCenterHorizontally, EmSpacer, InlineBlock, SpreadApart } from '../../Components/CoreUI';
+import {
+  AlignCenterHorizontally,
+  EmSpacer,
+  InlineBlock,
+  SpreadApart,
+} from '../../Components/CoreUI';
 import { Icon, IconType } from '../../Components/Icons';
 import { AccountLabel } from '../../Components/Labels/Labels';
 import {
@@ -41,7 +46,7 @@ import {
 } from '../../Components/Labels/ArtifactLabels';
 import { getDeterministicArtifact } from '../../../Backend/Utils/Utils';
 import { ArtifactBiomeLabelAnimSimple } from '../../Components/Labels/BiomeLabels';
-import { EMPTY_ADDRESS } from '@darkforest_eth/constants';
+import { EMPTY_ADDRESS } from '@dfdao/constants';
 
 export function PlanetCardTitle({
   planet,

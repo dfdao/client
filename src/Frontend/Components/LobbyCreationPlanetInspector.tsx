@@ -1,4 +1,4 @@
-import { PlanetTypeNames } from '@darkforest_eth/types';
+import { PlanetTypeNames } from '@dfdao/types';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { CloseButton, LobbyPlanet } from '../Panes/Lobby/LobbiesUtils';
@@ -6,7 +6,7 @@ import { LobbyAction, LobbyConfigState } from '../Panes/Lobby/Reducer';
 import { PlanetPropEditor } from './LobbyPlanetPropEditor';
 
 export interface LobbyPlanetInspectorProps {
-  selectedPlanet?: LobbyPlanet ;
+  selectedPlanet?: LobbyPlanet;
   selectedIndex?: number;
   config: LobbyConfigState;
   updateConfig: React.Dispatch<LobbyAction>;
@@ -41,7 +41,12 @@ export const LobbyCreationPlanetInspector: React.FC<LobbyPlanetInspectorProps> =
     setMutablePlanet(selectedPlanet);
   }, [selectedPlanet, selectedIndex]);
 
-  if(!mutablePlanet || !selectedPlanet || selectedIndex == undefined) return <Inspector><InspectorInner></InspectorInner></Inspector>;
+  if (!mutablePlanet || !selectedPlanet || selectedIndex == undefined)
+    return (
+      <Inspector>
+        <InspectorInner></InspectorInner>
+      </Inspector>
+    );
   return (
     <Inspector>
       <InspectorInner>
@@ -55,8 +60,11 @@ export const LobbyCreationPlanetInspector: React.FC<LobbyPlanetInspectorProps> =
           canAddPlanets={config.ADMIN_CAN_ADD_PLANETS.displayValue ?? false}
           spawnPlanetsEnabled={config.MANUAL_SPAWN.displayValue ?? false}
           targetPlanetsEnabled={config.TARGET_PLANETS.displayValue ?? false}
-          blockEnabled = {(config.BLOCK_CAPTURE.displayValue ?? false) || (config.BLOCK_MOVES.displayValue ?? false)}
-          stagedPlanets = {config.ADMIN_PLANETS.currentValue ?? []}
+          blockEnabled={
+            (config.BLOCK_CAPTURE.displayValue ?? false) ||
+            (config.BLOCK_MOVES.displayValue ?? false)
+          }
+          stagedPlanets={config.ADMIN_PLANETS.currentValue ?? []}
           root={root}
           onChange={(planet) => setMutablePlanet(planet)}
         />

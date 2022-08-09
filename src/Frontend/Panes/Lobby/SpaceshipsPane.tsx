@@ -1,4 +1,4 @@
-import { SpaceshipType, TooltipName } from '@darkforest_eth/types';
+import { SpaceshipType, TooltipName } from '@dfdao/types';
 import _ from 'lodash';
 import React from 'react';
 import { Checkbox, DarkForestCheckbox } from '../../Components/Input';
@@ -13,7 +13,7 @@ function Spaceships({
   onUpdate,
 }: LobbiesPaneProps & { value: boolean | undefined; index: number }) {
   return (
-    <div style = {{width: '20%'}}>
+    <div style={{ width: '20%' }}>
       {/* TODO: We should have a utility that converts an integer into an ArtifactRarity safely  */}
       <SpaceshipLabel spaceship={index as SpaceshipType} />
       <br></br>
@@ -33,7 +33,8 @@ function Spaceships({
   );
 }
 
-const pointsRowStyle = { gap: '8px', minWidth: '500px' } as CSSStyleDeclaration & React.CSSProperties;
+const pointsRowStyle = { gap: '8px', minWidth: '500px' } as CSSStyleDeclaration &
+  React.CSSProperties;
 
 export function SpaceshipsPane({ config, onUpdate }: LobbiesPaneProps) {
   const spaceships = _.chunk(config.SPACESHIPS.displayValue, 5).map((items, rowIdx) => {

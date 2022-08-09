@@ -1,4 +1,4 @@
-import { LocationId } from '@darkforest_eth/types';
+import { LocationId } from '@dfdao/types';
 import React, { useCallback } from 'react';
 import { BroadcastPane, BroadcastPaneHelpContent } from '../Panes/Game/BroadcastPane';
 import { HatPane } from '../Panes/Game/HatPane';
@@ -8,7 +8,10 @@ import {
   PlanetInfoHelpContent,
 } from '../Panes/ManagePlanetArtifacts/ManagePlanetArtifactsPane';
 import { PlanetInfoPane } from '../Panes/Game/PlanetInfoPane';
-import { UpgradeDetailsPane, UpgradeDetailsPaneHelpContent } from '../Panes/Game/UpgradeDetailsPane';
+import {
+  UpgradeDetailsPane,
+  UpgradeDetailsPaneHelpContent,
+} from '../Panes/Game/UpgradeDetailsPane';
 import {
   TOGGLE_BROADCAST_PANE,
   TOGGLE_HAT_PANE,

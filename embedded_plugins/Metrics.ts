@@ -1,6 +1,6 @@
 // organize-imports-ignore
-import { BLOCK_EXPLORER_URL } from '@darkforest_eth/constants';
-import { DarkForest } from '@darkforest_eth/contracts/typechain';
+import { BLOCK_EXPLORER_URL } from '@dfdao/constants';
+import { DarkForest } from '@dfdao/contracts/typechain';
 import type {
   ContractMethodName,
   EthAddress,
@@ -9,7 +9,7 @@ import type {
   Planet,
   Transaction,
   TxIntent,
-} from '@darkforest_eth/types';
+} from '@dfdao/types';
 import { ContractTransaction, logger } from 'ethers';
 import {
   MAX_ARTIFACT_RARITY,
@@ -18,20 +18,20 @@ import {
   MIN_ARTIFACT_TYPE,
   MIN_SPACESHIP_TYPE,
   //@ts-ignore
-} from 'https://cdn.skypack.dev/@darkforest_eth/constants';
+} from 'https://cdn.skypack.dev/@dfdao/constants';
 //@ts-ignore
-import { getPlanetNameHash } from 'https://cdn.skypack.dev/@darkforest_eth/procedural';
+import { getPlanetNameHash } from 'https://cdn.skypack.dev/@dfdao/procedural';
 import {
   locationIdToDecStr,
   artifactIdFromHexStr,
   //@ts-ignore
-} from 'https://cdn.skypack.dev/@darkforest_eth/serde';
+} from 'https://cdn.skypack.dev/@dfdao/serde';
 import {
   ArtifactRarityNames,
   ArtifactType,
   ArtifactTypeNames,
   //@ts-ignore
-} from 'https://cdn.skypack.dev/@darkforest_eth/types';
+} from 'https://cdn.skypack.dev/@dfdao/types';
 import {
   html,
   render,
@@ -44,39 +44,38 @@ type Tx = Transaction<{
   args: Promise<never[]>;
   contract: DarkForest;
   methodName: ContractMethodName;
-}>
+}>;
 
 async function dfWaitWithMetrics(tx: Tx): Promise<number> {
   try {
     // console.log(`tx`, tx);
     const submit = await tx.submittedPromise;
     // console.log(`submit`, submit);
-    var startTime = performance.now()
+    var startTime = performance.now();
     const receipt = await tx.confirmedPromise;
-    var endTime = performance.now()
+    var endTime = performance.now();
     // console.log(`${tx.intent.methodName} confirmed ${endTime - startTime} milliseconds`)
-    //console.log(`confirmed with ${receipt.confirmations} blocks, ${receipt.gasUsed} gas used and ${submit.gasPrice} price (wei)`);  
+    //console.log(`confirmed with ${receipt.confirmations} blocks, ${receipt.gasUsed} gas used and ${submit.gasPrice} price (wei)`);
     return endTime - startTime;
   } catch (error) {
     console.log(`ERROR`, error);
     return 0;
-  } 
+  }
 }
 
 async function waitWithMetrics(tx: ContractTransaction, name?: string): Promise<number> {
   try {
-    var startTime = performance.now()
+    var startTime = performance.now();
     const receipt = await tx.wait();
-    var endTime = performance.now()
+    var endTime = performance.now();
     // console.log(`${name} confirmed ${endTime - startTime} milliseconds`)
     //console.log(`confirmed with ${receipt.confirmations} blocks, ${receipt.gasUsed} gas used and ${tx.gasPrice} price (wei)`);
-    return endTime - startTime;  
+    return endTime - startTime;
   } catch (error) {
-    console.log(`ERROR`)
+    console.log(`ERROR`);
     return 0;
   }
 }
-
 
 async function pauseGame() {
   const tx = await df.submitTransaction({
@@ -98,32 +97,32 @@ async function unpauseGame() {
 
 async function rawPauseGame() {
   const contract = df.getContract();
-  const tx = await contract.pause()
+  const tx = await contract.pause();
   return await waitWithMetrics(tx, 'raw pause');
 }
 
 async function rawUnpauseGame() {
   const contract = df.getContract();
-  const tx = await contract.unpause()
+  const tx = await contract.unpause();
   return await waitWithMetrics(tx, 'raw unpause');
 }
 
 async function changeRPC(rpcUrl: string) {
   df.getEthConnection()
-  .setRpcUrl(rpcUrl)
-  .then(() => {
-    localStorage.setItem('XDAI_RPC_ENDPOINT_v5', rpcUrl);
-  })
-  .catch(() => {
-    console.log(`error setting RPC`);
-  });
+    .setRpcUrl(rpcUrl)
+    .then(() => {
+      localStorage.setItem('XDAI_RPC_ENDPOINT_v5', rpcUrl);
+    })
+    .catch(() => {
+      console.log(`error setting RPC`);
+    });
 }
 
 async function testPauseDifference() {
   await changeRPC('https://kovan.optimism.io');
   setPollingInterval();
 
-  await logPauseDifference(2)
+  await logPauseDifference(2);
 
   await changeRPC('wss://ws-kovan.optimism.io');
   await logPauseDifference(2);
@@ -131,22 +130,23 @@ async function testPauseDifference() {
 
 function setPollingInterval(interval = 8000) {
   const interval1 = df.getEthConnection().getProvider().pollingInterval;
-  console.log(`polling interval is ${interval1}`)
+  console.log(`polling interval is ${interval1}`);
 
   // Return if wss websocket rpc, which has interval of 0.
-  if(interval1 == 0) return;
+  if (interval1 == 0) return;
 
   // @ts-expect-error Need to do this because getEthConnection() creates a fresh provider each time
   df.ethConnection.provider.pollingInterval = interval;
-  const res = df.getEthConnection().getProvider().pollingInterval
-  console.log(`polling interval is now ${res}`)
-
+  const res = df.getEthConnection().getProvider().pollingInterval;
+  console.log(`polling interval is now ${res}`);
 }
 
 function pollingIntervalSanityCheck() {
   console.log(`running pollInterval sanity check`);
-  for(var i = 0; i < 5; i++) {
-    setTimeout(() => {setPollingInterval()}, 5000 * i + 1);
+  for (var i = 0; i < 5; i++) {
+    setTimeout(() => {
+      setPollingInterval();
+    }, 5000 * i + 1);
   }
 }
 
@@ -158,10 +158,10 @@ async function logPauseDifference(iterations = 1) {
   let paused = await df.getContract().paused();
   console.log('pre: paused?', paused);
 
-  if(paused) await unpauseGame();
+  if (paused) await unpauseGame();
   paused = await df.getContract().paused();
   console.log('post: paused?', paused);
-  if(paused) throw new Error('must test on unpaused game');
+  if (paused) throw new Error('must test on unpaused game');
 
   var pauseTime = 0;
   var unPauseTime = 0;
@@ -170,12 +170,12 @@ async function logPauseDifference(iterations = 1) {
 
   setPollingInterval();
 
-  for(var i = 0; i < iterations; i++) {
+  for (var i = 0; i < iterations; i++) {
     console.log(`getting metrics for round ${i} of normal pause / unpause`);
 
     pauseTime += await pauseGame();
     unPauseTime += await unpauseGame();
-  
+
     console.log(`getting metrics for round ${i} of raw pause / unpause`);
     rawPauseTime += await rawPauseGame();
     rawUnPauseTime += await rawUnpauseGame();
@@ -187,15 +187,14 @@ async function logPauseDifference(iterations = 1) {
   var results: any = {};
   results['normal_avg_ms'] = normalAvg.toFixed(2);
   results['raw_avg_ms'] = rawAvg.toFixed(2);
-  results['polling_interval'] = df.getEthConnection().getProvider().pollingInterval
-  results['rpc'] = df.getEthConnection().getRpcEndpoint()
+  results['polling_interval'] = df.getEthConnection().getProvider().pollingInterval;
+  results['rpc'] = df.getEthConnection().getRpcEndpoint();
   console.log('Test results', results);
 }
 
 function Heading({ title }: { title: string }) {
   return html`<h2 style=${{ fontSize: '14pt', textDecoration: 'underline' }}>${title}</h2>`;
 }
-
 
 const wrapperStyle = {
   display: 'flex',
@@ -251,7 +250,6 @@ function App() {
         <df-button onClick=${() => logPauseDifference()}> Log Pause Difference </df-button>
         <df-button onClick=${() => testPauseDifference()}> Test Pause Difference </df-button>
         <df-button onClick=${() => pollingIntervalSanityCheck()}> Poll Interval Sanity </df-button>
-
       </div>
     </div>
   `;

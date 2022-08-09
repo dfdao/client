@@ -1,5 +1,5 @@
-import { EthAddress, ModalName } from '@darkforest_eth/types';
-import { IconType } from '@darkforest_eth/ui';
+import { EthAddress, ModalName } from '@dfdao/types';
+import { IconType } from '@dfdao/ui';
 import React, { useEffect, useState } from 'react';
 import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import styled from 'styled-components';

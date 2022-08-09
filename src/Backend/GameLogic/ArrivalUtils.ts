@@ -1,5 +1,5 @@
-import { CONTRACT_PRECISION } from '@darkforest_eth/constants';
-import { hasOwner, isActivated, isEmojiFlagMessage } from '@darkforest_eth/gamelogic';
+import { CONTRACT_PRECISION } from '@dfdao/constants';
+import { hasOwner, isActivated, isEmojiFlagMessage } from '@dfdao/gamelogic';
 import {
   ArrivalType,
   Artifact,
@@ -11,7 +11,7 @@ import {
   Player,
   QueuedArrival,
   Upgrade,
-} from '@darkforest_eth/types';
+} from '@dfdao/types';
 import _ from 'lodash';
 import { ContractConstants } from '../../_types/darkforest/api/ContractsAPITypes';
 
@@ -168,7 +168,7 @@ export const arrive = (
   const { energyArriving } = arrival;
 
   const onSameTeam = toOwner && arrivalPlayer?.team == toOwner?.team;
-  if (arrival.player !== toPlanet.owner && (!contractConstants.TEAMS_ENABLED || !onSameTeam) ) {
+  if (arrival.player !== toPlanet.owner && (!contractConstants.TEAMS_ENABLED || !onSameTeam)) {
     if (arrival.arrivalType === ArrivalType.Wormhole) {
       // if this is a wormhole arrival to a planet that isn't owned by the initiator of
       // the move, then don't move any energy

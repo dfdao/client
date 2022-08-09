@@ -1,4 +1,4 @@
-import { ArtifactPointValues, EthAddress, LocationId, UpgradeBranches } from '@darkforest_eth/types';
+import { ArtifactPointValues, EthAddress, LocationId, UpgradeBranches } from '@dfdao/types';
 import { BigNumber as EthersBN } from 'ethers';
 
 export const enum ZKArgIdx {
@@ -319,23 +319,8 @@ export interface ContractConstants {
   MANUAL_SPAWN: boolean;
   TARGET_PLANETS: boolean;
   CLAIM_VICTORY_ENERGY_PERCENT: number;
-  MODIFIERS : [
-    number,
-    number,
-    number,
-    number,
-    number,
-    number,
-    number,
-    number,
-  ];
-  SPACESHIPS : [
-    boolean,
-    boolean,
-    boolean,
-    boolean,
-    boolean
-  ];
+  MODIFIERS: [number, number, number, number, number, number, number, number];
+  SPACESHIPS: [boolean, boolean, boolean, boolean, boolean];
 
   RANDOM_ARTIFACTS: boolean;
   NO_ADMIN: boolean;

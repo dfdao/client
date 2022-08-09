@@ -1,8 +1,4 @@
-import {
-  SpaceshipType,
-  SpaceshipTypeNames,
-  SpaceshipTypeDesc
-} from '@darkforest_eth/types';
+import { SpaceshipType, SpaceshipTypeNames, SpaceshipTypeDesc } from '@dfdao/types';
 import React from 'react';
 import styled from 'styled-components';
 import { RarityColors } from '../../Styles/Colors';

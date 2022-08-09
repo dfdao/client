@@ -1,6 +1,6 @@
-import { fakeHash, perlin, seededRandom } from '@darkforest_eth/hashing';
-import { locationIdFromBigInt } from '@darkforest_eth/serde';
-import { Rectangle, WorldCoords, WorldLocation } from '@darkforest_eth/types';
+import { fakeHash, perlin, seededRandom } from '@dfdao/hashing';
+import { locationIdFromBigInt } from '@dfdao/serde';
+import { Rectangle, WorldCoords, WorldLocation } from '@dfdao/types';
 import { planetLevelBelowLevel0Threshold } from './PlanetUtils';
 
 type IdxWithRand = {
@@ -67,7 +67,7 @@ export const getPlanetLocations =
     biomebaseKey: number,
     perlinLengthScale: number,
     perlinMirrorX: boolean,
-    perlinMirrorY: boolean,
+    perlinMirrorY: boolean
   ) =>
   (chunkFootprint: Rectangle, planetRarity: number, planetLevelThresholds: number[]) => {
     // assume that the chunkFootprint is entirely contained within a 256x256 grid square
@@ -115,8 +115,8 @@ export const getPlanetLocations =
           floor: true,
         }),
       }))
-      .filter(
-        (planetData) => planetLevelBelowLevel0Threshold(planetData.hash, planetLevelThresholds)
+      .filter((planetData) =>
+        planetLevelBelowLevel0Threshold(planetData.hash, planetLevelThresholds)
       );
 
     return locs;

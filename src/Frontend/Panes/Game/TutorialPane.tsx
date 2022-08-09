@@ -1,4 +1,4 @@
-import { Setting } from '@darkforest_eth/types';
+import { Setting } from '@dfdao/types';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import TutorialManager, {
@@ -55,14 +55,14 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
     );
   }
   if (tutorialState === TutorialState.None) {
-    const isSinglePlayer = uiManager.getSpawnPlanets().length == 1 
+    const isSinglePlayer = uiManager.getSpawnPlanets().length == 1;
     return (
       <div className='tutzoom'>
         Welcome to Dark Forest Arena!
         <br />
         <br />
         <div>
-          {isSinglePlayer? (
+          {isSinglePlayer ? (
             <>
               Race against the clock to capture the Target Planet (it has a big 🎯 floating above
               it) and{' '}

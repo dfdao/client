@@ -1,4 +1,4 @@
-import { TooltipName } from '@darkforest_eth/types';
+import { TooltipName } from '@dfdao/types';
 import React from 'react';
 import { Checkbox, DarkForestCheckbox } from '../../Components/Input';
 import { Row } from '../../Components/Row';
@@ -116,9 +116,7 @@ export function SpaceTypeBiomePane({ config, onUpdate }: LobbiesPaneProps) {
       <Row>
         <PortalTooltipTrigger
           name={TooltipName.Empty}
-          extraContent={
-            'Biomes affect artifact strength and rarity.'
-          }
+          extraContent={'Biomes affect artifact strength and rarity.'}
           style={{ width: '100%' }}
         >
           <Slider min={0} max={32} step={1} variant='range' label='Biome thresholds'>

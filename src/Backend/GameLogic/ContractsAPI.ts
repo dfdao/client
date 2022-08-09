@@ -1,5 +1,10 @@
-import { EMPTY_LOCATION_ID, GNOSIS_CHAIN_ID, GNOSIS_OPTIMISM_CHAIN_ID, KOVAN_OPTIMISM_CHAIN_ID } from '@darkforest_eth/constants';
-import { DarkForest } from '@darkforest_eth/contracts/typechain';
+import {
+  EMPTY_LOCATION_ID,
+  GNOSIS_CHAIN_ID,
+  GNOSIS_OPTIMISM_CHAIN_ID,
+  KOVAN_OPTIMISM_CHAIN_ID,
+} from '@dfdao/constants';
+import { DarkForest } from '@dfdao/contracts/typechain';
 import {
   aggregateBulkGetter,
   ContractCaller,
@@ -7,7 +12,7 @@ import {
   ethToWei,
   TxCollection,
   TxExecutor,
-} from '@darkforest_eth/network';
+} from '@dfdao/network';
 import {
   address,
   artifactIdFromEthersBN,
@@ -22,7 +27,7 @@ import {
   decodeUpgradeBranches,
   locationIdFromEthersBN,
   locationIdToDecStr,
-} from '@darkforest_eth/serde';
+} from '@dfdao/serde';
 import {
   Artifact,
   ArtifactId,
@@ -41,7 +46,7 @@ import {
   TransactionId,
   TxIntent,
   VoyageId,
-} from '@darkforest_eth/types';
+} from '@dfdao/types';
 import { BigNumber, BigNumber as EthersBN, ContractFunction, Event, providers } from 'ethers';
 import { EventEmitter } from 'events';
 import _ from 'lodash';
@@ -122,7 +127,8 @@ export class ContractsAPI extends EventEmitter {
    */
   private getGasFeeForTransaction(tx: Transaction): AutoGasSetting | string {
     if (
-      (tx.intent.methodName === 'arenaInitializePlayer' || tx.intent.methodName === 'getSpaceShips') &&
+      (tx.intent.methodName === 'arenaInitializePlayer' ||
+        tx.intent.methodName === 'getSpaceShips') &&
       tx.intent.contract.address === this.contract.address
     ) {
       return '50';
@@ -225,9 +231,9 @@ export class ContractsAPI extends EventEmitter {
           contract.filters.PauseStateChanged(null).topics,
           contract.filters.LobbyCreated(null, null).topics,
           contract.filters.Gameover(null).topics,
-          contract.filters.GameStarted(null,null).topics,
-          contract.filters.PlayerReady(null,null).topics,
-          contract.filters.PlayerNotReady(null,null).topics,
+          contract.filters.GameStarted(null, null).topics,
+          contract.filters.PlayerReady(null, null).topics,
+          contract.filters.PlayerNotReady(null, null).topics,
         ].map((topicsOrUndefined) => (topicsOrUndefined || [])[0]),
       ] as Array<string | Array<string>>,
     };
@@ -418,7 +424,6 @@ export class ContractsAPI extends EventEmitter {
     contract.removeAllListeners(ContractEvent.GameStarted);
     contract.removeAllListeners(ContractEvent.PlayerReady);
     contract.removeAllListeners(ContractEvent.PlayerNotReady);
-
   }
 
   public getContractAddress(): EthAddress {
@@ -489,7 +494,7 @@ export class ContractsAPI extends EventEmitter {
       TEAMS_ENABLED,
       NUM_TEAMS,
       RANKED,
-      START_PAUSED
+      START_PAUSED,
     } = await this.makeCall(this.contract.getArenaConstants);
 
     const TOKEN_MINT_END_TIMESTAMP = (
@@ -637,10 +642,10 @@ export class ContractsAPI extends EventEmitter {
       TARGETS_REQUIRED_FOR_VICTORY: TARGETS_REQUIRED_FOR_VICTORY.toNumber(),
       TEAMS_ENABLED,
       NUM_TEAMS: NUM_TEAMS.toNumber(),
-      RANKED
+      RANKED,
     };
 
-    return constants; 
+    return constants;
   }
 
   public async getPlayers(
@@ -663,7 +668,7 @@ export class ContractsAPI extends EventEmitter {
     );
 
     const playerMap: Map<EthAddress, Player> = new Map();
-    for (let i = 0; i < nPlayers; i ++) {
+    for (let i = 0; i < nPlayers; i++) {
       const player = decodePlayer(players[i], arenaPlayers[i]);
       playerMap.set(player.address, player);
     }
@@ -806,17 +811,17 @@ export class ContractsAPI extends EventEmitter {
 
   public async getWinners(): Promise<EthAddress[]> {
     const winnerString = await this.makeCall(this.contract.getWinners);
-    return winnerString.map(w => address(w));
+    return winnerString.map((w) => address(w));
   }
 
   public async getStartTime(): Promise<number | undefined> {
     const startTime = (await this.makeCall(this.contract.getStartTime)).toNumber();
-    return startTime == 0 ? undefined : startTime ;
+    return startTime == 0 ? undefined : startTime;
   }
 
   public async getEndTime(): Promise<number | undefined> {
     const endTime = (await this.makeCall(this.contract.getEndTime)).toNumber();
-    return endTime == 0 ? undefined : endTime ;
+    return endTime == 0 ? undefined : endTime;
   }
 
   public async getRevealedPlanetsCoords(
@@ -1008,11 +1013,10 @@ export class ContractsAPI extends EventEmitter {
     txIntent: T,
     overrides?: providers.TransactionRequest
   ): Promise<Transaction<T>> {
-
     /* Find a way to speed this up */
     const chainId = (await this.ethConnection.getProvider().getNetwork()).chainId;
     overrides = overrides ?? {};
-    
+
     if (chainId === GNOSIS_OPTIMISM_CHAIN_ID) overrides.gasPrice = '1';
     if (chainId === KOVAN_OPTIMISM_CHAIN_ID) overrides.gasPrice = '100000';
 

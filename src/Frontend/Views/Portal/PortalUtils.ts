@@ -1,4 +1,4 @@
-import { EthAddress } from '@darkforest_eth/types';
+import { EthAddress } from '@dfdao/types';
 
 export function truncateAddress(address: EthAddress) {
   return address.substring(0, 6) + '...' + address.substring(36, 42);

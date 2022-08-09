@@ -1,7 +1,7 @@
 // organize-imports-ignore
-import type { Chunk, WorldCoords } from '@darkforest_eth/types';
+import type { Chunk, WorldCoords } from '@dfdao/types';
 //@ts-ignore
-import { locationIdFromDecStr } from 'https://cdn.skypack.dev/@darkforest_eth/serde';
+import { locationIdFromDecStr } from 'https://cdn.skypack.dev/@dfdao/serde';
 import {
   html,
   render,
@@ -287,7 +287,7 @@ function App({
 
   return html`
     <div>
-      <p>Warning: mimc has been reduced to 5. \nUpdate your explorer!</p>
+      <p>Warning: mimc has been reduced to 5. Update your explorer!</p>
       ${miners.map(
         (miner: ExtendedMinerManager) => html`
           <${MinerUI} key=${miner.url} miner=${miner} onRemove=${remove} />

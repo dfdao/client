@@ -1,4 +1,4 @@
-import { EthAddress } from '@darkforest_eth/types';
+import { EthAddress } from '@dfdao/types';
 import { apiUrl } from '../../../Frontend/Utils/constants';
 import { getGraphQLData } from '../GraphApi';
 

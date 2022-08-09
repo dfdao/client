@@ -1,14 +1,7 @@
-import { BLOCK_EXPLORER_URL } from '@darkforest_eth/constants';
-import { isLocatable } from '@darkforest_eth/gamelogic';
-import { artifactName, getPlanetName } from '@darkforest_eth/procedural';
-import {
-  Artifact,
-  ArtifactId,
-  Chunk,
-  Planet,
-  Transaction,
-  WorldCoords,
-} from '@darkforest_eth/types';
+import { BLOCK_EXPLORER_URL } from '@dfdao/constants';
+import { isLocatable } from '@dfdao/gamelogic';
+import { artifactName, getPlanetName } from '@dfdao/procedural';
+import { Artifact, ArtifactId, Chunk, Planet, Transaction, WorldCoords } from '@dfdao/types';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Viewport from '../Game/Viewport';
@@ -54,10 +47,10 @@ export const Gold = styled.span`
   color: ${dfstyles.colors.dfgold};
 `;
 export const Silver = styled.span`
-color: ${dfstyles.colors.dfsilver};
+  color: ${dfstyles.colors.dfsilver};
 `;
 export const Bronze = styled.span`
-color: ${dfstyles.colors.dfbronze};
+  color: ${dfstyles.colors.dfbronze};
 `;
 
 export const Colored = styled.span<{ color: string }>`

@@ -1,4 +1,4 @@
-import { Leaderboard, ModalName } from '@darkforest_eth/types';
+import { Leaderboard, ModalName } from '@dfdao/types';
 import React from 'react';
 
 import { getRank, Rank } from '../../../Backend/Utils/Rank';

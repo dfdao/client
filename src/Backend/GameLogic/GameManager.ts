@@ -3,25 +3,25 @@ import {
   CONTRACT_PRECISION,
   EMPTY_ADDRESS,
   MIN_PLANET_LEVEL,
-} from '@darkforest_eth/constants';
-import type { DarkForest } from '@darkforest_eth/contracts/typechain';
-import { monomitter, Monomitter, Subscription } from '@darkforest_eth/events';
+} from '@dfdao/constants';
+import type { DarkForest } from '@dfdao/contracts/typechain';
+import { monomitter, Monomitter, Subscription } from '@dfdao/events';
 import {
   getRange,
   isActivated,
   isLocatable,
   isSpaceShip,
   timeUntilNextBroadcastAvailable,
-} from '@darkforest_eth/gamelogic';
-import { fakeHash, mimcHash, perlin } from '@darkforest_eth/hashing';
+} from '@dfdao/gamelogic';
+import { fakeHash, mimcHash, perlin } from '@dfdao/hashing';
 import {
   createContract,
   EthConnection,
   ThrottledConcurrentQueue,
   verifySignature,
   weiToEth,
-} from '@darkforest_eth/network';
-import { getPlanetName } from '@darkforest_eth/procedural';
+} from '@dfdao/network';
+import { getPlanetName } from '@dfdao/procedural';
 import {
   artifactIdToDecStr,
   isUnconfirmedActivateArtifactTx,
@@ -41,7 +41,7 @@ import {
   isUnconfirmedWithdrawSilverTx,
   locationIdFromBigInt,
   locationIdToDecStr,
-} from '@darkforest_eth/serde';
+} from '@dfdao/serde';
 import {
   Artifact,
   ArtifactId,
@@ -95,7 +95,7 @@ import {
   WorldCoords,
   WorldLocation,
   Wormhole,
-} from '@darkforest_eth/types';
+} from '@dfdao/types';
 import bigInt, { BigInteger } from 'big-integer';
 import delay from 'delay';
 import { BigNumber, Contract, ContractInterface, constants, providers } from 'ethers';
@@ -2205,7 +2205,6 @@ class GameManager extends EventEmitter {
       throw e;
     }
     this.refreshTwitters();
-
   }
 
   private async getSpaceships() {
@@ -3611,21 +3610,19 @@ class GameManager extends EventEmitter {
     if (!player) return [];
     return [...this.getPlanetMap()].reduce(
       (total, [location, planet]) =>
-          planet.isTargetPlanet && !this.isMoveBlocked(location, player.homePlanetId)
+        planet.isTargetPlanet && !this.isMoveBlocked(location, player.homePlanetId)
           ? [...total, planet]
           : total,
       []
     );
   }
 
-  public getAllBlocks() :{[dest: LocationId]: LocationId[]} {
-    const blocks : {[dest: LocationId]: LocationId[]}= {};
+  public getAllBlocks(): { [dest: LocationId]: LocationId[] } {
+    const blocks: { [dest: LocationId]: LocationId[] } = {};
 
-    [...this.getPlanetMap()].forEach(
-      ([location, planet]) => {
-          if(planet.blockedPlanetIds.length > 0) blocks[location] = planet.blockedPlanetIds
-      }
-    );
+    [...this.getPlanetMap()].forEach(([location, planet]) => {
+      if (planet.blockedPlanetIds.length > 0) blocks[location] = planet.blockedPlanetIds;
+    });
     return blocks;
   }
 

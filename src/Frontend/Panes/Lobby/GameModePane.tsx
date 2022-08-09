@@ -1,5 +1,5 @@
-import { EthAddress } from '@darkforest_eth/types';
-import { DarkForestCheckbox } from '@darkforest_eth/ui';
+import { EthAddress } from '@dfdao/types';
+import { DarkForestCheckbox } from '@dfdao/ui';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Spacer, Title } from '../../Components/CoreUI';
@@ -16,11 +16,10 @@ const ButtonRow = styled(Row)`
 `;
 
 export function GameModePane({ lobbyAddress }: { lobbyAddress: EthAddress | undefined }) {
-
-    type mode = 'solo' | 'team' | undefined;
+  type mode = 'solo' | 'team' | undefined;
 
   const [active, setActive] = useState<mode>('solo');
-  
+
   const content = (
     <>
       <Title slot='title'>Customize Arena</Title>
@@ -38,8 +37,8 @@ export function GameModePane({ lobbyAddress }: { lobbyAddress: EthAddress | unde
           label='Free for all'
           checked={active == 'solo'}
           onChange={(e: Event & React.ChangeEvent<DarkForestCheckbox>) =>
-            setActive(e.target.checked ? 'solo' : undefined)}
-          
+            setActive(e.target.checked ? 'solo' : undefined)
+          }
         />
       </Row>
       <Row>
@@ -52,11 +51,13 @@ export function GameModePane({ lobbyAddress }: { lobbyAddress: EthAddress | unde
           }
         />
       </Row>
-      
+
       <Spacer height={20} />
 
-      <ButtonRow >
-        <LinkButton disabled = {!active} to={`/settings`}>Customize Arena Settings</LinkButton>
+      <ButtonRow>
+        <LinkButton disabled={!active} to={`/settings`}>
+          Customize Arena Settings
+        </LinkButton>
       </ButtonRow>
     </>
   );

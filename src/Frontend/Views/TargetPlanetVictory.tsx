@@ -1,4 +1,4 @@
-import { TooltipName } from '@darkforest_eth/types';
+import { TooltipName } from '@dfdao/types';
 import React from 'react';
 import styled from 'styled-components';
 import { Btn } from '../Components/Btn';
@@ -37,9 +37,7 @@ export function TargetPlanetVictory() {
           </span>
 
           {canClaimVictory && (
-            <ArenaPortalButton
-              onClick={() => gameManager.claimVictory()}
-            >
+            <ArenaPortalButton onClick={() => gameManager.claimVictory()}>
               Claim Victory!
             </ArenaPortalButton>
           )}

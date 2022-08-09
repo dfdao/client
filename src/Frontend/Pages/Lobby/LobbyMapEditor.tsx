@@ -1,4 +1,4 @@
-import { EthAddress, WorldCoords } from '@darkforest_eth/types';
+import { EthAddress, WorldCoords } from '@dfdao/types';
 import React, { useMemo, useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled, { css } from 'styled-components';
@@ -74,9 +74,7 @@ export const LobbyMapEditor: React.FC<{
     //   return;
     // }
     if (
-      config.ADMIN_PLANETS.displayValue?.find(
-        (p) => planetCoord.x == p?.x && planetCoord.y == p?.y
-      )
+      config.ADMIN_PLANETS.displayValue?.find((p) => planetCoord.x == p?.x && planetCoord.y == p?.y)
     ) {
       onError('Planet with identical coords staged');
       return;
@@ -84,7 +82,7 @@ export const LobbyMapEditor: React.FC<{
     const newPlanetToStage: LobbyPlanet = {
       ...mutablePlanet,
       x: planetCoord.x,
-      y: planetCoord.y
+      y: planetCoord.y,
     };
     const index = config.ADMIN_PLANETS.displayValue?.length ?? 0;
     updateConfig({
@@ -120,7 +118,7 @@ export const LobbyMapEditor: React.FC<{
               (config.BLOCK_MOVES.displayValue ?? false)
             }
             stagedPlanets={config.ADMIN_PLANETS.currentValue ?? []}
-            excludePlanetTypes={['x','y']}
+            excludePlanetTypes={['x', 'y']}
             onChange={(planet) => setMutablePlanet(planet)}
             root={root}
           />
@@ -305,7 +303,7 @@ const EditorButton = styled.button<{ cancel: boolean }>`
   width: 100%;
 `;
 
-// styles copied from { DarkForestShortcutButton } from '@darkforest_eth/ui';
+// styles copied from { DarkForestShortcutButton } from '@dfdao/ui';
 const Key = styled.kbd<{ active: boolean }>`
   font-size: 0.7rem;
   line-height: 1.4;

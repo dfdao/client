@@ -1,5 +1,5 @@
-import { getConfigName } from '@darkforest_eth/procedural';
-import { EthAddress } from '@darkforest_eth/types';
+import { getConfigName } from '@dfdao/procedural';
+import { EthAddress } from '@dfdao/types';
 import _ from 'lodash';
 import React, { useEffect, useState, useMemo } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
@@ -53,7 +53,9 @@ function MapOverview({
   return (
     <OverviewContainer>
       <div style={{ textAlign: 'center' }}>
-        {configHash == competitiveConfig &&  <MythicLabelText text={`Galactic League Official Map`} />}
+        {configHash == competitiveConfig && (
+          <MythicLabelText text={`Galactic League Official Map`} />
+        )}
         <MapTitle>{mapName}</MapTitle>
         <TextPreview text={configHash} focusedWidth={'200px'} unFocusedWidth={'200px'} />
       </div>
@@ -77,7 +79,7 @@ function MapOverview({
           setRefreshing={() => {}}
         />
       )}
-      <div style = {{display: 'flex', gap: '16px', justifyContent: 'center', width: '100%'}}>
+      <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', width: '100%' }}>
         <Link style={{ minWidth: '250px' }} target='blank' to={`/arena/${lobbyAddress}/settings`}>
           <ArenaPortalButton secondary>Remix Map</ArenaPortalButton>
         </Link>
@@ -91,7 +93,7 @@ function MapOverview({
 
 export function MapInfoView({ match }: RouteComponentProps<{ configHash: string }>) {
   const configHash = match.params.configHash || undefined;
-  const {config, lobbyAddress, error} = useConfigFromHash(configHash);
+  const { config, lobbyAddress, error } = useConfigFromHash(configHash);
 
   return (
     <MapInfoContainer>

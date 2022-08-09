@@ -1,5 +1,5 @@
-import { RECOMMENDED_MODAL_WIDTH } from '@darkforest_eth/constants';
-import { TooltipName } from '@darkforest_eth/types';
+import { RECOMMENDED_MODAL_WIDTH } from '@dfdao/constants';
+import { TooltipName } from '@dfdao/types';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import styled from 'styled-components';
@@ -100,14 +100,21 @@ export function PortalTooltipTrigger(props: TooltipTriggerProps) {
   return (
     <>
       <StyledTooltipTrigger
-        style={{ ...props.style}}
+        style={{ ...props.style }}
         onMouseEnter={() => setHovering(true)}
         onMouseLeave={() => setHovering(false)}
       >
         {props.children}
       </StyledTooltipTrigger>
 
-      {hovering && <Tooltip {...props} top={mouseCoords.y} left={mouseCoords.x} style = {{zIndex: 9999, position: 'fixed'}}/> }
+      {hovering && (
+        <Tooltip
+          {...props}
+          top={mouseCoords.y}
+          left={mouseCoords.x}
+          style={{ zIndex: 9999, position: 'fixed' }}
+        />
+      )}
     </>
   );
 }

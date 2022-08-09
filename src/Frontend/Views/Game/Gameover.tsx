@@ -1,4 +1,4 @@
-import { EthAddress, TooltipName } from '@darkforest_eth/types';
+import { EthAddress, TooltipName } from '@dfdao/types';
 import React from 'react';
 import styled from 'styled-components';
 import { AccountLabel } from '../../Components/Labels/Labels';
@@ -33,15 +33,18 @@ export function Gameover() {
       <GameoverContainer>
         <TooltipTrigger
           extraContent={
-            <>
-              GAMEOVER! The winner is {teamsEnabled ? `Team ${winningTeam}` : winners[0]}
-            </>
+            <>GAMEOVER! The winner is {teamsEnabled ? `Team ${winningTeam}` : winners[0]}</>
           }
           name={TooltipName.Empty}
         >
           <Gold>GAMEOVER!</Gold>
           <br />
-          Winner: {' '} {teamsEnabled ? `Team ${winningTeam}` : <AccountLabel ethAddress={winners[0] as EthAddress}/>}
+          Winner:{' '}
+          {teamsEnabled ? (
+            `Team ${winningTeam}`
+          ) : (
+            <AccountLabel ethAddress={winners[0] as EthAddress} />
+          )}
           {/* {winners.map((winner, idx) => (
             <AccountLabel
               key={idx}

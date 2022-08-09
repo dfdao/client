@@ -52,7 +52,7 @@ const styles: {
 };
 
 const links = {
-  twitter: 'http://twitter.com/darkforest_eth',
+  twitter: 'http://twitter.com/dfdao',
   email: 'mailto:ivan@0xparc.org',
   blog: 'https://blog.zkga.me/',
   telegram: 'https://t.me/zk_forest',

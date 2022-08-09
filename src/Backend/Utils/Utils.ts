@@ -1,6 +1,6 @@
-import { formatNumber } from '@darkforest_eth/gamelogic';
-import { locationIdToDecStr } from '@darkforest_eth/serde';
-import { Initializers } from '@darkforest_eth/settings';
+import { formatNumber } from '@dfdao/gamelogic';
+import { locationIdToDecStr } from '@dfdao/serde';
+import { Initializers } from '@dfdao/settings';
 import {
   ArtifactRarity,
   ArtifactType,
@@ -12,7 +12,7 @@ import {
   SpaceType,
   Upgrade,
   UpgradeBranchName,
-} from '@darkforest_eth/types';
+} from '@dfdao/types';
 import * as bigInt from 'big-integer';
 import { BigInteger } from 'big-integer';
 import { BigNumber, ethers, utils } from 'ethers';
@@ -151,13 +151,11 @@ function artifactRarityFromPlanetLevel(planetLevel: number): ArtifactRarity {
   else return ArtifactRarity.Mythic;
 }
 
-
 export function getDeterministicArtifact(planet: LocatablePlanet) {
-
   const abiCoder = ethers.utils.defaultAbiCoder;
 
   const artifactSeed = ethers.utils.keccak256(
-    abiCoder.encode(['uint'], [BigInt('0x'+planet.locationId)])
+    abiCoder.encode(['uint'], [BigInt('0x' + planet.locationId)])
   );
 
   const seedHash = ethers.utils.keccak256(abiCoder.encode(['uint'], [BigInt(artifactSeed)]));
@@ -166,7 +164,11 @@ export function getDeterministicArtifact(planet: LocatablePlanet) {
   const lastByteOfSeed = seed.mod(BigNumber.from('0xff')).toNumber();
   const bigLastByte = BigNumber.from(lastByteOfSeed);
 
-  const secondLastByteOfSeed = ((seed.sub(bigLastByte)).div(BigNumber.from(256))).mod(BigNumber.from('0xff')).toNumber();
+  const secondLastByteOfSeed = seed
+    .sub(bigLastByte)
+    .div(BigNumber.from(256))
+    .mod(BigNumber.from('0xff'))
+    .toNumber();
 
   const perlin = planet.perlin;
   const biome = planet.biome;

@@ -1,5 +1,5 @@
-import { BLOCK_EXPLORER_URL } from '@darkforest_eth/constants';
-import { EthAddress } from '@darkforest_eth/types';
+import { BLOCK_EXPLORER_URL } from '@dfdao/constants';
+import { EthAddress } from '@dfdao/types';
 import _ from 'lodash';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
@@ -100,7 +100,7 @@ export function LobbyConfirmPage({
   }
   return (
     <Container>
-      <Sidebar previousPath={!created ? root : undefined} title={!created ? '← Choose Map': ''}>
+      <Sidebar previousPath={!created ? root : undefined} title={!created ? '← Choose Map' : ''}>
         <span>Confirm your map configuration before creating your DF Arena Universe.</span>
         <Spacer height={24} />
         <PlanetListPane

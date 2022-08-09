@@ -1,4 +1,4 @@
-import { ArtifactRarity, TooltipName } from '@darkforest_eth/types';
+import { ArtifactRarity, TooltipName } from '@dfdao/types';
 import React from 'react';
 import {
   Checkbox,
@@ -42,18 +42,20 @@ export function ArtifactSettingsPane({ config, onUpdate }: LobbiesPaneProps) {
   return (
     <>
       <Row>
-      <PortalTooltipTrigger
+        <PortalTooltipTrigger
           name={TooltipName.Empty}
-          extraContent={'When disabled, artifacts are created deterministically. When enabled, they are generated randomly when prospected.'}
+          extraContent={
+            'When disabled, artifacts are created deterministically. When enabled, they are generated randomly when prospected.'
+          }
           style={{ width: '100%' }}
         >
-        <Checkbox
-          label='Artifacts are created randomly?'
-          checked={config.RANDOM_ARTIFACTS.displayValue}
-          onChange={(e: Event & React.ChangeEvent<DarkForestCheckbox>) =>
-            onUpdate({ type: 'RANDOM_ARTIFACTS', value: e.target.checked })
-          }
-        />
+          <Checkbox
+            label='Artifacts are created randomly?'
+            checked={config.RANDOM_ARTIFACTS.displayValue}
+            onChange={(e: Event & React.ChangeEvent<DarkForestCheckbox>) =>
+              onUpdate({ type: 'RANDOM_ARTIFACTS', value: e.target.checked })
+            }
+          />
         </PortalTooltipTrigger>
       </Row>
 
@@ -70,12 +72,12 @@ export function ArtifactSettingsPane({ config, onUpdate }: LobbiesPaneProps) {
         <Warning>{config.PHOTOID_ACTIVATION_DELAY.warning}</Warning>
       </Row>
       <Row>
-      <PortalTooltipTrigger
+        <PortalTooltipTrigger
           name={TooltipName.Empty}
           extraContent={'Used when playing with traditional Dark Forest scoring.'}
           style={{ width: '100%' }}
         >
-        <span>Artifact point values by rarity</span>
+          <span>Artifact point values by rarity</span>
         </PortalTooltipTrigger>
       </Row>
       <Row style={pointsRowStyle}>

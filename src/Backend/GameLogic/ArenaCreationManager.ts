@@ -1,18 +1,18 @@
-import { EMPTY_ADDRESS } from '@darkforest_eth/constants';
-import { INIT_ADDRESS } from '@darkforest_eth/contracts';
-import { DarkForest, DFArenaInitialize } from '@darkforest_eth/contracts/typechain';
-import { fakeHash, mimcHash, modPBigInt, perlin } from '@darkforest_eth/hashing';
-import { EthConnection } from '@darkforest_eth/network';
-import { address } from '@darkforest_eth/serde';
+import { EMPTY_ADDRESS } from '@dfdao/constants';
+import { INIT_ADDRESS } from '@dfdao/contracts';
+import { DarkForest, DFArenaInitialize } from '@dfdao/contracts/typechain';
+import { fakeHash, mimcHash, modPBigInt, perlin } from '@dfdao/hashing';
+import { EthConnection } from '@dfdao/network';
+import { address } from '@dfdao/serde';
 import {
   buildContractCallArgs,
   fakeProof,
   RevealSnarkContractCallArgs,
   RevealSnarkInput,
   SnarkJSProofAndSignals,
-} from '@darkforest_eth/snarks';
-import revealCircuitPath from '@darkforest_eth/snarks/reveal.wasm';
-import revealZkeyPath from '@darkforest_eth/snarks/reveal.zkey';
+} from '@dfdao/snarks';
+import revealCircuitPath from '@dfdao/snarks/reveal.wasm';
+import revealZkeyPath from '@dfdao/snarks/reveal.zkey';
 import {
   ContractMethodName,
   EthAddress,
@@ -22,7 +22,7 @@ import {
   UnconfirmedReveal,
   WorldCoords,
   WorldLocation,
-} from '@darkforest_eth/types';
+} from '@dfdao/types';
 import { TransactionReceipt } from '@ethersproject/providers';
 import { keccak256, toUtf8Bytes } from 'ethers/lib/utils';
 import _ from 'lodash';
@@ -54,9 +54,13 @@ export class ArenaCreationManager {
   private arenaAddress: EthAddress | undefined;
   private whitelistedAddresses: EthAddress[];
   private createdPlanets: CreatedPlanet[];
-  private created : boolean = false;
+  private created: boolean = false;
 
-  private constructor(parentAddress: EthAddress, contract: ContractsAPI, connection: EthConnection) {
+  private constructor(
+    parentAddress: EthAddress,
+    contract: ContractsAPI,
+    connection: EthConnection
+  ) {
     this.parentAddress = parentAddress;
     this.contract = contract;
     this.connection = connection;
@@ -182,17 +186,18 @@ export class ArenaCreationManager {
     createdPlanet.revealTx = tx?.hash;
   }
 
-  // to do: simplify planet creation so either only create lobby planets 
+  // to do: simplify planet creation so either only create lobby planets
   // or only create init planets
-  public async bulkCreateLobbyPlanets({config, planets} :
-    {
-      config: LobbyInitializers;
-      planets?: LobbyPlanet[];
-    }) {
+  public async bulkCreateLobbyPlanets({
+    config,
+    planets,
+  }: {
+    config: LobbyInitializers;
+    planets?: LobbyPlanet[];
+  }) {
     // make create Planet args
     const planetsToCreate = planets || config.ADMIN_PLANETS;
     const initPlanets = this.lobbyPlanetsToInitPlanets(config, planetsToCreate);
-
 
     const args = Promise.resolve([initPlanets]);
     const txIntent = {
@@ -207,7 +212,9 @@ export class ArenaCreationManager {
 
     await tx.confirmedPromise;
 
-    planetsToCreate.map((p) => this.createdPlanets.push({ ...p, createTx: tx?.hash, revealTx: tx?.hash }));
+    planetsToCreate.map((p) =>
+      this.createdPlanets.push({ ...p, createTx: tx?.hash, revealTx: tx?.hash })
+    );
   }
 
   public async bulkCreateInitPlanets({
@@ -406,7 +413,7 @@ export class ArenaCreationManager {
   }
 
   private lobbyContract() {
-    if(!this.arenaAddress) throw new Error('no lobby created');
+    if (!this.arenaAddress) throw new Error('no lobby created');
     return this.connection.getContract<DarkForest>(this.arenaAddress);
   }
 
@@ -424,13 +431,13 @@ export class ArenaCreationManager {
   }
 
   getParentAddress() {
-    return this.parentAddress
+    return this.parentAddress;
   }
 
   getArenaAddress() {
     return this.arenaAddress;
   }
-  
+
   get arenaCreated() {
     return this.created;
   }

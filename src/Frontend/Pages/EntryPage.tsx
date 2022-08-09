@@ -1,8 +1,8 @@
-import { CONTRACT_ADDRESS, FAUCET_ADDRESS } from '@darkforest_eth/contracts';
-import { DFArenaFaucet } from '@darkforest_eth/contracts/typechain';
-import { EthConnection, ThrottledConcurrentQueue, weiToEth } from '@darkforest_eth/network';
-import { address } from '@darkforest_eth/serde';
-import { EthAddress } from '@darkforest_eth/types';
+import { CONTRACT_ADDRESS, FAUCET_ADDRESS } from '@dfdao/contracts';
+import { DFArenaFaucet } from '@dfdao/contracts/typechain';
+import { EthConnection, ThrottledConcurrentQueue, weiToEth } from '@dfdao/network';
+import { address } from '@dfdao/serde';
+import { EthAddress } from '@dfdao/types';
 import { utils, Wallet } from 'ethers';
 import React, { useEffect, useRef, useState } from 'react';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';

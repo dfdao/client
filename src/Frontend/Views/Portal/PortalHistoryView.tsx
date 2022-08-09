@@ -1,4 +1,4 @@
-import { getConfigName } from '@darkforest_eth/procedural';
+import { getConfigName } from '@dfdao/procedural';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ModifierType, TooltipName } from '@darkforest_eth/types';
+import { ModifierType, TooltipName } from '@dfdao/types';
 import {
   Checkbox,
   DarkForestCheckbox,
@@ -153,9 +153,7 @@ export function GameSettingsPane({ config, onUpdate }: LobbiesPaneProps) {
       <Row>
         <PortalTooltipTrigger
           name={TooltipName.Empty}
-          extraContent={
-            'Used when playing with traditional Dark Forest scoring.'
-          }
+          extraContent={'Used when playing with traditional Dark Forest scoring.'}
           style={{ width: '100%' }}
         >
           {/* It is a little weird that this is in Game Settings, but I'd rather keep other scoring grouped */}

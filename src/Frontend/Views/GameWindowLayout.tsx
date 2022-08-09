@@ -1,4 +1,4 @@
-import { ModalId, ModalName, Setting } from '@darkforest_eth/types';
+import { ModalId, ModalName, Setting } from '@dfdao/types';
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { BorderlessPane } from '../Components/CoreUI';
@@ -16,7 +16,7 @@ import { DiagnosticsPane } from '../Panes/Game/DiagnosticsPane';
 import { ExplorePane } from '../Panes/Game/ExplorePane';
 import { HelpPane } from '../Panes/Game/HelpPane';
 import { HoverPlanetPane } from '../Panes/Game/HoverPlanetPane';
-import { WaitingRoomPane} from '../Panes/Game/WaitingRoomPane'
+import { WaitingRoomPane } from '../Panes/Game/WaitingRoomPane';
 import { PlanetContextPane } from '../Panes/Game/PlanetContextPane';
 import { PlanetDexPane } from '../Panes/Game/PlanetDexPane';
 import { PlayerArtifactsPane } from '../Panes/Game/PlayerArtifactsPane';
@@ -90,7 +90,9 @@ export function GameWindowLayout({
     setModalsContainer(node);
   }, []);
 
-  const [waitingRoomVisible, setWaitingRoomVisible] = useState(!uiManager.gameStarted && uiManager.contractConstants.MANUAL_SPAWN);
+  const [waitingRoomVisible, setWaitingRoomVisible] = useState(
+    !uiManager.gameStarted && uiManager.contractConstants.MANUAL_SPAWN
+  );
 
   const [tutorialVisible, setTutorialVisible] = useBooleanSetting(uiManager, Setting.TutorialOpen);
   const isTutorialWorld = uiManager.contractConstants.CONFIG_HASH === tutorialConfig;
@@ -169,7 +171,7 @@ export function GameWindowLayout({
           visible={diagnosticsVisible}
           onClose={() => setDiagnosticsVisible(false)}
         />
-        <SurveyPane visible={uiManager.getGameover()} onClose={()=> {}} />
+        <SurveyPane visible={uiManager.getGameover()} onClose={() => {}} />
 
         {modalsContainer && (
           <PluginLibraryPane
@@ -181,10 +183,7 @@ export function GameWindowLayout({
         )}
       </div>
 
-      <WaitingRoomPane
-        visible = {waitingRoomVisible}
-        onClose = {() => setWaitingRoomVisible(false)}
-      />
+      <WaitingRoomPane visible={waitingRoomVisible} onClose={() => setWaitingRoomVisible(false)} />
 
       <MainWindow>
         <CanvasContainer>

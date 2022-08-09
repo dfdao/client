@@ -1,5 +1,5 @@
-import { RECOMMENDED_MODAL_WIDTH } from '@darkforest_eth/constants';
-import { SpaceType } from '@darkforest_eth/types';
+import { RECOMMENDED_MODAL_WIDTH } from '@dfdao/constants';
+import { SpaceType } from '@dfdao/types';
 import color from 'color';
 import styled, { css } from 'styled-components';
 
@@ -170,11 +170,11 @@ export const snips = {
 };
 
 export const PortalButton = styled.button`
-background: ${dfstyles.colors.text};
-color: ${dfstyles.colors.borderDarkest};
-border: 1px solid ${dfstyles.colors.borderDarkest};
-border-radius: 3px;
-padding: 2px 5px;
-`
+  background: ${dfstyles.colors.text};
+  color: ${dfstyles.colors.borderDarkest};
+  border: 1px solid ${dfstyles.colors.borderDarkest};
+  border-radius: 3px;
+  padding: 2px 5px;
+`;
 
 export default dfstyles;

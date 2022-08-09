@@ -1,4 +1,4 @@
-import { LiveMatch } from '@darkforest_eth/types';
+import { LiveMatch } from '@dfdao/types';
 import { apiUrl } from '../../../Frontend/Utils/constants';
 import { getGraphQLData } from '../GraphApi';
 

@@ -1,6 +1,6 @@
-import { CONTRACT_ADDRESS } from '@darkforest_eth/contracts';
-import { address } from '@darkforest_eth/serde';
-import { IconType } from '@darkforest_eth/ui';
+import { CONTRACT_ADDRESS } from '@dfdao/contracts';
+import { address } from '@dfdao/serde';
+import { IconType } from '@dfdao/ui';
 import React, { CSSProperties, useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled, { createGlobalStyle, CSSObject } from 'styled-components';
@@ -21,7 +21,7 @@ export const enum LandingPageZIndex {
 }
 
 const links = {
-  twitter: 'http://twitter.com/darkforest_eth',
+  twitter: 'http://twitter.com/dfdao',
   email: 'mailto:zeroxhank@gmail.com',
   blog: 'https://blog.zkga.me/',
   discord: 'https://discord.gg/WzYuegCh',

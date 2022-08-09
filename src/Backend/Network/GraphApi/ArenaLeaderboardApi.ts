@@ -1,11 +1,11 @@
-import { EMPTY_ADDRESS } from '@darkforest_eth/constants';
-import { address } from '@darkforest_eth/serde';
+import { EMPTY_ADDRESS } from '@dfdao/constants';
+import { address } from '@dfdao/serde';
 import {
   ArenaLeaderboard,
   ArenaLeaderboardEntry,
   Leaderboard,
   LeaderboardEntry,
-} from '@darkforest_eth/types';
+} from '@dfdao/types';
 import {
   roundEndTimestamp,
   roundStartTimestamp,

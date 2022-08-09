@@ -1,4 +1,4 @@
-import { Leaderboard } from '@darkforest_eth/types';
+import { Leaderboard } from '@dfdao/types';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';

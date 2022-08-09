@@ -1,6 +1,6 @@
 // should be able to be treated as a text element
-import { Planet, UpgradeBranchName } from '@darkforest_eth/types';
-import { DarkForestIcon, IconType } from '@darkforest_eth/ui';
+import { Planet, UpgradeBranchName } from '@dfdao/types';
+import { DarkForestIcon, IconType } from '@dfdao/ui';
 import { createComponent } from '@lit-labs/react';
 import React from 'react';
 import { getPlanetRank, isFullRank } from '../../Backend/Utils/Utils';
@@ -16,7 +16,7 @@ export const Icon = createComponent(React, DarkForestIcon.tagName, DarkForestIco
 });
 
 // Re-export the IconType abstract type & the "enum" object for easier access
-export { IconType } from '@darkforest_eth/ui';
+export { IconType } from '@dfdao/ui';
 
 // Utilities for calculating an Icon from some context.
 // I think these should be made into utilities that return the `IconType`
@@ -64,8 +64,10 @@ export const Quasar = ({ height, width }: AlertIcon) => {
 export const FoundRuins = ({ height, width }: AlertIcon) => {
   return <img height={height} width={width} src='/public/icons/alerts/planettypes/ruins.svg' />;
 };
-export const Star = ({ height, width, color }: AlertIcon & {color: string}) => {
-  return <img height={height} width={width} style = {{filter : color}} src='/public/icons/star.svg' />;
+export const Star = ({ height, width, color }: AlertIcon & { color: string }) => {
+  return (
+    <img height={height} width={width} style={{ filter: color }} src='/public/icons/star.svg' />
+  );
 };
 
 export const Gnosis = ({ height, width }: AlertIcon) => {
@@ -162,7 +164,9 @@ export const PlanetAttacked = ({ height, width }: AlertIcon) => {
   return <img height={height} width={width} src='/public/icons/alerts/combat/planetattacked.svg' />;
 };
 export const PlanetSupported = ({ height, width }: AlertIcon) => {
-  return <img height={height} width={width} src='/public/icons/alerts/combat/planetsupported.svg' />;
+  return (
+    <img height={height} width={width} src='/public/icons/alerts/combat/planetsupported.svg' />
+  );
 };
 export const PlanetLost = ({ height, width }: AlertIcon) => {
   return <img height={height} width={width} src='/public/icons/alerts/combat/planetlost.svg' />;

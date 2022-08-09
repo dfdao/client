@@ -1,4 +1,4 @@
-import { ArtifactRarity, ModalName, PlanetLevel } from '@darkforest_eth/types';
+import { ArtifactRarity, ModalName, PlanetLevel } from '@dfdao/types';
 import React from 'react';
 import styled from 'styled-components';
 import { EmSpacer, Link, Section, SectionHeader } from '../../Components/CoreUI';
@@ -40,7 +40,7 @@ export function HelpPane({ visible, onClose }: { visible: boolean; onClose: () =
           <SectionHeader>Firstly, Some Links:</SectionHeader>
           <Link to='https://blog.zkga.me'>Official Info and Announcements</Link>
           <br />
-          <Link to='https://twitter.com/darkforest_eth'>Official Twitter</Link>
+          <Link to='https://twitter.com/dfdao'>Official Twitter</Link>
           <br />
           <Link to='https://discord.gg/2u2TN6v8r6'>Official Discord Server</Link>
           <br />

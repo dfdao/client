@@ -1,15 +1,15 @@
-import { EMPTY_ADDRESS, RECOMMENDED_MODAL_WIDTH } from '@darkforest_eth/constants';
-import { formatNumber } from '@darkforest_eth/gamelogic';
+import { EMPTY_ADDRESS, RECOMMENDED_MODAL_WIDTH } from '@dfdao/constants';
+import { formatNumber } from '@dfdao/gamelogic';
 import {
   getPlanetClass,
   getPlanetCosmetic,
   getPlanetName,
   getPlayerColor,
   rgbStr,
-} from '@darkforest_eth/procedural';
-import { engineConsts } from '@darkforest_eth/renderer';
-import { address, isUnconfirmedNotReadyTx, isUnconfirmedReadyTx } from '@darkforest_eth/serde';
-import { ModalName, Planet, PlanetType, Player, RGBVec } from '@darkforest_eth/types';
+} from '@dfdao/procedural';
+import { engineConsts } from '@dfdao/renderer';
+import { address, isUnconfirmedNotReadyTx, isUnconfirmedReadyTx } from '@dfdao/serde';
+import { ModalName, Planet, PlanetType, Player, RGBVec } from '@dfdao/types';
 import React, { useEffect, useState, useMemo } from 'react';
 import styled, { CSSProperties } from 'styled-components';
 import { getPlanetRank } from '../../../Backend/Utils/Utils';
@@ -113,7 +113,7 @@ export function WaitingRoomPane({ visible, onClose }: { visible: boolean; onClos
   useEffect(() => {
     const audio = new Audio('../../../public/ready-alert.mp3');
     const listener = () => {
-      if (started && startTime && Math.abs(startTime - Date.now()/1000) < 60) {
+      if (started && startTime && Math.abs(startTime - Date.now() / 1000) < 60) {
         audio.play();
       }
     };
@@ -125,7 +125,8 @@ export function WaitingRoomPane({ visible, onClose }: { visible: boolean; onClos
 
   const submitting = useMemo(() => {
     const txs = uiManager.getGameManager().getGameObjects().transactions;
-    const submit = txs.hasTransaction(isUnconfirmedReadyTx) || txs.hasTransaction(isUnconfirmedNotReadyTx);
+    const submit =
+      txs.hasTransaction(isUnconfirmedReadyTx) || txs.hasTransaction(isUnconfirmedNotReadyTx);
     return submit;
   }, [
     objects.transactions.getTransactions(isUnconfirmedReadyTx),
@@ -207,9 +208,11 @@ export function WaitingRoomPane({ visible, onClose }: { visible: boolean; onClos
                         const res = await uiManager.getGameManager().notReady();
                       } else {
                         const res = await uiManager.getGameManager().ready();
-                        const rct = await res.confirmedPromise
+                        const rct = await res.confirmedPromise;
                         const eventDetails = getReadyEvent(rct, gameManager.getContract());
-                        gameManager.getContractAPI().emit(ContractsAPIEvent.PlayerUpdate, address(eventDetails.player));
+                        gameManager
+                          .getContractAPI()
+                          .emit(ContractsAPIEvent.PlayerUpdate, address(eventDetails.player));
                         console.log(`updated player`, eventDetails.player);
                       }
                     }}
