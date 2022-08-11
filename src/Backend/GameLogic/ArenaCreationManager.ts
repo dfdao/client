@@ -30,6 +30,7 @@ import { InitPlanet, LobbyPlanet } from '../../Frontend/Panes/Lobby/LobbiesUtils
 import { LobbyInitializers } from '../../Frontend/Panes/Lobby/Reducer';
 import { OPTIMISM_GAS_LIMIT } from '../../Frontend/Utils/constants';
 import { loadDiamondContract, loadInitContract } from '../Network/Blockchain';
+import { loadConfigFromAddress } from '../Network/GraphApi/ConfigApi';
 import { ContractsAPI, makeContractsAPI } from './ContractsAPI';
 
 export type CreatePlanetData = {
@@ -52,11 +53,21 @@ export class ArenaCreationManager {
   private readonly contract: ContractsAPI;
   private readonly connection: EthConnection;
   private arenaAddress: EthAddress | undefined;
+  private configData:
+    | {
+        config: LobbyInitializers;
+        address: string;
+      }
+    | undefined;
   private whitelistedAddresses: EthAddress[];
   private createdPlanets: CreatedPlanet[];
-  private created : boolean = false;
+  private created: boolean = false;
 
-  private constructor(parentAddress: EthAddress, contract: ContractsAPI, connection: EthConnection) {
+  private constructor(
+    parentAddress: EthAddress,
+    contract: ContractsAPI,
+    connection: EthConnection
+  ) {
     this.parentAddress = parentAddress;
     this.contract = contract;
     this.connection = connection;
@@ -115,6 +126,7 @@ export class ArenaCreationManager {
       console.log(`initialized arena with ${startRct.gasUsed} gas`);
       this.created = true;
       this.arenaAddress = lobby;
+      this.configData = await loadConfigFromAddress(lobby);
       return { owner, lobby, startTx };
     } catch (e) {
       console.log(e);
@@ -182,17 +194,18 @@ export class ArenaCreationManager {
     createdPlanet.revealTx = tx?.hash;
   }
 
-  // to do: simplify planet creation so either only create lobby planets 
+  // to do: simplify planet creation so either only create lobby planets
   // or only create init planets
-  public async bulkCreateLobbyPlanets({config, planets} :
-    {
-      config: LobbyInitializers;
-      planets?: LobbyPlanet[];
-    }) {
+  public async bulkCreateLobbyPlanets({
+    config,
+    planets,
+  }: {
+    config: LobbyInitializers;
+    planets?: LobbyPlanet[];
+  }) {
     // make create Planet args
     const planetsToCreate = planets || config.ADMIN_PLANETS;
     const initPlanets = this.lobbyPlanetsToInitPlanets(config, planetsToCreate);
-
 
     const args = Promise.resolve([initPlanets]);
     const txIntent = {
@@ -207,7 +220,9 @@ export class ArenaCreationManager {
 
     await tx.confirmedPromise;
 
-    planetsToCreate.map((p) => this.createdPlanets.push({ ...p, createTx: tx?.hash, revealTx: tx?.hash }));
+    planetsToCreate.map((p) =>
+      this.createdPlanets.push({ ...p, createTx: tx?.hash, revealTx: tx?.hash })
+    );
   }
 
   public async bulkCreateInitPlanets({
@@ -406,7 +421,7 @@ export class ArenaCreationManager {
   }
 
   private lobbyContract() {
-    if(!this.arenaAddress) throw new Error('no lobby created');
+    if (!this.arenaAddress) throw new Error('no lobby created');
     return this.connection.getContract<DarkForest>(this.arenaAddress);
   }
 
@@ -424,13 +439,21 @@ export class ArenaCreationManager {
   }
 
   getParentAddress() {
-    return this.parentAddress
+    return this.parentAddress;
   }
 
   getArenaAddress() {
     return this.arenaAddress;
   }
-  
+
+  getArenaConfig() {
+    return this.configData?.config;
+  }
+
+  getArenaConfigHash() {
+    return this.configData?.address;
+  }
+
   get arenaCreated() {
     return this.created;
   }
