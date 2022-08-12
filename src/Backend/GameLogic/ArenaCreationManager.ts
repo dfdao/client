@@ -53,12 +53,7 @@ export class ArenaCreationManager {
   private readonly contract: ContractsAPI;
   private readonly connection: EthConnection;
   private arenaAddress: EthAddress | undefined;
-  private configData:
-    | {
-        config: LobbyInitializers;
-        address: string;
-      }
-    | undefined;
+  private configHash: string | undefined;
   private whitelistedAddresses: EthAddress[];
   private createdPlanets: CreatedPlanet[];
   private created: boolean = false;
@@ -126,7 +121,8 @@ export class ArenaCreationManager {
       console.log(`initialized arena with ${startRct.gasUsed} gas`);
       this.created = true;
       this.arenaAddress = lobby;
-      this.configData = await loadConfigFromAddress(lobby);
+      this.configHash = (await diamond.getArenaConstants()).CONFIG_HASH;
+
       return { owner, lobby, startTx };
     } catch (e) {
       console.log(e);
@@ -446,12 +442,8 @@ export class ArenaCreationManager {
     return this.arenaAddress;
   }
 
-  getArenaConfig() {
-    return this.configData?.config;
-  }
-
   getArenaConfigHash() {
-    return this.configData?.address;
+    return this.configHash;
   }
 
   get arenaCreated() {
