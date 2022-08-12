@@ -50,7 +50,7 @@ export async function loadPlayerElo(
     }
 }
 `;
-  const rawData = await getGraphQLData(QUERY, apiUrl);
+  const rawData = await getGraphQLData(QUERY, process.env.GRAPH_URL || 'localhost:8000');
   return rawData;
 }
 
@@ -70,7 +70,7 @@ export async function loadEloLeaderboard(
     }
     `;
 
-  const rawData = await getGraphQLData(QUERY, apiUrl);
+  const rawData = await getGraphQLData(QUERY, process.env.GRAPH_URL || 'localhost:8000');
 
   if (rawData.error) {
     throw new Error(rawData.error);

@@ -20,5 +20,5 @@ query {
   }
 }
 `;
-  return (await getGraphQLData(query, apiUrl)).data.player;
+  return (await getGraphQLData(query, process.env.GRAPH_URL || 'localhost:8000')).data.player;
 }

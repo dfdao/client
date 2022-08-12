@@ -34,7 +34,7 @@ query {
   }
 }
 `;
-  const rawData = await getGraphQLData(QUERY, apiUrl);
+  const rawData = await getGraphQLData(QUERY, process.env.GRAPH_URL || 'localhost:8000');
 
   if (rawData.error) {
     throw new Error(rawData.error);

@@ -29,7 +29,7 @@ query {
       }
 }
 `;
-  const rawData = await getGraphQLData(query, apiUrl);
+  const rawData = await getGraphQLData(query, process.env.GRAPH_URL || 'localhost:8000');
   // @ts-expect-error
   const hasPlanets = rawData.data.arenas.filter((a) => a.planets.length > 0);
   const res = convertGraphConfig(hasPlanets[0]);
@@ -52,7 +52,9 @@ export async function loadConfigFromAddress(address: EthAddress): Promise<{
   }
 `;
   try {
-    const rawData: GraphArena = (await getGraphQLData(query, apiUrl)).data.arena;
+    const rawData: GraphArena = (
+      await getGraphQLData(query, process.env.GRAPH_URL || 'localhost:8000')
+    ).data.arena;
     const configData = convertGraphConfig(rawData);
     return configData;
   } catch (e) {
