@@ -1,5 +1,4 @@
 import { LiveMatch } from '@darkforest_eth/types';
-import { apiUrl } from '../../../Frontend/Utils/constants';
 import { getGraphQLData } from '../GraphApi';
 
 export const loadLiveMatches = async (config?: string): Promise<LiveMatch> => {

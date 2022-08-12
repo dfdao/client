@@ -1,20 +1,6 @@
-import { EMPTY_ADDRESS } from '@darkforest_eth/constants';
-import { address } from '@darkforest_eth/serde';
-import {
-  ArenaLeaderboard,
-  ArenaLeaderboardEntry,
-  EthAddress,
-  Leaderboard,
-  LeaderboardEntry,
-} from '@darkforest_eth/types';
-import {
-  roundEndTimestamp,
-  roundStartTimestamp,
-  competitiveConfig,
-  apiUrl,
-} from '../../../Frontend/Utils/constants';
+import { EthAddress } from '@darkforest_eth/types';
+import { competitiveConfig } from '../../../Frontend/Utils/constants';
 import { getGraphQLData } from '../GraphApi';
-import { getAllTwitters } from '../UtilityServerAPI';
 
 const testData: { data: { configPlayers: GraphConfigPlayer[] }; error: undefined } = {
   data: {

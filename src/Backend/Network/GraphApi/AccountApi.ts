@@ -1,5 +1,5 @@
 import { EthAddress, RawAccount } from '@darkforest_eth/types';
-import { apiUrl, CONFIG_CONSTANTS } from '../../../Frontend/Utils/constants';
+import { CONFIG_CONSTANTS } from '../../../Frontend/Utils/constants';
 import { getGraphQLData } from '../GraphApi';
 
 export async function loadAccountData(address: EthAddress): Promise<RawAccount | undefined> {
