@@ -63,8 +63,8 @@ export function ArenaBriefingPane() {
           </div>
         )}
         <div>
-          ⏲️ starts when you press ready!
-          {isCompetitive && 'The player with the fastest time after 48hrs will win XDAI and a 🏆!'}
+          ⏲️ starts {isSinglePlayer ? 'with your first move' : 'when you press ready'}!
+          {isCompetitive && isSinglePlayer && 'The player with the fastest time after 48hrs will win XDAI and a 🏆!'}
         </div>
         <div style={{ gap: '5px' }}>
           <Btn className='btn' onClick={() => setOpen(false)}>
