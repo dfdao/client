@@ -37,6 +37,7 @@ import { NotificationsPane } from './Game/Notifications';
 import { SidebarPane } from '../Panes/Game/SidebarPane';
 import { TopBar } from './Game/TopBar';
 import { tutorialConfig } from '../Utils/constants';
+import { ArenaBriefingPane } from '../Panes/Game/ArenaBriefingPane';
 
 export function GameWindowLayout({
   terminalVisible,
@@ -97,6 +98,7 @@ export function GameWindowLayout({
   const [showTutorialSetting] = useBooleanSetting(uiManager, Setting.ShowTutorial);
   const showTutorial = isTutorialWorld || showTutorialSetting;
   const [showSpectatorInfo] = useBooleanSetting(uiManager, Setting.ShowSpectatorInfo);
+  const [showArenaBriefing] = useBooleanSetting(uiManager, Setting.ShowArenaBriefing);
   const selected = useSelectedPlanet(uiManager).value;
   const [selectedPlanetVisible, setSelectedPlanetVisible] = useState<boolean>(!!selected);
 
@@ -215,6 +217,7 @@ export function GameWindowLayout({
 
           {showTutorial && <TutorialPane />}
           {showSpectatorInfo && <SpectatorInfoPane />}
+          {showArenaBriefing && <ArenaBriefingPane />}
         </CanvasContainer>
       </MainWindow>
     </WindowWrapper>

@@ -46,6 +46,7 @@ const defaultSettings: Record<Setting, string> = {
   [Setting.TerminalVisible]: 'true',
   [Setting.ShowTutorial]: 'false',
   [Setting.ShowSpectatorInfo]: 'true',
+  [Setting.ShowArenaBriefing]: 'true',
   [Setting.FoundPirates]: 'false',
   [Setting.TutorialCompleted]: 'false',
   [Setting.FoundSilver]: 'false',
