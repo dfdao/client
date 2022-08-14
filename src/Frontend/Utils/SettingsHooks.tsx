@@ -26,7 +26,6 @@ export const ALL_AUTO_GAS_SETTINGS = [
   AutoGasSetting.Fast,
 ];
 
-
 function onlyInProduction(): string {
   return JSON.stringify(process.env.NODE_ENV === 'production');
 }

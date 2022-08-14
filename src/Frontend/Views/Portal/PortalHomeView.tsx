@@ -1,53 +1,105 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { TimeUntil } from '../../Components/TimeUntil';
 import { competitiveConfig, tutorialConfig } from '../../Utils/constants';
-import { loadRecentMaps, MapInfo } from '../../../Backend/Network/GraphApi/MapsApi';
 import { OfficialGameBanner } from './Components/OfficialGameBanner';
 import { useConfigFromHash } from '../../Utils/AppHooks';
+import useSWR, { useSWRConfig } from 'swr';
+import { fetcher } from '../../../Backend/Network/UtilityServerAPI';
 
 export const PortalHomeView: React.FC<{}> = () => {
-  const { lobbyAddress: tutorialLobbyAddress } = useConfigFromHash(tutorialConfig)
+  const { data: adminData, error } = useSWR(`${process.env.DFDAO_WEBSERVER_URL}/rounds`, fetcher);
+  let finalTime = undefined;
+  let roundConfig = undefined;
+  let current = undefined;
+
+  if (adminData) {
+    console.log(adminData);
+    const data = adminData as any[];
+    const sortedData: any[] = data.sort((a, b) => a.startTime - b.endTime);
+
+    const now = Date.now();
+    for (const round of sortedData) {
+      // if we get here, there is no current round.
+      if (round.startTime > now) {
+        finalTime = round.startTime;
+        break;
+      }
+      // set the round config up to the current round
+      roundConfig = round.configHash;
+
+      if (round.startTime < now && round.endTime > now) {
+        finalTime = round.endTime;
+        current = true;
+        break;
+      }
+    }
+  }
+
+  const title = !roundConfig
+    ? 'No rounds stored'
+    : current
+    ? 'Race the Grand Prix'
+    : "Practice Last Week's Grand Prix";
+  const description = !finalTime ? (
+    <>No round scheduled</>
+  ) : current ? (
+    <>
+      This round ends in <TimeUntil timestamp={finalTime} ifPassed='zero seconds!' />
+    </>
+  ) : (
+    <>
+      Next round starts in <TimeUntil timestamp={finalTime} ifPassed='zero seconds!' />
+    </>
+  );
+  const link = `/portal/map/${roundConfig}`;
+
+  const { lobbyAddress: tutorialLobbyAddress } = useConfigFromHash(tutorialConfig);
   return (
     <Container>
       <Content>
         <span style={{ fontSize: '3em', gridColumn: '1/7' }}>Welcome to Dark Forest Arena!</span>
         <OfficialGameBanner
-          title='Play Galactic League'
+          title={title}
+          description={description}
           style={{ gridColumn: '1 / 5', gridRow: '2/4' }}
-          link={`/portal/map/${competitiveConfig}`}
-          imageUrl='/public/img/deathstar.png'
+          link={link}
+          disabled={!roundConfig}
+          imageUrl='/public/img/screenshots/deathstar.png'
         />
         <OfficialGameBanner
           title='Previous Rounds'
           style={{ gridColumn: '5 / 7', gridRow: '2/3' }}
           link='/portal/history'
-          imageUrl='/public/img/deathstar.png'
+          imageUrl='/public/img/screenshots/pickles.png'
           disabled
         />
         <OfficialGameBanner
           title='Find a match'
           style={{ gridColumn: '5 / 7', gridRow: '3/4' }}
           link='/portal/matchmaking'
-          imageUrl='/public/img/deathstar.png'
+          imageUrl='/public/img/screenshots/purple.png'
         />
         <OfficialGameBanner
           title='Tutorial (IP)'
           description='Learn to play'
           style={{ gridColumn: '1 / 3', gridRow: '4/5' }}
           link={`/play/${tutorialLobbyAddress}?create=true`}
-          imageUrl='/public/img/tutorial-banner.png'
+          imageUrl='/public/img/screenshots/tutorial-banner.png'
+          contain
         />
         <OfficialGameBanner
           title='Create a map'
-          style={{ gridColumn: '3 / 5', gridRow: '4/5' }}
+          style={{ gridColumn: '5 / 7', gridRow: '4/5' }}
           link={`/arena`}
-          imageUrl='/public/img/deathstar.png'
+          imageUrl='/public/img/screenshots/wholeworld.png'
+          contain
         />
         <OfficialGameBanner
           title='Community Maps'
-          style={{ gridColumn: '5 / 7', gridRow: '4/5' }}
+          style={{ gridColumn: '3 / 5', gridRow: '4/5' }}
           link={`/portal/community`}
-          imageUrl='/public/img/deathstar.png'
+          imageUrl='/public/img/screenshots/bluespace.png'
         />
       </Content>
     </Container>
