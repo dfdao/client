@@ -59,7 +59,7 @@ export const PortalHistoryView: React.FC<{}> = ({}) => {
         <span>Unable to load Grand Prix round history.</span>
       ) : (
         <>
-          {(rounds && rounds.length) > 0 ? (
+          {rounds && rounds.length > 0 ? (
             <TimelineContainer>
               <thead>
                 <tr>
