@@ -14,21 +14,28 @@ export async function loadArenaLeaderboard(
 ): Promise<Leaderboard> {
   const QUERY = `
 query {
-  arenas(first:1000, where: {configHash: "${config}"}) {
+  arenas(
+    first:1000, 
+    where: {configHash: "${config}", duration_not: null}
+    orderBy: duration
+    orderDirection: asc
+  )
+  {
     id
     startTime
     winners(first :1) {
       address
       moves
-   }
+   }    
     gameOver
     endTime
     duration
   }
 }
 `;
+console.log(`query`, QUERY);
   const rawData = await getGraphQLData(QUERY, process.env.GRAPH_URL || 'localhost:8000');
-
+  console.log('arenaData', rawData);
   if (rawData.error) {
     throw new Error(rawData.error);
   }
@@ -63,9 +70,9 @@ async function convertData(arenas: GraphArena[], isCompetitive: boolean): Promis
       !arena.gameOver ||
       !arena.endTime ||
       !arena.duration ||
-      arena.startTime == 0 ||
-      arena.winners.length == 0 ||
-      !arena.winners[0].address ||
+      // arena.startTime == 0 ||
+      // arena.winners.length == 0 ||
+      // !arena.winners[0].address ||
       (isCompetitive && (roundEnd <= arena.endTime || roundStart >= arena.startTime))
     )
       continue;
