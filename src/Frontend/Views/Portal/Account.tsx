@@ -86,7 +86,7 @@ function AccountModal({ setOpen }: { setOpen: (open: boolean) => void }) {
   );
 }
 export function Account() {
-  const [open, setOpen] = useState<boolean>(true);
+  const [open, setOpen] = useState<boolean>(false);
   const connection = useEthConnection();
   const address = connection.getAddress();
   const twitters = useTwitters();
