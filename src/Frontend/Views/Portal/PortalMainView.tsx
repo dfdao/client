@@ -101,14 +101,7 @@ export function PortalMainView() {
       <MainContainer>
         <TopBar>
           <TitleContainer>
-            <Title onClick={() => history.push('/portal/home')}>Home</Title>
-            <Button onClick={async () => {const a = await loadSeasonLeaderboard()}}>
-              Load Season
-            </Button>
-            <Button onClick={async () => {const a = await loadWallbreakers()}}>
-              Load Wallbreakers
-            </Button>
-            
+            <Title onClick={() => history.push('/portal/home')}>Home</Title>            
           </TitleContainer>
 
           <TitleContainer>
