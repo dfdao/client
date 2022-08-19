@@ -22,7 +22,7 @@ import { PortalCommunityView } from './PortalCommunityView';
 import { MatchmakingView } from './MatchmakingView';
 import { PortalHomeView } from './PortalHomeView';
 import { truncateAddress, truncateString } from './PortalUtils';
-import { loadSeasonLeaderboard } from '../../../Backend/Network/GraphApi/SeasonLeaderboardApi';
+import { loadSeasonLeaderboard, loadWallbreakers } from '../../../Backend/Network/GraphApi/SeasonLeaderboardApi';
 
 export function PortalMainView() {
   const [input, setInput] = useState<string>('');
@@ -102,9 +102,13 @@ export function PortalMainView() {
         <TopBar>
           <TitleContainer>
             <Title onClick={() => history.push('/portal/home')}>Home</Title>
-            <Button onClick={async () => await loadSeasonLeaderboard()}>
+            <Button onClick={async () => {const a = await loadSeasonLeaderboard()}}>
               Load Season
             </Button>
+            <Button onClick={async () => {const a = await loadWallbreakers()}}>
+              Load Wallbreakers
+            </Button>
+            
           </TitleContainer>
 
           <TitleContainer>
