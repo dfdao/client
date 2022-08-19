@@ -31,6 +31,7 @@ import { InitPlanet, LobbyPlanet } from '../../Frontend/Panes/Lobby/LobbiesUtils
 import { LobbyInitializers } from '../../Frontend/Panes/Lobby/Reducer';
 import { OPTIMISM_GAS_LIMIT } from '../../Frontend/Utils/constants';
 import { loadDiamondContract, loadInitContract } from '../Network/Blockchain';
+import { loadConfigFromAddress } from '../Network/GraphApi/ConfigApi';
 import { ContractsAPI, makeContractsAPI } from './ContractsAPI';
 
 export type CreatePlanetData = {
@@ -53,6 +54,7 @@ export class ArenaCreationManager {
   private readonly contract: ContractsAPI;
   private readonly connection: EthConnection;
   private arenaAddress: EthAddress | undefined;
+  private configHash: string | undefined;
   private whitelistedAddresses: EthAddress[];
   private createdPlanets: CreatedPlanet[];
   private created: boolean = false;
@@ -130,6 +132,8 @@ export class ArenaCreationManager {
       console.log(`initialized arena with ${startRct.gasUsed} gas`);
       this.created = true;
       this.arenaAddress = lobby;
+      this.configHash = (await diamond.getArenaConstants()).CONFIG_HASH;
+
       return { owner, lobby, startTx };
     } catch (e) {
       console.log(e);
@@ -223,6 +227,7 @@ export class ArenaCreationManager {
 
     const createRct = await tx.confirmedPromise;
     console.log(`created ${planets?.length} planets with ${createRct.gasUsed} gas`);
+    await tx.confirmedPromise;
     planetsToCreate.map((p) =>
       this.createdPlanets.push({ ...p, createTx: tx?.hash, revealTx: tx?.hash })
     );
@@ -445,6 +450,10 @@ export class ArenaCreationManager {
 
   getArenaAddress() {
     return this.arenaAddress;
+  }
+
+  getArenaConfigHash() {
+    return this.configHash;
   }
 
   get arenaCreated() {
