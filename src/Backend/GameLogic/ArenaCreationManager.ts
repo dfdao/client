@@ -20,6 +20,7 @@ import {
   UnconfirmedCreateArenaPlanet,
   UnconfirmedCreateLobby,
   UnconfirmedReveal,
+  UnconfirmedStartLobby,
   WorldCoords,
   WorldLocation,
 } from '@darkforest_eth/types';
@@ -54,9 +55,13 @@ export class ArenaCreationManager {
   private arenaAddress: EthAddress | undefined;
   private whitelistedAddresses: EthAddress[];
   private createdPlanets: CreatedPlanet[];
-  private created : boolean = false;
+  private created: boolean = false;
 
-  private constructor(parentAddress: EthAddress, contract: ContractsAPI, connection: EthConnection) {
+  private constructor(
+    parentAddress: EthAddress,
+    contract: ContractsAPI,
+    connection: EthConnection
+  ) {
     this.parentAddress = parentAddress;
     this.contract = contract;
     this.connection = connection;
@@ -92,13 +97,13 @@ export class ArenaCreationManager {
         },
       ]);
       console.log('creating lobby at', this.contract.getContractAddress());
-      const txIntent: UnconfirmedCreateLobby = {
+      const createTxIntent: UnconfirmedCreateLobby = {
         methodName: 'createLobby',
         contract: this.contract.contract,
         args: Promise.resolve([initAddress, initFunctionCall]),
       };
 
-      const tx = await this.contract.submitTransaction(txIntent, {
+      const tx = await this.contract.submitTransaction(createTxIntent, {
         // The createLobby function costs somewhere around 12mil gas
         gasLimit: OPTIMISM_GAS_LIMIT,
       });
@@ -110,8 +115,18 @@ export class ArenaCreationManager {
 
       const diamond = await this.connection.loadContract<DarkForest>(lobby, loadDiamondContract);
 
-      const startTx = await diamond.start({ gasLimit: OPTIMISM_GAS_LIMIT });
-      const startRct = await startTx.wait();
+      const startTxIntent: UnconfirmedStartLobby = {
+        methodName: 'start',
+        contract: diamond, // Calling this on new diamond
+        args: Promise.resolve([]),
+      };
+
+      const startTx = await this.contract.submitTransaction(startTxIntent, {
+        // The createLobby function costs somewhere around 12mil gas
+        gasLimit: OPTIMISM_GAS_LIMIT,
+      });
+
+      const startRct = await startTx.confirmedPromise;
       console.log(`initialized arena with ${startRct.gasUsed} gas`);
       this.created = true;
       this.arenaAddress = lobby;
@@ -182,17 +197,18 @@ export class ArenaCreationManager {
     createdPlanet.revealTx = tx?.hash;
   }
 
-  // to do: simplify planet creation so either only create lobby planets 
+  // to do: simplify planet creation so either only create lobby planets
   // or only create init planets
-  public async bulkCreateLobbyPlanets({config, planets} :
-    {
-      config: LobbyInitializers;
-      planets?: LobbyPlanet[];
-    }) {
+  public async bulkCreateLobbyPlanets({
+    config,
+    planets,
+  }: {
+    config: LobbyInitializers;
+    planets?: LobbyPlanet[];
+  }) {
     // make create Planet args
     const planetsToCreate = planets || config.ADMIN_PLANETS;
     const initPlanets = this.lobbyPlanetsToInitPlanets(config, planetsToCreate);
-
 
     const args = Promise.resolve([initPlanets]);
     const txIntent = {
@@ -205,15 +221,17 @@ export class ArenaCreationManager {
       gasLimit: '15000000',
     });
 
-    await tx.confirmedPromise;
-
-    planetsToCreate.map((p) => this.createdPlanets.push({ ...p, createTx: tx?.hash, revealTx: tx?.hash }));
+    const createRct = await tx.confirmedPromise;
+    console.log(`created ${planets?.length} planets with ${createRct.gasUsed} gas`);
+    planetsToCreate.map((p) =>
+      this.createdPlanets.push({ ...p, createTx: tx?.hash, revealTx: tx?.hash })
+    );
   }
 
   public async bulkCreateInitPlanets({
     config,
     planets,
-    CHUNK_SIZE = 10,
+    CHUNK_SIZE = 24,
   }: {
     config: LobbyInitializers;
     planets?: InitPlanet[];
@@ -227,15 +245,14 @@ export class ArenaCreationManager {
         contract: this.lobbyContract(),
         args: args,
       };
-
       const tx = await this.contract.submitTransaction(txIntent, {
         gasLimit: OPTIMISM_GAS_LIMIT,
+        nonce
       });
-
       return tx.confirmedPromise;
     });
 
-    await Promise.all(createPlanetTxs);
+    const res = await Promise.all(createPlanetTxs);
     console.log(
       `successfully created planets`,
       createPlanetTxs.map((i) => i)
@@ -406,7 +423,7 @@ export class ArenaCreationManager {
   }
 
   private lobbyContract() {
-    if(!this.arenaAddress) throw new Error('no lobby created');
+    if (!this.arenaAddress) throw new Error('no lobby created');
     return this.connection.getContract<DarkForest>(this.arenaAddress);
   }
 
@@ -424,13 +441,13 @@ export class ArenaCreationManager {
   }
 
   getParentAddress() {
-    return this.parentAddress
+    return this.parentAddress;
   }
 
   getArenaAddress() {
     return this.arenaAddress;
   }
-  
+
   get arenaCreated() {
     return this.created;
   }

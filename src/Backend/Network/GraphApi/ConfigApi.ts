@@ -29,10 +29,12 @@ query {
 }
 `;
   const rawData = await getGraphQLData(query, process.env.GRAPH_URL || 'localhost:8000');
+  console.log(rawData);
   // @ts-expect-error
   const hasPlanets = rawData.data.arenas.filter((a) => a.planets.length > 0);
+  console.log('loadConfigFromHash', hasPlanets[0])
   const res = convertGraphConfig(hasPlanets[0]);
-  return res;
+  if(res) return res;
 }
 
 export async function loadConfigFromAddress(address: EthAddress): Promise<{
@@ -54,6 +56,7 @@ export async function loadConfigFromAddress(address: EthAddress): Promise<{
     const rawData: GraphArena = (
       await getGraphQLData(query, process.env.GRAPH_URL || 'localhost:8000')
     ).data.arena;
+    if(!rawData) throw new Error('arena has no data');
     const configData = convertGraphConfig(rawData);
     return configData;
   } catch (e) {
