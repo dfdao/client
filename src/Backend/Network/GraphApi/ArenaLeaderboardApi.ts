@@ -1,5 +1,5 @@
 import { address } from '@darkforest_eth/serde';
-import { Leaderboard, LeaderboardEntry } from '@darkforest_eth/types';
+import { GraphArena, Leaderboard, LeaderboardEntry } from '@darkforest_eth/types';
 import {
   roundEndTimestamp,
   roundStartTimestamp,
@@ -41,21 +41,6 @@ console.log(`query`, QUERY);
   }
   const ret = await convertData(rawData.data.arenas, config == competitiveConfig);
   return ret;
-}
-
-interface winners {
-  address: string;
-  moves: number;
-}
-export interface GraphArena {
-  winners: winners[];
-  creator: string;
-  duration: number | null;
-  endTime: number | null;
-  gameOver: boolean;
-  id: string;
-  startTime: number;
-  moves: number;
 }
 
 async function convertData(arenas: GraphArena[], isCompetitive: boolean): Promise<Leaderboard> {

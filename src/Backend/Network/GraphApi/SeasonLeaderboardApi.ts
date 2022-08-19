@@ -1,5 +1,5 @@
 import { address } from '@darkforest_eth/serde';
-import { Leaderboard, LeaderboardEntry } from '@darkforest_eth/types';
+import { ConfigPlayer, GrandPrixResult, Leaderboard, LeaderboardEntry, SeasonPlayers, SeasonScore, Wallbreaker, WallbreakerArena } from '@darkforest_eth/types';
 import {
   roundEndTimestamp,
   roundStartTimestamp,
@@ -20,59 +20,6 @@ const HASHES = [
 const WALLBREAKER_BONUS = 5 * 60;
 const START_ENGINE_BONUS = 100;
 const DAY_IN_SECONDS = 24 * 60 * 60;
-
-export interface BadgeSet {
-  startYourEngine: boolean;
-  nice: boolean;
-  based: boolean;
-  ouch: boolean;
-  wallBreaker: boolean; // Synthetic Value added after data is loaded.
-}
-
-export interface GrandPrixResult {
-  bestTime: number;
-  moves: number;
-  badges: BadgeSet;
-}
-
-export interface ConfigPlayer {
-  id: string;
-  address: string;
-  bestTime: {
-    duration: number;
-    winners: {
-      moves: number;
-    }[];
-  };
-  badge: BadgeSet;
-  configHash: string;
-  gamesStarted: number;
-}
-
-export interface SeasonPlayers {
-  [address: string]: GrandPrixResult[];
-}
-
-export interface SeasonScore {
-  player: string;
-  score: number;
-}
-
-export interface WallbreakerArena {
-  configHash: string;
-  winners: {
-    address: string;
-  }[];
-  lobbyAddress: string;
-  duration: number;
-}
-
-export interface Wallbreaker {
-  configHash: string;
-  player: string;
-  duration: number;
-  arenaAddress: string;
-}
 
 export async function loadWallbreakers(): Promise<Wallbreaker[]> {
   const wallbreakerQuery = HASHES.map((configHash) => {
@@ -123,6 +70,7 @@ export async function loadWallbreakers(): Promise<Wallbreaker[]> {
   return wallBreakers;
 }
 
+// This calls loadWallbreakers and adds the wallBreaker badge to each
 export async function loadSeasonLeaderboard(): Promise<SeasonScore[]> {
   const stringHashes = HASHES.map((h) => `"${h}"`);
   const QUERY = `
@@ -190,7 +138,6 @@ function calcSeasonScore(grandPrixResult: GrandPrixResult): number {
   badgeScore += grandPrixResult.badges.wallBreaker ? WALLBREAKER_BONUS : 0;
   return timeScore + badgeScore;
 }
-
 
 function getSeasonScore(seasonPlayers: SeasonPlayers): SeasonScore[] {
   const seasonScores: SeasonScore[] = [];
