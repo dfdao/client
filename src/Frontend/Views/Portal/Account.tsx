@@ -9,6 +9,12 @@ import { useEthConnection, useTwitters } from '../../Utils/AppHooks';
 import { truncateAddress } from './PortalUtils';
 
 function AccountModal({ setOpen }: { setOpen: (open: boolean) => void }) {
+  const connection = useEthConnection();
+  const address = connection.getAddress();
+  const twitters = useTwitters();
+  if (!address) return <></>;
+  const twitter = twitters[address];
+  const truncatedAddress = truncateAddress(address);
   return (
     <ModalContainer>
       <AccountDetails>
@@ -18,7 +24,32 @@ function AccountModal({ setOpen }: { setOpen: (open: boolean) => void }) {
         >
           <Icon type={IconType.X} />
         </button>
-        <span>hello mama</span>
+        <div style={{ fontSize: '2em' }}>{twitter || truncatedAddress}</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <IconContainer
+            onClick={() => {
+              window.open(`https://blockscout.com/xdai/optimism/address/${address}`, '_blank');
+            }}
+          >
+            <GnoButton>
+              <Gnosis width='24px' height='24px' />
+            </GnoButton>
+            Account Details
+          </IconContainer>
+          {twitter && (
+            <IconContainer
+              onClick={() => {
+                window.open(`https://twitter.com/${twitter}`, '_blank');
+              }}
+            >
+              <Twitter width='24px' height='24px' />
+              {twitter ? 'Twitter' : 'Connect'}
+            </IconContainer>
+          )}
+        </div>
+        {/*badges*/}
+        <div></div>
+        <IconContainer onClick={logOut}>Logout</IconContainer>
       </AccountDetails>
     </ModalContainer>
   );
@@ -51,6 +82,7 @@ const ModalContainer = styled.div`
   background: rgba(0, 0, 0, 0.6);
   z-index: 1000;
   display: flex;
+  text-align: center;
   justify-content: center;
   align-items: center;
 `;
@@ -63,9 +95,11 @@ const AccountDetails = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
   padding: 12px;
   border-radius: 5px;
   position: relative;
+  gap: 8px;
 `;
 
 const PaneContainer = styled.button`
@@ -79,12 +113,13 @@ const PaneContainer = styled.button`
   justify-self: flex-end;
 `;
 
-const IconContainer = styled.div`
+const IconContainer = styled.button`
   padding: 2px;
   display: flex;
   gap: 4px;
   background: rgba(255, 255, 255, 0.03);
-  border-radius: 2px;
+  border-radius: 5px;
+  padding: 4px;
 `;
 
 const NamesContainer = styled.div`
