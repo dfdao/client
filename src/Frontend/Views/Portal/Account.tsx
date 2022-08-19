@@ -1,12 +1,16 @@
+import { BadgeType } from '@darkforest_eth/ui';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { logOut } from '../../../Backend/Network/AccountManager';
+import { Badge, BadgeDetails, SpacedBadges } from '../../Components/Badges';
 import { Gnosis, Icon, IconType, Twitter } from '../../Components/Icons';
 import { WithdrawSilverButton } from '../../Panes/Game/TooltipPanes';
 
 import dfstyles from '../../Styles/dfstyles';
 import { useEthConnection, useTwitters } from '../../Utils/AppHooks';
 import { truncateAddress } from './PortalUtils';
+
+const mockBadges: BadgeType[] = [BadgeType.Dfdao, BadgeType.Dfdao];
 
 function AccountModal({ setOpen }: { setOpen: (open: boolean) => void }) {
   const connection = useEthConnection();
@@ -47,8 +51,13 @@ function AccountModal({ setOpen }: { setOpen: (open: boolean) => void }) {
             </IconContainer>
           )}
         </div>
-        {/*badges*/}
-        <div></div>
+        <div>
+          Badges
+          <SpacedBadges badges={mockBadges} />
+          {mockBadges.map((badge, idx) => (
+            <BadgeDetails type={badge} />
+          ))}
+        </div>
         <IconContainer onClick={logOut}>Logout</IconContainer>
       </AccountDetails>
     </ModalContainer>
