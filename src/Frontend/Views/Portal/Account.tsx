@@ -37,8 +37,12 @@ function AccountModal({ setOpen }: { setOpen: (open: boolean) => void }) {
     [mockBadges]
   );
   return (
-    <ModalContainer>
-      <AccountDetails>
+    <ModalContainer onClick={() => setOpen(false)}>
+      <AccountDetails
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      >
         <AccountContent>
           <button
             style={{ position: 'absolute', top: '12px', right: '12px' }}
@@ -67,9 +71,8 @@ function AccountModal({ setOpen }: { setOpen: (open: boolean) => void }) {
               </Btn>
             )}
           </div>
-          <div style={{ display: 'flex', width: '100%' }}>
-            <TiledTable items={badgeElements} paginated={true} title='Your Badges' />
-          </div>
+          {/* <StackedBadges items={mockBadges} /> */}
+          <TiledTable items={badgeElements} paginated={true} title='Your Badges' />
         </AccountContent>
         <Footer>
           <Btn onClick={logOut}>Logout</Btn>
@@ -117,7 +120,7 @@ const AccountContent = styled.div`
 `;
 
 const AccountDetails = styled.div`
-  min-width: clamp(40%, 50%, 60%);
+  width: 600px;
   height: 60%;
   background: #38383b;
   border: 1px solid #676767;
