@@ -18,7 +18,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import GameUIManager from '../../Backend/GameLogic/GameUIManager';
 import { loadConfigFromHash } from '../../Backend/Network/GraphApi/ConfigApi';
 import { Account } from '../../Backend/Network/AccountManager';
-import { loadArenaLeaderboard } from '../../Backend/Network/GraphApi/GrandPrixLeaderboard';
+import { loadArenaLeaderboard } from '../../Backend/Network/GraphApi/GrandPrixApi';
 import {
   loadEloLeaderboard,
 } from '../../Backend/Network/GraphApi/EloLeaderboardApi';

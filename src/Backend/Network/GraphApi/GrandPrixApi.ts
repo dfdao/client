@@ -8,6 +8,13 @@ import {
 import { getGraphQLData } from '../GraphApi';
 import { getAllTwitters } from '../UtilityServerAPI';
 
+/**
+ * Purpose: 
+ * Fetch necessary data for Grand Prixs
+ * 
+ */
+
+
 export async function loadArenaLeaderboard(
   config: string = competitiveConfig,
   isCompetitive: boolean
