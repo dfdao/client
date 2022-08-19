@@ -29,10 +29,8 @@ query {
 }
 `;
   const rawData = await getGraphQLData(query, process.env.GRAPH_URL || 'localhost:8000');
-  console.log(rawData);
   // @ts-expect-error
   const hasPlanets = rawData.data.arenas.filter((a) => a.planets.length > 0);
-  console.log('loadConfigFromHash', hasPlanets[0])
   const res = convertGraphConfig(hasPlanets[0]);
   if(res) return res;
 }

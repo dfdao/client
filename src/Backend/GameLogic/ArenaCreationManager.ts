@@ -246,8 +246,7 @@ export class ArenaCreationManager {
         args: args,
       };
       const tx = await this.contract.submitTransaction(txIntent, {
-        gasLimit: OPTIMISM_GAS_LIMIT,
-        nonce
+        gasLimit: OPTIMISM_GAS_LIMIT
       });
       return tx.confirmedPromise;
     });
