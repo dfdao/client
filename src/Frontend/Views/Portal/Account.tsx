@@ -1,4 +1,4 @@
-import { BadgeType } from '@darkforest_eth/ui';
+import { BadgeType } from '@darkforest_eth/types';
 import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { logOut } from '../../../Backend/Network/AccountManager';
@@ -8,21 +8,11 @@ import { Gnosis, Icon, IconType, Twitter } from '../../Components/Icons';
 import { WithdrawSilverButton } from '../../Panes/Game/TooltipPanes';
 
 import dfstyles from '../../Styles/dfstyles';
-import { useEthConnection, useTwitters } from '../../Utils/AppHooks';
+import { useEthConnection, usePlayerBadges, useTwitters } from '../../Utils/AppHooks';
 import { TiledTable } from '../TiledTable';
 import { truncateAddress } from './PortalUtils';
 
-const mockBadges: BadgeType[] = [
-  BadgeType.Dfdao,
-  BadgeType.Dfdao,
-  BadgeType.Dfdao,
-  BadgeType.Dfdao,
-  BadgeType.Dfdao,
-  BadgeType.Dfdao,
-  BadgeType.Dfdao,
-  BadgeType.Dfdao,
-  BadgeType.Dfdao,
-];
+const mockBadges: BadgeType[] = [BadgeType.Dfdao, BadgeType.StartYourEngine];
 
 function AccountModal({ setOpen }: { setOpen: (open: boolean) => void }) {
   const connection = useEthConnection();
@@ -31,11 +21,17 @@ function AccountModal({ setOpen }: { setOpen: (open: boolean) => void }) {
   if (!address) return <></>;
   const twitter = twitters[address];
   const truncatedAddress = truncateAddress(address);
+  const { grandPrixBadges, error } = usePlayerBadges();
 
   const badgeElements = useMemo(
-    () => mockBadges.map((badge, idx) => <BadgeDetails type={badge} key={`badge-${idx}`} />),
-    [mockBadges]
+    () =>
+      grandPrixBadges &&
+      grandPrixBadges.map((grandPrixBadge, idx) => (
+        <BadgeDetails type={grandPrixBadge.badge} key={`badge-${idx}`} />
+      )),
+    [grandPrixBadges]
   );
+
   return (
     <ModalContainer onClick={() => setOpen(false)}>
       <AccountDetails

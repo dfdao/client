@@ -1,20 +1,16 @@
 import { address } from '@darkforest_eth/serde';
-import { ConfigPlayer, GrandPrixResult, Leaderboard, LeaderboardEntry, SeasonPlayers, SeasonScore, Wallbreaker, WallbreakerArena } from '@darkforest_eth/types';
+import { BadgeSet, BadgeType, ConfigPlayer, GrandPrixResult, Leaderboard, LeaderboardEntry, SeasonPlayers, SeasonScore, Wallbreaker, WallbreakerArena } from '@darkforest_eth/types';
 import {
   roundEndTimestamp,
   roundStartTimestamp,
   competitiveConfig,
   SEASON_GRAND_PRIXS,
+  DAY_IN_SECONDS,
+  START_ENGINE_BONUS,
+  WALLBREAKER_BONUS,
 } from '../../../Frontend/Utils/constants';
 import { getGraphQLData } from '../GraphApi';
 import { getAllTwitters } from '../UtilityServerAPI';
-
-// Will be eventually imported from Dynasty. Need Start Time and End Time as Well
-
-// One hour 
-const WALLBREAKER_BONUS = 5 * 60;
-const START_ENGINE_BONUS = 100;
-const DAY_IN_SECONDS = 24 * 60 * 60;
 
 export async function loadWallbreakers(): Promise<Wallbreaker[]> {
   const wallbreakerQuery = SEASON_GRAND_PRIXS.map((season) => {
@@ -100,9 +96,17 @@ query
   if (rawData.error) {
     throw new Error(rawData.error);
   }
+  console.log(`rawData`, rawData);
   const seasonPlayers = await groupPlayers(rawData.data.configPlayers);
   const seasonScores = getSeasonScore(seasonPlayers);
   return seasonScores;
+}
+
+export function graphBadgeToBadge(graphBadge: BadgeSet): BadgeType[] {
+  const badges: BadgeType[] = [];
+  if(graphBadge.startYourEngine) badges.push(BadgeType.StartYourEngine);
+  // TODO: Add all the badge types
+  return badges;
 }
 
 async function groupPlayers(configPlayers: ConfigPlayer[]): Promise<SeasonPlayers> {

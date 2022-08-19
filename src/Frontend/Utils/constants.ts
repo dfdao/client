@@ -116,6 +116,11 @@ planets(first: ${MAX_ADMIN_PLANETS}) {
 const TEMP_START_TIME = 1597862644;
 const TEMP_END_TIME = 1724093044;
 
+// One hour 
+const WALLBREAKER_BONUS = 5 * 60;
+const START_ENGINE_BONUS = 100;
+const DAY_IN_SECONDS = 24 * 60 * 60;
+
 export interface GrandPrixMetadata {
   id: number;
   configHash: string;
@@ -129,12 +134,6 @@ const SEASON_GRAND_PRIXS: GrandPrixMetadata[] = [
     startTime: TEMP_START_TIME,
     endTime: TEMP_END_TIME,
   },
-  {
-    id: 1,
-    configHash:'0x88f6a4430a1723523d420e1320599408c4627e573debe7dd96897c9736d739d0',
-    startTime: TEMP_START_TIME,
-    endTime: TEMP_END_TIME,
-  }
 ];
 
 export {
@@ -150,7 +149,10 @@ export {
   silverTime,
   CONFIG_CONSTANTS,
   goldTime,
-  SEASON_GRAND_PRIXS
+  SEASON_GRAND_PRIXS,
+  WALLBREAKER_BONUS,
+  START_ENGINE_BONUS,
+  DAY_IN_SECONDS
 };
 
 export const enum DFZIndex {

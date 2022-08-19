@@ -4,7 +4,9 @@ import { EthConnection } from '@darkforest_eth/network';
 import {
   Artifact,
   ArtifactId,
+  BadgeType,
   EthAddress,
+  GrandPrixBadge,
   GraphConfigPlayer,
   Leaderboard,
   LiveMatch,
@@ -19,9 +21,7 @@ import GameUIManager from '../../Backend/GameLogic/GameUIManager';
 import { loadConfigFromHash } from '../../Backend/Network/GraphApi/ConfigApi';
 import { Account } from '../../Backend/Network/AccountManager';
 import { loadArenaLeaderboard } from '../../Backend/Network/GraphApi/GrandPrixApi';
-import {
-  loadEloLeaderboard,
-} from '../../Backend/Network/GraphApi/EloLeaderboardApi';
+import { loadEloLeaderboard } from '../../Backend/Network/GraphApi/EloLeaderboardApi';
 import { loadLeaderboard } from '../../Backend/Network/GraphApi/LeaderboardApi';
 import { loadLiveMatches } from '../../Backend/Network/GraphApi/SpyApi';
 import { Wrapper } from '../../Backend/Utils/Wrapper';
@@ -233,6 +233,36 @@ export function useLeaderboard(poll: number | undefined = undefined): {
   usePoll(load, poll, true);
 
   return { leaderboard, error };
+}
+
+export function usePlayerBadges(poll: number | undefined = undefined): {
+  grandPrixBadges: GrandPrixBadge[] | undefined;
+  error: Error | undefined;
+} {
+  const [grandPrixBadges, setBadges] = useState<GrandPrixBadge[] | undefined>();
+  const [error, setError] = useState<Error | undefined>();
+
+  const load = useCallback(async function load() {
+    try {
+      setBadges([
+        {
+          configHash: '0xe8c09c646e1c9228918754437a7130a30e4837b21689b51dfd67a8ecf55ebd6e',
+          badge: BadgeType.Dfdao,
+        },
+        {
+          configHash: '0xe8c09c646e1c9228918754437a7130a30e4837b21689b51dfd67a8ecf55ebd6e',
+          badge: BadgeType.StartYourEngine,
+        },
+      ]);
+    } catch (e) {
+      console.log('error loading badges', e);
+      setError(e);
+    }
+  }, []);
+
+  usePoll(load, poll, true);
+
+  return { grandPrixBadges, error };
 }
 
 export function useArenaLeaderboard(
