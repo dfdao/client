@@ -2,6 +2,7 @@
 import { DarkForestBadge, BadgeType, getBadgeElement } from '@darkforest_eth/ui';
 import { createComponent } from '@lit-labs/react';
 import React from 'react';
+import styled from 'styled-components';
 
 // TODO: Decide if this is the best place to register the custom elements
 customElements.define(DarkForestBadge.tagName, DarkForestBadge);
