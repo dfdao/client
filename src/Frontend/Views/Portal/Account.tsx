@@ -72,7 +72,11 @@ function AccountModal({ setOpen }: { setOpen: (open: boolean) => void }) {
             )}
           </div>
           {/* <StackedBadges items={mockBadges} /> */}
-          <TiledTable items={badgeElements} paginated={true} title='Your Badges' />
+          {badgeElements && badgeElements.length > 0 ? (
+            <TiledTable items={badgeElements} paginated={true} title='Your Badges' />
+          ) : (
+            'You have no badges'
+          )}
         </AccountContent>
         <Footer>
           <Btn onClick={logOut}>Logout</Btn>
