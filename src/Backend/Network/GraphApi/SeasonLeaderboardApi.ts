@@ -4,17 +4,12 @@ import {
   roundEndTimestamp,
   roundStartTimestamp,
   competitiveConfig,
+  SEASON_GRAND_PRIXS,
 } from '../../../Frontend/Utils/constants';
 import { getGraphQLData } from '../GraphApi';
 import { getAllTwitters } from '../UtilityServerAPI';
 
 // Will be eventually imported from Dynasty. Need Start Time and End Time as Well
-const TEMP_START_TIME = 1597862644;
-const TEMP_END_TIME = 1724093044;
-const HASHES = [
-  '0xe8c09c646e1c9228918754437a7130a30e4837b21689b51dfd67a8ecf55ebd6e',
-  '0x88f6a4430a1723523d420e1320599408c4627e573debe7dd96897c9736d739d0',
-];
 
 // One hour 
 const WALLBREAKER_BONUS = 5 * 60;
@@ -22,16 +17,16 @@ const START_ENGINE_BONUS = 100;
 const DAY_IN_SECONDS = 24 * 60 * 60;
 
 export async function loadWallbreakers(): Promise<Wallbreaker[]> {
-  const wallbreakerQuery = HASHES.map((configHash) => {
+  const wallbreakerQuery = SEASON_GRAND_PRIXS.map((season) => {
     const QUERY = `
     query
     {
       arenas(
         where: {
-          configHash: "${configHash}", 
+          configHash: "${season.configHash}", 
           duration_not:null,
-          startTime_gte: ${TEMP_START_TIME}
-          endTime_lte: ${TEMP_END_TIME}
+          startTime_gte: ${season.startTime}
+          endTime_lte: ${season.endTime}
         }
         orderBy: duration
         orderDirection: asc
@@ -72,7 +67,7 @@ export async function loadWallbreakers(): Promise<Wallbreaker[]> {
 
 // This calls loadWallbreakers and adds the wallBreaker badge to each
 export async function loadSeasonLeaderboard(): Promise<SeasonScore[]> {
-  const stringHashes = HASHES.map((h) => `"${h}"`);
+  const stringHashes = SEASON_GRAND_PRIXS.map((season) => `"${season.configHash}"`);
   const QUERY = `
 query
   {
