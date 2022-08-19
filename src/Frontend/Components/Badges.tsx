@@ -20,11 +20,11 @@ export function BadgeDetails({ type }: { type: BadgeType }) {
   if (!badgeElement) return <></>;
 
   return (
-    <div>
+    <BadgeDetailsContainer>
       <Badge type={type} />
-      {badgeElement.name}
-      {badgeElement.description}
-    </div>
+      <span style={{ fontSize: '1.25rem' }}>{badgeElement.name}</span>
+      <span>{badgeElement.description}</span>
+    </BadgeDetailsContainer>
   );
 }
 
@@ -39,3 +39,11 @@ export function SpacedBadges({ badges }: { badges: BadgeType[] }) {
 }
 
 export function StackedBadges({}: {}) {}
+
+const BadgeDetailsContainer = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  justify-content: center;
+`;
