@@ -8,10 +8,16 @@ import dfstyles from '../../Styles/dfstyles';
 import { useEthConnection, useTwitters } from '../../Utils/AppHooks';
 import { truncateAddress } from './PortalUtils';
 
-function AccountModal({}: {}) {
+function AccountModal({ setOpen }: { setOpen: (open: boolean) => void }) {
   return (
     <ModalContainer>
       <AccountDetails>
+        <button
+          style={{ position: 'absolute', top: '12px', right: '12px' }}
+          onClick={() => setOpen(false)}
+        >
+          <Icon type={IconType.X} />
+        </button>
         <span>hello mama</span>
       </AccountDetails>
     </ModalContainer>
@@ -28,9 +34,9 @@ export function Account() {
 
   return (
     <>
-      {open && <AccountModal />}
-      <PaneContainer>
-        <NamesContainer onClick={() => setOpen(true)}>{twitter || truncatedAddress}</NamesContainer>
+      {open && <AccountModal setOpen={setOpen} />}
+      <PaneContainer onClick={() => setOpen(true)}>
+        <NamesContainer>{twitter || truncatedAddress}</NamesContainer>
       </PaneContainer>
     </>
   );
@@ -59,9 +65,10 @@ const AccountDetails = styled.div`
   justify-content: center;
   padding: 12px;
   border-radius: 5px;
+  position: relative;
 `;
 
-const PaneContainer = styled.div`
+const PaneContainer = styled.button`
   padding: 8px;
   position: relative;
   display: flex;
@@ -80,7 +87,7 @@ const IconContainer = styled.div`
   border-radius: 2px;
 `;
 
-const NamesContainer = styled.button`
+const NamesContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
