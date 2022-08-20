@@ -1,14 +1,5 @@
-import { EthAddress } from '@darkforest_eth/types';
-import { apiUrl } from '../../../Frontend/Utils/constants';
+import { EthAddress, MapInfo } from '@darkforest_eth/types';
 import { getGraphQLData } from '../GraphApi';
-
-export interface MapInfo {
-  creator: EthAddress;
-  configHash: string;
-  lobbyAddress?: EthAddress;
-  startTime?: number;
-  winners?: EthAddress[];
-}
 
 export async function loadRecentMaps(
   nMaps?: number,
@@ -28,5 +19,5 @@ export async function loadRecentMaps(
 		}
 	}
 	`;
-  return (await getGraphQLData(query, apiUrl)).data?.arenas;
+  return (await getGraphQLData(query, process.env.GRAPH_URL || 'localhost:8000')).data?.arenas;
 }

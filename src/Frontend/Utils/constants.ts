@@ -18,8 +18,6 @@ const LOCATION_ID_UB = bigInt(
   '21888242871839275222246405745257275088548364400416034343698204186575808495617'
 );
 
-const apiUrl = 'https://9a46-143-244-168-87.ngrok.io/subgraphs/name/df-arena-v2';
-
 const competitiveConfig = '0xfe719a3cfccf2bcfa23f71f0af80a931eda4f4197331828d728b7505a6156930';
 
 const tutorialConfig = '0xdccc97271cde9ad566db3a1e1d3d12220b04b595134bb7039b5606fdc57d82a1';
@@ -115,12 +113,35 @@ planets(first: ${MAX_ADMIN_PLANETS}) {
   }
 }`;
 
+const TEMP_START_TIME = 1597862644;
+const TEMP_END_TIME = 1724093044;
+
+export interface GrandPrixMetadata {
+  id: number;
+  configHash: string;
+  startTime: number;
+  endTime: number;
+}
+const SEASON_GRAND_PRIXS: GrandPrixMetadata[] = [
+  {
+    id: 1,
+    configHash:'0xe8c09c646e1c9228918754437a7130a30e4837b21689b51dfd67a8ecf55ebd6e',
+    startTime: TEMP_START_TIME,
+    endTime: TEMP_END_TIME,
+  },
+  {
+    id: 1,
+    configHash:'0x88f6a4430a1723523d420e1320599408c4627e573debe7dd96897c9736d739d0',
+    startTime: TEMP_START_TIME,
+    endTime: TEMP_END_TIME,
+  }
+];
+
 export {
   MIN_CHUNK_SIZE,
   MAX_CHUNK_SIZE,
   OPTIMISM_GAS_LIMIT,
   LOCATION_ID_UB,
-  apiUrl,
   roundEndTimestamp,
   roundStartTimestamp,
   competitiveConfig,
@@ -129,6 +150,7 @@ export {
   silverTime,
   CONFIG_CONSTANTS,
   goldTime,
+  SEASON_GRAND_PRIXS
 };
 
 export const enum DFZIndex {
