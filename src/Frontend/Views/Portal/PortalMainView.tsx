@@ -23,6 +23,7 @@ import { MatchmakingView } from './MatchmakingView';
 import { PortalHomeView } from './PortalHomeView';
 import { truncateAddress, truncateString } from './PortalUtils';
 import { loadSeasonLeaderboard, loadWallbreakers } from '../../../Backend/Network/GraphApi/SeasonLeaderboardApi';
+import { loadSeasonBadges } from '../../../Backend/Network/GraphApi/BadgeApi';
 
 export function PortalMainView() {
   const [input, setInput] = useState<string>('');
@@ -103,7 +104,7 @@ export function PortalMainView() {
           <TitleContainer>
             <Title onClick={() => history.push('/portal/home')}>Home</Title>   
             <Button onClick={async () => {
-              const a = await loadSeasonLeaderboard();
+              const a = await loadSeasonBadges('0x1c0f0Af3262A7213E59Be7f1440282279D788335');
             }}>
               Load Season 
             </Button>         

@@ -32,6 +32,7 @@ import { ModalHandle } from '../Views/Game/ModalPane';
 import { createDefinedContext } from './createDefinedContext';
 import { useEmitterSubscribe, useEmitterValue, useWrappedEmitter } from './EmitterHooks';
 import { usePoll } from './Hooks';
+import { loadSeasonBadges } from '../../Backend/Network/GraphApi/BadgeApi';
 
 export const { useDefinedContext: useEthConnection, provider: EthConnectionProvider } =
   createDefinedContext<EthConnection>();
@@ -244,16 +245,8 @@ export function usePlayerBadges(poll: number | undefined = undefined): {
 
   const load = useCallback(async function load() {
     try {
-      setBadges([
-        {
-          configHash: '0xe8c09c646e1c9228918754437a7130a30e4837b21689b51dfd67a8ecf55ebd6e',
-          badge: BadgeType.Dfdao,
-        },
-        {
-          configHash: '0xe8c09c646e1c9228918754437a7130a30e4837b21689b51dfd67a8ecf55ebd6e',
-          badge: BadgeType.StartYourEngine,
-        },
-      ]);
+      // TODO: Populate with current account;
+      setBadges(await loadSeasonBadges('0x1c0f0Af3262A7213E59Be7f1440282279D788335'));
     } catch (e) {
       console.log('error loading badges', e);
       setError(e);

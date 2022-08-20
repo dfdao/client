@@ -62,6 +62,7 @@ export async function loadWallbreakers(): Promise<Wallbreaker[]> {
 }
 
 // This calls loadWallbreakers and adds the wallBreaker badge to each
+// Loads Data for All Players, not a specific one
 export async function loadSeasonLeaderboard(): Promise<SeasonScore[]> {
   const stringHashes = SEASON_GRAND_PRIXS.map((season) => `"${season.configHash}"`);
   const QUERY = `
@@ -120,7 +121,6 @@ async function groupPlayers(configPlayers: ConfigPlayer[]): Promise<SeasonPlayer
       moves: cp.bestTime.winners[0].moves,
       badges: cp.badge,
     };
-
     // Add Wallbreaker Badge
     const isWallBreaker = wallBreakers.filter(e => e.player === cp.address).length > 0
     grandPrixResult.badges.wallBreaker = isWallBreaker;

@@ -134,6 +134,12 @@ const SEASON_GRAND_PRIXS: GrandPrixMetadata[] = [
     startTime: TEMP_START_TIME,
     endTime: TEMP_END_TIME,
   },
+  {
+    id: 1,
+    configHash:'0xda5387c71e68cb076a5ba7aed1f6a8d14f396425c1cb3ca5b2952af53588626c',
+    startTime: TEMP_START_TIME,
+    endTime: TEMP_END_TIME,
+  },
 ];
 
 export {
