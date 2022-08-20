@@ -51,6 +51,6 @@ export function graphBadgeToGrandPrixBadge(graphBadge: ConfigBadges): GrandPrixB
   return badges;
 }
 
-export function getBadges(configBadges: ConfigBadges[]) {
+export function getBadges(configBadges: ConfigBadges[]): GrandPrixBadge[]  {
   return (configBadges.map(configBadge => graphBadgeToGrandPrixBadge(configBadge)).flat())
 }

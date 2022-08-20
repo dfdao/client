@@ -1,17 +1,30 @@
 import { getConfigName } from '@darkforest_eth/procedural';
-import { BadgeType, IconType } from '@darkforest_eth/ui';
+import { BadgeType, SeasonScore } from '@darkforest_eth/types';
+import { IconType } from '@darkforest_eth/ui';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
+import { loadSeasonLeaderboard } from '../../../Backend/Network/GraphApi/SeasonLeaderboardApi';
 import { Icon } from '../../Components/Icons';
 import { Sub } from '../../Components/Text';
+import { useAccount, useAllPlayers, useSeasonData } from '../../Utils/AppHooks';
+import { GrandPrixMetadata, SEASON_GRAND_PRIXS } from '../../Utils/constants';
 import { TiledTable } from '../TiledTable';
 
 export interface TimelineProps {
   configHashes: string[];
 }
 
-interface SeasonHistoryItem {
+// For now, just for season one.
+function seasonScoreToSeasonHistoryItem(seasonScores: SeasonScore[]){
+  // Sort descending
+  seasonScores.sort((a,b) => b.score - a.score).map((s,index) => {
+    
+  })
+  
+}
+
+export interface SeasonHistoryItem {
   id: number;
   grandPrixHistoryItems: GrandPrixHistoryItem[];
   rank: number;
@@ -27,6 +40,14 @@ interface GrandPrixHistoryItem {
   score: number;
   badges: BadgeType[];
 }
+/**
+ * Derive Season Leaderboard from AllPlayerData
+ * (Rank, Score, Id)
+ * 
+ * Derive GrandPrixHistoryItem
+ * Need to get Badge Type as well
+ * 
+ */
 
 const seasons: SeasonHistoryItem[] = [
   {
@@ -140,6 +161,16 @@ const MapComponent: React.FC<{ round: GrandPrixHistoryItem; index: number }> = (
   index,
 }) => {
   const history = useHistory();
+  // const account = useAccount();
+  // const configPlayers = useSeasonData();
+  // const seasonScores = loadSeasonLeaderboard(configPlayers)
+  // // Might not be case sensitive.
+  // let rank = 0;
+  // seasonScores.sort((a,b) => b.score - a.score).map((s,index) => {
+  //   if(s.player == account.address) rank = index;
+  // })
+
+  // console.log(`player rank`, rank);
   return (
     <MapContainer onClick={() => history.push(`/portal/map/${round.configHash}`)}>
       <MapNameContainer>
@@ -196,7 +227,7 @@ const MapDetailsContainer = styled.div`
 `;
 
 export const PortalHistoryView: React.FC<{}> = ({}) => {
-  const [current, setCurrent] = useState<number>(0);
+  const [current, setCurrent] = useState<number>(1);
 
   const rounds = seasons[current].grandPrixHistoryItems;
   const totalScore = useMemo(() => rounds.reduce((prev, curr) => curr.score + prev, 0), [rounds]);

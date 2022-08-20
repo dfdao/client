@@ -123,8 +123,8 @@ query
 }
 
 // Map reduce to get the season score for each player
-export async function loadSeasonLeaderboard(configPlayers: ConfigPlayer[]): Promise<SeasonScore[]> {
-  const seasonPlayers = await groupPlayers(configPlayers);
+export function loadSeasonLeaderboard(configPlayers: ConfigPlayer[]): SeasonScore[] {
+  const seasonPlayers = groupPlayers(configPlayers);
   const seasonScores = getSeasonScore(seasonPlayers);
   return seasonScores;
 }
@@ -168,7 +168,6 @@ export function loadSeasonPlayer(playerId: string, configPlayers: ConfigPlayer[]
   return configPlayers.filter(cp => cp.address === playerId);
 }
 
-
 export async function loadGrandPrixLeaderboard(configPlayers: ConfigPlayer[], configHash: string) {
   const players = await loadGrandPrixPlayers(configPlayers, configHash);
   const leaderboard = await configPlayersToLeaderboard(players);
@@ -186,7 +185,7 @@ async function addWallbreakers(configPlayers: ConfigPlayer[]): Promise<ConfigPla
 }
 
 // Group ConfigPlayers by address to calculate Season Score
-async function groupPlayers(configPlayers: ConfigPlayer[]): Promise<SeasonPlayers> {
+function groupPlayers(configPlayers: ConfigPlayer[]): SeasonPlayers {
   const seasonPlayers: SeasonPlayers = {};
   configPlayers.map((cp) => {
     if (!seasonPlayers[cp.address]) seasonPlayers[cp.address] = [];

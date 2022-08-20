@@ -123,14 +123,14 @@ const DAY_IN_SECONDS = 24 * 60 * 60;
 
 // startTime and endTime are in UNIX seconds
 export interface GrandPrixMetadata {
-  id: number;
+  seasonId: number;
   configHash: string;
   startTime: number;
   endTime: number;
 }
 const SEASON_GRAND_PRIXS: GrandPrixMetadata[] = [
   {
-    id: 1,
+    seasonId: 1,
     configHash:'0xd08bbeb0785370a68369f0a042e33ef2688da6da5e79acbb5688ddbb8ca4a862',
     startTime: TEMP_START_TIME,
     endTime: TEMP_END_TIME,
