@@ -40,7 +40,6 @@ query {
   }
 }
 `;
-console.log(`query`, QUERY);
   const rawData = await getGraphQLData(QUERY, process.env.GRAPH_URL || 'localhost:8000');
   console.log('arenaData', rawData);
   if (rawData.error) {
