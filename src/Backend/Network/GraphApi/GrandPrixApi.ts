@@ -11,9 +11,7 @@ import { getAllTwitters } from '../UtilityServerAPI';
 /**
  * Purpose: 
  * Fetch necessary data for Grand Prixs
- * 
  */
-
 
 export async function loadArenaLeaderboard(
   config: string = competitiveConfig,

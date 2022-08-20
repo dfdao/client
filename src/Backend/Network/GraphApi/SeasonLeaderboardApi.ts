@@ -1,5 +1,16 @@
 import { address } from '@darkforest_eth/serde';
-import { BadgeSet, BadgeType, ConfigPlayer, GrandPrixResult, Leaderboard, LeaderboardEntry, SeasonPlayers, SeasonScore, Wallbreaker, WallbreakerArena } from '@darkforest_eth/types';
+import {
+  BadgeSet,
+  BadgeType,
+  ConfigPlayer,
+  GrandPrixResult,
+  Leaderboard,
+  LeaderboardEntry,
+  SeasonPlayers,
+  SeasonScore,
+  Wallbreaker,
+  WallbreakerArena,
+} from '@darkforest_eth/types';
 import {
   roundEndTimestamp,
   roundStartTimestamp,
@@ -8,21 +19,22 @@ import {
   DAY_IN_SECONDS,
   START_ENGINE_BONUS,
   WALLBREAKER_BONUS,
+  GrandPrixMetadata,
 } from '../../../Frontend/Utils/constants';
 import { getGraphQLData } from '../GraphApi';
 import { getAllTwitters } from '../UtilityServerAPI';
 
 export async function loadWallbreakers(): Promise<Wallbreaker[]> {
-  const wallbreakerQuery = SEASON_GRAND_PRIXS.map((season) => {
+  const wallbreakerQuery = SEASON_GRAND_PRIXS.map((grandPrix) => {
     const QUERY = `
     query
     {
       arenas(
         where: {
-          configHash: "${season.configHash}", 
+          configHash: "${grandPrix.configHash}", 
           duration_not:null,
-          startTime_gte: ${season.startTime}
-          endTime_lte: ${season.endTime}
+          startTime_gte: ${grandPrix.startTime}
+          endTime_lte: ${grandPrix.endTime}
         }
         orderBy: duration
         orderDirection: asc
@@ -37,7 +49,6 @@ export async function loadWallbreakers(): Promise<Wallbreaker[]> {
       }
     }
     `;
-    console.log(QUERY);
     return getGraphQLData(QUERY, process.env.GRAPH_URL || 'localhost:8000');
   });
 
@@ -61,10 +72,12 @@ export async function loadWallbreakers(): Promise<Wallbreaker[]> {
   return wallBreakers;
 }
 
-// This calls loadWallbreakers and adds the wallBreaker badge to each
-// Loads Data for All Players, not a specific one
-export async function loadSeasonLeaderboard(): Promise<SeasonScore[]> {
+// Returns all the ConfigPlayers for each Grand Prix, including the Wallbreaker.
+// It calls loadWallbreakers() internally.
+export async function loadAllPlayerData(): Promise<ConfigPlayer[]> {
   const stringHashes = SEASON_GRAND_PRIXS.map((season) => `"${season.configHash}"`);
+  // Query size is number of unique players on each Grand Prix in a season. (6 GPs * 100 players = 100 results).
+  // If > 1000, graph won't return.
   const QUERY = `
 query
   {
@@ -77,11 +90,14 @@ query
       id
       address
       gamesStarted
+      gamesFinished
       bestTime {
         winners(first:1) {
           moves
         }
         duration
+        startTime
+        endTime
       }
       configHash
       badge {
@@ -97,22 +113,80 @@ query
   if (rawData.error) {
     throw new Error(rawData.error);
   }
-  console.log(`rawData`, rawData);
-  const seasonPlayers = await groupPlayers(rawData.data.configPlayers);
+  console.log(`configPlayers`, rawData.data.configPlayers);
+  if (!rawData.data.configPlayers)
+    throw new Error(`config players undefined. Make sure query is correct`);
+
+  const configPlayersFinal = await addWallbreakers(rawData.data.configPlayers);
+  console.log(configPlayersFinal);
+  return configPlayersFinal;
+}
+
+// Map reduce to get the season score for each player
+export async function loadSeasonLeaderboard(configPlayers: ConfigPlayer[]): Promise<SeasonScore[]> {
+  const seasonPlayers = await groupPlayers(configPlayers);
   const seasonScores = getSeasonScore(seasonPlayers);
   return seasonScores;
 }
 
-export function graphBadgeToBadge(graphBadge: BadgeSet): BadgeType[] {
-  const badges: BadgeType[] = [];
-  if(graphBadge.startYourEngine) badges.push(BadgeType.StartYourEngine);
-  // TODO: Add all the badge types
-  return badges;
+// Filter to get all Config Players for a single Grand Prix
+// Can be used for badges
+export function loadGrandPrixPlayers(configPlayers: ConfigPlayer[], configHash: string) {
+  const grandPrixScores = configPlayers
+    .filter((cp) => cp.configHash == configHash)
+    .sort((a, b) => a.bestTime.duration - b.bestTime.duration);
+  return grandPrixScores;
 }
 
-async function groupPlayers(configPlayers: ConfigPlayer[]): Promise<SeasonPlayers> {
-  const wallBreakers = await loadWallbreakers();
+// Assumes configPlayers have same configHash
+export async function configPlayersToLeaderboard(
+  configPlayers: ConfigPlayer[]
+) {
+  let entries: LeaderboardEntry[] = [];
+  const twitters = await getAllTwitters();
 
+  // Just show wallBreaker badge in client.
+  let numMatches = 0;
+  configPlayers.map((cp) => {
+    numMatches += cp.gamesFinished;
+    entries.push({
+      ethAddress: address(cp.address),
+      score: undefined,
+      twitter: twitters[cp.address],
+      moves: cp.bestTime.winners[0].moves,
+      startTime: cp.bestTime.startTime,
+      endTime: cp.bestTime.endTime,
+      time: cp.bestTime.duration,
+    });
+  });
+
+  return { entries, length: numMatches } as Leaderboard;
+}
+
+// Get a single player's Season data. Best Grand Prix results and badges.
+export function loadSeasonPlayer(playerId: string, configPlayers: ConfigPlayer[]): ConfigPlayer[] {
+  return configPlayers.filter(cp => cp.address === playerId);
+}
+
+
+export async function loadGrandPrixLeaderboard(configPlayers: ConfigPlayer[], configHash: string) {
+  const players = await loadGrandPrixPlayers(configPlayers, configHash);
+  const leaderboard = await configPlayersToLeaderboard(players);
+  return leaderboard
+}
+
+// Add wallbreaker badge to ConfigPlayers
+async function addWallbreakers(configPlayers: ConfigPlayer[]): Promise<ConfigPlayer[]> {
+  const wallBreakers = await loadWallbreakers();
+  return configPlayers.map((cfp) => {
+    const isWallBreaker = wallBreakers.filter((e) => e.player === cfp.address).length > 0;
+    if (isWallBreaker) cfp.badge.wallBreaker = true;
+    return cfp;
+  });
+}
+
+// Group ConfigPlayers by address to calculate Season Score
+async function groupPlayers(configPlayers: ConfigPlayer[]): Promise<SeasonPlayers> {
   const seasonPlayers: SeasonPlayers = {};
   configPlayers.map((cp) => {
     if (!seasonPlayers[cp.address]) seasonPlayers[cp.address] = [];
@@ -121,35 +195,40 @@ async function groupPlayers(configPlayers: ConfigPlayer[]): Promise<SeasonPlayer
       moves: cp.bestTime.winners[0].moves,
       badges: cp.badge,
     };
-    // Add Wallbreaker Badge
-    const isWallBreaker = wallBreakers.filter(e => e.player === cp.address).length > 0
-    grandPrixResult.badges.wallBreaker = isWallBreaker;
-    
+
     seasonPlayers[cp.address].push(grandPrixResult);
   });
   return seasonPlayers;
 }
-
-function calcSeasonScore(grandPrixResult: GrandPrixResult): number {
-  const timeScore = DAY_IN_SECONDS - grandPrixResult.bestTime;
-  let badgeScore = 0;
-  badgeScore += grandPrixResult.badges.startYourEngine ? START_ENGINE_BONUS : 0;
-  badgeScore += grandPrixResult.badges.wallBreaker ? WALLBREAKER_BONUS : 0;
-  return timeScore + badgeScore;
-}
-
+// Sum player dictionary to create list of {player, score}
 function getSeasonScore(seasonPlayers: SeasonPlayers): SeasonScore[] {
   const seasonScores: SeasonScore[] = [];
   for (const [player, grandPrixResults] of Object.entries(seasonPlayers)) {
     const seasonScore: SeasonScore = {
       player,
       score: grandPrixResults
-        .map((result) => calcSeasonScore(result))
+        .map((result) => calcGrandPrixScore(result))
         .reduce((prev, curr) => prev + curr),
     };
     seasonScores.push(seasonScore);
   }
-  console.log(`season Scores`, seasonScores);
   return seasonScores;
 }
+
+/**
+ * Utils to calculate scores
+ */
+export function calcBadgeScore(badges: BadgeSet): number {
+  let badgeScore = 0;
+  badgeScore += badges.startYourEngine ? START_ENGINE_BONUS : 0;
+  badgeScore += badges.wallBreaker ? WALLBREAKER_BONUS : 0;
+  return badgeScore;
+}
+
+export function calcGrandPrixScore(grandPrixResult: GrandPrixResult): number {
+  const timeScore = DAY_IN_SECONDS - grandPrixResult.bestTime;
+  return timeScore + calcBadgeScore(grandPrixResult.badges);
+}
+
+
 

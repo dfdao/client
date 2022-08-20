@@ -121,6 +121,7 @@ const WALLBREAKER_BONUS = 5 * 60;
 const START_ENGINE_BONUS = 100;
 const DAY_IN_SECONDS = 24 * 60 * 60;
 
+// startTime and endTime are in UNIX seconds
 export interface GrandPrixMetadata {
   id: number;
   configHash: string;
@@ -130,13 +131,7 @@ export interface GrandPrixMetadata {
 const SEASON_GRAND_PRIXS: GrandPrixMetadata[] = [
   {
     id: 1,
-    configHash:'0xe8c09c646e1c9228918754437a7130a30e4837b21689b51dfd67a8ecf55ebd6e',
-    startTime: TEMP_START_TIME,
-    endTime: TEMP_END_TIME,
-  },
-  {
-    id: 1,
-    configHash:'0xda5387c71e68cb076a5ba7aed1f6a8d14f396425c1cb3ca5b2952af53588626c',
+    configHash:'0xd08bbeb0785370a68369f0a042e33ef2688da6da5e79acbb5688ddbb8ca4a862',
     startTime: TEMP_START_TIME,
     endTime: TEMP_END_TIME,
   },

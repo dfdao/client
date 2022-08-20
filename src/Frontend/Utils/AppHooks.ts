@@ -5,6 +5,7 @@ import {
   Artifact,
   ArtifactId,
   BadgeType,
+  ConfigPlayer,
   EthAddress,
   GrandPrixBadge,
   GraphConfigPlayer,
@@ -33,6 +34,7 @@ import { createDefinedContext } from './createDefinedContext';
 import { useEmitterSubscribe, useEmitterValue, useWrappedEmitter } from './EmitterHooks';
 import { usePoll } from './Hooks';
 import { loadSeasonBadges } from '../../Backend/Network/GraphApi/BadgeApi';
+import { loadAllPlayerData, loadGrandPrixLeaderboard } from '../../Backend/Network/GraphApi/SeasonLeaderboardApi';
 
 export const { useDefinedContext: useEthConnection, provider: EthConnectionProvider } =
   createDefinedContext<EthConnection>();
@@ -52,6 +54,10 @@ export const { useDefinedContext: useTwitters, provider: TwitterProvider } =
 export function useOverlayContainer(): HTMLDivElement | null {
   return useUIManager()?.getOverlayContainer() ?? null;
 }
+
+export const { useDefinedContext: useSeasonData, provider: SeasonDataProvider } =
+  createDefinedContext<ConfigPlayer[]>();
+
 
 /**
  * Get the currently used account on the client.
@@ -256,6 +262,29 @@ export function usePlayerBadges(poll: number | undefined = undefined): {
   usePoll(load, poll, true);
 
   return { grandPrixBadges, error };
+}
+
+
+export function useAllPlayers(poll: number | undefined = undefined): {
+  configPlayers: ConfigPlayer[] | undefined;
+  error: Error | undefined;
+} {
+  const [configPlayers, setConfigPlayers] = useState<ConfigPlayer[] | undefined>();
+  const [error, setError] = useState<Error | undefined>();
+
+  const load = useCallback(async function load() {
+    try {
+      // TODO: Have Season as input.
+      setConfigPlayers(await loadAllPlayerData());
+    } catch (e) {
+      console.log('error loading badges', e);
+      setError(e);
+    }
+  }, []);
+
+  usePoll(load, poll, true);
+
+  return { configPlayers, error };
 }
 
 export function useArenaLeaderboard(
