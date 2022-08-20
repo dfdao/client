@@ -5,7 +5,6 @@ import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { Icon } from '../../Components/Icons';
 import { Sub } from '../../Components/Text';
-import { Triangle } from '../../Components/Triangle';
 import { TiledTable } from '../TiledTable';
 
 export interface TimelineProps {
@@ -140,8 +139,9 @@ const MapComponent: React.FC<{ round: GrandPrixHistoryItem; index: number }> = (
   round,
   index,
 }) => {
+  const history = useHistory();
   return (
-    <MapContainer>
+    <MapContainer onClick={() => history.push(`/portal/map/${round.configHash}`)}>
       <MapNameContainer>
         <div style={{ position: 'absolute', top: '0', left: '5px' }}>GP{index}</div>
         <WhiteFont>{getConfigName(round.configHash)}</WhiteFont>
@@ -172,9 +172,11 @@ const MapContainer = styled.div`
   text-align: left;
   gap: 8px;
   margin: 8px;
+  max-width: calc(33% - 13px);
+  cursor: pointer;
 `;
 
-const MapNameContainer = styled.button`
+const MapNameContainer = styled.div`
   flex: 1;
   display: flex;
   background: #202020;
@@ -197,30 +199,43 @@ export const PortalHistoryView: React.FC<{}> = ({}) => {
   const [current, setCurrent] = useState<number>(0);
 
   const rounds = seasons[current].grandPrixHistoryItems;
-  console.log(rounds);
   const totalScore = useMemo(() => rounds.reduce((prev, curr) => curr.score + prev, 0), [rounds]);
-
+  const mapComponents = useMemo(
+    () => rounds.map((round, idx) => <MapComponent round={round} index={idx} />),
+    [rounds]
+  );
+  const leftDisplay = current == 0 ? 'none' : 'flex';
+  const rightDisplay = current == seasons.length - 1 ? 'none' : 'flex';
   return (
     <Container>
       <HeaderContainer>
         <TitleContainer>
-          {current !== 0 && (
-            <button
-              onClick={() => setCurrent(current - 1)}
-              style={{ display: 'flex', fontSize: '2rem', transform: 'rotate(180deg)' }}
-            >
-              <Icon type={IconType.RightArrow} />
-            </button>
-          )}
+          <button
+            onClick={() => setCurrent(current - 1)}
+            style={{
+              position: 'absolute',
+              left: '-40px',
+              margin: 'auto',
+              display: leftDisplay,
+              fontSize: '2rem',
+              transform: 'rotate(180deg)',
+            }}
+          >
+            <Icon type={IconType.RightArrow} />
+          </button>
           <span>Season {current + 1}</span>
-          {current !== seasons.length - 1 && (
-            <button
-              onClick={() => setCurrent(current + 1)}
-              style={{ display: 'flex', fontSize: '2rem' }}
-            >
-              <Icon type={IconType.RightArrow} />
-            </button>
-          )}
+          <button
+            onClick={() => setCurrent(current + 1)}
+            style={{
+              position: 'absolute',
+              right: '-40px',
+              margin: 'auto',
+              display: rightDisplay,
+              fontSize: '2rem',
+            }}
+          >
+            <Icon type={IconType.RightArrow} />
+          </button>
         </TitleContainer>
 
         <div style={{ fontSize: '1.5rem', textAlign: 'right' }}>
@@ -234,12 +249,7 @@ export const PortalHistoryView: React.FC<{}> = ({}) => {
         </div>
       </HeaderContainer>
       <BodyContainer>
-        <TiledTable
-          title={<span style={{ fontSize: '2em' }}>Maps</span>}
-          items={rounds.map((round, idx) => (
-            <MapComponent round={round} index={idx} />
-          ))}
-        />
+        <TiledTable title={<span style={{ fontSize: '2em' }}>Maps</span>} items={mapComponents} />
       </BodyContainer>
     </Container>
   );

@@ -53,7 +53,7 @@ export function TiledTable({
       createTable(
         paginated ? items.slice(page * itemsPerPage, page * itemsPerPage + itemsPerPage) : items
       ),
-    [page]
+    [page, items]
   );
 
   function createTable(items: React.ReactNode[]) {
