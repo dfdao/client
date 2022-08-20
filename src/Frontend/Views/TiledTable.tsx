@@ -43,7 +43,7 @@ export function TiledTable({
   paginated?: boolean;
   rowsPerPage?: number;
   columnsPerPage?: number;
-  title?: string;
+  title?: string | JSX.Element;
 }) {
   const [page, setPage] = useState(0);
 

@@ -1,107 +1,175 @@
 import { getConfigName } from '@darkforest_eth/procedural';
+import { BadgeType } from '@darkforest_eth/ui';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import useSWR from 'swr';
 import { fetcher } from '../../../Backend/Network/UtilityServerAPI';
+import { Badge } from '../../Components/Badges';
 import { Link } from '../../Components/CoreUI';
 import { MythicLabelText } from '../../Components/Labels/MythicLabel';
 import dfstyles from '../../Styles/dfstyles';
 import { useTwitters } from '../../Utils/AppHooks';
 import { formatStartTime } from '../../Utils/TimeUtils';
+import { TiledTable } from '../TiledTable';
 
 export interface TimelineProps {
   configHashes: string[];
 }
 
-export interface RoundHistoryItem {
-  configHash: string;
-  name: string;
-  startTime: number;
-  winner: string;
+interface SeasonHistoryItem {
+  id: number;
+  grandPrixHistoryItems: GrandPrixHistoryItem[];
+  rank: number;
+  players: number;
 }
 
+interface GrandPrixHistoryItem {
+  configHash: string;
+  startTime: string;
+  endTime: string;
+  players: number;
+  rank: number;
+  score: number;
+  badges: BadgeType[];
+}
+
+const seasons: SeasonHistoryItem[] = [
+  {
+    id: 1,
+    rank: 5,
+    players: 1000,
+    grandPrixHistoryItems: [
+      {
+        configHash: '0xfe719a3cfccf2bcfa23f71f0af80a931eda4f4197331828d728b7505a6156930',
+        startTime: '2022-07-13T00:00:00.000Z',
+        endTime: '2022-07-13T00:00:00.000Z',
+        players: 1000,
+        rank: 5,
+        score: 10000,
+        badges: [BadgeType.Dfdao, BadgeType.Dfdao],
+      },
+      {
+        configHash: '0xfe719a3cfccf2bcfa23f71f0af80a931eda4f4197331828d728b7505a6156930',
+        startTime: '2022-07-13T00:00:00.000Z',
+        endTime: '2022-07-13T00:00:00.000Z',
+        players: 1000,
+        rank: 5,
+        score: 10000,
+        badges: [BadgeType.Dfdao, BadgeType.Dfdao],
+      },
+      {
+        configHash: '0xfe719a3cfccf2bcfa23f71f0af80a931eda4f4197331828d728b7505a6156930',
+        startTime: '2022-07-13T00:00:00.000Z',
+        endTime: '2022-07-13T00:00:00.000Z',
+        players: 1000,
+        rank: 5,
+        score: 10000,
+        badges: [BadgeType.Dfdao, BadgeType.Dfdao],
+      },
+      {
+        configHash: '0xfe719a3cfccf2bcfa23f71f0af80a931eda4f4197331828d728b7505a6156930',
+        startTime: '2022-07-13T00:00:00.000Z',
+        endTime: '2022-07-13T00:00:00.000Z',
+        players: 1000,
+        rank: 5,
+        score: 10000,
+        badges: [BadgeType.Dfdao, BadgeType.Dfdao],
+      },
+      {
+        configHash: '0xfe719a3cfccf2bcfa23f71f0af80a931eda4f4197331828d728b7505a6156930',
+        startTime: '2022-07-13T00:00:00.000Z',
+        endTime: '2022-07-13T00:00:00.000Z',
+        players: 1000,
+        rank: 5,
+        score: 10000,
+        badges: [BadgeType.Dfdao, BadgeType.Dfdao],
+      },
+      {
+        configHash: '0xfe719a3cfccf2bcfa23f71f0af80a931eda4f4197331828d728b7505a6156930',
+        startTime: '2022-07-13T00:00:00.000Z',
+        endTime: '2022-07-13T00:00:00.000Z',
+        players: 1000,
+        rank: 5,
+        score: 10000,
+        badges: [BadgeType.Dfdao, BadgeType.Dfdao],
+      },
+    ],
+  },
+  {
+    id: 1,
+    rank: 5,
+    players: 1000,
+    grandPrixHistoryItems: [
+      {
+        configHash: '0xfe719a3cfccf2bcfa23f71f0af80a931eda4f4197331828d728b7505a6156930',
+        startTime: '2022-07-13T00:00:00.000Z',
+        endTime: '2022-07-13T00:00:00.000Z',
+        players: 1000,
+        rank: 5,
+        score: 10000,
+        badges: [BadgeType.Dfdao, BadgeType.Dfdao],
+      },
+      {
+        configHash: '0xfe719a3cfccf2bcfa23f71f0af80a931eda4f4197331828d728b7505a6156930',
+        startTime: '2022-07-13T00:00:00.000Z',
+        endTime: '2022-07-13T00:00:00.000Z',
+        players: 1000,
+        rank: 5,
+        score: 10000,
+        badges: [BadgeType.Dfdao, BadgeType.Dfdao],
+      },
+      {
+        configHash: '0xfe719a3cfccf2bcfa23f71f0af80a931eda4f4197331828d728b7505a6156930',
+        startTime: '2022-07-13T00:00:00.000Z',
+        endTime: '2022-07-13T00:00:00.000Z',
+        players: 1000,
+        rank: 5,
+        score: 10000,
+        badges: [BadgeType.Dfdao, BadgeType.Dfdao],
+      },
+      {
+        configHash: '0xfe719a3cfccf2bcfa23f71f0af80a931eda4f4197331828d728b7505a6156930',
+        startTime: '2022-07-13T00:00:00.000Z',
+        endTime: '2022-07-13T00:00:00.000Z',
+        players: 1000,
+        rank: 5,
+        score: 10000,
+        badges: [BadgeType.Dfdao, BadgeType.Dfdao],
+      },
+    ],
+  },
+];
+
 export const PortalHistoryView: React.FC<{}> = ({}) => {
+  const [current, setCurrent] = useState<number>(0);
+
+  const rounds = useMemo(() => seasons[current].grandPrixHistoryItems, [current]);
+  const totalScore = useMemo(() => rounds.reduce((prev, curr) => curr.score + prev, 0), [rounds]);
+
   const history = useHistory();
-  const twitters = useTwitters() as Object;
-  const { data: adminData, error } = useSWR(`${process.env.DFDAO_WEBSERVER_URL}/rounds`, fetcher);
-  const rounds = useMemo(() => {
-    if (adminData) {
-      return adminData.map((round: RoundHistoryItem & { endTime: number }) => {
-        return {
-          configHash: round.configHash,
-          name: getConfigName(round.configHash),
-          startTime: round.startTime,
-          endTime: round.endTime,
-          winner: round.winner,
-        };
-      });
-    } else {
-      return [];
-    }
-  }, [adminData]);
-
-  const addressToTwitter = (address: string) => {
-    const foundTwitter = Object.entries(twitters).find((t) => t[1] == address.toLowerCase().trim());
-    if (foundTwitter) {
-      return foundTwitter[0];
-    } else {
-      return address;
-    }
-  };
-
+  const error = false;
   return (
     <Container>
-      <Header>
-        <MythicLabelText text='Previous Grand Prix Rounds'></MythicLabelText>
-      </Header>
-      {error ? (
-        <span>Unable to load Grand Prix round history.</span>
-      ) : (
-        <>
-          {rounds && rounds.length > 0 ? (
-            <TimelineContainer>
-              <thead>
-                <tr>
-                  <TimelineHeader>Started</TimelineHeader>
-                  <TimelineHeader>Name</TimelineHeader>
-                  <TimelineHeader>Winner</TimelineHeader>
-                </tr>
-              </thead>
-              <tbody>
-                {' '}
-                {rounds
-                  .filter((round: any) => round.startTime < Date.now())
-                  .map((historyItem: RoundHistoryItem) => (
-                    <TimelineRow
-                      key={historyItem.configHash}
-                      onClick={() => {
-                        history.push(`/portal/map/${historyItem.configHash}`);
-                      }}
-                    >
-                      <TimelineItem>{formatStartTime(historyItem.startTime / 1000)}</TimelineItem>
-                      <TimelineItem>{historyItem.name}</TimelineItem>
-                      <TimelineItem>
-                        {historyItem.winner !== undefined && historyItem.winner !== '' ? (
-                          <Link to={`https://twitter.com/${addressToTwitter(historyItem.winner)}`}>
-                            {addressToTwitter(historyItem.winner)}
-                          </Link>
-                        ) : (
-                          'None'
-                        )}
-                      </TimelineItem>
-                      <TimelineItem>
-                        <HoverIcon />
-                      </TimelineItem>
-                    </TimelineRow>
-                  ))}
-              </tbody>
-            </TimelineContainer>
-          ) : (
-            <span>No Previous Rounds</span>
-          )}
-        </>
-      )}
+      <HeaderContainer>
+        <span style={{ fontSize: '2em' }}>Season {current + 1}</span>
+        <div>
+          <div>
+            Rank: {seasons[current].rank}
+            Score: {totalScore}
+          </div>
+        </div>
+      </HeaderContainer>
+      <BodyContainer>
+        <TiledTable
+          title={<span style={{ fontSize: '2em' }}>Season 2 History</span>}
+          items={rounds.map((round) => (
+            <div style={{ width: '200px', height: '200px', background: 'indigo' }}>
+              {round.rank} / {round.players}
+            </div>
+          ))}
+        />
+      </BodyContainer>
     </Container>
   );
 };
@@ -110,24 +178,32 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   height: 100%;
+  width: 100%;
+  padding: 16px 48px;
 `;
 
-const Header = styled.h1`
-  font-size: 1.5rem;
-  color: #fff;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+const HeaderContainer = styled.div`
+  background: rgb(42, 42, 42);
+  background: linear-gradient(0deg, rgba(42, 42, 42, 1) 05%, rgba(20, 20, 20, 1) 100%);
+  width: 100%;
+  min-height: 200px;
+  border-radius: 48px 48px 0px 0px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
 `;
 
-const TimelineContainer = styled.table`
+const BodyContainer = styled.div`
   margin-top: 3rem;
-  border-collapse: collapse;
-  display: block;
-  border-spacing: 0;
-  font-size: 1rem;
-  overflow-y: auto;
+  width: 80%;
+  height: 100%;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  // justify-content: space-around;
+  align-items: center;
 `;
 
 const TimelineRow = styled.tr`
