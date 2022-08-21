@@ -2,7 +2,7 @@ import { CONTRACT_ADDRESS, FAUCET_ADDRESS } from '@darkforest_eth/contracts';
 import { DFArenaFaucet } from '@darkforest_eth/contracts/typechain';
 import { EthConnection, ThrottledConcurrentQueue, weiToEth } from '@darkforest_eth/network';
 import { address } from '@darkforest_eth/serde';
-import { ConfigPlayer, EthAddress } from '@darkforest_eth/types';
+import { CleanConfigPlayer, ConfigPlayer, EthAddress } from '@darkforest_eth/types';
 import { utils, Wallet } from 'ethers';
 import React, { useEffect, useRef, useState } from 'react';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
@@ -270,13 +270,14 @@ class EntryPageTerminal {
 type LoadingStatus = 'loading' | 'creating' | 'complete';
 export function EntryPage() {
   const terminal = useRef<TerminalHandle>();
+  console.log(`terminal`, terminal.current);
 
   const [loadingStatus, setLoadingStatus] = useState<LoadingStatus>('loading');
   const [controller, setController] = useState<EntryPageTerminal | undefined>();
 
   const [twitters, setTwitters] = useState<AddressTwitterMap | undefined>();
   const [connection, setConnection] = useState<EthConnection | undefined>();
-  const [seasonPlayers, setPlayers] = useState<ConfigPlayer[] | undefined>();
+  const [seasonPlayers, setPlayers] = useState<CleanConfigPlayer[] | undefined>();
 
   /* get all twitters on page load */
   useEffect(() => {
@@ -325,7 +326,9 @@ export function EntryPage() {
   }, [connection]);
 
   useEffect(() => {
+    console.log(`!controller`, !controller, `connection`, connection, `terminal`, terminal.current)
     if (!controller && connection && terminal.current) {
+      console.log(`setting new controller`);
       const newController = new EntryPageTerminal(
         connection,
         terminal.current,
@@ -339,7 +342,7 @@ export function EntryPage() {
     }
   }, [terminal, connection, controller, loadingStatus]);
 
-  if (!connection || !twitters || !seasonPlayers || loadingStatus == 'loading') {
+  if (!connection || !twitters || loadingStatus == 'loading') {
     return <LoadingPage />;
   } else if (loadingStatus == 'creating') {
     return (
@@ -356,7 +359,7 @@ export function EntryPage() {
     return (
       <EthConnectionProvider value={connection}>
         <TwitterProvider value={twitters}>
-          <SeasonDataProvider value={seasonPlayers}>
+          <SeasonDataProvider value={seasonPlayers!}>
           <Router>
             <Switch>
               <Redirect path='/play' to={`/play/${defaultAddress}`} push={true} exact={true} />

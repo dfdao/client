@@ -2,13 +2,14 @@ import { BadgeType } from '@darkforest_eth/types';
 import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { logOut } from '../../../Backend/Network/AccountManager';
+import { loadPlayerBadges } from '../../../Backend/Network/GraphApi/SeasonLeaderboardApi';
 import { Badge, BadgeDetails, SpacedBadges } from '../../Components/Badges';
 import { Btn } from '../../Components/Btn';
 import { Gnosis, Icon, IconType, Twitter } from '../../Components/Icons';
 import { WithdrawSilverButton } from '../../Panes/Game/TooltipPanes';
 
 import dfstyles from '../../Styles/dfstyles';
-import { useEthConnection, usePlayerBadges, useTwitters } from '../../Utils/AppHooks';
+import { useEthConnection, usePlayerBadges, useSeasonData, useTwitters } from '../../Utils/AppHooks';
 import { TiledTable } from '../TiledTable';
 import { truncateAddress } from './PortalUtils';
 
@@ -21,13 +22,14 @@ function AccountModal({ setOpen }: { setOpen: (open: boolean) => void }) {
   if (!address) return <></>;
   const twitter = twitters[address];
   const truncatedAddress = truncateAddress(address);
-  const { grandPrixBadges, error } = usePlayerBadges();
+  const configPlayers = useSeasonData();
+  const grandPrixBadges = loadPlayerBadges(address, configPlayers);
 
   const badgeElements = useMemo(
     () =>
       grandPrixBadges &&
       grandPrixBadges.map((grandPrixBadge, idx) => (
-        <BadgeDetails type={grandPrixBadge.badge} key={`badge-${idx}`} />
+        <BadgeDetails type={grandPrixBadge} key={`badge-${idx}`} />
       )),
     [grandPrixBadges]
   );

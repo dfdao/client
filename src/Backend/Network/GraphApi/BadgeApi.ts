@@ -1,12 +1,12 @@
 import { address } from '@darkforest_eth/serde';
-import { BadgeType, ConfigBadges, GrandPrixBadge } from '@darkforest_eth/types';
+import { BadgeSet, BadgeType, ConfigBadges, GrandPrixBadge } from '@darkforest_eth/types';
 import { SEASON_GRAND_PRIXS } from '../../../Frontend/Utils/constants';
 import { getGraphQLData } from '../GraphApi';
 
 // Given a player address, gets the all the badges they won in a given season.
 // TODO: add Wallbreaker badges
 // Filter this data for a specific configHash to get data for a specific GrandPrix
-export async function loadSeasonBadges(player: string): Promise<GrandPrixBadge[]> {
+export async function loadSeasonBadges(player: string): Promise<BadgeType[]> {
   // Fetch players data. Parse badges.
   const stringHashes = SEASON_GRAND_PRIXS.map((season) => `"${season.configHash}"`);
   const QUERY = `
@@ -38,19 +38,19 @@ query
 }
 
 // Given a season, get all badges won by all Players
-export function graphBadgeToGrandPrixBadge(graphBadge: ConfigBadges): GrandPrixBadge[] {
-  const badges: GrandPrixBadge[] = [];
+export function graphBadgeToGrandPrixBadge(graphBadge: BadgeSet): BadgeType[] {
+  const badges: BadgeType[] = [];
 
-  if(graphBadge.badge.startYourEngine) badges.push(
-    {
-      configHash: graphBadge.configHash,
-      badge: BadgeType.StartYourEngine
-    }
+  if(graphBadge.startYourEngine) badges.push(
+      BadgeType.StartYourEngine
+  )
+  if(graphBadge.wallBreaker) badges.push(
+    BadgeType.Wallbreaker
   )
   // TODO: Add all the badge types
   return badges;
 }
 
-export function getBadges(configBadges: ConfigBadges[]): GrandPrixBadge[]  {
+export function getBadges(configBadges: BadgeSet[]): BadgeType[]  {
   return (configBadges.map(configBadge => graphBadgeToGrandPrixBadge(configBadge)).flat())
 }

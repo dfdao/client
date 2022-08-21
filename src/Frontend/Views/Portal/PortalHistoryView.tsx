@@ -1,13 +1,13 @@
 import { getConfigName } from '@darkforest_eth/procedural';
-import { BadgeType, SeasonScore } from '@darkforest_eth/types';
+import { BadgeType, EthAddress, SeasonScore } from '@darkforest_eth/types';
 import { IconType } from '@darkforest_eth/ui';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { loadSeasonLeaderboard } from '../../../Backend/Network/GraphApi/SeasonLeaderboardApi';
+import { GrandPrixHistory, loadPlayerSeasonHistoryView, loadSeasonLeaderboard } from '../../../Backend/Network/GraphApi/SeasonLeaderboardApi';
 import { Icon } from '../../Components/Icons';
 import { Sub } from '../../Components/Text';
-import { useAccount, useAllPlayers, useSeasonData } from '../../Utils/AppHooks';
+import { useAccount, useEthConnection, useSeasonData } from '../../Utils/AppHooks';
 import { GrandPrixMetadata, SEASON_GRAND_PRIXS } from '../../Utils/constants';
 import { TiledTable } from '../TiledTable';
 
@@ -16,25 +16,34 @@ export interface TimelineProps {
 }
 
 // For now, just for season one.
-function seasonScoreToSeasonHistoryItem(seasonScores: SeasonScore[]){
+function seasonScoreToSeasonHistoryItem(account: EthAddress, seasonScores: SeasonScore[]) {
   // Sort descending
+  let rank = 0;
+  
   seasonScores.sort((a,b) => b.score - a.score).map((s,index) => {
-    
+    if(account && s.player == account) rank = index;
   })
+  const history: SeasonHistoryItem = {
+    seasonId: 1,
+    grandPrixHistoryItems: [],
+    rank,
+    players: seasonScores.length
+  } 
+  return history;
   
 }
 
 export interface SeasonHistoryItem {
-  id: number;
+  seasonId: number;
   grandPrixHistoryItems: GrandPrixHistoryItem[];
   rank: number;
   players: number;
 }
 
-interface GrandPrixHistoryItem {
+export interface GrandPrixHistoryItem {
   configHash: string;
-  startTime: string;
-  endTime: string;
+  startTime: number;
+  endTime: number;
   players: number;
   rank: number;
   score: number;
@@ -51,14 +60,14 @@ interface GrandPrixHistoryItem {
 
 const seasons: SeasonHistoryItem[] = [
   {
-    id: 1,
+    seasonId: 1,
     rank: 5,
     players: 1000,
     grandPrixHistoryItems: [
       {
         configHash: '0xfe719a3cfccf2bcfa23f71f0af80a931eda4f4197331828d728b7505a6156930',
-        startTime: '2022-07-13T00:00:00.000Z',
-        endTime: '2022-07-13T00:00:00.000Z',
+        startTime: new Date('2022-07-13T00:00:00.000Z').getTime() / 1000,
+        endTime: new Date('2022-07-13T00:00:00.000Z').getTime() / 1000,
         players: 1000,
         rank: 5,
         score: 10000,
@@ -66,44 +75,8 @@ const seasons: SeasonHistoryItem[] = [
       },
       {
         configHash: '0xfe719a3cfccf2bcfa23f71f0af80a931eda4f4197331828d728b7505a6156930',
-        startTime: '2022-07-13T00:00:00.000Z',
-        endTime: '2022-07-13T00:00:00.000Z',
-        players: 1000,
-        rank: 5,
-        score: 10000,
-        badges: [BadgeType.Dfdao, BadgeType.Dfdao],
-      },
-      {
-        configHash: '0xfe719a3cfccf2bcfa23f71f0af80a931eda4f4197331828d728b7505a6156930',
-        startTime: '2022-07-13T00:00:00.000Z',
-        endTime: '2022-07-13T00:00:00.000Z',
-        players: 1000,
-        rank: 5,
-        score: 10000,
-        badges: [BadgeType.Dfdao, BadgeType.Dfdao],
-      },
-      {
-        configHash: '0xfe719a3cfccf2bcfa23f71f0af80a931eda4f4197331828d728b7505a6156930',
-        startTime: '2022-07-13T00:00:00.000Z',
-        endTime: '2022-07-13T00:00:00.000Z',
-        players: 1000,
-        rank: 5,
-        score: 10000,
-        badges: [BadgeType.Dfdao, BadgeType.Dfdao],
-      },
-      {
-        configHash: '0xfe719a3cfccf2bcfa23f71f0af80a931eda4f4197331828d728b7505a6156930',
-        startTime: '2022-07-13T00:00:00.000Z',
-        endTime: '2022-07-13T00:00:00.000Z',
-        players: 1000,
-        rank: 5,
-        score: 10000,
-        badges: [BadgeType.Dfdao, BadgeType.Dfdao],
-      },
-      {
-        configHash: '0xfe719a3cfccf2bcfa23f71f0af80a931eda4f4197331828d728b7505a6156930',
-        startTime: '2022-07-13T00:00:00.000Z',
-        endTime: '2022-07-13T00:00:00.000Z',
+        startTime: new Date('2022-07-13T00:00:00.000Z').getTime() / 1000,
+        endTime: new Date('2022-07-13T00:00:00.000Z').getTime() / 1000,
         players: 1000,
         rank: 5,
         score: 10000,
@@ -112,14 +85,14 @@ const seasons: SeasonHistoryItem[] = [
     ],
   },
   {
-    id: 1,
+    seasonId: 1,
     rank: 5,
     players: 1000,
     grandPrixHistoryItems: [
       {
         configHash: '0xfe719a3cfccf2bcfa23f71f0af80a931eda4f4197331828d728b7505a6156930',
-        startTime: '2022-07-13T00:00:00.000Z',
-        endTime: '2022-07-13T00:00:00.000Z',
+        startTime: new Date('2022-07-13T00:00:00.000Z').getTime() / 1000,
+        endTime: new Date('2022-07-13T00:00:00.000Z').getTime() / 1000,
         players: 1000,
         rank: 5,
         score: 10000,
@@ -127,26 +100,8 @@ const seasons: SeasonHistoryItem[] = [
       },
       {
         configHash: '0xfe719a3cfccf2bcfa23f71f0af80a931eda4f4197331828d728b7505a6156930',
-        startTime: '2022-07-13T00:00:00.000Z',
-        endTime: '2022-07-13T00:00:00.000Z',
-        players: 1000,
-        rank: 5,
-        score: 10000,
-        badges: [BadgeType.Dfdao, BadgeType.Dfdao],
-      },
-      {
-        configHash: '0xfe719a3cfccf2bcfa23f71f0af80a931eda4f4197331828d728b7505a6156930',
-        startTime: '2022-07-13T00:00:00.000Z',
-        endTime: '2022-07-13T00:00:00.000Z',
-        players: 1000,
-        rank: 5,
-        score: 10000,
-        badges: [BadgeType.Dfdao, BadgeType.Dfdao],
-      },
-      {
-        configHash: '0xfe719a3cfccf2bcfa23f71f0af80a931eda4f4197331828d728b7505a6156930',
-        startTime: '2022-07-13T00:00:00.000Z',
-        endTime: '2022-07-13T00:00:00.000Z',
+        startTime: new Date('2022-07-13T00:00:00.000Z').getTime() / 1000,
+        endTime: new Date('2022-07-13T00:00:00.000Z').getTime() / 1000,
         players: 1000,
         rank: 5,
         score: 10000,
@@ -156,21 +111,11 @@ const seasons: SeasonHistoryItem[] = [
   },
 ];
 
-const MapComponent: React.FC<{ round: GrandPrixHistoryItem; index: number }> = ({
+const MapComponent: React.FC<{ round: GrandPrixHistory; index: number }> = ({
   round,
   index,
 }) => {
   const history = useHistory();
-  // const account = useAccount();
-  // const configPlayers = useSeasonData();
-  // const seasonScores = loadSeasonLeaderboard(configPlayers)
-  // // Might not be case sensitive.
-  // let rank = 0;
-  // seasonScores.sort((a,b) => b.score - a.score).map((s,index) => {
-  //   if(s.player == account.address) rank = index;
-  // })
-
-  // console.log(`player rank`, rank);
   return (
     <MapContainer onClick={() => history.push(`/portal/map/${round.configHash}`)}>
       <MapNameContainer>
@@ -229,7 +174,12 @@ const MapDetailsContainer = styled.div`
 export const PortalHistoryView: React.FC<{}> = ({}) => {
   const [current, setCurrent] = useState<number>(1);
 
-  const rounds = seasons[current].grandPrixHistoryItems;
+  
+  const account = useEthConnection().getAddress()!;
+  const configPlayers = useSeasonData();
+  const { seasonHistory, grandPrixHistories } = loadPlayerSeasonHistoryView(account,configPlayers);
+  
+  const rounds = grandPrixHistories;
   const totalScore = useMemo(() => rounds.reduce((prev, curr) => curr.score + prev, 0), [rounds]);
   const mapComponents = useMemo(
     () => rounds.map((round, idx) => <MapComponent round={round} index={idx} />),
@@ -271,8 +221,8 @@ export const PortalHistoryView: React.FC<{}> = ({}) => {
 
         <div style={{ fontSize: '1.5rem', textAlign: 'right' }}>
           <div>
-            <Sub>rank</Sub> <span style={{ fontSize: '2rem' }}>{seasons[current].rank}</span> of{' '}
-            {seasons[current].players}
+            <Sub>rank</Sub> <span style={{ fontSize: '2rem' }}>{seasonHistory.rank}</span> of{' '}
+            {seasonHistory.players}
           </div>
           <div>
             <Sub>score</Sub> <span style={{ fontSize: '2rem' }}>{totalScore}</span>
