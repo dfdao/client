@@ -270,7 +270,6 @@ class EntryPageTerminal {
 type LoadingStatus = 'loading' | 'creating' | 'complete';
 export function EntryPage() {
   const terminal = useRef<TerminalHandle>();
-  console.log(`terminal`, terminal.current);
 
   const [loadingStatus, setLoadingStatus] = useState<LoadingStatus>('loading');
   const [controller, setController] = useState<EntryPageTerminal | undefined>();

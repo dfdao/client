@@ -5,10 +5,12 @@ import {
   CleanConfigPlayer,
   ConfigPlayer,
   EthAddress,
+  GrandPrixHistory,
   GrandPrixPlayers,
   GrandPrixResult,
   Leaderboard,
   LeaderboardEntry,
+  SeasonHistory,
   SeasonPlayers,
   SeasonScore,
   Wallbreaker,
@@ -57,6 +59,7 @@ export async function loadWallbreakers(): Promise<Wallbreaker[]> {
       }
     }
     `;
+
     return getGraphQLData(QUERY, process.env.GRAPH_URL || 'localhost:8000');
   });
 
@@ -68,14 +71,17 @@ export async function loadWallbreakers(): Promise<Wallbreaker[]> {
     }
   });
 
-  const wallBreakers = wallBreakersRaw.map((wbr) => {
-    return {
-      configHash: wbr.configHash,
-      player: wbr.winners[0].address,
-      duration: wbr.duration,
-      arenaAddress: wbr.lobbyAddress,
-    } as Wallbreaker;
-  });
+  // Filter undefined because graph returns [undefined] if query isn't found
+  const wallBreakers = wallBreakersRaw
+    .filter((wbr) => wbr !== undefined)
+    .map((wbr) => {
+      return {
+        configHash: wbr.configHash,
+        player: wbr.winners[0].address,
+        duration: wbr.duration,
+        arenaAddress: wbr.lobbyAddress,
+      } as Wallbreaker;
+    });
 
   return wallBreakers;
 }
@@ -199,7 +205,8 @@ async function addWallbreakersAndBadges(
 ): Promise<CleanConfigPlayer[]> {
   const wallBreakers = await loadWallbreakers();
   return configPlayers.map((cfp) => {
-    const isWallBreaker = wallBreakers.filter((e) => e.player === cfp.address).length > 0;
+    const isWallBreaker =
+      wallBreakers.length > 0 && wallBreakers.filter((e) => e.player === cfp.address).length > 0;
     if (isWallBreaker) cfp.badge.wallBreaker = true;
     const cleanConfig: CleanConfigPlayer = {
       id: cfp.id,
@@ -241,13 +248,28 @@ function getSeasonScore(seasonPlayers: SeasonPlayers): SeasonScore[] {
   }
   return seasonScores;
 }
-function groupByGrandPrix(configPlayers: CleanConfigPlayer[]): GrandPrixPlayers {
+function groupByGrandPrix(configPlayers: CleanConfigPlayer[] | undefined): GrandPrixPlayers {
+  if (!configPlayers) return {};
+
   const seasonPlayers: GrandPrixPlayers = {};
   configPlayers.map((cp) => {
     if (!seasonPlayers[cp.configHash]) seasonPlayers[cp.configHash] = [];
     seasonPlayers[cp.configHash].push(cp);
   });
   return seasonPlayers;
+}
+
+export interface Seasons {
+  [id: number]: GrandPrixMetadata[];
+}
+
+function groupBySeason(grandPrixs: GrandPrixMetadata[]): Seasons {
+  const seasons: Seasons = {};
+  grandPrixs.map((gp) => {
+    if (!seasons[gp.seasonId]) seasons[gp.seasonId] = [];
+    seasons[gp.seasonId].push(gp);
+  });
+  return seasons;
 }
 
 /**
@@ -278,89 +300,90 @@ export function calcGrandPrixScore(configPlayer: ConfigPlayer): number {
   const timeScore = DAY_IN_SECONDS - configPlayer.bestTime.duration;
   return timeScore + calcBadgeScore(configPlayer.badge);
 }
-
-export interface SeasonHistory {
-  seasonId: number;
-  rank: number;
-  score: number;
-  players: number;
-}
-
-export interface GrandPrixHistory {
-  configHash: string;
-  rank: number;
-  score: number;
-  players: number;
-  badges: BadgeType[];
-}
+ 
 export function loadPlayerSeasonHistoryView(
   player: EthAddress,
   configPlayers: CleanConfigPlayer[]
-): {
-  seasonHistory: SeasonHistory;
-  grandPrixHistories: GrandPrixHistory[];
-} {
+): SeasonHistory[] {
+  const seasonHistories: SeasonHistory[] = [];
   // Get Season Rank and Score.
-  const seasonId = 1;
-  let rank = 0;
-  let score = 0;
-  const seasonLeaderboard = loadSeasonLeaderboard(configPlayers);
-  seasonLeaderboard
-    .sort((a, b) => b.score - a.score)
-    .map((s, index) => {
-      if (s.player == player) {
-        rank = index + 1;
-        score = s.score;
-      }
-    });
+  // Need to handle multiple seasons.
 
-  const seasonHistory: SeasonHistory = {
-    seasonId,
-    rank,
-    score,
-    players: seasonLeaderboard.length,
-  };
+  // Loops over all official Grand Prixs
+  const seasons = groupBySeason(SEASON_GRAND_PRIXS);
 
-  const grandPrixHistories: GrandPrixHistory[] = [];
+  // For each Season, get required data.
+  for (const [key, value] of Object.entries(seasons)) {
+    console.log(`seasonId ${key}: grandPrixs:`, value);
+    const grandPrixs = value as GrandPrixMetadata[];
 
-  SEASON_GRAND_PRIXS.map((gp) => {
-    const grandPrixs = groupByGrandPrix(configPlayers)[gp.configHash];
+    // Calculate Season Aggregate Statistics
+    const seasonId = parseInt(key);
     let rank = 0;
     let score = 0;
-    grandPrixs
+    const seasonLeaderboard = loadSeasonLeaderboard(configPlayers);
+    seasonLeaderboard
       .sort((a, b) => b.score - a.score)
       .map((s, index) => {
-        if (s.address == player) {
+        if (s.player == player) {
           rank = index + 1;
           score = s.score;
         }
       });
 
-    const playerGrandPrixs = groupByPlayers(configPlayers)[player].filter(
-      (cp) => cp.configHash == gp.configHash
-    )[0];
-
-    const grandPrixHistory: GrandPrixHistory = {
-      configHash: gp.configHash,
+    const seasonHistory: SeasonHistory = {
+      seasonId,
       rank,
       score,
-      players: grandPrixs.length,
-      badges: playerGrandPrixs.badges,
+      players: seasonLeaderboard.length,
+      grandPrixs: [],
     };
-    grandPrixHistories.push(grandPrixHistory);
-  })
-  
-  return { seasonHistory, grandPrixHistories };
 
+    const grandPrixHistories: GrandPrixHistory[] = [];
+
+    // Calculate Grand prix aggregate statistics
+    grandPrixs.map((gp) => {
+      const allGrandPrixs = groupByGrandPrix(configPlayers)[gp.configHash];
+      let rank = 0;
+      let score = 0;
+      if (allGrandPrixs && allGrandPrixs.length > 0) {
+        allGrandPrixs
+          .sort((a, b) => b.score - a.score)
+          .map((s, index) => {
+            if (s.address == player) {
+              rank = index + 1;
+              score = s.score;
+            }
+          });
+        const playerGrandPrixs = groupByPlayers(configPlayers)[player].filter(
+          (cp) => cp.configHash == gp.configHash
+        )[0];
+
+        const grandPrixHistory: GrandPrixHistory = {
+          configHash: gp.configHash,
+          rank,
+          score,
+          players: grandPrixs.length,
+          badges: playerGrandPrixs.badges,
+        };
+
+        grandPrixHistories.push(grandPrixHistory);
+      }
+    });
+
+    seasonHistory.grandPrixs = grandPrixHistories;
+    seasonHistories.push(seasonHistory);
+  }
+  return seasonHistories;
 }
 
-export function getBadges(configBadges: BadgeType[][]): BadgeType[]  {
-  return (configBadges.map(configBadge => (configBadge)).flat())
+export function getBadges(configBadges: BadgeType[][]): BadgeType[] {
+  return configBadges.map((configBadge) => configBadge).flat();
 }
 export function loadPlayerBadges(
   player: EthAddress,
   configPlayers: CleanConfigPlayer[]
 ): BadgeType[] {
-  const playerGrandPrixs = groupByPlayers(configPlayers)[player]
-  return playerGrandPrixs.map(pgp => pgp.badges).flat()
+  const playerGrandPrixs = groupByPlayers(configPlayers)[player];
+  return playerGrandPrixs.map((pgp) => pgp.badges).flat();
 }

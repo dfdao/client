@@ -1,4 +1,7 @@
+import { address } from '@darkforest_eth/serde';
+import { EthAddress } from '@darkforest_eth/types';
 import * as bigInt from 'big-integer';
+import { constants } from 'ethers';
 
 // To developer, increase this number to 256. This, in combination with setting `DISABLE_ZK_CHECKS`
 // in darkforest.toml, will make you mine the map at ULTRA SPEED!
@@ -127,13 +130,16 @@ export interface GrandPrixMetadata {
   configHash: string;
   startTime: number;
   endTime: number;
+  parentAddress: EthAddress;
 }
+
 const SEASON_GRAND_PRIXS: GrandPrixMetadata[] = [
   {
     seasonId: 1,
     configHash:'0xd08bbeb0785370a68369f0a042e33ef2688da6da5e79acbb5688ddbb8ca4a862',
     startTime: TEMP_START_TIME,
     endTime: TEMP_END_TIME,
+    parentAddress: address(constants.AddressZero)
   },
 ];
 
