@@ -4,6 +4,7 @@ import { createGlobalStyle } from 'styled-components';
 import { Theme } from '../Components/Theme';
 import { LandingPageBackground } from '../Renderers/LandingPageCanvas';
 import dfstyles from '../Styles/dfstyles';
+import { SeasonLeaderboard } from '../Views/Leaderboards/SeasonLeaderboard';
 import { EntryPage } from './EntryPage';
 import { EventsPage } from './EventsPage';
 import { GifMaker } from './GifMaker';
@@ -29,6 +30,7 @@ function App() {
             <Route path='/planet/:locationId' component={SharePlanet} />
             <Route path='/events' component={EventsPage} />
             <Route path='/artifact/:artifactId' component={ShareArtifact} />
+            <Route path='/leaderboard' component={SeasonLeaderboard} />
             <Route
               path='/wallet/:contract/:addr/:actionId/:balance/:method'
               component={TxConfirmPopup}

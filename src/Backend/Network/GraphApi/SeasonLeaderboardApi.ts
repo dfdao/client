@@ -1,5 +1,14 @@
 import { address } from '@darkforest_eth/serde';
-import { ConfigPlayer, GrandPrixResult, Leaderboard, LeaderboardEntry, SeasonPlayers, SeasonScore, Wallbreaker, WallbreakerArena } from '@darkforest_eth/types';
+import {
+  ConfigPlayer,
+  GrandPrixResult,
+  Leaderboard,
+  LeaderboardEntry,
+  SeasonPlayers,
+  SeasonScore,
+  Wallbreaker,
+  WallbreakerArena,
+} from '@darkforest_eth/types';
 import {
   roundEndTimestamp,
   roundStartTimestamp,
@@ -11,7 +20,7 @@ import { getAllTwitters } from '../UtilityServerAPI';
 
 // Will be eventually imported from Dynasty. Need Start Time and End Time as Well
 
-// One hour 
+// One hour
 const WALLBREAKER_BONUS = 5 * 60;
 const START_ENGINE_BONUS = 100;
 const DAY_IN_SECONDS = 24 * 60 * 60;
@@ -49,9 +58,12 @@ export async function loadWallbreakers(): Promise<Wallbreaker[]> {
     if (x.error) {
       throw new Error(x.error);
     } else {
+      console.log(x);
       return x.data.arenas[0] as WallbreakerArena;
     }
   });
+
+  console.log('www', wallBreakersRaw);
 
   const wallBreakers = wallBreakersRaw.map((wbr) => {
     return {
@@ -118,9 +130,9 @@ async function groupPlayers(configPlayers: ConfigPlayer[]): Promise<SeasonPlayer
     };
 
     // Add Wallbreaker Badge
-    const isWallBreaker = wallBreakers.filter(e => e.player === cp.address).length > 0
+    const isWallBreaker = wallBreakers.filter((e) => e.player === cp.address).length > 0;
     grandPrixResult.badges.wallBreaker = isWallBreaker;
-    
+
     seasonPlayers[cp.address].push(grandPrixResult);
   });
   return seasonPlayers;
@@ -148,4 +160,3 @@ function getSeasonScore(seasonPlayers: SeasonPlayers): SeasonScore[] {
   console.log(`season Scores`, seasonScores);
   return seasonScores;
 }
-
