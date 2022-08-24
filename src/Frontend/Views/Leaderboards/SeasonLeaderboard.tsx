@@ -1,26 +1,19 @@
 import { getConfigName } from '@darkforest_eth/procedural';
+import { BadgeType } from '@darkforest_eth/types';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { loadSeasonLeaderboard } from '../../../Backend/Network/GraphApi/SeasonLeaderboardApi';
+import {
+  groupByPlayers,
+  loadSeasonLeaderboard,
+  loadSeasonPlayers,
+  SeasonLeaderboardEntry,
+  SeasonLeaderboardProps,
+} from '../../../Backend/Network/GraphApi/SeasonLeaderboardApi';
 import dfstyles from '../../Styles/dfstyles';
+import { useSeasonData } from '../../Utils/AppHooks';
+import { SEASON_GRAND_PRIXS } from '../../Utils/constants';
 import { MinimalButton } from '../Portal/PortalMainView';
-
-export interface SeasonGame {
-  configHash: string;
-  score: number;
-}
-
-export interface SeasonLeaderboardEntry {
-  address: string;
-  games: SeasonGame[];
-  score: number;
-}
-
-export interface LeaderboardProps {
-  seasonId: number;
-  entries: SeasonLeaderboardEntry[];
-}
 
 const Entry: React.FC<{ entry: SeasonLeaderboardEntry; index: number }> = ({ entry, index }) => {
   const [expanded, setExpanded] = useState<boolean>(false);
@@ -65,7 +58,7 @@ const Entry: React.FC<{ entry: SeasonLeaderboardEntry; index: number }> = ({ ent
                 borderTop: `1px solid ${dfstyles.colors.borderDarker}`,
               }}
             >
-              <span>5 badges this season</span>
+              <span>{entry.badges} badges this season</span>
               <button>View player</button>
             </div>
           </div>
@@ -75,7 +68,7 @@ const Entry: React.FC<{ entry: SeasonLeaderboardEntry; index: number }> = ({ ent
   );
 };
 
-const Leaderboard: React.FC<LeaderboardProps> = ({ seasonId, entries }) => {
+const Leaderboard: React.FC<SeasonLeaderboardProps> = ({ seasonId, entries }) => {
   return (
     <Container>
       <Title>Season {seasonId} Leaderboard</Title>
@@ -101,38 +94,66 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ seasonId, entries }) => {
 
 let N_MOCK_ENTRIES = 30;
 
-let DUMMY = [] as SeasonLeaderboardEntry[];
+let DUMMY: SeasonLeaderboardEntry[] = [];
 for (let i = 0; i < N_MOCK_ENTRIES; i++) {
-  DUMMY.push({
-    address: '0x' + Math.floor(Math.random() * 10000000000000000).toString(16),
+  const address = '0x' + Math.floor(Math.random() * 10000000000000000).toString(16);
+  const entry: SeasonLeaderboardEntry = {
+    address,
     games: [
       {
+        id: '123',
+        address: address,
+        duration: Math.floor(Math.random() * 1000),
+        moves: Math.floor(Math.random() * 1000),
+        startTime: SEASON_GRAND_PRIXS[0].startTime,
+        endTime: SEASON_GRAND_PRIXS[0].endTime,
+        badges: [BadgeType.StartYourEngine, BadgeType.Wallbreaker],
+        gamesStarted: Math.floor(Math.random() * 100),
+        gamesFinished: Math.floor(Math.random() * 100),
         configHash: '0x' + Math.floor(Math.random() * 10000000000000000).toString(16),
         score: Math.floor(i * Math.random() * 1000),
       },
       {
+        id: '123',
+        address: address,
+        duration: Math.floor(Math.random() * 1000),
+        moves: Math.floor(Math.random() * 1000),
+        startTime: SEASON_GRAND_PRIXS[0].startTime,
+        endTime: SEASON_GRAND_PRIXS[0].endTime,
+        badges: [BadgeType.StartYourEngine, BadgeType.Wallbreaker],
+        gamesStarted: Math.floor(Math.random() * 100),
+        gamesFinished: Math.floor(Math.random() * 100),
         configHash: '0x' + Math.floor(Math.random() * 10000000000000000).toString(16),
         score: Math.floor(i * Math.random() * 1000),
       },
       {
+        id: '123',
+        address: address,
+        duration: Math.floor(Math.random() * 1000),
+        moves: Math.floor(Math.random() * 1000),
+        startTime: SEASON_GRAND_PRIXS[0].startTime,
+        endTime: SEASON_GRAND_PRIXS[0].endTime,
+        badges: [BadgeType.StartYourEngine, BadgeType.Wallbreaker],
+        gamesStarted: Math.floor(Math.random() * 100),
+        gamesFinished: Math.floor(Math.random() * 100),
         configHash: '0x' + Math.floor(Math.random() * 10000000000000000).toString(16),
         score: Math.floor(i * Math.random() * 1000),
       },
     ],
     score: Math.floor(i * Math.random() * 1000),
-  });
+    badges: Math.floor(Math.random() * 1000),
+  };
+  DUMMY.push(entry);
 }
 
 export const SeasonLeaderboard: React.FC = () => {
   const history = useHistory();
-  // useEffect(() => {
-  //   async function load() {
-  //     const x = await loadSeasonLeaderboard();
-  //     return x;
-  //   }
-  //   const y = load();
-  //   console.log(y);
-  // }, []);
+
+  const allPlayers = useSeasonData();
+  const seasonId = 1;
+  const leaderboard = loadSeasonLeaderboard(allPlayers, seasonId);
+
+  console.log(`leaderboard`, leaderboard);
   return (
     <div>
       <Topbar>
@@ -144,7 +165,7 @@ export const SeasonLeaderboard: React.FC = () => {
         </p>
         {/* <Account /> */}
       </Topbar>
-      <Leaderboard seasonId={2} entries={DUMMY} />;
+      <Leaderboard seasonId={seasonId} entries={leaderboard.entries} />;
     </div>
   );
 };

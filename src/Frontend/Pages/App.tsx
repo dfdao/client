@@ -30,7 +30,6 @@ function App() {
             <Route path='/planet/:locationId' component={SharePlanet} />
             <Route path='/events' component={EventsPage} />
             <Route path='/artifact/:artifactId' component={ShareArtifact} />
-            <Route path='/leaderboard' component={SeasonLeaderboard} />
             <Route
               path='/wallet/:contract/:addr/:actionId/:balance/:method'
               component={TxConfirmPopup}
@@ -42,6 +41,7 @@ function App() {
             {!isProd && <Route path='/bg' component={LandingPageBackground} />}
 
             <Route path='*' component={EntryPage} />
+            <Route path='/leaderboard' component={SeasonLeaderboard} />
           </Switch>
         </Router>
       </Theme>

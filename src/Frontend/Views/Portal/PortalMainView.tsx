@@ -22,14 +22,11 @@ import { PortalCommunityView } from './PortalCommunityView';
 import { MatchmakingView } from './MatchmakingView';
 import { PortalHomeView } from './PortalHomeView';
 import { truncateAddress, truncateString } from './PortalUtils';
-import {
-  loadSeasonLeaderboard,
-  loadWallbreakers,
-} from '../../../Backend/Network/GraphApi/SeasonLeaderboardApi';
 import { loadSeasonBadges } from '../../../Backend/Network/GraphApi/BadgeApi';
 import { populate } from '../../../Backend/Utils/Populate';
 import { CONTRACT_ADDRESS } from '@darkforest_eth/contracts';
 import { address } from '@darkforest_eth/serde';
+import { SeasonLeaderboard } from '../Leaderboards/SeasonLeaderboard';
 
 export function PortalMainView() {
   const [input, setInput] = useState<string>('');
@@ -119,13 +116,6 @@ export function PortalMainView() {
                 >
                   Populate
                 </Button>
-                <Button
-                onClick={async () => {
-                  const a = await loadSeasonBadges('0x1c0f0Af3262A7213E59Be7f1440282279D788335');
-                }}
-              >
-                Load Season
-              </Button>
             </>
             ) : null}
             
@@ -148,7 +138,6 @@ export function PortalMainView() {
         </TopBar>
         <Switch>
           <Redirect path='/portal/map' to={`/portal/map/${competitiveConfig}`} exact={true} />
-
           <Route path={'/portal/home'} exact={true} component={PortalHomeView} />
           <Route path={'/portal/map/:configHash'} component={MapInfoView} />
           <Route path={'/portal/account/:account'} component={AccountInfoView} />
@@ -156,7 +145,7 @@ export function PortalMainView() {
           <Route path={'/portal/community'} component={PortalCommunityView} />
           <Route path={'/portal/matchmaking'} component={MatchmakingView} />
           <Route
-            path='/portal/*'
+          path='/portal/*'
             component={() => (
               <TitleContainer style={{ justifyContent: 'center' }}>Page Not Found</TitleContainer>
             )}

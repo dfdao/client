@@ -6,7 +6,6 @@ import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import {
   loadPlayerSeasonHistoryView,
-  loadSeasonLeaderboard,
 } from '../../../Backend/Network/GraphApi/SeasonLeaderboardApi';
 import { Icon } from '../../Components/Icons';
 import { Sub } from '../../Components/Text';
