@@ -31,7 +31,6 @@ import {
 } from '../Utils/AppHooks';
 import { Incompatibility, unsupportedFeatures } from '../Utils/BrowserChecks';
 import { TerminalTextStyle } from '../Utils/TerminalTypes';
-import { SeasonLeaderboard } from '../Views/Leaderboards/SeasonLeaderboard';
 import { PortalMainView } from '../Views/Portal/PortalMainView';
 import { Terminal, TerminalHandle } from '../Views/Terminal';
 import { GameLandingPage } from './Game/GameLandingPage';
@@ -373,7 +372,6 @@ export function EntryPage() {
                 <Route path='/portal' component={PortalMainView} />
                 <Redirect path='/arena' to={`/arena/${defaultAddress}`} push={true} exact={true} />
                 <Route path='/arena/:contract' component={CreateLobby} />
-                <Route path='/leaderboard' component={SeasonLeaderboard} />
                 <Route path='*' component={NotFoundPage} />
               </Switch>
             </Router>

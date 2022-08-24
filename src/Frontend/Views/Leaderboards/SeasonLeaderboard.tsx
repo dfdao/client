@@ -18,53 +18,55 @@ import { MinimalButton } from '../Portal/PortalMainView';
 const Entry: React.FC<{ entry: SeasonLeaderboardEntry; index: number }> = ({ entry, index }) => {
   const [expanded, setExpanded] = useState<boolean>(false);
   return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <Row key={index} onClick={() => setExpanded(!expanded)} expanded={expanded}>
-        <Group>
-          <span
-            style={{
-              color: index % 2 === 0 ? dfstyles.colors.text : dfstyles.colors.textLight,
-            }}
-          >
-            {index + 1}
-          </span>
-          <span>{entry.address}</span>
-        </Group>
-        <span>{entry.score}</span>
-      </Row>
-      {expanded && (
-        <ExpandedGames style={{ display: 'flex', flexDirection: 'column' }}>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {entry.games.map((game, index) => (
+    <tr>
+      <td style={{ display: 'flex', flexDirection: 'column' }}>
+        <Row key={index} onClick={() => setExpanded(!expanded)} expanded={expanded}>
+          <Group>
+            <span
+              style={{
+                color: index % 2 === 0 ? dfstyles.colors.text : dfstyles.colors.textLight,
+              }}
+            >
+              {index + 1}
+            </span>
+            <span>{entry.address}</span>
+          </Group>
+          <span>{entry.score}</span>
+        </Row>
+        {expanded && (
+          <ExpandedGames style={{ display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              {entry.games.map((game, index) => (
+                <div
+                  key={index}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <span>{getConfigName(game.configHash)}</span>
+                  <span>{game.score}</span>
+                </div>
+              ))}
               <div
-                key={index}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
+                  marginTop: '8px',
+                  padding: '8px',
+                  borderTop: `1px solid ${dfstyles.colors.borderDarker}`,
                 }}
               >
-                <span>{getConfigName(game.configHash)}</span>
-                <span>{game.score}</span>
+                <span>{entry.badges} badges this season</span>
+                <button>View player</button>
               </div>
-            ))}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginTop: '8px',
-                padding: '8px',
-                borderTop: `1px solid ${dfstyles.colors.borderDarker}`,
-              }}
-            >
-              <span>{entry.badges} badges this season</span>
-              <button>View player</button>
             </div>
-          </div>
-        </ExpandedGames>
-      )}
-    </div>
+          </ExpandedGames>
+        )}
+      </td>
+    </tr>
   );
 };
 
@@ -78,7 +80,9 @@ const Leaderboard: React.FC<SeasonLeaderboardProps> = ({ seasonId, entries }) =>
             <HeaderColumn>Rank</HeaderColumn>
             <HeaderColumn>Address</HeaderColumn>
           </tr>
-          <HeaderColumn>Score</HeaderColumn>
+          <tr>
+            <HeaderColumn>Score</HeaderColumn>
+          </tr>
         </Header>
         <Body>
           {entries
@@ -154,20 +158,7 @@ export const SeasonLeaderboard: React.FC = () => {
   const leaderboard = loadSeasonLeaderboard(allPlayers, seasonId);
 
   console.log(`leaderboard`, leaderboard);
-  return (
-    <div>
-      <Topbar>
-        <p
-          style={{ fontWeight: 'bold', fontSize: '1.5em', cursor: 'pointer' }}
-          onClick={() => history.push('/portal/home')}
-        >
-          Home
-        </p>
-        {/* <Account /> */}
-      </Topbar>
-      <Leaderboard seasonId={seasonId} entries={leaderboard.entries} />;
-    </div>
-  );
+  return <Leaderboard seasonId={seasonId} entries={leaderboard.entries} />;
 };
 
 const Topbar = styled.div`
@@ -222,7 +213,7 @@ const Table = styled.table`
   border-collapse: collapse;
 `;
 
-const Row = styled.tr<{ expanded?: boolean }>`
+const Row = styled.div<{ expanded?: boolean }>`
   display: flex;
   width: 100%;
   align-items: center;

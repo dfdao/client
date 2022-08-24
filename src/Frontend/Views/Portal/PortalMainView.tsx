@@ -116,9 +116,8 @@ export function PortalMainView() {
                 >
                   Populate
                 </Button>
-            </>
+              </>
             ) : null}
-            
           </TitleContainer>
 
           <TitleContainer>
@@ -144,8 +143,9 @@ export function PortalMainView() {
           <Route path={'/portal/history'} component={PortalHistoryView} />
           <Route path={'/portal/community'} component={PortalCommunityView} />
           <Route path={'/portal/matchmaking'} component={MatchmakingView} />
+          <Route path={'/portal/leaderboard'} component={SeasonLeaderboard} />
           <Route
-          path='/portal/*'
+            path='/portal/*'
             component={() => (
               <TitleContainer style={{ justifyContent: 'center' }}>Page Not Found</TitleContainer>
             )}
