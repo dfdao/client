@@ -140,7 +140,7 @@ export function PortalMainView() {
           <Route path={'/portal/home'} exact={true} component={PortalHomeView} />
           <Route path={'/portal/map/:configHash'} component={MapInfoView} />
           <Route path={'/portal/account/:account'} component={AccountInfoView} />
-          <Route path={'/portal/history'} component={PortalHistoryView} />
+          <Route path={'/portal/history/:account'} component={PortalHistoryView} />
           <Route path={'/portal/community'} component={PortalCommunityView} />
           <Route path={'/portal/matchmaking'} component={MatchmakingView} />
           <Route path={'/portal/leaderboard'} component={SeasonLeaderboard} />

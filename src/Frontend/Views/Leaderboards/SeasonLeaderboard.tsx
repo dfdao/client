@@ -1,7 +1,7 @@
 import { getConfigName } from '@darkforest_eth/procedural';
 import { BadgeType } from '@darkforest_eth/types';
 import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import {
   groupByPlayers,
@@ -60,7 +60,9 @@ const Entry: React.FC<{ entry: SeasonLeaderboardEntry; index: number }> = ({ ent
                 }}
               >
                 <span>{entry.badges} badges this season</span>
-                <button>View player</button>
+                <Link to={`/portal/history/${entry.address}`}>
+                  <button>View player</button>
+                </Link>
               </div>
             </div>
           </ExpandedGames>
@@ -151,8 +153,6 @@ for (let i = 0; i < N_MOCK_ENTRIES; i++) {
 }
 
 export const SeasonLeaderboard: React.FC = () => {
-  const history = useHistory();
-
   const allPlayers = useSeasonData();
   const seasonId = 1;
   const leaderboard = loadSeasonLeaderboard(allPlayers, seasonId);
