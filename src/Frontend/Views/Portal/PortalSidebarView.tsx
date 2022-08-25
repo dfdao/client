@@ -4,11 +4,11 @@ import styled from 'styled-components';
 import dfstyles from '../../Styles/dfstyles';
 import { Text } from '../../Components/Text';
 import { Link, useHistory } from 'react-router-dom';
-import { ArenaPortalButton } from './PortalHomeView';
 import { loadRecentMaps } from '../../../Backend/Network/GraphApi/MapsApi';
 import { getConfigName } from '@darkforest_eth/procedural';
 import { formatDate } from '../../Utils/TimeUtils';
 import { useEthConnection } from '../../Utils/AppHooks';
+import { LobbyButton } from '../../Pages/Lobby/LobbyMapEditor';
 
 const SidebarMap: React.FC<{
   configHash: string;
@@ -46,7 +46,7 @@ export function PortalSidebarView() {
     <SidebarContainer>
       <Text style={{ fontSize: '1.5em', textTransform: 'uppercase' }}>Dark Forest Arena</Text>
       <Link style={{ width: '100%' }} to={`/arena/`} target='blank'>
-        <ArenaPortalButton secondary>New Arena</ArenaPortalButton>
+        <LobbyButton>New Arena</LobbyButton>
       </Link>
       <span>
         {recentlyPlayedMaps.length > 0

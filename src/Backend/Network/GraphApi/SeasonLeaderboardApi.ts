@@ -124,6 +124,9 @@ query
     throw new Error(rawData.error);
   }
   console.log(`configPlayers`, rawData.data.configPlayers);
+  if (!rawData.data) {
+    throw new Error(`rawData.data undefined. Make sure query is correct`);
+  }
   if (!rawData.data.configPlayers)
     throw new Error(`config players undefined. Make sure query is correct`);
 
