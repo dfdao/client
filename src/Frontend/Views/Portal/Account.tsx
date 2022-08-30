@@ -13,7 +13,7 @@ import { useEthConnection, usePlayerBadges, useSeasonData, useTwitters } from '.
 import { TiledTable } from '../TiledTable';
 import { truncateAddress } from './PortalUtils';
 
-const mockBadges: BadgeType[] = [BadgeType.Dfdao, BadgeType.StartYourEngine];
+const mockBadges: BadgeType[] = [BadgeType.Tree, BadgeType.Wallbreaker, BadgeType.Nice, BadgeType.Sleepy, BadgeType.StartYourEngine];
 
 function AccountModal({ setOpen }: { setOpen: (open: boolean) => void }) {
   const connection = useEthConnection();
