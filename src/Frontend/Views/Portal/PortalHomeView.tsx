@@ -6,7 +6,6 @@ import { loadArenaLeaderboard } from '../../../Backend/Network/GraphApi/GrandPri
 import { LoadingSpinner } from '../../Components/LoadingSpinner';
 import { useConfigFromHash, useEthConnection } from '../../Utils/AppHooks';
 import { ArenaLeaderboardDisplay } from '../Leaderboards/ArenaLeaderboard';
-import { SeasonLeaderboard } from '../Leaderboards/SeasonLeaderboard';
 import { LabeledPanel } from './Components/LabeledPanel';
 import { PaddedRow } from './Components/PaddedRow';
 import { SeasonLeaderboardEntryComponent } from './Components/SeasonLeaderboardEntryComponent';

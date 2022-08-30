@@ -1,25 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
+import React from 'react';
+import { Redirect, Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
-import Button from '../../Components/Button';
 import { PortalHistoryView } from './PortalHistoryView';
-import { useConfigFromHash, useEthConnection, useTwitters } from '../../Utils/AppHooks';
-import { competitiveConfig, tutorialConfig } from '../../Utils/constants';
-import { Account } from './Account';
+import { competitiveConfig } from '../../Utils/constants';
 import { AccountInfoView } from './AccountInfoView';
 import { MapInfoView } from './MapInfoView';
 import { PortalCommunityView } from './PortalCommunityView';
 import { MatchmakingView } from './MatchmakingView';
 import { PortalHomeView } from './PortalHomeView';
-import { populate } from '../../../Backend/Utils/Populate';
-import { CONTRACT_ADDRESS } from '@darkforest_eth/contracts';
-import { address } from '@darkforest_eth/serde';
-import { SeasonLeaderboard } from '../Leaderboards/SeasonLeaderboard';
-import { Logo } from '../../Panes/Lobby/LobbiesUtils';
-import { TabNav } from './Components/TabNav';
 import './portal.css';
 import { PortalHeader } from './Components/PortalHeader';
 import { theme } from './styleUtils';
+import { SeasonLeaderboardPage } from './SeasonLeaderboardPage';
 
 export function PortalMainView() {
   return (
@@ -34,7 +26,7 @@ export function PortalMainView() {
           <Route path={'/portal/history/:account'} component={PortalHistoryView} />
           <Route path={'/portal/community'} component={PortalCommunityView} />
           <Route path={'/portal/matchmaking'} component={MatchmakingView} />
-          <Route path={'/portal/leaderboard'} component={SeasonLeaderboard} />
+          <Route path={'/portal/leaderboard'} component={SeasonLeaderboardPage} />
           <Route
             path='/portal/*'
             component={() => (

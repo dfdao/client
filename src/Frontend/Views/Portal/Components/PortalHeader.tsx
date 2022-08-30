@@ -28,6 +28,7 @@ export const PortalHeader = () => {
             gap: '8px',
             maxHeight: '56px',
             padding: '8px',
+            cursor: 'pointer',
           }}
           onClick={() => history.push('/portal/home')}
         >
