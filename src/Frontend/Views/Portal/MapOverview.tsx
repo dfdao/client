@@ -10,6 +10,9 @@ import { LobbyInitializers } from '../../Panes/Lobby/Reducer';
 import { EthAddress } from '@darkforest_eth/types';
 import { RoundResponse } from './PortalHomeView';
 import { getConfigName } from '@darkforest_eth/procedural';
+import { PortalButton } from '../../Styles/dfstyles';
+import { LobbyButton } from '../../Pages/Lobby/LobbyMapEditor';
+import { theme } from './styleUtils';
 
 type RoundStatus = 'not started' | 'started' | 'ended';
 
@@ -81,25 +84,6 @@ export const MapOverview: React.FC<{
   return (
     <Container>
       <Content>
-        <TextContent>
-          <RoundName>{`Season ${round.seasonId.toNumber()}`}</RoundName>
-          <Title>{mapName ?? 'Grand Prix Round'}</Title>
-          <MapActions>
-            <Link target='blank' to={`/play/${lobbyAddress}?create=true`}>
-              <PlayButton disabled={status !== 'started'}>Play Round</PlayButton>
-            </Link>
-            {countdown && (
-              <RoundCountdown>
-                {status == 'ended'
-                  ? 'Round over!'
-                  : status == 'not started'
-                  ? `Round starts in ${formatDuration(countdown)} `
-                  : `Round ends in ${formatDuration(countdown)} `}
-              </RoundCountdown>
-            )}
-          </MapActions>
-        </TextContent>
-
         {!minimapConfig ? (
           <div
             style={{
@@ -123,22 +107,48 @@ export const MapOverview: React.FC<{
             />
           </MinimapContainer>
         )}
+        <TextContent>
+          <div
+            style={{
+              border: `1px solid ${theme.colors.bg1}`,
+              padding: theme.spacing.md,
+              alignSelf: 'flex-start',
+              borderRadius: '2px',
+            }}
+          >
+            <SeasonName>{`Season ${round.seasonId.toNumber()}`}</SeasonName>
+          </div>
+          <Title>{mapName ?? 'Grand Prix Round'}</Title>
+          <MapActions>
+            <Link target='blank' to={`/play/${lobbyAddress}?create=true`}>
+              <LobbyButton primary disabled={status !== 'started'}>
+                Play round
+              </LobbyButton>
+            </Link>
+            {countdown && (
+              <RoundCountdown>
+                {status == 'ended'
+                  ? 'Round over!'
+                  : status == 'not started'
+                  ? `Round starts in ${formatDuration(countdown)} `
+                  : `Round ends in ${formatDuration(countdown)} `}
+              </RoundCountdown>
+            )}
+          </MapActions>
+        </TextContent>
       </Content>
     </Container>
   );
 };
 
 const Container = styled.div`
-  border: 1px solid hsla(0, 0%, 33%, 1);
-  background: linear-gradient(90deg, hsla(240, 7%, 42%, 0.2) 0%, #111 100%);
   padding: 24px;
   border-radius: 4px;
 `;
 const Content = styled.div`
-  max-width: 66%;
   margin: 0 auto;
-  justify-content: space-between;
   display: flex;
+  gap: 16px;
   align-items: center;
 `;
 const TextContent = styled.div`
@@ -146,61 +156,27 @@ const TextContent = styled.div`
   display: flex;
   flex-direction: column;
 `;
-const RoundName = styled.span`
-  font-weight: 500;
-  color: hsla(218, 100%, 74%, 1);
+const SeasonName = styled.span`
+  text-transform: uppercase;
+  font-family: ${theme.fonts.mono};
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
 `;
 const Title = styled.span`
   font-size: 2.5rem;
-  font-weight: 500;
+  // letter-spacing: 0.06em;
+  text-transform: uppercase;
   margin-bottom: 0.5rem;
+  font-family: ${theme.fonts.mono};
+  color: ${theme.colors.fgPrimary};
 `;
 const MapActions = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
   flex: 1 1 auto;
-  margin-top: 2rem;
 `;
-const PlayButton = styled.button`
-  display: flex;
-  box-shadow: 0px 8px 48px 0px hsla(0, 0%, 34%, 0.08);
-  box-shadow: 0px 4px 8px 0px hsla(210, 7%, 28%, 0.06);
-  box-shadow: 0px 0px 1px 0px hsla(210, 7%, 28%, 0.32);
-  color: #fff;
-  background: hsla(218, 100%, 74%, 1);
-  padding: 0.5rem 1.5rem;
-  border-radius: 4px;
-  cursor: pointer;
-  outline: none;
-  transition: all 0.2s ease-in-out;
-  animation: pulse 2s infinite ease-in-out;
-  &:active:not([disabled]) {
-    transform: scale(0.95);
-    outline: none;
-  }
-  &:hover:not([disabled]) {
-    background: var(--primary-hover);
-    transform: scale(1.05);
-    animation: none;
-    -webkit-animation: none;
-  }
-  &:disabled {
-    cursor: not-allowed;
-    border: none;
-    animation: none;
-    -webkit-animation: none;
-  }
 
-  @keyframes pulse {
-    0% {
-      box-shadow: 0 0 0px 0px hsla(218, 100%, 84%, 0.5);
-    }
-    70% {
-      box-shadow: 0 0 0px 6px hsla(0, 0%, 0%, 0);
-    }
-  }
-`;
 const RoundCountdown = styled.span`
   justify-self: flex-start;
 `;

@@ -278,9 +278,14 @@ export const LobbyButton = styled.button<{ primary?: boolean }>`
   justify-content: center;
   align-items: center;
   transition: background 80ms ease 0s, border-color;
-  &:hover {
+  &:hover:not([disabled]) {
     background: ${({ primary }) => (primary ? '#0E5141' : '#3D3D3D')};
     border-color: ${({ primary }) => (primary ? '#30FFCD' : '#797979')};
+  }
+  &:disabled {
+    cursor: not-allowed;
+    background: #0e5141;
+    border-color: transparent;
   }
 `;
 
