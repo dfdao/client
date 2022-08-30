@@ -73,7 +73,7 @@ export const PortalHomeView: React.FC<{}> = () => {
         </div>
         <div className='col w-100'>
           <Label>Live Feed</Label>
-          <GPFeed round={DUMMY} config={config} />
+          <GPFeed leaderboard={leaderboard} />
         </div>
       </div>
       <div className='row w-100' style={{ gap: theme.spacing.xl }}>
