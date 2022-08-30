@@ -1,4 +1,4 @@
-import { BadgeType, EthAddress } from '@darkforest_eth/types';
+import { BadgeType, EthAddress, ExtendedMatchEntry, LeaderboardEntry } from '@darkforest_eth/types';
 import { SeasonLeaderboardEntry } from '../../../Backend/Network/GraphApi/SeasonLeaderboardApi';
 import { SEASON_GRAND_PRIXS } from '../../Utils/constants';
 

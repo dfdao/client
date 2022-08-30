@@ -7,8 +7,8 @@ import { LoadingSpinner } from '../../Components/LoadingSpinner';
 import { useConfigFromHash, useEthConnection } from '../../Utils/AppHooks';
 import { ArenaLeaderboardDisplay } from '../Leaderboards/ArenaLeaderboard';
 import { SeasonLeaderboard } from '../Leaderboards/SeasonLeaderboard';
-import { FeedRow } from './Components/FeedRow';
 import { LabeledPanel } from './Components/LabeledPanel';
+import { PaddedRow } from './Components/PaddedRow';
 import { SeasonLeaderboardEntryComponent } from './Components/SeasonLeaderboardEntryComponent';
 import { GPFeed } from './GPFeed';
 import { MapOverview } from './MapOverview';
@@ -78,6 +78,17 @@ export const PortalHomeView: React.FC<{}> = () => {
       </div>
       <div className='row w-100' style={{ gap: theme.spacing.xl }}>
         <div className='col w-100'>
+          <LabeledPanel label='Active game leaderboard'>
+            <ArenaLeaderboardDisplay leaderboard={leaderboard} error={undefined} />
+            {leaderboard?.entries.length === 0 ||
+              (leaderboard && leaderboard.length <= 3 && (
+                <PaddedRow>
+                  <span>Play the current round to get your score on the leaderboard</span>
+                </PaddedRow>
+              ))}
+          </LabeledPanel>
+        </div>
+        <div className='col w-100'>
           <LabeledPanel label='Season leaderboard'>
             <div className='col' style={{ gap: theme.spacing.md }}>
               {createDummySeasonLeaderboardData(15)
@@ -86,17 +97,6 @@ export const PortalHomeView: React.FC<{}> = () => {
                   <SeasonLeaderboardEntryComponent key={index} entry={entry} index={index} />
                 ))}
             </div>
-          </LabeledPanel>
-        </div>
-        <div className='col w-100'>
-          <LabeledPanel label='Active game leaderboard'>
-            <ArenaLeaderboardDisplay leaderboard={leaderboard} error={undefined} />
-            {leaderboard?.entries.length === 0 ||
-              (leaderboard && leaderboard.length <= 3 && (
-                <FeedRow>
-                  <span>Play the current round to get your score on the leaderboard</span>
-                </FeedRow>
-              ))}
           </LabeledPanel>
         </div>
       </div>
