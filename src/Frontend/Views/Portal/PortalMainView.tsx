@@ -12,7 +12,6 @@ import { PortalHomeView } from './PortalHomeView';
 import './portal.css';
 import { PortalHeader } from './Components/PortalHeader';
 import { theme } from './styleUtils';
-import { SeasonLeaderboardPage } from './SeasonLeaderboardPage';
 
 export function PortalMainView() {
   return (

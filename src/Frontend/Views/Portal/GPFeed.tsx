@@ -66,3 +66,4 @@ export const GPFeed: React.FC<MapDetailsProps> = ({ leaderboard }) => {
     </div>
   );
 };
+>>>>>>> 2da0e6c (more improvements)
