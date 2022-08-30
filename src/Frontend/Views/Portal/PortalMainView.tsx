@@ -1,7 +1,6 @@
 import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
-import Button from '../../Components/Button';
 import { PortalHistoryView } from './PortalHistoryView';
 import { competitiveConfig } from '../../Utils/constants';
 import { AccountInfoView } from './AccountInfoView';
@@ -12,6 +11,7 @@ import { PortalHomeView } from './PortalHomeView';
 import './portal.css';
 import { PortalHeader } from './Components/PortalHeader';
 import { theme } from './styleUtils';
+import { SeasonLeaderboardPage } from './SeasonLeaderboardPage';
 
 export function PortalMainView() {
   return (
