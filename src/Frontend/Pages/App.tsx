@@ -40,10 +40,7 @@ function App() {
             {!isProd && <Route path='/gifs' component={GifMaker} />}
             {!isProd && <Route path='/bg' component={LandingPageBackground} />}
             <Route path='*' component={EntryPage} />
-<<<<<<< HEAD
-=======
             <Route path='/leaderboard' component={SeasonLeaderboardPage} />
->>>>>>> 0f569b1 (cleanup)
           </Switch>
         </Router>
       </Theme>
