@@ -19,12 +19,12 @@ import { Logo } from '../../Panes/Lobby/LobbiesUtils';
 import { TabNav } from './Components/TabNav';
 import './portal.css';
 import { PortalHeader } from './Components/PortalHeader';
+import { theme } from './styleUtils';
 
 export function PortalMainView() {
   return (
     <>
-      {/* <MainContainer> */}
-      <div>
+      <div style={{ paddingBottom: '3rem' }}>
         <PortalHeader />
         <Switch>
           <Redirect path='/portal/map' to={`/portal/map/${competitiveConfig}`} exact={true} />
@@ -45,7 +45,6 @@ export function PortalMainView() {
           />
         </Switch>
       </div>
-      {/* </MainContainer> */}
     </>
   );
 }
@@ -53,7 +52,7 @@ export function PortalMainView() {
 export const MinimalButton = styled.button`
   border-radius: 3px;
   padding: 8px;
-  background: #252525;
+  background: ${theme.colors.bg1};
   color: #fff;
   text-transform: uppercase;
 `;

@@ -7,6 +7,7 @@ import { LoadingSpinner } from '../../Components/LoadingSpinner';
 import { useConfigFromHash, useEthConnection } from '../../Utils/AppHooks';
 import { ArenaLeaderboardDisplay } from '../Leaderboards/ArenaLeaderboard';
 import { SeasonLeaderboard } from '../Leaderboards/SeasonLeaderboard';
+import { FeedRow } from './Components/FeedRow';
 import { LabeledPanel } from './Components/LabeledPanel';
 import { SeasonLeaderboardEntryComponent } from './Components/SeasonLeaderboardEntryComponent';
 import { GPFeed } from './GPFeed';
@@ -88,8 +89,14 @@ export const PortalHomeView: React.FC<{}> = () => {
           </LabeledPanel>
         </div>
         <div className='col w-100'>
-          <LabeledPanel label='Current game leaderboard'>
+          <LabeledPanel label='Active game leaderboard'>
             <ArenaLeaderboardDisplay leaderboard={leaderboard} error={undefined} />
+            {leaderboard?.entries.length === 0 ||
+              (leaderboard && leaderboard.length <= 3 && (
+                <FeedRow>
+                  <span>Play the current round to get your score on the leaderboard</span>
+                </FeedRow>
+              ))}
           </LabeledPanel>
         </div>
       </div>

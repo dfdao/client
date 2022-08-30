@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { SeasonLeaderboardEntry } from '../../../../Backend/Network/GraphApi/SeasonLeaderboardApi';
+import { MinimalButton } from '../PortalMainView';
 import { theme } from '../styleUtils';
 
 export const SeasonLeaderboardEntryComponent: React.FC<{
@@ -48,7 +49,7 @@ export const SeasonLeaderboardEntryComponent: React.FC<{
             >
               <span>{entry.badges} badges this season</span>
               <Link to={`/portal/history/${entry.address}`}>
-                <button>View player</button>
+                <MinimalButton>View player</MinimalButton>
               </Link>
             </div>
           </div>
@@ -79,7 +80,8 @@ const ExpandedGames = styled.div`
   padding: 0.5rem;
   display: flex;
   flex-direction: column;
-  background: #000;
+  background: ${theme.colors.bg};
+  font-family: ${theme.fonts.mono};
 `;
 
 const Group = styled.div`

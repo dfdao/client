@@ -164,7 +164,6 @@ const SeasonName = styled.span`
 `;
 const Title = styled.span`
   font-size: 2.5rem;
-  // letter-spacing: 0.06em;
   text-transform: uppercase;
   margin-bottom: 0.5rem;
   font-family: ${theme.fonts.mono};
@@ -179,6 +178,7 @@ const MapActions = styled.div`
 
 const RoundCountdown = styled.span`
   justify-self: flex-start;
+  font-family: ${theme.fonts.mono};
 `;
 const MinimapContainer = styled.div`
   border-radius: 4px;

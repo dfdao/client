@@ -9,9 +9,15 @@ import { Gnosis, Icon, IconType, Twitter } from '../../Components/Icons';
 import { WithdrawSilverButton } from '../../Panes/Game/TooltipPanes';
 
 import dfstyles from '../../Styles/dfstyles';
-import { useEthConnection, usePlayerBadges, useSeasonData, useTwitters } from '../../Utils/AppHooks';
+import {
+  useEthConnection,
+  usePlayerBadges,
+  useSeasonData,
+  useTwitters,
+} from '../../Utils/AppHooks';
 import { TiledTable } from '../TiledTable';
 import { truncateAddress } from './PortalUtils';
+import { theme } from './styleUtils';
 
 const mockBadges: BadgeType[] = [BadgeType.Tree, BadgeType.Wallbreaker, BadgeType.Nice, BadgeType.Sleepy, BadgeType.StartYourEngine];
 
@@ -137,13 +143,12 @@ const AccountDetails = styled.div`
 `;
 
 const PaneContainer = styled.button`
-  padding: 8px;
+  padding: ${theme.spacing.md};
   position: relative;
   display: flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.04);
-  border-radius: 3px;
-  gap: 8px;
+  background: ${theme.colors.bg2};
+  border-radius: ${theme.borderRadius};
   justify-self: flex-end;
 `;
 
