@@ -84,6 +84,25 @@ export const MapOverview: React.FC<{
   return (
     <Container>
       <Content>
+        <TextContent>
+          <RoundName>{`Season ${round.seasonId.toNumber()}`}</RoundName>
+          <Title>{mapName ?? 'Grand Prix Round'}</Title>
+          <MapActions>
+            <Link target='blank' to={`/play/${lobbyAddress}?create=true`}>
+              <PlayButton disabled={status !== 'started'}>Play Round</PlayButton>
+            </Link>
+            {countdown && (
+              <RoundCountdown>
+                {status == 'ended'
+                  ? 'Round over!'
+                  : status == 'not started'
+                  ? `Round starts in ${formatDuration(countdown)} `
+                  : `Round ends in ${formatDuration(countdown)} `}
+              </RoundCountdown>
+            )}
+          </MapActions>
+        </TextContent>
+
         {!minimapConfig ? (
           <div
             style={{

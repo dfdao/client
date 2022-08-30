@@ -1,6 +1,7 @@
 import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
+import Button from '../../Components/Button';
 import { PortalHistoryView } from './PortalHistoryView';
 import { competitiveConfig } from '../../Utils/constants';
 import { AccountInfoView } from './AccountInfoView';

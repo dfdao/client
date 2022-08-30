@@ -14,7 +14,7 @@ import dfstyles from '../../Styles/dfstyles';
 import { useSeasonData } from '../../Utils/AppHooks';
 import { theme } from './styleUtils';
 
-export const Entry: React.FC<{
+export const SeasonLeaderboardEntryComponent: React.FC<{
   entry: SeasonLeaderboardEntry;
   index: number;
 }> = ({ entry, index }) => {
@@ -91,7 +91,7 @@ const Leaderboard: React.FC<SeasonLeaderboardProps> = ({ seasonId, entries }) =>
           {entries
             .sort((a, b) => b.score - a.score)
             .map((entry, index) => (
-              <Entry key={index} entry={entry} index={index} />
+              <SeasonLeaderboardEntryComponent key={index} entry={entry} index={index} />
             ))}
         </Body>
       </Table>
@@ -106,16 +106,16 @@ export const SeasonLeaderboardPage: React.FC = () => {
 
   console.log(`leaderboard`, leaderboard);
   return (
-    <div style={{ margin: '0 auto', textAlign: 'center' }}>
+    <div>
       <Title>Season {seasonId} Leaderboard</Title>
-      <Leaderboard seasonId={seasonId} entries={leaderboard.entries} />
+      <Leaderboard seasonId={seasonId} entries={leaderboard.entries} />;
     </div>
   );
 };
 
 const Container = styled.div`
-  width: 66%;
-  max-width: 640px;
+  // width: 66%;
+  // max-width: 640px;
   margin: 0 auto;
   padding: 3rem;
   text-align: center;
