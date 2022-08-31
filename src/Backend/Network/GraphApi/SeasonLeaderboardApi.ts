@@ -401,7 +401,7 @@ export function loadPlayerSeasonHistoryView(
           configHash: gp.configHash,
           rank,
           score,
-          players: grandPrixs.length,
+          players: allGrandPrixs.length,
           badges: playerGrandPrixs.badges,
         };
 

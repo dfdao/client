@@ -25,7 +25,7 @@ export interface RoundResponse {
 const DUMMY = {
   configHash: '0xd08bbeb0785370a68369f0a042e33ef2688da6da5e79acbb5688ddbb8ca4a862',
   startTime: BigNumber.from('1661435558381'),
-  endTime: BigNumber.from('1661435658381'),
+  endTime: BigNumber.from('1761435658381'),
   parentAddress: '0xcee9abadf221ca7db9fb8c3a2d402d9cab9bb38d',
   seasonId: BigNumber.from('1'),
 } as RoundResponse;
