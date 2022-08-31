@@ -1,0 +1,134 @@
+import { getConfigName } from '@darkforest_eth/procedural';
+import { GrandPrixHistory } from '@darkforest_eth/types';
+import { debounce } from 'lodash';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import styled from 'styled-components';
+import { LoadingSpinner } from '../../../Components/LoadingSpinner';
+import { Minimap } from '../../../Components/Minimap';
+import { generateMinimapConfig, MinimapConfig } from '../../../Panes/Lobby/MinimapUtils';
+import { useConfigFromHash } from '../../../Utils/AppHooks';
+import { theme } from '../styleUtils';
+
+/**
+ * Derive Season Leaderboard from AllPlayerData
+ * (Rank, Score, Id)
+ *
+ * Derive GrandPrixHistoryItem
+ * Need to get Badge Type as well
+ *
+ */
+
+export const PortalHistoryRoundCard: React.FC<{ round: GrandPrixHistory; index: number }> = ({
+  round,
+  index,
+}) => {
+  const [minimapConfig, setMinimapConfig] = useState<MinimapConfig | undefined>();
+  const { config } = useConfigFromHash(round.configHash);
+  const history = useHistory();
+
+  const onMapChange = useMemo(() => {
+    return debounce((config: MinimapConfig) => round.configHash && setMinimapConfig(config), 500);
+  }, [setMinimapConfig, round.configHash]);
+
+  useEffect(() => {
+    if (config) {
+      onMapChange(generateMinimapConfig(config, 4));
+    } else {
+      setMinimapConfig(undefined);
+    }
+  }, [onMapChange, round.configHash]);
+
+  const { innerHeight } = window;
+  let mapSize = '200px';
+  if (innerHeight < 700) {
+    mapSize = '200px';
+  }
+
+  return (
+    <MapContainer onClick={() => history.push(`/portal/map/${round.configHash}`)}>
+      <MapNameContainer>
+        {!minimapConfig ? (
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: '300px',
+              height: '300px',
+            }}
+          >
+            <LoadingSpinner initialText='Loading...' />
+          </div>
+        ) : (
+          <MinimapContainer>
+            <Minimap
+              style={{ width: mapSize, height: mapSize }}
+              minimapConfig={minimapConfig}
+              setRefreshing={() => {
+                // do nothing
+              }}
+            />
+          </MinimapContainer>
+        )}
+      </MapNameContainer>
+      <MapDetailsContainer>
+        <GameTitle>{getConfigName(round.configHash)}</GameTitle>
+        <Sub>score</Sub> <WhiteFont>{round.score}</WhiteFont>
+        <Sub>rank</Sub>{' '}
+        <WhiteFont>
+          {round.rank} of {round.players}
+        </WhiteFont>
+        <Sub>badges</Sub> <WhiteFont>{round.badges.length}</WhiteFont>
+      </MapDetailsContainer>
+    </MapContainer>
+  );
+};
+
+const Sub = styled.span``;
+
+const WhiteFont = styled.p`
+  color: white;
+  font-size: 1.15rem;
+  margin-top: -12px;
+  margin-bottom: -6px;
+`;
+
+const GameTitle = styled.span`
+  font-family: ${theme.fonts.mono};
+  text-transform: uppercase;
+  font-size: 1.15rem;
+  letter-spacing: 0.06em;
+  color: ${theme.colors.fgPrimary};
+`;
+
+const MapContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  border: 1px solid ${theme.colors.bg3};
+  border-radius: ${theme.borderRadius};
+  cursor: pointer;
+`;
+
+const MapNameContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: ${theme.spacing.sm};
+`;
+
+const MapDetailsContainer = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: ${theme.spacing.md};
+  background: ${theme.colors.bg1};
+  padding: ${theme.spacing.xl};
+`;
+
+const MinimapContainer = styled.div`
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;

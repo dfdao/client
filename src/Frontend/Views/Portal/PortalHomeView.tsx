@@ -122,7 +122,7 @@ const Content = styled.div`
   margin-bottom: 24px;
 `;
 
-const Label = styled.span`
+export const Label = styled.span`
   font-size: 1rem;
   color: ${theme.colors.fgPrimary};
   font-family: ${theme.fonts.mono};
