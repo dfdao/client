@@ -125,7 +125,7 @@ export const MapOverview: React.FC<{
                 Play round
               </LobbyButton>
             </Link>
-            {countdown && (
+            {countdown ? (
               <RoundCountdown>
                 {status == 'ended'
                   ? 'Round over!'
@@ -133,6 +133,8 @@ export const MapOverview: React.FC<{
                   ? `Round starts in ${formatDuration(countdown)} `
                   : `Round ends in ${formatDuration(countdown)} `}
               </RoundCountdown>
+            ) : (
+              <div style={{ height: 21, width: 240 }}>Loading...</div>
             )}
           </MapActions>
         </TextContent>
