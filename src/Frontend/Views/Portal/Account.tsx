@@ -62,7 +62,7 @@ function AccountModal({ setOpen }: { setOpen: (open: boolean) => void }) {
             <Icon type={IconType.X} />
           </button>
           <div style={{ fontSize: '2em' }}>
-            {twitter || <TextPreview text={address} unFocusedWidth={'50%'} focusedWidth={'100%'} />}
+            {twitter ?? <TextPreview text={address} unFocusedWidth={'50%'} focusedWidth={'100%'} />}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Btn
