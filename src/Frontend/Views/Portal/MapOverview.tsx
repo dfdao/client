@@ -90,8 +90,8 @@ export const MapOverview: React.FC<{
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              width: mapSize,
-              height: mapSize,
+              minWidth: mapSize,
+              minHeight: mapSize,
             }}
           >
             <LoadingSpinner initialText='Loading...' />
@@ -185,10 +185,8 @@ const RoundCountdown = styled.span`
   font-family: ${theme.fonts.mono};
 `;
 const MinimapContainer = styled.div<{ width: string; height: string }>`
-  border-radius: 4px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: grid;
+  place-items: center;
   width: ${(props) => props.width};
   height: ${(props) => props.height};
   max-width: ${(props) => props.width};
