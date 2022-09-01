@@ -84,27 +84,6 @@ export const MapOverview: React.FC<{
   return (
     <Container>
       <Content>
-        <TextContent>
-          <SeasonName>{`Season ${round.seasonId.toNumber()}`}</SeasonName>
-          <Title>{mapName ?? 'Grand Prix Round'}</Title>
-          <MapActions>
-            <Link target='blank' to={`/play/${lobbyAddress}?create=true`}>
-              <LobbyButton primary disabled={status !== 'started'}>
-                Play Round
-              </LobbyButton>
-            </Link>
-            {countdown && (
-              <RoundCountdown>
-                {status == 'ended'
-                  ? 'Round over!'
-                  : status == 'not started'
-                  ? `Round starts in ${formatDuration(countdown)} `
-                  : `Round ends in ${formatDuration(countdown)} `}
-              </RoundCountdown>
-            )}
-          </MapActions>
-        </TextContent>
-
         {!minimapConfig ? (
           <div
             style={{
@@ -210,6 +189,8 @@ const MinimapContainer = styled.div<{ width: string; height: string }>`
   display: flex;
   justify-content: center;
   align-items: center;
+  width: ${(props) => props.width};
+  height: ${(props) => props.height};
   max-width: ${(props) => props.width};
   max-height: ${(props) => props.height};
 `;
