@@ -7,6 +7,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { RouteComponentProps, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { loadPlayerSeasonHistoryView } from '../../../Backend/Network/GraphApi/SeasonLeaderboardApi';
+import { BadgeDetailsRow } from '../../Components/Badges';
 import { Icon } from '../../Components/Icons';
 import { Sub } from '../../Components/Text';
 import { useAccount, useEthConnection, useSeasonData } from '../../Utils/AppHooks';
@@ -14,7 +15,7 @@ import { GrandPrixMetadata, SEASON_GRAND_PRIXS } from '../../Utils/constants';
 import { TiledTable } from '../TiledTable';
 import { PortalHistoryRoundCard } from './Components/PortalHistoryRoundCard';
 import { Label } from './PortalHomeView';
-import { DummySeasons } from './PortalUtils';
+import { DummySeasons, mockBadges } from './PortalUtils';
 import { theme } from './styleUtils';
 
 export interface TimelineProps {
@@ -54,9 +55,25 @@ export function PortalHistoryView({ match }: RouteComponentProps<{ account: stri
   const rounds = DummySeasons[0].grandPrixHistoryItems;
   const totalScore = useMemo(() => rounds.reduce((prev, curr) => curr.score + prev, 0), [rounds]);
   const mapComponents = useMemo(
-    () => rounds.map((round, idx) => <PortalHistoryRoundCard round={round} index={idx} />),
+    () =>
+      rounds.map((round: GrandPrixHistoryItem, idx: number) => (
+        <PortalHistoryRoundCard round={round} index={idx} key={idx} />
+      )),
     [rounds]
   );
+  const grandPrixBadges = mockBadges;
+
+  const badgeElements = useMemo(() => {
+    if (!grandPrixBadges) return;
+
+    const countedBadges: { count: number; badge: BadgeType }[] = [];
+    grandPrixBadges.forEach((badge) => {
+      const found = countedBadges.find((b) => b.badge == badge);
+      if (!found) return countedBadges.push({ count: 1, badge: badge });
+      return found.count++;
+    });
+    return countedBadges.map((badge) => <BadgeDetailsRow type={badge.badge} count={badge.count} />);
+  }, [grandPrixBadges]);
 
   const leftDisplay = current == 0 ? 'none' : 'flex';
   const rightDisplay = current == seasonHistories.length - 1 ? 'none' : 'flex';
@@ -93,13 +110,10 @@ export function PortalHistoryView({ match }: RouteComponentProps<{ account: stri
       </PlayerInfoContainer>
 
       <Label>Season badges</Label>
+      <BodyContainer>{badgeElements}</BodyContainer>
 
       <Label>Season rounds</Label>
       <BodyContainer>{mapComponents}</BodyContainer>
-
-      {/* <BodyContainer>
-        <TiledTable title={<span style={{ fontSize: '2em' }}>Maps</span>} items={mapComponents} />
-      </BodyContainer> */}
     </Container>
   );
 }
@@ -136,7 +150,8 @@ const HeaderContainer = styled.div`
 `;
 
 const BodyContainer = styled.div`
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 300px);
   align-items: center;
   gap: ${theme.spacing.xl};
 `;

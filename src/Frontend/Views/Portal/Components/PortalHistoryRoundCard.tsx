@@ -37,7 +37,7 @@ export const PortalHistoryRoundCard: React.FC<{ round: GrandPrixHistory; index: 
     } else {
       setMinimapConfig(undefined);
     }
-  }, [onMapChange, round.configHash]);
+  }, [config, onMapChange, round.configHash]);
 
   const { innerHeight } = window;
   let mapSize = '200px';
@@ -54,8 +54,8 @@ export const PortalHistoryRoundCard: React.FC<{ round: GrandPrixHistory; index: 
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              width: '300px',
-              height: '300px',
+              width: mapSize,
+              height: mapSize,
             }}
           >
             <LoadingSpinner initialText='Loading...' />
@@ -74,25 +74,24 @@ export const PortalHistoryRoundCard: React.FC<{ round: GrandPrixHistory; index: 
       </MapNameContainer>
       <MapDetailsContainer>
         <GameTitle>{getConfigName(round.configHash)}</GameTitle>
-        <Sub>score</Sub> <WhiteFont>{round.score}</WhiteFont>
-        <Sub>rank</Sub>{' '}
-        <WhiteFont>
-          {round.rank} of {round.players}
-        </WhiteFont>
-        <Sub>badges</Sub> <WhiteFont>{round.badges.length}</WhiteFont>
+        <DetailRow>
+          <DetailLabel>Score</DetailLabel>
+          <DetailValue>{round.score}</DetailValue>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel>Rank</DetailLabel>
+          <DetailValue>
+            {round.rank} of {round.players}
+          </DetailValue>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel>Badges</DetailLabel>
+          <DetailValue>{round.badges.length}</DetailValue>
+        </DetailRow>
       </MapDetailsContainer>
     </MapContainer>
   );
 };
-
-const Sub = styled.span``;
-
-const WhiteFont = styled.p`
-  color: white;
-  font-size: 1.15rem;
-  margin-top: -12px;
-  margin-bottom: -6px;
-`;
 
 const GameTitle = styled.span`
   font-family: ${theme.fonts.mono};
@@ -100,6 +99,7 @@ const GameTitle = styled.span`
   font-size: 1.15rem;
   letter-spacing: 0.06em;
   color: ${theme.colors.fgPrimary};
+  margin-bottom: ${theme.spacing.md};
 `;
 
 const MapContainer = styled.div`
@@ -127,8 +127,25 @@ const MapDetailsContainer = styled.div`
 
 const MinimapContainer = styled.div`
   border-radius: 4px;
-  margin-bottom: 1rem;
   display: flex;
   justify-content: center;
   align-items: center;
+`;
+
+const DetailRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: ${theme.spacing.sm};
+`;
+const DetailLabel = styled.span`
+  font-family: ${theme.fonts.mono};
+  color: ${theme.colors.fgMuted2};
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+`;
+
+const DetailValue = styled.span`
+  font-family: ${theme.fonts.mono};
+  color: ${theme.colors.fgPrimary};
 `;

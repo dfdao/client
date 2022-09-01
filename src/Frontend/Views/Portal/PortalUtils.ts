@@ -11,6 +11,14 @@ export function truncateString(str: string, maxLength: number) {
   return str.length > maxLength ? str.substring(0, maxLength - 3) + '...' : str;
 }
 
+export const mockBadges: BadgeType[] = [
+  BadgeType.Tree,
+  BadgeType.Wallbreaker,
+  BadgeType.Nice,
+  BadgeType.Sleepy,
+  BadgeType.StartYourEngine,
+];
+
 export function createDummySeasonLeaderboardData(nEntries: number): SeasonLeaderboardEntry[] {
   let dummy: SeasonLeaderboardEntry[] = [];
   for (let i = 0; i < nEntries; i++) {
@@ -73,7 +81,7 @@ export const DummySeasons: SeasonHistoryItem[] = [
     players: 1000,
     grandPrixHistoryItems: [
       {
-        configHash: '0xfe719a3cfccf2bcfa23f71f0af80a931eda4f4197331828d728b7505a6156930',
+        configHash: '0xd08bbeb0785370a68369f0a042e33ef2688da6da5e79acbb5688ddbb8ca4a862',
         startTime: new Date('2022-07-13T00:00:00.000Z').getTime() / 1000,
         endTime: new Date('2022-07-13T00:00:00.000Z').getTime() / 1000,
         players: 1000,
@@ -82,7 +90,16 @@ export const DummySeasons: SeasonHistoryItem[] = [
         badges: [BadgeType.StartYourEngine, BadgeType.Tree],
       },
       {
-        configHash: '0xfe719a3cfccf2bcfa23f71f0af80a931eda4f4197331828d728b7505a6156930',
+        configHash: '0xd08bbeb0785370a68369f0a042e33ef2688da6da5e79acbb5688ddbb8ca4a862',
+        startTime: new Date('2022-07-13T00:00:00.000Z').getTime() / 1000,
+        endTime: new Date('2022-07-13T00:00:00.000Z').getTime() / 1000,
+        players: 1000,
+        rank: 5,
+        score: 10000,
+        badges: [BadgeType.Nice, BadgeType.Wallbreaker],
+      },
+      {
+        configHash: '0xd08bbeb0785370a68369f0a042e33ef2688da6da5e79acbb5688ddbb8ca4a862',
         startTime: new Date('2022-07-13T00:00:00.000Z').getTime() / 1000,
         endTime: new Date('2022-07-13T00:00:00.000Z').getTime() / 1000,
         players: 1000,
@@ -93,7 +110,7 @@ export const DummySeasons: SeasonHistoryItem[] = [
     ],
   },
   {
-    seasonId: 1,
+    seasonId: 2,
     rank: 5,
     players: 1000,
     grandPrixHistoryItems: [

@@ -3,7 +3,7 @@ import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { logOut } from '../../../Backend/Network/AccountManager';
 import { loadPlayerBadges } from '../../../Backend/Network/GraphApi/SeasonLeaderboardApi';
-import { Badge, BadgeDetails, SpacedBadges } from '../../Components/Badges';
+import { Badge, BadgeDetailsCol, SpacedBadges } from '../../Components/Badges';
 import { Btn } from '../../Components/Btn';
 import { Gnosis, Icon, IconType, Twitter } from '../../Components/Icons';
 import { WithdrawSilverButton } from '../../Panes/Game/TooltipPanes';
@@ -15,11 +15,8 @@ import {
   useSeasonData,
   useTwitters,
 } from '../../Utils/AppHooks';
-import { TiledTable } from '../TiledTable';
-import { truncateAddress } from './PortalUtils';
+import { mockBadges, truncateAddress } from './PortalUtils';
 import { theme } from './styleUtils';
-
-const mockBadges: BadgeType[] = [BadgeType.Tree, BadgeType.Wallbreaker, BadgeType.Nice, BadgeType.Sleepy, BadgeType.StartYourEngine];
 
 function AccountModal({ setOpen }: { setOpen: (open: boolean) => void }) {
   const connection = useEthConnection();
@@ -38,7 +35,9 @@ function AccountModal({ setOpen }: { setOpen: (open: boolean) => void }) {
       if (!found) return countedBadges.push({ count: 1, badge: badge });
       return found.count++;
     });
-    return countedBadges.map((badge) => <BadgeDetails type={badge.badge} count={badge.count} />);
+    return countedBadges.map((badge, index: number) => (
+      <BadgeDetailsCol type={badge.badge} count={badge.count} key={index} />
+    ));
   }, [grandPrixBadges]);
 
   return (
@@ -78,7 +77,7 @@ function AccountModal({ setOpen }: { setOpen: (open: boolean) => void }) {
           </div>
           {/* <StackedBadges items={mockBadges} /> */}
           {badgeElements && badgeElements.length > 0 ? (
-            <TiledTable items={badgeElements} paginated={true} title='Your Badges' />
+            <BadgeGrid>{badgeElements}</BadgeGrid>
           ) : (
             'You have no badges'
           )}
@@ -157,4 +156,11 @@ const Footer = styled.div`
   border-top: solid 1px #676767;
   display: flex;
   padding-top: 12px;
+`;
+
+const BadgeGrid = styled.div`
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: ${theme.spacing.md};
 `;
