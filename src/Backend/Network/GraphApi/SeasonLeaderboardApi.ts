@@ -345,6 +345,10 @@ export function loadPlayerSeasonHistoryView(
   configPlayers: CleanConfigPlayer[]
 ): SeasonHistory[] {
   const seasonHistories: SeasonHistory[] = [];
+
+  const playerExists = configPlayers.find(cp => cp.address == player);
+  if(!playerExists) return [];
+
   // Get Season Rank and Score.
   // Need to handle multiple seasons.
 

@@ -13,7 +13,7 @@ export function truncateString(str: string, maxLength: number) {
 export function createDummySeasonLeaderboardData(nEntries: number): SeasonLeaderboardEntry[] {
   let dummy: SeasonLeaderboardEntry[] = [];
   for (let i = 0; i < nEntries; i++) {
-    const address = '0x' + Math.floor(Math.random() * 10000000000000000).toString(16);
+    const address = '0x' + Math.floor(Math.random() * Math.pow(10,40)).toString(16);
     const entry: SeasonLeaderboardEntry = {
       address,
       games: [
