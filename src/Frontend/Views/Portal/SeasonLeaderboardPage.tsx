@@ -108,7 +108,7 @@ export const SeasonLeaderboardPage: React.FC = () => {
   return (
     <div style={{ margin: '0 auto', textAlign: 'center' }}>
       <Title>Season {seasonId} Leaderboard</Title>
-      <Leaderboard seasonId={seasonId} entries={leaderboard.entries} />;
+      <Leaderboard seasonId={seasonId} entries={leaderboard.entries} />
     </div>
   );
 };
