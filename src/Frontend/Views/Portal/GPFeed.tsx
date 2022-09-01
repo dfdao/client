@@ -43,7 +43,7 @@ export const GPFeed: React.FC<MapDetailsProps> = ({ leaderboard }) => {
           >
             {latest &&
               latest.map((entry: LeaderboardEntry, i: number) => (
-                <PaddedRow>
+                <PaddedRow key={`latest-${i}`}>
                   <Orb />
                   <span>
                     {formatStartTime(entry.endTime)}{' '}
@@ -57,7 +57,7 @@ export const GPFeed: React.FC<MapDetailsProps> = ({ leaderboard }) => {
         {latest &&
           latest.length < 3 &&
           [...Array(3 - latest.length)].map((_, i) => (
-            <PaddedRow>
+            <PaddedRow key={`latest-placeholder-${i}`}>
               <Orb />
               <span>Waiting for players...</span>
             </PaddedRow>
