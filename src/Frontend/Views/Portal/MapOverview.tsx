@@ -90,14 +90,14 @@ export const MapOverview: React.FC<{
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              width: '300px',
-              height: '300px',
+              width: mapSize,
+              height: mapSize,
             }}
           >
             <LoadingSpinner initialText='Loading...' />
           </div>
         ) : (
-          <MinimapContainer>
+          <MinimapContainer width={mapSize} height={mapSize}>
             <Minimap
               style={{ width: mapSize, height: mapSize }}
               minimapConfig={minimapConfig}
@@ -134,7 +134,9 @@ export const MapOverview: React.FC<{
                   : `Round ends in ${formatDuration(countdown)} `}
               </RoundCountdown>
             ) : (
-              <div style={{ height: 21, width: 240 }}>Loading...</div>
+              <div style={{ height: '21px', width: '240px' }}>
+                <LoadingSpinner />
+              </div>
             )}
           </MapActions>
         </TextContent>
@@ -182,10 +184,11 @@ const RoundCountdown = styled.span`
   justify-self: flex-start;
   font-family: ${theme.fonts.mono};
 `;
-const MinimapContainer = styled.div`
+const MinimapContainer = styled.div<{ width: string; height: string }>`
   border-radius: 4px;
-  margin-bottom: 1rem;
   display: flex;
   justify-content: center;
   align-items: center;
+  max-width: ${(props) => props.width};
+  max-height: ${(props) => props.height};
 `;

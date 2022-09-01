@@ -34,7 +34,13 @@ export const GPFeed: React.FC<MapDetailsProps> = ({ leaderboard }) => {
         }}
       >
         {latest && latest.length > 0 && (
-          <div>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1rem',
+            }}
+          >
             {latest &&
               latest.map((entry: LeaderboardEntry, i: number) => (
                 <PaddedRow>
