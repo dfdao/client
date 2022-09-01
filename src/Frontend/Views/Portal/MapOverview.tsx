@@ -85,11 +85,13 @@ export const MapOverview: React.FC<{
     <Container>
       <Content>
         <TextContent>
-          <RoundName>{`Season ${round.seasonId.toNumber()}`}</RoundName>
+          <SeasonName>{`Season ${round.seasonId.toNumber()}`}</SeasonName>
           <Title>{mapName ?? 'Grand Prix Round'}</Title>
           <MapActions>
             <Link target='blank' to={`/play/${lobbyAddress}?create=true`}>
-              <PlayButton disabled={status !== 'started'}>Play Round</PlayButton>
+              <LobbyButton primary disabled={status !== 'started'}>
+                Play Round
+              </LobbyButton>
             </Link>
             {countdown && (
               <RoundCountdown>
