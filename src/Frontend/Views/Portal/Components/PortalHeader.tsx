@@ -65,6 +65,7 @@ export const PortalHeader = () => {
           {
             label: 'History',
             to: `/portal/history/${playerAddress}`,
+            wildcard: playerAddress,
           },
           {
             label: 'Community',
