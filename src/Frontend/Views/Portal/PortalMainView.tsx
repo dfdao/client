@@ -26,7 +26,7 @@ export function PortalMainView() {
           <Route path={'/portal/history/:account'} component={PortalHistoryView} />
           <Route path={'/portal/community'} component={PortalCommunityView} />
           <Route path={'/portal/matchmaking'} component={MatchmakingView} />
-          <Route path={'/portal/leaderboard'} component={SeasonLeaderboardPage} />
+          {/* <Route path={'/portal/leaderboard'} component={SeasonLeaderboardPage} /> */}
           <Route
             path='/portal/*'
             component={() => (

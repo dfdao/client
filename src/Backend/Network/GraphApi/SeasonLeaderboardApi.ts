@@ -400,7 +400,8 @@ export function loadPlayerSeasonHistoryView(
         const playerGrandPrixs = groupByPlayers(configPlayers)[player].filter(
           (cp) => cp.configHash == gp.configHash
         )[0];
-
+        
+          
         const grandPrixHistory: GrandPrixHistory = {
           configHash: gp.configHash,
           rank,
