@@ -1,4 +1,4 @@
-import { LiveMatch } from '@darkforest_eth/types';
+import { CleanMatchEntry, ExtendedMatchEntry, LiveMatch } from '@darkforest_eth/types';
 import { getGraphQLData } from '../GraphApi';
 
 export const loadLiveMatches = async (configHash?: string): Promise<LiveMatch> => {
@@ -12,7 +12,10 @@ export const loadLiveMatches = async (configHash?: string): Promise<LiveMatch> =
       firstMover {
         address
       },  
-      players {address}
+      players {
+        address
+        moves
+      }
       creator,
       id
       startTime,
@@ -26,8 +29,7 @@ export const loadLiveMatches = async (configHash?: string): Promise<LiveMatch> =
       }
     }`;
 
-    const response = await getGraphQLData(query, process.env.GRAPH_URL || 'localhost:8000');
-
+  const response = await getGraphQLData(query, process.env.GRAPH_URL || 'localhost:8000');
   if ('errors' in response) {
     throw new Error(`error when fetching data, ${JSON.stringify(response)}`);
   }
@@ -37,5 +39,30 @@ export const loadLiveMatches = async (configHash?: string): Promise<LiveMatch> =
     throw new Error(`error when fetching data, ${JSON.stringify(response)}`);
   }
 
-  return { entries: arenas };
+  return { entries: cleanLiveMatches(arenas as ExtendedMatchEntry[]) };
 };
+
+function calcMoves(match: ExtendedMatchEntry) {
+  const players = match.players
+  if(!players || players.length == 0) return 0;
+  else {
+    return players.map(lm => lm.moves).reduce((a,b) => a + b)
+  }
+}
+export function cleanLiveMatches(liveMatches: ExtendedMatchEntry[]) {
+  return liveMatches.map(lm => {
+    const clean: CleanMatchEntry = {
+      player: lm.creator,
+      lobbyAddress: lm.lobbyAddress,
+      moves: calcMoves(lm),
+      configHash: lm.configHash,
+      numSpawn: lm.planets.length,
+      gameOver: lm.gameOver,
+      duration: lm.duration,
+      startTime: lm.startTime,
+      endTime: lm.endTime,
+      players: lm.players ? lm.players.map(p => p.address) : []
+    }
+    return clean;
+  })
+}

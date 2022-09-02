@@ -14,8 +14,9 @@ import { ConfigDetails } from './ConfigDetails';
 import { FindMatch } from './FindMatch';
 import useSWR from 'swr';
 import { fetcher } from '../../../Backend/Network/UtilityServerAPI';
-import { useSeasonData, useSeasonPlayers, useTwitters } from '../../Utils/AppHooks';
+import { useLiveMatches, useSeasonData, useSeasonPlayers, useTwitters } from '../../Utils/AppHooks';
 import { loadGrandPrixLeaderboard } from '../../../Backend/Network/GraphApi/SeasonLeaderboardApi';
+import { DUMMY } from '../../Utils/constants';
 
 export function MapDetails({
   configHash,
@@ -27,7 +28,7 @@ export function MapDetails({
   const [leaderboard, setLeaderboard] = useState<Leaderboard | undefined>();
   const [eloLeaderboard, setEloLeaderboard] = useState<GraphConfigPlayer[] | undefined>();
   const [leaderboardError, setLeaderboardError] = useState<Error | undefined>();
-  const [liveMatches, setLiveMatches] = useState<LiveMatch | undefined>();
+  // const [liveMatches, setLiveMatches] = useState<LiveMatch | undefined>();
   const [liveMatchError, setLiveMatchError] = useState<Error | undefined>();
 
   const numSpawnPlanets = config?.ADMIN_PLANETS.filter((p) => p.isSpawnPlanet).length ?? 0;
@@ -36,9 +37,10 @@ export function MapDetails({
   const allPlayers = useSeasonPlayers();
   const leaders = loadGrandPrixLeaderboard(allPlayers, configHash, twitters);
 
+  const { liveMatches, spyError } = useLiveMatches(configHash, !DUMMY ? 5000 : undefined);
+
   useEffect(() => {
     setLeaderboard(undefined);
-    setLiveMatches(undefined);
     if (configHash) {
       if (numSpawnPlanets > 1) {
         loadEloLeaderboard(configHash, numSpawnPlanets > 1)
@@ -50,15 +52,6 @@ export function MapDetails({
       } else {
         setLeaderboard(leaders);
       }
-      loadLiveMatches(configHash)
-        .then((matches) => {
-          setLiveMatchError(undefined);
-          setLiveMatches(matches);
-        })
-        .catch((e) => {
-          console.log(e);
-          setLiveMatchError(e);
-        });
     }
   }, [configHash]);
 
@@ -89,8 +82,8 @@ export function MapDetails({
         startSelected={numSpawnPlanets >= 2 ? 1 : 0}
         tabTitles={[
           'Leaderboard',
-          numSpawnPlanets > 1 ? 'Join a Match' : 'Live Games',
-          'Config Details',
+          'History',
+          // 'Config Details',
         ]}
         tabContents={(i) => {
           if (i === 0) {
@@ -114,7 +107,7 @@ export function MapDetails({
               );
             }
           }
-          return <ConfigDetails config={config} />;
+          // return <ConfigDetails config={config} />;
         }}
       />
     </div>

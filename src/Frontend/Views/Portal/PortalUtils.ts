@@ -2,6 +2,7 @@ import { address } from '@darkforest_eth/serde';
 import {
   BadgeType,
   CleanConfigPlayer,
+  CleanMatchEntry,
   EthAddress,
   ExtendedMatchEntry,
   GrandPrixMetadata,
@@ -57,16 +58,16 @@ export function createDummySeasonData(nEntries: number): CleanConfigPlayer[] {
       badges: [
         {
           type: BadgeType.Nice,
-          configHash: DEV_CONFIG_HASH_1
+          configHash: DEV_CONFIG_HASH_1,
         },
         {
           type: BadgeType.StartYourEngine,
-          configHash: DEV_CONFIG_HASH_1
+          configHash: DEV_CONFIG_HASH_1,
         },
         {
           type: BadgeType.Sleepy,
-          configHash: DEV_CONFIG_HASH_1
-        }
+          configHash: DEV_CONFIG_HASH_1,
+        },
       ],
       configHash: DEV_CONFIG_HASH_1,
       gamesStarted: Math.floor(Math.random() * 100),
@@ -83,30 +84,27 @@ export function createDummySeasonData(nEntries: number): CleanConfigPlayer[] {
   return dummy;
 }
 
-
 export function createDummyLiveMatches(nEntries: number): LiveMatch {
-  const entries: ExtendedMatchEntry[] = [];
-  for(let i = 0; i < nEntries; i++) {
+  const entries: CleanMatchEntry[] = [];
+  for (let i = 0; i < nEntries; i++) {
     const startTime = Math.floor(Math.random() * 1000);
     const endTime = Math.floor(Math.random() * 1000) + startTime;
     const player = '0x' + genRanHex(40);
     const lobby = '0x' + genRanHex(40);
-    const entry1:ExtendedMatchEntry = {
+    const entry1: CleanMatchEntry = {
       lobbyAddress: address(lobby),
-      creator: address(player),
-      firstMover: {
-        address: address(player)
-      },
-      id: "123",
+      player: address(player),
+      moves: Math.floor(Math.random() * 100),
       // Have start time be later if game is not over
       startTime: endTime,
       endTime,
       configHash: DEV_CONFIG_HASH_1,
       gameOver: false,
       duration: endTime - startTime,
-      planets: []
-    }
-    const entry2: ExtendedMatchEntry = {
+      numSpawn: 1,
+      players: [address(player)],
+    };
+    const entry2: CleanMatchEntry = {
       ...entry1,
       gameOver: true,
       configHash: DEV_CONFIG_HASH_2,
@@ -114,7 +112,7 @@ export function createDummyLiveMatches(nEntries: number): LiveMatch {
     entries.push(entry1);
     entries.push(entry2);
   }
-  return { entries } as LiveMatch
+  return { entries } as LiveMatch;
 }
 
 export const DummySeasons: SeasonHistoryItem[] = [

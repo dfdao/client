@@ -150,7 +150,7 @@ class EntryPageTerminal {
     this.terminal?.println(``);
     this.terminal?.println(`Select an option:`, TerminalTextStyle.Text);
 
-    const userInput = await this.terminal.getInput();
+    const userInput = await this.terminal?.getInput();
 
     if (+userInput && +userInput <= accounts.length && +userInput > 0) {
       const selectedAccount = accounts[+userInput - 1];
@@ -160,8 +160,8 @@ class EntryPageTerminal {
     } else if (userInput === 'i') {
       this.importAccount();
     } else {
-      this.terminal.println('Unrecognized input. Please try again.', TerminalTextStyle.Red);
-      this.terminal.println('');
+      this.terminal?.println('Unrecognized input. Please try again.', TerminalTextStyle.Red);
+      this.terminal?.println('');
       await this.chooseAccount();
     }
   }

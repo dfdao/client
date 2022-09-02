@@ -1,5 +1,5 @@
 import { getConfigName } from '@darkforest_eth/procedural';
-import { ExtendedMatchEntry, Leaderboard, LeaderboardEntry } from '@darkforest_eth/types';
+import { CleanConfigPlayer, CleanMatchEntry, ExtendedMatchEntry, Leaderboard, LeaderboardEntry } from '@darkforest_eth/types';
 import dfstyles from '@darkforest_eth/ui/dist/styles';
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -58,14 +58,14 @@ export const GPFeed: React.FC<MapDetailsProps> = ({ configHash }) => {
             }}
           >
             {latest &&
-              latest.map((entry: ExtendedMatchEntry, i: number) => (
+              latest.map((entry: CleanMatchEntry, i: number) => (
                 <PaddedRow key={`latest-${i}`}>
                   {/* <Orb /> */}
                   {entry.gameOver ? (
                     <span>
                       🎖{' '}
                       {formatStartTime(entry.startTime)}{' '}
-                      {compPlayerToEntry(entry.creator, twitters[entry.creator])} {' '}
+                      {compPlayerToEntry(entry.player, twitters[entry.player])} {' '}
                       <Link
                         style={{ color: dfstyles.colors.dfgreenlight }}
                         to={`/play/${entry.lobbyAddress}`}
@@ -79,7 +79,7 @@ export const GPFeed: React.FC<MapDetailsProps> = ({ configHash }) => {
                     <span>
                       🚀{' '}
                       {formatStartTime(entry.startTime)}{' '}
-                      {compPlayerToEntry(entry.creator, twitters[entry.creator])}  {' '}
+                      {compPlayerToEntry(entry.player, twitters[entry.player])}  {' '}
                       <Link
                         style={{ color: dfstyles.colors.dfgreenlight }}
                         to={`/play/${entry.lobbyAddress}`}
