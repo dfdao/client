@@ -27,7 +27,8 @@ export async function populate(
   contractAddress: EthAddress,
 ): Promise<void> {
 
-  const config = JSON.parse(JSON.stringify(stockConfig.devOnePlayerRace)) as LobbyInitializers;
+  const initConfig = (Math.random() > 0.5 ) ? stockConfig.devOnePlayerRace : stockConfig.devOnePlayerRaceB;
+  const config = JSON.parse(JSON.stringify(initConfig)) as LobbyInitializers;
 
   // 1. Create new arena Creation manager
   const newCreationManager = await ArenaCreationManager.create(ethConnection, contractAddress);

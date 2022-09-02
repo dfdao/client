@@ -11,7 +11,7 @@ import { BadgeDetailsRow } from '../../Components/Badges';
 import { Icon } from '../../Components/Icons';
 import { Sub } from '../../Components/Text';
 import { useAccount, useEthConnection, useSeasonData } from '../../Utils/AppHooks';
-import { GrandPrixMetadata, SEASON_GRAND_PRIXS } from '../../Utils/constants';
+import { SEASON_GRAND_PRIXS } from '../../Utils/constants';
 import { TiledTable } from '../TiledTable';
 import { PortalHistoryRoundCard } from './Components/PortalHistoryRoundCard';
 import { Label } from './PortalHomeView';

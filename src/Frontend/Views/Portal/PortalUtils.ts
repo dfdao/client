@@ -1,6 +1,17 @@
-import { BadgeType, CleanConfigPlayer, EthAddress, SeasonScore } from '@darkforest_eth/types';
+import {
+  BadgeType,
+  CleanConfigPlayer,
+  EthAddress,
+  GrandPrixMetadata,
+  SeasonScore,
+} from '@darkforest_eth/types';
 import { SeasonLeaderboardEntry } from '../../../Backend/Network/GraphApi/SeasonLeaderboardApi';
-import { DAY_IN_SECONDS, DEV_CONFIG_HASH, GrandPrixMetadata, SEASON_GRAND_PRIXS } from '../../Utils/constants';
+import {
+  DAY_IN_SECONDS,
+  DEV_CONFIG_HASH_1,
+  DEV_CONFIG_HASH_2,
+  SEASON_GRAND_PRIXS,
+} from '../../Utils/constants';
 import { SeasonHistoryItem } from './PortalHistoryView';
 
 export function truncateAddress(address: EthAddress) {
@@ -21,7 +32,7 @@ export const mockBadges: BadgeType[] = [
   BadgeType.Sleepy,
   BadgeType.StartYourEngine,
   BadgeType.StartYourEngine,
-  BadgeType.Tree
+  BadgeType.Tree,
 ];
 
 export function createDummySeasonLeaderboardData(nEntries: number): SeasonLeaderboardEntry[] {
@@ -79,33 +90,38 @@ export function createDummySeasonLeaderboardData(nEntries: number): SeasonLeader
   return dummy;
 }
 
-const genRanHex = (size: number) => [...Array(size)]
-  .map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+const genRanHex = (size: number) =>
+  [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
 
 export function createDummySeasonData(nEntries: number): CleanConfigPlayer[] {
   let dummy: CleanConfigPlayer[] = [];
   for (let i = 0; i < nEntries; i++) {
     const address = '0x' + genRanHex(40);
-    const startTime = Math.floor(Math.random() * 1000)
-    const endTime = Math.floor(Math.random() * 1000) + startTime
-    const entry: CleanConfigPlayer = {
-      id: "123",
+    const startTime = Math.floor(Math.random() * 1000);
+    const endTime = Math.floor(Math.random() * 1000) + startTime;
+    const entry1: CleanConfigPlayer = {
+      id: '123',
       address,
       duration: endTime - startTime,
       moves: Math.floor(Math.random() * 1000),
       startTime,
       endTime,
       badges: [BadgeType.StartYourEngine, BadgeType.Nice, BadgeType.Tree],
-      configHash: DEV_CONFIG_HASH,
+      configHash: DEV_CONFIG_HASH_1,
       gamesStarted: Math.floor(Math.random() * 100),
       gamesFinished: Math.floor(Math.random() * 100),
-      score: DAY_IN_SECONDS - (endTime - startTime)
+      score: DAY_IN_SECONDS - (endTime - startTime),
     };
-    dummy.push(entry);
+    const entry2: CleanConfigPlayer = {
+      ...entry1,
+      configHash: DEV_CONFIG_HASH_2,
+    };
+    dummy.push(entry1);
+    dummy.push(entry2);
   }
+  console.log(`dummy data`, dummy);
   return dummy;
 }
-
 
 export const DummySeasons: SeasonHistoryItem[] = [
   {
@@ -191,7 +207,9 @@ export function seasonScoreToSeasonHistoryItem(account: EthAddress, seasonScores
 
 export function getCurrentGrandPrix(grandPrixs: GrandPrixMetadata[]): GrandPrixMetadata {
   const now = Math.floor(Date.now() / 1000);
-  const res = grandPrixs.find(gp => now >= gp.startTime && now <= gp.endTime)
-  if(!res) throw new Error("No current Grand Prix found");
+  console.log(`now ${now} start ${grandPrixs[0].startTime} end ${grandPrixs[1].endTime}`);
+
+  const res = grandPrixs.find((gp) => now >= gp.startTime && now <= gp.endTime);
+  if (!res) throw new Error('No current Grand Prix found');
   return res;
 }

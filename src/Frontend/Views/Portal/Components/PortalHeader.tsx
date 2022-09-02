@@ -37,7 +37,7 @@ export const PortalHeader = () => {
         {process.env.NODE_ENV !== 'production' ? (
           <MinimalButton
             onClick={async () => {
-              await populateBulk(connection, address(CONTRACT_ADDRESS), 10);
+              await populateBulk(connection, address(CONTRACT_ADDRESS), 5);
               //await populate(connection, address(CONTRACT_ADDRESS));
             }}
           >

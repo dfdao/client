@@ -6,6 +6,7 @@ import {
   ConfigPlayer,
   EthAddress,
   GrandPrixHistory,
+  GrandPrixMetadata,
   GrandPrixPlayers,
   GrandPrixResult,
   Leaderboard,
@@ -21,7 +22,6 @@ import {
   DAY_IN_SECONDS,
   START_ENGINE_BONUS,
   WALLBREAKER_BONUS,
-  GrandPrixMetadata,
   EGP,
   DUMMY,
 } from '../../../Frontend/Utils/constants';
@@ -235,7 +235,6 @@ export function loadSeasonPlayer(playerId: string, configPlayers: ConfigPlayer[]
 export function loadGrandPrixLeaderboard(configPlayers: CleanConfigPlayer[], configHash: string, twitters?: AddressTwitterMap) {
   const players = loadGrandPrixPlayers(configPlayers, configHash);
   const leaderboard = configPlayersToLeaderboard(players, twitters);
-  console.log(`api leaderboard length`, leaderboard.length, leaderboard);
   return leaderboard;
 }
 

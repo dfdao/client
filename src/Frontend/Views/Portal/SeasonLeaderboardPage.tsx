@@ -61,10 +61,10 @@ export const Entry: React.FC<{
                   borderTop: `1px solid ${dfstyles.colors.borderDarker}`,
                 }}
               >
-                <span>{entry.badges} badges this season</span>
                 <Link to={`/portal/history/${entry.address}`}>
                   <button>View player</button>
                 </Link>
+                <span>{entry.badges} badges this season</span>
               </div>
             </div>
           </ExpandedGames>

@@ -149,6 +149,7 @@ interface Row {
   twitter: string | undefined;
   time: number | undefined;
   moves: number | undefined;
+  score: number | undefined;
 }
 
 interface EloRow {
@@ -289,6 +290,7 @@ function ArenaLeaderboardTable({ rows }: { rows: Row[] }) {
           <Cell key='name'></Cell>,
           <Cell key='twitter'></Cell>,
           <Cell key='gnosis'></Cell>,
+          <Cell key='score'>Score</Cell>,
           <Cell key='time'>Time</Cell>,
           <Cell key='moves'>Moves</Cell>,
         ]}
@@ -350,6 +352,10 @@ function ArenaLeaderboardTable({ rows }: { rows: Row[] }) {
           },
           (row: Row, i) => {
             // score
+            return <Cell>{row.score}</Cell>;
+          },
+          (row: Row, i) => {
+            // score
             return <Cell>{scoreToTime(row.time)}</Cell>;
           },
           (row: Row, i) => {
@@ -389,7 +395,7 @@ function ArenaLeaderboardBody({
       return -1;
     }
 
-    return a.score - b.score;
+    return b.score - a.score;
   });
 
   const arenaRows: Row[] = leaderboard.entries.map((entry) => {
@@ -398,6 +404,7 @@ function ArenaLeaderboardBody({
       twitter: entry.twitter,
       time: entry.time,
       moves: entry.moves,
+      score: entry.score,
     };
   });
 

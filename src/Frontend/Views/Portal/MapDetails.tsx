@@ -14,13 +14,15 @@ import { ConfigDetails } from './ConfigDetails';
 import { FindMatch } from './FindMatch';
 import useSWR from 'swr';
 import { fetcher } from '../../../Backend/Network/UtilityServerAPI';
+import { useSeasonData, useTwitters } from '../../Utils/AppHooks';
+import { loadGrandPrixLeaderboard } from '../../../Backend/Network/GraphApi/SeasonLeaderboardApi';
 
 export function MapDetails({
   configHash,
   config,
 }: {
-  configHash: string | undefined;
-  config: LobbyInitializers | undefined;
+  configHash: string;
+  config: LobbyInitializers;
 }) {
   const [leaderboard, setLeaderboard] = useState<Leaderboard | undefined>();
   const [eloLeaderboard, setEloLeaderboard] = useState<GraphConfigPlayer[] | undefined>();
@@ -28,13 +30,11 @@ export function MapDetails({
   const [liveMatches, setLiveMatches] = useState<LiveMatch | undefined>();
   const [liveMatchError, setLiveMatchError] = useState<Error | undefined>();
 
-  const { data: data, error } = useSWR(
-    `${process.env.DFDAO_WEBSERVER_URL}/rounds/${configHash}`,
-    fetcher
-  );
-  const parsedData = data ? JSON.parse(data) : undefined;
   const numSpawnPlanets = config?.ADMIN_PLANETS.filter((p) => p.isSpawnPlanet).length ?? 0;
   const hasWhitelist = config?.WHITELIST_ENABLED ?? true;
+  const twitters = useTwitters();
+  const allPlayers = useSeasonData();
+  const leaders = loadGrandPrixLeaderboard(allPlayers, configHash, twitters);
 
   useEffect(() => {
     setLeaderboard(undefined);
@@ -48,12 +48,7 @@ export function MapDetails({
           })
           .catch((e) => setLeaderboardError(e));
       } else {
-        loadArenaLeaderboard(configHash, numSpawnPlanets > 1 ? true : false)
-          .then((board: Leaderboard) => {
-            setLeaderboardError(undefined);
-            setLeaderboard(board);
-          })
-          .catch((e) => setLeaderboardError(e));
+        setLeaderboard(leaders);
       }
       loadLiveMatches(configHash)
         .then((matches) => {
@@ -81,29 +76,6 @@ export function MapDetails({
         overflowY: 'auto',
       }}
     >
-      {parsedData?.description?.length > 0 && (
-        <div
-          style={{
-            margin: '2rem auto',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '4px',
-            textAlign: 'center',
-          }}
-        >
-          <span style={{ color: '#fff' }}>Description</span>
-          <span
-            style={{
-              maxWidth: '66%',
-              margin: '0 auto',
-              textAlign: 'center',
-              opacity: '70%',
-            }}
-          >
-            {parsedData.description}
-          </span>
-        </div>
-      )}
       <TabbedView
         style={{
           display: 'flex',

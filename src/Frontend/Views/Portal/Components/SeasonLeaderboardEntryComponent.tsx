@@ -1,7 +1,7 @@
 import { getConfigName } from '@darkforest_eth/procedural';
 import dfstyles from '@darkforest_eth/ui/dist/styles';
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { SeasonLeaderboardEntry } from '../../../../Backend/Network/GraphApi/SeasonLeaderboardApi';
 import { MinimalButton } from '../PortalMainView';
@@ -11,6 +11,7 @@ export const SeasonLeaderboardEntryComponent: React.FC<{
   entry: SeasonLeaderboardEntry;
   index: number;
 }> = ({ entry, index }) => {
+  const history = useHistory();
   const [expanded, setExpanded] = useState<boolean>(false);
   return (
     <div>
@@ -33,7 +34,15 @@ export const SeasonLeaderboardEntryComponent: React.FC<{
                   justifyContent: 'space-between',
                 }}
               >
-                <span>{getConfigName(game.configHash)}</span>
+                <span>
+                  <button
+                    onClick={() => {
+                      history.push(`/portal/map/${game.configHash}`);
+                    }}
+                  >
+                    {getConfigName(game.configHash)}
+                  </button>
+                </span>
                 <span>{game.score}</span>
               </div>
             ))}
@@ -47,10 +56,10 @@ export const SeasonLeaderboardEntryComponent: React.FC<{
                 borderTop: `1px solid ${dfstyles.colors.borderDarker}`,
               }}
             >
-              <span>{entry.badges} badges this season</span>
               <Link to={`/portal/history/${entry.address}`}>
                 <MinimalButton>View player</MinimalButton>
               </Link>
+              <span>{entry.badges} badges this season</span>
             </div>
           </div>
         </ExpandedGames>

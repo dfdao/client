@@ -100,7 +100,7 @@ export function MapInfoView({ match }: RouteComponentProps<{ configHash: string 
       {error ? (
         <div>Map Not Found</div>
       ) : (
-        config && (
+        config && configHash && (
           <>
             <MapOverview configHash={configHash} config={config} lobbyAddress={lobbyAddress} />
             <MapDetails configHash={configHash} config={config} />

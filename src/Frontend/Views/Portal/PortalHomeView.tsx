@@ -1,4 +1,4 @@
-import { Leaderboard } from '@darkforest_eth/types';
+import { Leaderboard, RegistryResponse } from '@darkforest_eth/types';
 import { BigNumber } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -15,22 +15,6 @@ import { GPFeed } from './GPFeed';
 import { MapOverview } from './MapOverview';
 import { createDummySeasonLeaderboardData, getCurrentGrandPrix } from './PortalUtils';
 import { theme } from './styleUtils';
-
-export interface RoundResponse {
-  configHash: string;
-  startTime: BigNumber;
-  endTime: BigNumber;
-  parentAddress: string;
-  seasonId: BigNumber;
-}
-
-const DUMMY = {
-  configHash: '0xd08bbeb0785370a68369f0a042e33ef2688da6da5e79acbb5688ddbb8ca4a862',
-  startTime: BigNumber.from('1661435558381'),
-  endTime: BigNumber.from('1761435658381'),
-  parentAddress: '0xcee9abadf221ca7db9fb8c3a2d402d9cab9bb38d',
-  seasonId: BigNumber.from('1'),
-} as RoundResponse;
 
 export const PortalHomeView: React.FC<{}> = () => {
   const [leaderboard, setLeaderboard] = useState<Leaderboard | undefined>();
@@ -67,7 +51,7 @@ export const PortalHomeView: React.FC<{}> = () => {
     <Container>
       <div className='row w-100' style={{ gap: theme.spacing.xl }}>
         <div className='col w-100'>
-          <MapOverview round={DUMMY} config={config} lobbyAddress={lobbyAddress} />
+          <MapOverview round={grandPrix} config={config} lobbyAddress={lobbyAddress} />
         </div>
         <div className='col w-100'>
           <Label>Live Feed</Label>
@@ -76,7 +60,7 @@ export const PortalHomeView: React.FC<{}> = () => {
       </div>
       <div className='row w-100' style={{ gap: theme.spacing.xl }}>
         <div className='col w-100'>
-          <LabeledPanel label='Active game leaderboard'>
+          <LabeledPanel label='Active Grand Prix'>
             <ArenaLeaderboardDisplay leaderboard={leaderboard} error={undefined} />
           </LabeledPanel>
         </div>

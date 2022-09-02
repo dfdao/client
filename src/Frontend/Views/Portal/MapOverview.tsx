@@ -7,8 +7,7 @@ import { generateMinimapConfig, MinimapConfig } from '../../Panes/Lobby/MinimapU
 import { Link } from 'react-router-dom';
 import { debounce } from 'lodash';
 import { LobbyInitializers } from '../../Panes/Lobby/Reducer';
-import { EthAddress } from '@darkforest_eth/types';
-import { RoundResponse } from './PortalHomeView';
+import { EthAddress, GrandPrixMetadata, RegistryResponse } from '@darkforest_eth/types';
 import { getConfigName } from '@darkforest_eth/procedural';
 import { PortalButton } from '../../Styles/dfstyles';
 import { LobbyButton } from '../../Pages/Lobby/LobbyMapEditor';
@@ -17,13 +16,10 @@ import { theme } from './styleUtils';
 type RoundStatus = 'not started' | 'started' | 'ended';
 
 export const MapOverview: React.FC<{
-  round: RoundResponse;
+  round: GrandPrixMetadata;
   config: LobbyInitializers;
   lobbyAddress?: EthAddress;
 }> = ({ round, lobbyAddress, config }) => {
-  const endTime = new Date(round.endTime.toNumber()).getTime();
-  const startTime = new Date(round.startTime.toNumber()).getTime();
-
   const [status, setStatus] = useState<RoundStatus>('not started');
   const [countdown, setCountdown] = useState<number>();
   const [minimapConfig, setMinimapConfig] = useState<MinimapConfig | undefined>();
@@ -48,24 +44,24 @@ export const MapOverview: React.FC<{
 
   useEffect(() => {
     const update = () => {
-      const now = Date.now();
-
-      if (now > endTime) {
+      const now = Math.floor(Date.now() / 1000);
+      
+      if (now > round.endTime) {
         setStatus('ended');
         setCountdown(1);
         return;
       }
-      if (now < startTime) {
+      if (now < round.startTime) {
         setStatus('not started');
-        const msWait = startTime - now;
-        setCountdown(msWait);
+        const sWait = round.startTime - now;
+        setCountdown(sWait * 1000);
         return;
       }
 
-      const msWait = endTime - now;
+      const sWait = round.endTime - now;
 
       setStatus('started');
-      setCountdown(msWait);
+      setCountdown(sWait * 1000);
     };
 
     const interval = setInterval(() => {
@@ -73,7 +69,7 @@ export const MapOverview: React.FC<{
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [status, countdown, endTime, startTime]);
+  }, [status, countdown, round.endTime, round.startTime]);
 
   const { innerHeight } = window;
   let mapSize = '300px';
@@ -116,7 +112,7 @@ export const MapOverview: React.FC<{
               borderRadius: '2px',
             }}
           >
-            <SeasonName>{`Season ${round.seasonId.toNumber()}`}</SeasonName>
+            <SeasonName>{`Season ${round.seasonId}`}</SeasonName>
           </div>
           <Title>{mapName ?? 'Grand Prix Round'}</Title>
           <MapActions>
