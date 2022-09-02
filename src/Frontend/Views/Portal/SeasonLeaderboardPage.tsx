@@ -104,7 +104,6 @@ export const SeasonLeaderboardPage: React.FC = () => {
   const seasonId = 1;
   const leaderboard = loadSeasonLeaderboard(allPlayers, seasonId);
 
-  console.log(`leaderboard`, leaderboard);
   return (
     <div style={{ margin: '0 auto', textAlign: 'center' }}>
       <Title>Season {seasonId} Leaderboard</Title>

@@ -38,7 +38,6 @@ export const PortalHomeView: React.FC<{}> = () => {
   const twitters = useTwitters();
   const allPlayers = useSeasonData();
   const leaders = loadGrandPrixLeaderboard(allPlayers,grandPrix.configHash, twitters);
-  console.log(`leaders length`, leaders.length);
   const { config, lobbyAddress, error } = useConfigFromHash(grandPrix.configHash);
 
   useEffect(() => {
