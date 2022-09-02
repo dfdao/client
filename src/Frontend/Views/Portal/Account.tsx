@@ -132,7 +132,7 @@ const AccountContent = styled.div`
 
 const AccountDetails = styled.div`
   width: 600px;
-  min-height: 60%;
+  min-height: 20%;
   background: #38383b;
   border: 1px solid #676767;
   color: #dddde9;

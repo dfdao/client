@@ -7,7 +7,7 @@ import { useHistory } from 'react-router-dom';
 import { useConfigFromHash, useEthConnection } from '../../../Utils/AppHooks';
 import { tutorialConfig } from '../../../Utils/constants';
 import { MinimalButton } from '../PortalMainView';
-import { populate } from '../../../../Backend/Utils/Populate';
+import { populate, populateBulk } from '../../../../Backend/Utils/Populate';
 import { address } from '@darkforest_eth/serde';
 import { CONTRACT_ADDRESS } from '@darkforest_eth/contracts';
 import { Logo } from '../../../Panes/Lobby/LobbiesUtils';
@@ -33,18 +33,12 @@ export const PortalHeader = () => {
           onClick={() => history.push('/portal/home')}
         >
           <Logo width={56} />
-          <span
-            style={{
-              textTransform: 'uppercase',
-            }}
-          >
-            Arena
-          </span>
         </div>
         {process.env.NODE_ENV !== 'production' ? (
           <MinimalButton
             onClick={async () => {
-              await populate(connection, address(CONTRACT_ADDRESS));
+              await populateBulk(connection, address(CONTRACT_ADDRESS), 10);
+              //await populate(connection, address(CONTRACT_ADDRESS));
             }}
           >
             Populate

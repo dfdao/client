@@ -3,8 +3,9 @@ import { BigNumber } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { loadArenaLeaderboard } from '../../../Backend/Network/GraphApi/GrandPrixApi';
+import { loadSeasonLeaderboard } from '../../../Backend/Network/GraphApi/SeasonLeaderboardApi';
 import { LoadingSpinner } from '../../Components/LoadingSpinner';
-import { useConfigFromHash, useEthConnection } from '../../Utils/AppHooks';
+import { useConfigFromHash, useEthConnection, useSeasonData } from '../../Utils/AppHooks';
 import { ArenaLeaderboardDisplay } from '../Leaderboards/ArenaLeaderboard';
 import { LabeledPanel } from './Components/LabeledPanel';
 import { PaddedRow } from './Components/PaddedRow';
@@ -33,7 +34,8 @@ const DUMMY = {
 export const PortalHomeView: React.FC<{}> = () => {
   const [leaderboard, setLeaderboard] = useState<Leaderboard | undefined>();
   const { config, lobbyAddress, error } = useConfigFromHash(DUMMY.configHash);
-
+  const allPlayers = useSeasonData()
+  
   useEffect(() => {
     setLeaderboard(undefined);
     async function loadLeaderboard() {
@@ -79,18 +81,19 @@ export const PortalHomeView: React.FC<{}> = () => {
         <div className='col w-100'>
           <LabeledPanel label='Active game leaderboard'>
             <ArenaLeaderboardDisplay leaderboard={leaderboard} error={undefined} />
-            {leaderboard?.entries.length === 0 ||
+            {/* {leaderboard?.entries.length === 0 ||
               (leaderboard && leaderboard.length <= 3 && (
                 <PaddedRow>
                   <span>Play the current round to get your score on the leaderboard</span>
                 </PaddedRow>
-              ))}
+              ))} */}
           </LabeledPanel>
         </div>
         <div className='col w-100'>
           <LabeledPanel label='Season leaderboard'>
             <div className='col' style={{ gap: theme.spacing.md }}>
-              {createDummySeasonLeaderboardData(15)
+              {/* {createDummySeasonLeaderboardData(15) */}
+              {loadSeasonLeaderboard(allPlayers, 1).entries
                 .sort((a, b) => b.score - a.score)
                 .map((entry, index) => (
                   <SeasonLeaderboardEntryComponent key={index} entry={entry} index={index} />

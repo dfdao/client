@@ -10,12 +10,24 @@ import { TerminalHandle } from '../../Frontend/Views/Terminal';
 import { useRef } from 'react';
 import { DarkForest } from '@darkforest_eth/contracts/typechain';
 import { loadDiamondContract } from '../Network/Blockchain';
+import { LobbyInitializers } from '../../Frontend/Panes/Lobby/Reducer';
 
+export async function populateBulk(
+  ethConnection: EthConnection,
+  contractAddress: EthAddress,
+  numTimes = 1
+): Promise<void> {
+  const arr = new Array(numTimes)
+  for (let a of arr) {
+    await populate(ethConnection, contractAddress);
+  }
+}
 export async function populate(
   ethConnection: EthConnection,
-  contractAddress: EthAddress
+  contractAddress: EthAddress,
 ): Promise<void> {
-  const config = stockConfig.devOnePlayerRace;
+
+  const config = JSON.parse(JSON.stringify(stockConfig.devOnePlayerRace)) as LobbyInitializers;
 
   // 1. Create new arena Creation manager
   const newCreationManager = await ArenaCreationManager.create(ethConnection, contractAddress);

@@ -52,8 +52,8 @@ export function PortalHistoryView({ match }: RouteComponentProps<{ account: stri
   console.log(`season Histories`, seasonHistories);
   if (seasonHistories.length == 0) return <Container>Player not found...</Container>;
 
-  // const rounds = seasonHistories[current].grandPrixs;
-  const rounds = DummySeasons[0].grandPrixHistoryItems;
+  const rounds = seasonHistories[current].grandPrixs;
+  //const rounds = DummySeasons[0].grandPrixHistoryItems;
   const totalScore = useMemo(() => rounds.reduce((prev, curr) => curr.score + prev, 0), [rounds]);
   const mapComponents = useMemo(
     () =>
@@ -62,7 +62,7 @@ export function PortalHistoryView({ match }: RouteComponentProps<{ account: stri
       )),
     [rounds]
   );
-  const grandPrixBadges = mockBadges;
+  const grandPrixBadges = rounds.map(round => round.badges).flat() //mockBadges;
 
   const badgeElements = useMemo(() => {
     if (!grandPrixBadges) return;
@@ -73,7 +73,7 @@ export function PortalHistoryView({ match }: RouteComponentProps<{ account: stri
       if (!found) return countedBadges.push({ count: 1, badge: badge });
       return found.count++;
     });
-    return countedBadges.map((badge) => <BadgeDetailsRow type={badge.badge} count={badge.count} />);
+    return countedBadges.map((badge,i) => <BadgeDetailsRow key={i} type={badge.badge} count={badge.count} />);
   }, [grandPrixBadges]);
 
   const leftDisplay = current == 0 ? 'none' : 'flex';

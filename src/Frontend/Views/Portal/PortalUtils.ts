@@ -14,9 +14,14 @@ export function truncateString(str: string, maxLength: number) {
 export const mockBadges: BadgeType[] = [
   BadgeType.Tree,
   BadgeType.Wallbreaker,
+  BadgeType.Wallbreaker,
+  BadgeType.Nice,
   BadgeType.Nice,
   BadgeType.Sleepy,
+  BadgeType.Sleepy,
   BadgeType.StartYourEngine,
+  BadgeType.StartYourEngine,
+  BadgeType.Tree
 ];
 
 export function createDummySeasonLeaderboardData(nEntries: number): SeasonLeaderboardEntry[] {
