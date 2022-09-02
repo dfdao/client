@@ -300,7 +300,14 @@ export function EntryPage() {
   useEffect(() => {
     if (connection) {
       console.log(`loading registry...`);
-      loadRegistry(connection).then((t) => setSeasonData(t));
+      loadRegistry(connection)
+      .then((t) => {
+        setSeasonData(t)
+      })
+      .catch((e) => {
+        console.log(`load registry error`, e);
+        setSeasonData([])
+      })
     }
   }, [connection]);
 

@@ -31,6 +31,7 @@ export const PortalHomeView: React.FC<{}> = () => {
   const [leaderboard, setLeaderboard] = useState<Leaderboard | undefined>();
   const SEASON_GRAND_PRIXS = useSeasonData();
   const grandPrix = getCurrentGrandPrix(SEASON_GRAND_PRIXS);
+  if(!grandPrix) return <div>No active Grand Prix</div>
   const twitters = useTwitters();
   const allPlayers = useSeasonPlayers();
   const connection = useEthConnection();

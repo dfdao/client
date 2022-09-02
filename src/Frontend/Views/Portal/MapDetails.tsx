@@ -95,8 +95,8 @@ export function MapDetails({
           }
           if (i === 1) {
             if (numSpawnPlanets > 1 && !hasWhitelist) {
-              return <FindMatch game={liveMatches} />;
-            } else {
+            //   return <FindMatch game={liveMatches} />;
+            // } else {
               return (
                 <>
                   <LiveMatches game={liveMatches} error={liveMatchError} />{' '}

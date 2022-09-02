@@ -104,6 +104,7 @@ export const SeasonLeaderboardPage: React.FC = () => {
   const allPlayers = useSeasonPlayers();
   const SEASON_GRAND_PRIXS = useSeasonData();
   const currentGrandPrix = getCurrentGrandPrix(SEASON_GRAND_PRIXS);
+  if(!currentGrandPrix) return <div>No grand prix is currently active</div>
   const leaderboard = loadSeasonLeaderboard(allPlayers, currentGrandPrix.seasonId, SEASON_GRAND_PRIXS);
   const seasonId = currentGrandPrix.seasonId;
   return (

@@ -197,11 +197,13 @@ export function seasonScoreToSeasonHistoryItem(account: EthAddress, seasonScores
   return history;
 }
 
-export function getCurrentGrandPrix(seasonGrandPrixs: GrandPrixMetadata[]): GrandPrixMetadata {
-  const now = Math.floor(Date.now() / 1000);
+export function getCurrentGrandPrix(seasonGrandPrixs: GrandPrixMetadata[]): GrandPrixMetadata | undefined {
+  if(seasonGrandPrixs.length == 0) return undefined;
 
+  const now = Math.floor(Date.now() / 1000);
   const res = seasonGrandPrixs.find((gp) => now >= gp.startTime && now <= gp.endTime);
-  if (!res) throw new Error('No current Grand Prix found');
+  // Return most recent grand prix if none are active
+  if(!res) return seasonGrandPrixs.sort((a,b) => b.startTime - a.startTime)[0]
   return res;
 }
 
