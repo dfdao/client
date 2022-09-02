@@ -35,13 +35,9 @@ export const SeasonLeaderboardEntryComponent: React.FC<{
                 }}
               >
                 <span>
-                  <button
-                    onClick={() => {
-                      history.push(`/portal/map/${game.configHash}`);
-                    }}
-                  >
+                  <Link style={{color: dfstyles.colors.dfblue }}  to={`/portal/map/${game.configHash}`}>
                     {getConfigName(game.configHash)}
-                  </button>
+                  </Link>
                 </span>
                 <span>{game.score}</span>
               </div>
