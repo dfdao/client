@@ -184,10 +184,11 @@ export function loadSeasonLeaderboard(
     entries: [],
   };
 
-  
   for (const [player, cleanConfigPlayers] of Object.entries(seasonPlayers)) {
-    const allBadges = cleanConfigPlayers.map(ccp => ccp.badges.map(badge => badge.type).flat()).flat();
-    const badgeScore = calcBadgeTypeScore(allBadges)
+    const allBadges = cleanConfigPlayers
+      .map((ccp) => ccp.badges.map((badge) => badge.type).flat())
+      .flat();
+    const badgeScore = calcBadgeTypeScore(allBadges);
     const { score, badges } = cleanConfigPlayers
       .map((ccp) => {
         return { score: ccp.score, badges: ccp.badges.length };
@@ -346,18 +347,9 @@ export function calcBadgeScore(badges: BadgeSet): number {
 
 export function calcBadgeTypeScore(badges: BadgeType[]): number {
   let badgeScore = 0;
-  for(let item of Object.values(BadgeType)) {
-    console.log(`item`, item);
-    console.log(`does badges include ${item}`)
-    if (badges.includes(item as BadgeType))
-      badgeScore += BADGE_BONUSES[item as BadgeType].bonus;
+  for (let item of Object.values(BadgeType)) {
+    if (badges.includes(item as BadgeType)) badgeScore += BADGE_BONUSES[item as BadgeType].bonus;
   }
-  // if (badges.includes(BadgeType.StartYourEngine))
-  //   badgeScore += BADGE_BONUSES[BadgeType.StartYourEngine].bonus;
-  // if (badges.includes(BadgeType.Nice)) badgeScore += BADGE_BONUSES[BadgeType.Nice].bonus;;
-  // if (badges.includes(BadgeType.Tree)) badgeScore += TREE_BONUS;
-  // if (badges.includes(BadgeType.Sleepy)) badgeScore += SLEEPY_BONUS;
-
   return badgeScore;
 }
 
