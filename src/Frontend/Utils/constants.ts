@@ -121,7 +121,7 @@ const TEMP_START_TIME = 1597862644;
 const TEMP_END_TIME = 1662588877;
 
 // One hour 
-const WALLBREAKER_BONUS = 5 * 60;
+const WALLBREAKER_BONUS = 0;
 const START_ENGINE_BONUS = 100;
 const SLEEPY_BONUS = 24;
 const TREE_BONUS = 42;
@@ -146,7 +146,7 @@ BADGE_BONUSES[BadgeType.Sleepy] = {
   color: dfstyles.colors.dfblue
 }
 BADGE_BONUSES[BadgeType.Wallbreaker] = {
-  bonus: 0,
+  bonus: WALLBREAKER_BONUS,
   color: dfstyles.colors.dfgold
 }
 

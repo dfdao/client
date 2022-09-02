@@ -30,6 +30,7 @@ import {
   NICE_BONUS,
   TREE_BONUS,
   SLEEPY_BONUS,
+  BADGE_BONUSES,
 } from '../../../Frontend/Utils/constants';
 import { createDummySeasonData } from '../../../Frontend/Views/Portal/PortalUtils';
 import { AddressTwitterMap } from '../../../_types/darkforest/api/UtilityServerAPITypes';
@@ -183,7 +184,10 @@ export function loadSeasonLeaderboard(
     entries: [],
   };
 
+  
   for (const [player, cleanConfigPlayers] of Object.entries(seasonPlayers)) {
+    const allBadges = cleanConfigPlayers.map(ccp => ccp.badges.map(badge => badge.type).flat()).flat();
+    const badgeScore = calcBadgeTypeScore(allBadges)
     const { score, badges } = cleanConfigPlayers
       .map((ccp) => {
         return { score: ccp.score, badges: ccp.badges.length };
@@ -194,7 +198,7 @@ export function loadSeasonLeaderboard(
     const entry: SeasonLeaderboardEntry = {
       address: player,
       games: cleanConfigPlayers,
-      score,
+      score: score + badgeScore,
       badges,
     };
     leaderboardProps.entries.push(entry);
@@ -271,7 +275,7 @@ async function addWallbreakersAndBadges(
       configHash: cfp.configHash,
       gamesStarted: cfp.gamesStarted,
       gamesFinished: cfp.gamesFinished,
-      score: calcGrandPrixScore(cfp),
+      score: calcGrandPrixScore(cfp), // Doesn't include badges!!
     };
     return cleanConfig;
   });
@@ -342,10 +346,17 @@ export function calcBadgeScore(badges: BadgeSet): number {
 
 export function calcBadgeTypeScore(badges: BadgeType[]): number {
   let badgeScore = 0;
-  if (badges.includes(BadgeType.StartYourEngine)) badgeScore += START_ENGINE_BONUS;
-  if (badges.includes(BadgeType.Nice)) badgeScore += NICE_BONUS;
-  if (badges.includes(BadgeType.Tree)) badgeScore += TREE_BONUS;
-  if (badges.includes(BadgeType.Sleepy)) badgeScore += SLEEPY_BONUS;
+  for(let item of Object.values(BadgeType)) {
+    console.log(`item`, item);
+    console.log(`does badges include ${item}`)
+    if (badges.includes(item as BadgeType))
+      badgeScore += BADGE_BONUSES[item as BadgeType].bonus;
+  }
+  // if (badges.includes(BadgeType.StartYourEngine))
+  //   badgeScore += BADGE_BONUSES[BadgeType.StartYourEngine].bonus;
+  // if (badges.includes(BadgeType.Nice)) badgeScore += BADGE_BONUSES[BadgeType.Nice].bonus;;
+  // if (badges.includes(BadgeType.Tree)) badgeScore += TREE_BONUS;
+  // if (badges.includes(BadgeType.Sleepy)) badgeScore += SLEEPY_BONUS;
 
   return badgeScore;
 }
@@ -357,7 +368,7 @@ export function calcCleanGrandPrixScore(cleanConfigPlayer: CleanConfigPlayer): n
 
 export function calcGrandPrixScore(configPlayer: ConfigPlayer): number {
   const timeScore = DAY_IN_SECONDS - configPlayer.bestTime.duration;
-  return timeScore + calcBadgeScore(configPlayer.badge);
+  return timeScore;
 }
 
 /**
