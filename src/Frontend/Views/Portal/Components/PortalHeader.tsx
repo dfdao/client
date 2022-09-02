@@ -54,13 +54,13 @@ export const PortalHeader = () => {
             to: '/portal/home',
           },
           {
-            label: 'Create',
-            to: '/arena',
-          },
-          {
             label: 'History',
             to: `/portal/history/${playerAddress}`,
             wildcard: playerAddress,
+          },
+          {
+            label: 'Create',
+            to: '/arena',
           },
           {
             label: 'Community',
