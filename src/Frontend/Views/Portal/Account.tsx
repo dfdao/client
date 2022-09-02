@@ -2,20 +2,12 @@ import { BadgeType } from '@darkforest_eth/types';
 import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { logOut } from '../../../Backend/Network/AccountManager';
-import { loadPlayerBadges } from '../../../Backend/Network/GraphApi/SeasonLeaderboardApi';
 import { Badge, BadgeDetailsCol, SpacedBadges } from '../../Components/Badges';
 import { Btn } from '../../Components/Btn';
 import { Gnosis, Icon, IconType, Twitter } from '../../Components/Icons';
 import { TextPreview } from '../../Components/TextPreview';
-import { WithdrawSilverButton } from '../../Panes/Game/TooltipPanes';
 
-import dfstyles from '../../Styles/dfstyles';
-import {
-  useEthConnection,
-  usePlayerBadges,
-  useSeasonData,
-  useTwitters,
-} from '../../Utils/AppHooks';
+import { useEthConnection, useTwitters } from '../../Utils/AppHooks';
 import { mockBadges, truncateAddress } from './PortalUtils';
 import { theme } from './styleUtils';
 
@@ -25,21 +17,6 @@ function AccountModal({ setOpen }: { setOpen: (open: boolean) => void }) {
   const twitters = useTwitters();
   if (!address) return <></>;
   const twitter = twitters[address];
-  const truncatedAddress = truncateAddress(address);
-  const grandPrixBadges = mockBadges;
-  const badgeElements = useMemo(() => {
-    if (!grandPrixBadges) return;
-
-    const countedBadges: { count: number; badge: BadgeType }[] = [];
-    grandPrixBadges.forEach((badge) => {
-      const found = countedBadges.find((b) => b.badge == badge);
-      if (!found) return countedBadges.push({ count: 1, badge: badge });
-      return found.count++;
-    });
-    return countedBadges.map((badge, index: number) => (
-      <BadgeDetailsCol type={badge.badge} count={badge.count} key={index} />
-    ));
-  }, [grandPrixBadges]);
 
   return (
     <ModalContainer onClick={() => setOpen(false)}>
@@ -78,12 +55,6 @@ function AccountModal({ setOpen }: { setOpen: (open: boolean) => void }) {
               </Btn>
             )}
           </div>
-          {/* <StackedBadges items={mockBadges} /> */}
-          {/* {badgeElements && badgeElements.length > 0 ? (
-            <BadgeGrid>{badgeElements}</BadgeGrid>
-          ) : (
-            'You have no badges'
-          )} */}
         </AccountContent>
         <Footer>
           <Btn onClick={logOut}>Logout</Btn>

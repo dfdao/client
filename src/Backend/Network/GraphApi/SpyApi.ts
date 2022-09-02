@@ -1,13 +1,14 @@
 import { LiveMatch } from '@darkforest_eth/types';
 import { getGraphQLData } from '../GraphApi';
 
-export const loadLiveMatches = async (config?: string): Promise<LiveMatch> => {
+export const loadLiveMatches = async (configHash?: string): Promise<LiveMatch> => {
   const startTime = Math.round((Date.now() - 1000 * 60 * 60 * 24 * 7) / 1000);
 
-  const configHash = config ? `configHash: "${config}",` : '';
+  const hash = configHash ? `configHash: "${configHash}",` : '';
   const query = `
     query {
-      arenas(first: 1000, orderBy: startTime, orderDirection: desc, where: {startTime_gt: ${startTime}, ${configHash} gameOver: false}) {
+      arenas(first: 1000, orderBy: startTime, orderDirection: desc, where: {startTime_gt: ${startTime}, ${hash}}) {
+      lobbyAddress
       firstMover {
         address
       },  
@@ -15,12 +16,16 @@ export const loadLiveMatches = async (config?: string): Promise<LiveMatch> => {
       creator,
       id
       startTime,
+      endTime,
       configHash
-planets{spawnPlanet}  
-
+      planets {
+        spawnPlanet
+      }
+      gameOver
+      duration  
       }
     }`;
-
+  console.log(`spy query`, query);
   const response = await getGraphQLData(query, process.env.GRAPH_URL || 'localhost:8000');
 
   if ('errors' in response) {

@@ -143,7 +143,7 @@ const MatchContainer = styled.div`
   height: 100%;
 `;
 
-const MatchButton = styled.button`
+export const MatchButton = styled.button`
   border-radius: 3px;
   padding: 8px 16px;
   background: ${dfstyles.colors.backgroundlighter};

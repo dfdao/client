@@ -14,6 +14,7 @@ import { formatDuration } from '../../Utils/TimeUtils';
 import { GenericErrorBoundary } from '../GenericErrorBoundary';
 import { SortableTable } from '../SortableTable';
 import { Table } from '../Table';
+import { scoreToTime } from '../Portal/PortalUtils';
 
 const errorMessage = 'Error Loading Leaderboard';
 
@@ -77,18 +78,7 @@ export function EloLeaderboardDisplay({
   );
 }
 
-function scoreToTime(score?: number | null) {
-  if (score === null || score === undefined) {
-    return 'n/a';
-  }
-  score = Math.floor(score);
 
-  const seconds = String(score % 60).padStart(2, '0');
-  const minutes = String(Math.floor(score / 60) % 60).padStart(2, '0');
-  const hours = String(Math.min(99, Math.floor(score / 3600))).padStart(2, '0');
-
-  return hours + ':' + minutes + ':' + seconds;
-}
 
 // pass in either an address, or a twitter handle. this function will render the appropriate
 // component

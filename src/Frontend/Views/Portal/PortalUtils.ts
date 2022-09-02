@@ -35,61 +35,6 @@ export const mockBadges: BadgeType[] = [
   BadgeType.Tree,
 ];
 
-export function createDummySeasonLeaderboardData(nEntries: number): SeasonLeaderboardEntry[] {
-  let dummy: SeasonLeaderboardEntry[] = [];
-  for (let i = 0; i < nEntries; i++) {
-    const address = '0x' + Math.floor(Math.random() * Math.pow(10, 40)).toString(16);
-    const entry: SeasonLeaderboardEntry = {
-      address,
-      games: [
-        {
-          id: '123',
-          address: address,
-          duration: Math.floor(Math.random() * 1000),
-          moves: Math.floor(Math.random() * 1000),
-          startTime: SEASON_GRAND_PRIXS[0].startTime,
-          endTime: SEASON_GRAND_PRIXS[0].endTime,
-          badges: [BadgeType.StartYourEngine, BadgeType.Wallbreaker],
-          gamesStarted: Math.floor(Math.random() * 100),
-          gamesFinished: Math.floor(Math.random() * 100),
-          configHash: '0x' + Math.floor(Math.random() * 10000000000000000).toString(16),
-          score: Math.floor(i * Math.random() * 1000),
-        },
-        {
-          id: '123',
-          address: address,
-          duration: Math.floor(Math.random() * 1000),
-          moves: Math.floor(Math.random() * 1000),
-          startTime: SEASON_GRAND_PRIXS[0].startTime,
-          endTime: SEASON_GRAND_PRIXS[0].endTime,
-          badges: [BadgeType.StartYourEngine, BadgeType.Wallbreaker],
-          gamesStarted: Math.floor(Math.random() * 100),
-          gamesFinished: Math.floor(Math.random() * 100),
-          configHash: '0x' + Math.floor(Math.random() * 10000000000000000).toString(16),
-          score: Math.floor(i * Math.random() * 1000),
-        },
-        {
-          id: '123',
-          address: address,
-          duration: Math.floor(Math.random() * 1000),
-          moves: Math.floor(Math.random() * 1000),
-          startTime: SEASON_GRAND_PRIXS[0].startTime,
-          endTime: SEASON_GRAND_PRIXS[0].endTime,
-          badges: [BadgeType.StartYourEngine, BadgeType.Wallbreaker],
-          gamesStarted: Math.floor(Math.random() * 100),
-          gamesFinished: Math.floor(Math.random() * 100),
-          configHash: '0x' + Math.floor(Math.random() * 10000000000000000).toString(16),
-          score: Math.floor(i * Math.random() * 1000),
-        },
-      ],
-      score: Math.floor(i * Math.random() * 1000),
-      badges: Math.floor(Math.random() * 1000),
-    };
-    dummy.push(entry);
-  }
-  return dummy;
-}
-
 const genRanHex = (size: number) =>
   [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
 
@@ -106,7 +51,20 @@ export function createDummySeasonData(nEntries: number): CleanConfigPlayer[] {
       moves: Math.floor(Math.random() * 1000),
       startTime,
       endTime,
-      badges: [BadgeType.StartYourEngine, BadgeType.Nice, BadgeType.Tree],
+      badges: [
+        {
+          type: BadgeType.Nice,
+          configHash: DEV_CONFIG_HASH_1
+        },
+        {
+          type: BadgeType.StartYourEngine,
+          configHash: DEV_CONFIG_HASH_1
+        },
+        {
+          type: BadgeType.Sleepy,
+          configHash: DEV_CONFIG_HASH_1
+        }
+      ],
       configHash: DEV_CONFIG_HASH_1,
       gamesStarted: Math.floor(Math.random() * 100),
       gamesFinished: Math.floor(Math.random() * 100),
@@ -207,9 +165,21 @@ export function seasonScoreToSeasonHistoryItem(account: EthAddress, seasonScores
 
 export function getCurrentGrandPrix(grandPrixs: GrandPrixMetadata[]): GrandPrixMetadata {
   const now = Math.floor(Date.now() / 1000);
-  console.log(`now ${now} start ${grandPrixs[0].startTime} end ${grandPrixs[1].endTime}`);
 
   const res = grandPrixs.find((gp) => now >= gp.startTime && now <= gp.endTime);
   if (!res) throw new Error('No current Grand Prix found');
   return res;
+}
+
+export function scoreToTime(score?: number | null) {
+  if (score === null || score === undefined) {
+    return 'n/a';
+  }
+  score = Math.floor(score);
+
+  const seconds = String(score % 60).padStart(2, '0');
+  const minutes = String(Math.floor(score / 60) % 60).padStart(2, '0');
+  const hours = String(Math.min(99, Math.floor(score / 3600))).padStart(2, '0');
+
+  return hours + ':' + minutes + ':' + seconds;
 }

@@ -10,7 +10,7 @@ import { loadPlayerSeasonHistoryView } from '../../../Backend/Network/GraphApi/S
 import { BadgeDetailsRow } from '../../Components/Badges';
 import { Icon } from '../../Components/Icons';
 import { Sub } from '../../Components/Text';
-import { useAccount, useEthConnection, useSeasonData } from '../../Utils/AppHooks';
+import { useAccount, useEthConnection, useSeasonData, useTwitters } from '../../Utils/AppHooks';
 import { SEASON_GRAND_PRIXS } from '../../Utils/constants';
 import { TiledTable } from '../TiledTable';
 import { PortalHistoryRoundCard } from './Components/PortalHistoryRoundCard';
@@ -43,6 +43,7 @@ export function PortalHistoryView({ match }: RouteComponentProps<{ account: stri
   const [current, setCurrent] = useState<number>(0);
   const account = match.params.account as EthAddress;
   const ethConnection = useEthConnection();
+  const twitters = useTwitters();
   const currentPlayerAddress = ethConnection.getAddress();
   if (!account) return <div>Loading...</div>;
 
@@ -56,7 +57,7 @@ export function PortalHistoryView({ match }: RouteComponentProps<{ account: stri
   const totalScore = useMemo(() => rounds.reduce((prev, curr) => curr.score + prev, 0), [rounds]);
   const mapComponents = useMemo(
     () =>
-      rounds.map((round: GrandPrixHistoryItem, idx: number) => (
+      rounds.map((round: GrandPrixHistory, idx: number) => (
         <PortalHistoryRoundCard round={round} index={idx} key={idx} />
       )),
     [rounds]
@@ -67,9 +68,9 @@ export function PortalHistoryView({ match }: RouteComponentProps<{ account: stri
     if (!grandPrixBadges) return;
 
     const countedBadges: { count: number; badge: BadgeType }[] = [];
-    grandPrixBadges.forEach((badge) => {
-      const found = countedBadges.find((b) => b.badge == badge);
-      if (!found) return countedBadges.push({ count: 1, badge: badge });
+    grandPrixBadges.forEach((cb) => {
+      const found = countedBadges.find((b) => b.badge == cb.type);
+      if (!found) return countedBadges.push({ count: 1, badge: cb.type });
       return found.count++;
     });
     return countedBadges.map((badge,i) => <BadgeDetailsRow key={i} type={badge.badge} count={badge.count} />);
@@ -87,7 +88,7 @@ export function PortalHistoryView({ match }: RouteComponentProps<{ account: stri
       </HeaderContainer>
       <PlayerInfoContainer>
         <span>
-          Player {account} {account === currentPlayerAddress && '(you)'}
+          Player {twitters[account] ?? account} {account === currentPlayerAddress && '(you)'}
         </span>
         <div
           style={{

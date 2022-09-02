@@ -1,7 +1,8 @@
 import { address } from '@darkforest_eth/serde';
-import { EthAddress, GrandPrixMetadata } from '@darkforest_eth/types';
+import { BadgeType, EthAddress, GrandPrixMetadata } from '@darkforest_eth/types';
 import * as bigInt from 'big-integer';
 import { constants } from 'ethers';
+import dfstyles from '../Styles/dfstyles';
 
 // To developer, increase this number to 256. This, in combination with setting `DISABLE_ZK_CHECKS`
 // in darkforest.toml, will make you mine the map at ULTRA SPEED!
@@ -122,9 +123,36 @@ const TEMP_END_TIME = 1662588877;
 // One hour 
 const WALLBREAKER_BONUS = 5 * 60;
 const START_ENGINE_BONUS = 100;
+const SLEEPY_BONUS = 24;
+const TREE_BONUS = 42;
+const NICE_BONUS = 69;
+
+const BADGE_BONUSES: {[type:BadgeType]: {bonus: number, color: string}} = {};
+
+BADGE_BONUSES[BadgeType.StartYourEngine] = {
+  bonus: START_ENGINE_BONUS,
+  color: dfstyles.colors.dfred
+}
+BADGE_BONUSES[BadgeType.Tree] = {
+  bonus: TREE_BONUS,
+  color: dfstyles.colors.dfgreen
+}
+BADGE_BONUSES[BadgeType.Nice] = {
+  bonus: NICE_BONUS,
+  color: dfstyles.colors.dfpurple
+}
+BADGE_BONUSES[BadgeType.Sleepy] = {
+  bonus: SLEEPY_BONUS,
+  color: dfstyles.colors.dfblue
+}
+BADGE_BONUSES[BadgeType.Wallbreaker] = {
+  bonus: 0,
+  color: dfstyles.colors.dfgold
+}
+
 const DAY_IN_SECONDS = 24 * 60 * 60;
 const EGP = true;
-const DUMMY = true;
+const DUMMY = false;
 const DEV_CONFIG_HASH_1 = "0xd08bbeb0785370a68369f0a042e33ef2688da6da5e79acbb5688ddbb8ca4a862";
 const DEV_CONFIG_HASH_2 = "0x0d6894ebcd6476be6c4ffe3ae3aaafda48b3b02c438ca481fd8836d16964a80e";
 // startTime and endTime are in UNIX seconds
@@ -162,6 +190,10 @@ export {
   SEASON_GRAND_PRIXS,
   WALLBREAKER_BONUS,
   START_ENGINE_BONUS,
+  SLEEPY_BONUS,
+  TREE_BONUS,
+  NICE_BONUS,
+  BADGE_BONUSES,
   EGP,
   DUMMY,
   DEV_CONFIG_HASH_1,

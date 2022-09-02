@@ -3,6 +3,7 @@ import {
   BadgeSet,
   BadgeType,
   CleanConfigPlayer,
+  ConfigBadge,
   ConfigPlayer,
   EthAddress,
   GrandPrixHistory,
@@ -11,12 +12,14 @@ import {
   GrandPrixResult,
   Leaderboard,
   LeaderboardEntry,
+  SeasonBadge,
   SeasonHistory,
   SeasonPlayers,
   SeasonScore,
   Wallbreaker,
   WallbreakerArena,
 } from '@darkforest_eth/types';
+import { UniquePlayerBadges } from '@darkforest_eth/types/src/grand_prix';
 import {
   SEASON_GRAND_PRIXS,
   DAY_IN_SECONDS,
@@ -24,6 +27,9 @@ import {
   WALLBREAKER_BONUS,
   EGP,
   DUMMY,
+  NICE_BONUS,
+  TREE_BONUS,
+  SLEEPY_BONUS,
 } from '../../../Frontend/Utils/constants';
 import { createDummySeasonData } from '../../../Frontend/Views/Portal/PortalUtils';
 import { AddressTwitterMap } from '../../../_types/darkforest/api/UtilityServerAPITypes';
@@ -88,8 +94,8 @@ export async function loadWallbreakers(): Promise<Wallbreaker[]> {
 // It calls loadWallbreakers() internally.
 export async function loadAllPlayerData(): Promise<CleanConfigPlayer[]> {
   console.log(`loading player data...`);
-  if(DUMMY) return createDummySeasonData(200);
-  if(!EGP) return [];
+  if (DUMMY) return createDummySeasonData(200);
+  if (!EGP) return [];
   const stringHashes = SEASON_GRAND_PRIXS.map((season) => `"${season.configHash}"`);
   // Query size is number of unique players on each Grand Prix in a season. (6 GPs * 100 players = 100 results).
   // If > 1000, graph won't return.
@@ -206,7 +212,10 @@ export function loadGrandPrixPlayers(configPlayers: CleanConfigPlayer[], configH
 }
 
 // Assumes configPlayers have same configHash
-export function configPlayersToLeaderboard(configPlayers: CleanConfigPlayer[], twitters?: AddressTwitterMap) {
+export function configPlayersToLeaderboard(
+  configPlayers: CleanConfigPlayer[],
+  twitters?: AddressTwitterMap
+) {
   let entries: LeaderboardEntry[] = [];
 
   // Just show wallBreaker badge in client.
@@ -232,7 +241,11 @@ export function loadSeasonPlayer(playerId: string, configPlayers: ConfigPlayer[]
   return configPlayers.filter((cp) => cp.address === playerId);
 }
 
-export function loadGrandPrixLeaderboard(configPlayers: CleanConfigPlayer[], configHash: string, twitters?: AddressTwitterMap) {
+export function loadGrandPrixLeaderboard(
+  configPlayers: CleanConfigPlayer[],
+  configHash: string,
+  twitters?: AddressTwitterMap
+) {
   const players = loadGrandPrixPlayers(configPlayers, configHash);
   const leaderboard = configPlayersToLeaderboard(players, twitters);
   return leaderboard;
@@ -254,7 +267,7 @@ async function addWallbreakersAndBadges(
       moves: cfp.bestTime.winners[0].moves,
       startTime: cfp.bestTime.startTime,
       endTime: cfp.bestTime.endTime,
-      badges: graphBadgeToGrandPrixBadge(cfp.badge),
+      badges: graphBadgeToGrandPrixBadge(cfp.badge, cfp.configHash),
       configHash: cfp.configHash,
       gamesStarted: cfp.gamesStarted,
       gamesFinished: cfp.gamesFinished,
@@ -278,12 +291,17 @@ export function groupByPlayers(configPlayers: CleanConfigPlayer[]): SeasonPlayer
 export function getSeasonScore(seasonPlayers: SeasonPlayers): SeasonScore[] {
   const seasonScores: SeasonScore[] = [];
   for (const [player, cleanConfigPlayer] of Object.entries(seasonPlayers)) {
+    const badges: ConfigBadge[] = [];
     const seasonScore: SeasonScore = {
       player,
       score: cleanConfigPlayer
-        .map((result) => calcCleanGrandPrixScore(result))
+        .map((result) => {
+          badges.concat(result.badges);
+          return calcCleanGrandPrixScore(result);
+        })
         .reduce((prev, curr) => prev + curr),
     };
+    seasonScore.score += calcBadgeTypeScore(badges.map((b) => b.type));
     seasonScores.push(seasonScore);
   }
   return seasonScores;
@@ -324,16 +342,17 @@ export function calcBadgeScore(badges: BadgeSet): number {
 
 export function calcBadgeTypeScore(badges: BadgeType[]): number {
   let badgeScore = 0;
-  badges.map((b) => {
-    if (b == BadgeType.StartYourEngine) badgeScore += START_ENGINE_BONUS;
-    if (b == BadgeType.Wallbreaker) badgeScore += WALLBREAKER_BONUS;
-  });
+  if (badges.includes(BadgeType.StartYourEngine)) badgeScore += START_ENGINE_BONUS;
+  if (badges.includes(BadgeType.Nice)) badgeScore += NICE_BONUS;
+  if (badges.includes(BadgeType.Tree)) badgeScore += TREE_BONUS;
+  if (badges.includes(BadgeType.Sleepy)) badgeScore += SLEEPY_BONUS;
+
   return badgeScore;
 }
 
+// Doesn't include badges. Badges just add season points.
 export function calcCleanGrandPrixScore(cleanConfigPlayer: CleanConfigPlayer): number {
-  const timeScore = DAY_IN_SECONDS - cleanConfigPlayer.duration;
-  return timeScore + calcBadgeTypeScore(cleanConfigPlayer.badges);
+  return DAY_IN_SECONDS - cleanConfigPlayer.duration;
 }
 
 export function calcGrandPrixScore(configPlayer: ConfigPlayer): number {
@@ -350,8 +369,8 @@ export function loadPlayerSeasonHistoryView(
 ): SeasonHistory[] {
   const seasonHistories: SeasonHistory[] = [];
 
-  const playerExists = configPlayers.find(cp => cp.address == player);
-  if(!playerExists) return [];
+  const playerExists = configPlayers.find((cp) => cp.address == player);
+  if (!playerExists) return [];
 
   // Get Season Rank and Score.
   // Need to handle multiple seasons.
@@ -404,8 +423,7 @@ export function loadPlayerSeasonHistoryView(
         const playerGrandPrixs = groupByPlayers(configPlayers)[player].filter(
           (cp) => cp.configHash == gp.configHash
         )[0];
-        
-          
+
         const grandPrixHistory: GrandPrixHistory = {
           configHash: gp.configHash,
           rank,
@@ -427,10 +445,20 @@ export function loadPlayerSeasonHistoryView(
 export function getBadges(configBadges: BadgeType[][]): BadgeType[] {
   return configBadges.map((configBadge) => configBadge).flat();
 }
-export function loadPlayerBadges(
-  player: EthAddress,
-  configPlayers: CleanConfigPlayer[]
-): BadgeType[] {
-  const playerGrandPrixs = groupByPlayers(configPlayers)[player];
-  return playerGrandPrixs.map((pgp) => pgp.badges).flat();
+
+// Output: object of player address => unique season badges
+export function loadUniquePlayerBadges(configPlayers: CleanConfigPlayer[], seasonId: number) {
+  const seasonPlayers = loadSeasonPlayers(configPlayers, seasonId);
+  const res: { [player: string]: ConfigBadge[] } = {};
+  for (const [player, playerGrandPrixs] of Object.entries(seasonPlayers)) {
+    const allBadges = playerGrandPrixs.map((pgp) => pgp.badges).flat();
+    const uniqueBadgeSet: UniquePlayerBadges = {};
+    allBadges.forEach((cb) => {
+      uniqueBadgeSet[cb.type] = cb;
+    });
+
+    const uniques = Object.values(uniqueBadgeSet) as ConfigBadge[];
+    res[player] = uniques;
+  }
+  return res;
 }
