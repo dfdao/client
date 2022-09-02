@@ -35,6 +35,8 @@ import { ModalHandle } from '../Views/Game/ModalPane';
 import { createDefinedContext } from './createDefinedContext';
 import { useEmitterSubscribe, useEmitterValue, useWrappedEmitter } from './EmitterHooks';
 import { usePoll } from './Hooks';
+import { DUMMY } from './constants';
+import { createDummyLiveMatches } from '../Views/Portal/PortalUtils';
 
 export const { useDefinedContext: useEthConnection, provider: EthConnectionProvider } =
   createDefinedContext<EthConnection>();
@@ -331,7 +333,12 @@ export function useLiveMatches(
   const [spyError, setSpyError] = useState<Error | undefined>();
   const loadSpy = useCallback(async function loadSpy() {
     try {
-      setLiveMatches(await loadLiveMatches(config));
+      if(DUMMY) {
+        setLiveMatches( createDummyLiveMatches(10))
+      }
+      else {
+        setLiveMatches(await loadLiveMatches(config));
+      }
     } catch (e) {
       console.log('error loading leaderboard', e);
       setSpyError(e);

@@ -4,7 +4,7 @@ import dfstyles from '@darkforest_eth/ui/dist/styles';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useLiveMatches, useTwitters } from '../../Utils/AppHooks';
-import { DAY_IN_SECONDS, DEV_CONFIG_HASH_1 } from '../../Utils/constants';
+import { DAY_IN_SECONDS, DEV_CONFIG_HASH_1, DUMMY } from '../../Utils/constants';
 import { formatStartTime } from '../../Utils/TimeUtils';
 import { compPlayerToEntry } from '../Leaderboards/ArenaLeaderboard';
 import { Orb } from './Components/FlashingOrb';
@@ -22,8 +22,8 @@ export interface MapDetailsProps {
 export const GPFeed: React.FC<MapDetailsProps> = ({ configHash }) => {
   const twitters = useTwitters();
   // Updates every x ms.
-  const { liveMatches, spyError } = useLiveMatches(configHash, 3000);
-
+  const { liveMatches, spyError } = useLiveMatches(configHash, !DUMMY ? 5000 : undefined);
+  
   const latest = liveMatches?.entries
     .map((m) => {
       return {

@@ -1,8 +1,11 @@
+import { address } from '@darkforest_eth/serde';
 import {
   BadgeType,
   CleanConfigPlayer,
   EthAddress,
+  ExtendedMatchEntry,
   GrandPrixMetadata,
+  LiveMatch,
   SeasonScore,
 } from '@darkforest_eth/types';
 import { SeasonLeaderboardEntry } from '../../../Backend/Network/GraphApi/SeasonLeaderboardApi';
@@ -77,8 +80,41 @@ export function createDummySeasonData(nEntries: number): CleanConfigPlayer[] {
     dummy.push(entry1);
     dummy.push(entry2);
   }
-  console.log(`dummy data`, dummy);
   return dummy;
+}
+
+
+export function createDummyLiveMatches(nEntries: number): LiveMatch {
+  const entries: ExtendedMatchEntry[] = [];
+  for(let i = 0; i < nEntries; i++) {
+    const startTime = Math.floor(Math.random() * 1000);
+    const endTime = Math.floor(Math.random() * 1000) + startTime;
+    const player = '0x' + genRanHex(40);
+    const lobby = '0x' + genRanHex(40);
+    const entry1:ExtendedMatchEntry = {
+      lobbyAddress: address(lobby),
+      creator: address(player),
+      firstMover: {
+        address: address(player)
+      },
+      id: "123",
+      // Have start time be later if game is not over
+      startTime: endTime,
+      endTime,
+      configHash: DEV_CONFIG_HASH_1,
+      gameOver: false,
+      duration: endTime - startTime,
+      planets: []
+    }
+    const entry2: ExtendedMatchEntry = {
+      ...entry1,
+      gameOver: true,
+      configHash: DEV_CONFIG_HASH_2,
+    };
+    entries.push(entry1);
+    entries.push(entry2);
+  }
+  return { entries } as LiveMatch
 }
 
 export const DummySeasons: SeasonHistoryItem[] = [
@@ -163,10 +199,10 @@ export function seasonScoreToSeasonHistoryItem(account: EthAddress, seasonScores
   return history;
 }
 
-export function getCurrentGrandPrix(grandPrixs: GrandPrixMetadata[]): GrandPrixMetadata {
+export function getCurrentGrandPrix(seasonGrandPrixs: GrandPrixMetadata[]): GrandPrixMetadata {
   const now = Math.floor(Date.now() / 1000);
 
-  const res = grandPrixs.find((gp) => now >= gp.startTime && now <= gp.endTime);
+  const res = seasonGrandPrixs.find((gp) => now >= gp.startTime && now <= gp.endTime);
   if (!res) throw new Error('No current Grand Prix found');
   return res;
 }
