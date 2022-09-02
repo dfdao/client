@@ -14,7 +14,7 @@ import { ConfigDetails } from './ConfigDetails';
 import { FindMatch } from './FindMatch';
 import useSWR from 'swr';
 import { fetcher } from '../../../Backend/Network/UtilityServerAPI';
-import { useSeasonData, useTwitters } from '../../Utils/AppHooks';
+import { useSeasonData, useSeasonPlayers, useTwitters } from '../../Utils/AppHooks';
 import { loadGrandPrixLeaderboard } from '../../../Backend/Network/GraphApi/SeasonLeaderboardApi';
 
 export function MapDetails({
@@ -33,7 +33,7 @@ export function MapDetails({
   const numSpawnPlanets = config?.ADMIN_PLANETS.filter((p) => p.isSpawnPlanet).length ?? 0;
   const hasWhitelist = config?.WHITELIST_ENABLED ?? true;
   const twitters = useTwitters();
-  const allPlayers = useSeasonData();
+  const allPlayers = useSeasonPlayers();
   const leaders = loadGrandPrixLeaderboard(allPlayers, configHash, twitters);
 
   useEffect(() => {

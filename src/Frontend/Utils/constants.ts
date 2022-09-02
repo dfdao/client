@@ -155,8 +155,8 @@ const EGP = true;
 const DUMMY = false;
 const DEV_CONFIG_HASH_1 = "0xd08bbeb0785370a68369f0a042e33ef2688da6da5e79acbb5688ddbb8ca4a862";
 const DEV_CONFIG_HASH_2 = "0x0d6894ebcd6476be6c4ffe3ae3aaafda48b3b02c438ca481fd8836d16964a80e";
-// startTime and endTime are in UNIX seconds
 
+// startTime and endTime are in UNIX seconds
 const SEASON_GRAND_PRIXS: GrandPrixMetadata[] = [
   {
     seasonId: 1,

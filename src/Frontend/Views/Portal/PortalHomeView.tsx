@@ -14,6 +14,7 @@ import {
   useConfigFromHash,
   useEthConnection,
   useSeasonData,
+  useSeasonPlayers,
   useTwitters,
 } from '../../Utils/AppHooks';
 import { SEASON_GRAND_PRIXS } from '../../Utils/constants';
@@ -28,16 +29,17 @@ import { theme } from './styleUtils';
 
 export const PortalHomeView: React.FC<{}> = () => {
   const [leaderboard, setLeaderboard] = useState<Leaderboard | undefined>();
+  const SEASON_GRAND_PRIXS = useSeasonData();
   const grandPrix = getCurrentGrandPrix(SEASON_GRAND_PRIXS);
   const twitters = useTwitters();
-  const allPlayers = useSeasonData();
+  const allPlayers = useSeasonPlayers();
   const connection = useEthConnection();
   const address = connection.getAddress();
   if (!address) return <></>;
   const leaders = loadGrandPrixLeaderboard(allPlayers, grandPrix.configHash, twitters);
   const { config, lobbyAddress, error } = useConfigFromHash(grandPrix.configHash);
-  const uniqueBadges = loadUniquePlayerBadges(allPlayers, grandPrix.seasonId);
-  console.log(`uniqueBadges`, uniqueBadges);
+  const uniqueBadges = loadUniquePlayerBadges(allPlayers, grandPrix.seasonId, SEASON_GRAND_PRIXS);
+
   useEffect(() => {
     setLeaderboard(leaders);
   }, []);
@@ -81,10 +83,15 @@ export const PortalHomeView: React.FC<{}> = () => {
         <div className='col w-100'>
           <LabeledPanel label='Season leaderboard'>
             <div className='col' style={{ gap: theme.spacing.md }}>
-              {loadSeasonLeaderboard(allPlayers, grandPrix.seasonId)
+              {loadSeasonLeaderboard(allPlayers, grandPrix.seasonId, SEASON_GRAND_PRIXS)
                 .entries.sort((a, b) => b.score - a.score)
                 .map((entry, index) => (
-                  <SeasonLeaderboardEntryComponent key={index} entry={entry} index={index} uniqueBadges={uniqueBadges}/>
+                  <SeasonLeaderboardEntryComponent
+                    key={index}
+                    entry={entry}
+                    index={index}
+                    uniqueBadges={uniqueBadges}
+                  />
                 ))}
             </div>
           </LabeledPanel>

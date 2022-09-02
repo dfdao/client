@@ -10,7 +10,7 @@ import { loadPlayerSeasonHistoryView } from '../../../Backend/Network/GraphApi/S
 import { BadgeDetailsRow } from '../../Components/Badges';
 import { Icon } from '../../Components/Icons';
 import { Sub } from '../../Components/Text';
-import { useAccount, useEthConnection, useSeasonData, useTwitters } from '../../Utils/AppHooks';
+import { useAccount, useEthConnection, useSeasonData, useSeasonPlayers, useTwitters } from '../../Utils/AppHooks';
 import { SEASON_GRAND_PRIXS } from '../../Utils/constants';
 import { TiledTable } from '../TiledTable';
 import { PortalHistoryRoundCard } from './Components/PortalHistoryRoundCard';
@@ -47,9 +47,10 @@ export function PortalHistoryView({ match }: RouteComponentProps<{ account: stri
   const currentPlayerAddress = ethConnection.getAddress();
   if (!account) return <div>Loading...</div>;
 
-  const configPlayers = useSeasonData();
+  const configPlayers = useSeasonPlayers();
+  const SEASON_GRAND_PRIXS = useSeasonData()
 
-  const seasonHistories = loadPlayerSeasonHistoryView(account, configPlayers);
+  const seasonHistories = loadPlayerSeasonHistoryView(account, configPlayers, SEASON_GRAND_PRIXS);
   if (seasonHistories.length == 0) return <Container>Player not found...</Container>;
 
   const rounds = seasonHistories[current].grandPrixs;

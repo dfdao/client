@@ -66,7 +66,6 @@ export const SeasonLeaderboardEntryComponent: React.FC<{
                 {uniqueBadges[entry.address]
                   .filter((cb) => cb.configHash == game.configHash)
                   .map((badge, i) => {
-                    console.log('badgeee', badge);
                     return (
                       <span style={{ color: BADGE_BONUSES[badge.type].color }} key={i}>
                         {'[+'}

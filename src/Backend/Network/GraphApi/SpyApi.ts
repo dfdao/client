@@ -25,8 +25,8 @@ export const loadLiveMatches = async (configHash?: string): Promise<LiveMatch> =
       duration  
       }
     }`;
-  console.log(`spy query`, query);
-  const response = await getGraphQLData(query, process.env.GRAPH_URL || 'localhost:8000');
+
+    const response = await getGraphQLData(query, process.env.GRAPH_URL || 'localhost:8000');
 
   if ('errors' in response) {
     throw new Error(`error when fetching data, ${JSON.stringify(response)}`);

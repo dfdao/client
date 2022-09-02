@@ -1,12 +1,8 @@
-import { address } from '@darkforest_eth/serde';
 import {
   BadgeSet,
   BadgeType,
   ConfigBadge,
-  GrandPrixBadge,
 } from '@darkforest_eth/types';
-import { SEASON_GRAND_PRIXS } from '../../../Frontend/Utils/constants';
-import { getGraphQLData } from '../GraphApi';
 
 // Given a season, get all badges won by all Players
 export function graphBadgeToGrandPrixBadge(

@@ -9,8 +9,9 @@ import { tutorialConfig } from '../../../Utils/constants';
 import { MinimalButton } from '../PortalMainView';
 import { populate, populateBulk } from '../../../../Backend/Utils/Populate';
 import { address } from '@darkforest_eth/serde';
-import { CONTRACT_ADDRESS } from '@darkforest_eth/contracts';
 import { Logo } from '../../../Panes/Lobby/LobbiesUtils';
+import { loadRegistry } from '../../../../Backend/Network/GraphApi/GrandPrixApi';
+import { CONTRACT_ADDRESS } from '@darkforest_eth/contracts';
 
 export const PortalHeader = () => {
   const history = useHistory();

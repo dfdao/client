@@ -36,7 +36,6 @@ export const GPFeed: React.FC<MapDetailsProps> = ({ configHash }) => {
     })
     .slice(0, 4);
 
-  console.log(`latest`, latest);
   return (
     <div
       style={{

@@ -11,7 +11,8 @@ import {
   SeasonLeaderboardProps,
 } from '../../../Backend/Network/GraphApi/SeasonLeaderboardApi';
 import dfstyles from '../../Styles/dfstyles';
-import { useSeasonData } from '../../Utils/AppHooks';
+import { useSeasonData, useSeasonPlayers } from '../../Utils/AppHooks';
+import { getCurrentGrandPrix } from './PortalUtils';
 import { theme } from './styleUtils';
 
 export const Entry: React.FC<{
@@ -100,10 +101,11 @@ const Leaderboard: React.FC<SeasonLeaderboardProps> = ({ seasonId, entries }) =>
 };
 
 export const SeasonLeaderboardPage: React.FC = () => {
-  const allPlayers = useSeasonData();
-  const seasonId = 1;
-  const leaderboard = loadSeasonLeaderboard(allPlayers, seasonId);
-
+  const allPlayers = useSeasonPlayers();
+  const SEASON_GRAND_PRIXS = useSeasonData();
+  const currentGrandPrix = getCurrentGrandPrix(SEASON_GRAND_PRIXS);
+  const leaderboard = loadSeasonLeaderboard(allPlayers, currentGrandPrix.seasonId, SEASON_GRAND_PRIXS);
+  const seasonId = currentGrandPrix.seasonId;
   return (
     <div style={{ margin: '0 auto', textAlign: 'center' }}>
       <Title>Season {seasonId} Leaderboard</Title>

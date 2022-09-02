@@ -9,6 +9,7 @@ import {
   ConfigPlayer,
   EthAddress,
   GrandPrixBadge,
+  GrandPrixMetadata,
   GraphConfigPlayer,
   Leaderboard,
   LiveMatch,
@@ -54,8 +55,11 @@ export function useOverlayContainer(): HTMLDivElement | null {
   return useUIManager()?.getOverlayContainer() ?? null;
 }
 
-export const { useDefinedContext: useSeasonData, provider: SeasonDataProvider } =
+export const { useDefinedContext: useSeasonPlayers, provider: SeasonPlayerProvider } =
   createDefinedContext<CleanConfigPlayer[]>();
+
+export const { useDefinedContext: useSeasonData, provider: SeasonDataProvider } =
+  createDefinedContext<GrandPrixMetadata[]>();
 
 /**
  * Get the currently used account on the client.
