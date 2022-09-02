@@ -1,6 +1,6 @@
-import { BadgeType, EthAddress, SeasonScore } from '@darkforest_eth/types';
+import { BadgeType, CleanConfigPlayer, EthAddress, SeasonScore } from '@darkforest_eth/types';
 import { SeasonLeaderboardEntry } from '../../../Backend/Network/GraphApi/SeasonLeaderboardApi';
-import { SEASON_GRAND_PRIXS } from '../../Utils/constants';
+import { DAY_IN_SECONDS, DEV_CONFIG_HASH, GrandPrixMetadata, SEASON_GRAND_PRIXS } from '../../Utils/constants';
 import { SeasonHistoryItem } from './PortalHistoryView';
 
 export function truncateAddress(address: EthAddress) {
@@ -78,6 +78,34 @@ export function createDummySeasonLeaderboardData(nEntries: number): SeasonLeader
   }
   return dummy;
 }
+
+const genRanHex = (size: number) => [...Array(size)]
+  .map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+
+export function createDummySeasonData(nEntries: number): CleanConfigPlayer[] {
+  let dummy: CleanConfigPlayer[] = [];
+  for (let i = 0; i < nEntries; i++) {
+    const address = '0x' + genRanHex(40);
+    const startTime = Math.floor(Math.random() * 1000)
+    const endTime = Math.floor(Math.random() * 1000) + startTime
+    const entry: CleanConfigPlayer = {
+      id: "123",
+      address,
+      duration: endTime - startTime,
+      moves: Math.floor(Math.random() * 1000),
+      startTime,
+      endTime,
+      badges: [BadgeType.StartYourEngine, BadgeType.Nice, BadgeType.Tree],
+      configHash: DEV_CONFIG_HASH,
+      gamesStarted: Math.floor(Math.random() * 100),
+      gamesFinished: Math.floor(Math.random() * 100),
+      score: DAY_IN_SECONDS - (endTime - startTime)
+    };
+    dummy.push(entry);
+  }
+  return dummy;
+}
+
 
 export const DummySeasons: SeasonHistoryItem[] = [
   {
@@ -159,4 +187,11 @@ export function seasonScoreToSeasonHistoryItem(account: EthAddress, seasonScores
     players: seasonScores.length,
   };
   return history;
+}
+
+export function getCurrentGrandPrix(grandPrixs: GrandPrixMetadata[]): GrandPrixMetadata {
+  const now = Math.floor(Date.now() / 1000);
+  const res = grandPrixs.find(gp => now >= gp.startTime && now <= gp.endTime)
+  if(!res) throw new Error("No current Grand Prix found");
+  return res;
 }

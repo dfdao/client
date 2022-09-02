@@ -23,7 +23,10 @@ import {
   WALLBREAKER_BONUS,
   GrandPrixMetadata,
   EGP,
+  DUMMY,
 } from '../../../Frontend/Utils/constants';
+import { createDummySeasonData } from '../../../Frontend/Views/Portal/PortalUtils';
+import { AddressTwitterMap } from '../../../_types/darkforest/api/UtilityServerAPITypes';
 import { getGraphQLData } from '../GraphApi';
 import { getAllTwitters } from '../UtilityServerAPI';
 import { graphBadgeToGrandPrixBadge } from './BadgeApi';
@@ -84,6 +87,8 @@ export async function loadWallbreakers(): Promise<Wallbreaker[]> {
 // Returns all the ConfigPlayers for each Grand Prix, including the Wallbreaker.
 // It calls loadWallbreakers() internally.
 export async function loadAllPlayerData(): Promise<CleanConfigPlayer[]> {
+  console.log(`loading player data...`);
+  if(DUMMY) return createDummySeasonData(200);
   if(!EGP) return [];
   const stringHashes = SEASON_GRAND_PRIXS.map((season) => `"${season.configHash}"`);
   // Query size is number of unique players on each Grand Prix in a season. (6 GPs * 100 players = 100 results).
@@ -193,17 +198,16 @@ export function loadSeasonLeaderboard(
 
 // Filter to get all Config Players for a single Grand Prix
 // Can be used for badges
-export function loadGrandPrixPlayers(configPlayers: ConfigPlayer[], configHash: string) {
+export function loadGrandPrixPlayers(configPlayers: CleanConfigPlayer[], configHash: string) {
   const grandPrixScores = configPlayers
     .filter((cp) => cp.configHash == configHash)
-    .sort((a, b) => a.bestTime.duration - b.bestTime.duration);
+    .sort((a, b) => a.duration - b.duration);
   return grandPrixScores;
 }
 
 // Assumes configPlayers have same configHash
-export async function configPlayersToLeaderboard(configPlayers: ConfigPlayer[]) {
+export function configPlayersToLeaderboard(configPlayers: CleanConfigPlayer[], twitters?: AddressTwitterMap) {
   let entries: LeaderboardEntry[] = [];
-  const twitters = await getAllTwitters();
 
   // Just show wallBreaker badge in client.
   let numMatches = 0;
@@ -211,12 +215,12 @@ export async function configPlayersToLeaderboard(configPlayers: ConfigPlayer[]) 
     numMatches += cp.gamesFinished;
     entries.push({
       ethAddress: address(cp.address),
-      score: undefined,
-      twitter: twitters[cp.address],
-      moves: cp.bestTime.winners[0].moves,
-      startTime: cp.bestTime.startTime,
-      endTime: cp.bestTime.endTime,
-      time: cp.bestTime.duration,
+      score: calcCleanGrandPrixScore(cp),
+      twitter: twitters?.[cp.address],
+      moves: cp.moves,
+      startTime: cp.startTime,
+      endTime: cp.endTime,
+      time: cp.duration,
     });
   });
 
@@ -228,9 +232,10 @@ export function loadSeasonPlayer(playerId: string, configPlayers: ConfigPlayer[]
   return configPlayers.filter((cp) => cp.address === playerId);
 }
 
-export async function loadGrandPrixLeaderboard(configPlayers: ConfigPlayer[], configHash: string) {
-  const players = await loadGrandPrixPlayers(configPlayers, configHash);
-  const leaderboard = await configPlayersToLeaderboard(players);
+export function loadGrandPrixLeaderboard(configPlayers: CleanConfigPlayer[], configHash: string, twitters?: AddressTwitterMap) {
+  const players = loadGrandPrixPlayers(configPlayers, configHash);
+  const leaderboard = configPlayersToLeaderboard(players, twitters);
+  console.log(`api leaderboard length`, leaderboard.length, leaderboard);
   return leaderboard;
 }
 

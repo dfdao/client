@@ -3,16 +3,17 @@ import { BigNumber } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { loadArenaLeaderboard } from '../../../Backend/Network/GraphApi/GrandPrixApi';
-import { loadSeasonLeaderboard } from '../../../Backend/Network/GraphApi/SeasonLeaderboardApi';
+import { loadGrandPrixLeaderboard, loadSeasonLeaderboard } from '../../../Backend/Network/GraphApi/SeasonLeaderboardApi';
 import { LoadingSpinner } from '../../Components/LoadingSpinner';
-import { useConfigFromHash, useEthConnection, useSeasonData } from '../../Utils/AppHooks';
+import { useConfigFromHash, useEthConnection, useSeasonData, useTwitters } from '../../Utils/AppHooks';
+import { SEASON_GRAND_PRIXS } from '../../Utils/constants';
 import { ArenaLeaderboardDisplay } from '../Leaderboards/ArenaLeaderboard';
 import { LabeledPanel } from './Components/LabeledPanel';
 import { PaddedRow } from './Components/PaddedRow';
 import { SeasonLeaderboardEntryComponent } from './Components/SeasonLeaderboardEntryComponent';
 import { GPFeed } from './GPFeed';
 import { MapOverview } from './MapOverview';
-import { createDummySeasonLeaderboardData } from './PortalUtils';
+import { createDummySeasonLeaderboardData, getCurrentGrandPrix } from './PortalUtils';
 import { theme } from './styleUtils';
 
 export interface RoundResponse {
@@ -33,20 +34,17 @@ const DUMMY = {
 
 export const PortalHomeView: React.FC<{}> = () => {
   const [leaderboard, setLeaderboard] = useState<Leaderboard | undefined>();
-  const { config, lobbyAddress, error } = useConfigFromHash(DUMMY.configHash);
-  const allPlayers = useSeasonData()
-  
-  useEffect(() => {
-    setLeaderboard(undefined);
-    async function loadLeaderboard() {
-      if (DUMMY.configHash) {
-        const leaderboard = await loadArenaLeaderboard(DUMMY.configHash, true);
-        setLeaderboard(leaderboard);
-      }
-    }
-    loadLeaderboard();
-  }, [DUMMY.configHash]);
+  const grandPrix = getCurrentGrandPrix(SEASON_GRAND_PRIXS)
+  const twitters = useTwitters();
+  const allPlayers = useSeasonData();
+  const leaders = loadGrandPrixLeaderboard(allPlayers,grandPrix.configHash, twitters);
+  console.log(`leaders length`, leaders.length);
+  const { config, lobbyAddress, error } = useConfigFromHash(grandPrix.configHash);
 
+  useEffect(() => {
+    setLeaderboard(leaders)
+  }, [])
+  
   if (error) {
     return (
       <Container>
@@ -81,19 +79,12 @@ export const PortalHomeView: React.FC<{}> = () => {
         <div className='col w-100'>
           <LabeledPanel label='Active game leaderboard'>
             <ArenaLeaderboardDisplay leaderboard={leaderboard} error={undefined} />
-            {/* {leaderboard?.entries.length === 0 ||
-              (leaderboard && leaderboard.length <= 3 && (
-                <PaddedRow>
-                  <span>Play the current round to get your score on the leaderboard</span>
-                </PaddedRow>
-              ))} */}
           </LabeledPanel>
         </div>
         <div className='col w-100'>
           <LabeledPanel label='Season leaderboard'>
             <div className='col' style={{ gap: theme.spacing.md }}>
-              {/* {createDummySeasonLeaderboardData(15) */}
-              {loadSeasonLeaderboard(allPlayers, 1).entries
+              {loadSeasonLeaderboard(allPlayers, grandPrix.seasonId).entries
                 .sort((a, b) => b.score - a.score)
                 .map((entry, index) => (
                   <SeasonLeaderboardEntryComponent key={index} entry={entry} index={index} />

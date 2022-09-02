@@ -124,7 +124,8 @@ const WALLBREAKER_BONUS = 5 * 60;
 const START_ENGINE_BONUS = 100;
 const DAY_IN_SECONDS = 24 * 60 * 60;
 const EGP = true;
-
+const DUMMY = true;
+const DEV_CONFIG_HASH = "0xd08bbeb0785370a68369f0a042e33ef2688da6da5e79acbb5688ddbb8ca4a862";
 // startTime and endTime are in UNIX seconds
 export interface GrandPrixMetadata {
   seasonId: number;
@@ -161,6 +162,8 @@ export {
   WALLBREAKER_BONUS,
   START_ENGINE_BONUS,
   EGP,
+  DUMMY,
+  DEV_CONFIG_HASH,
   DAY_IN_SECONDS
 };
 

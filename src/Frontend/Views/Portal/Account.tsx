@@ -79,11 +79,11 @@ function AccountModal({ setOpen }: { setOpen: (open: boolean) => void }) {
             )}
           </div>
           {/* <StackedBadges items={mockBadges} /> */}
-          {badgeElements && badgeElements.length > 0 ? (
+          {/* {badgeElements && badgeElements.length > 0 ? (
             <BadgeGrid>{badgeElements}</BadgeGrid>
           ) : (
             'You have no badges'
-          )}
+          )} */}
         </AccountContent>
         <Footer>
           <Btn onClick={logOut}>Logout</Btn>
