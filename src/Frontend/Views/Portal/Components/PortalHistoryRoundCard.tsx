@@ -80,7 +80,7 @@ export const PortalHistoryRoundCard: React.FC<{ round: GrandPrixHistory; index: 
         </DetailRow>
         <DetailRow>
           <DetailLabel>Rank</DetailLabel>
-          <DetailValue>{round.score == 0 ? '-' : round.rank + `of` + round.players}</DetailValue>
+          <DetailValue>{round.score == 0 ? '-' : round.rank + ` of ` + round.players}</DetailValue>
         </DetailRow>
         <DetailRow>
           <DetailLabel>Badges</DetailLabel>

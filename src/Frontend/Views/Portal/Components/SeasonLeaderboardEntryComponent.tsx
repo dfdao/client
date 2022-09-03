@@ -53,16 +53,6 @@ export const SeasonLeaderboardEntryComponent: React.FC<{
                     {getConfigName(game.configHash)}
                   </Link>
                 </span>
-                {/* {mockBages.map((badge, i) => {
-                  console.log('badgeee', badge);
-                  return (
-                    <span style={{ color: BADGE_BONUSES[badge].color }} key={i}>
-                      {'[+'}
-                      {BADGE_BONUSES[badge].bonus}
-                      {']'}
-                    </span>
-                  );
-                })} */}
                 {uniqueBadges[entry.address]
                   .filter((cb) => cb.configHash == game.configHash)
                   .map((badge, i) => {

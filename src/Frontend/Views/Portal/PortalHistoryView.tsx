@@ -1,6 +1,6 @@
 import { getConfigName } from '@darkforest_eth/procedural';
 import { address } from '@darkforest_eth/serde';
-import { BadgeType, EthAddress, GrandPrixHistory, SeasonScore } from '@darkforest_eth/types';
+import { BadgeType, EthAddress, GrandPrixHistory, GrandPrixMetadata, SeasonScore } from '@darkforest_eth/types';
 import { IconType } from '@darkforest_eth/ui';
 import { isAddress } from 'ethers/lib/utils';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -45,6 +45,13 @@ export interface GrandPrixHistoryItem {
   badges: BadgeType[];
 }
 
+function showPastAndCurrentRounds(round: GrandPrixHistory, SEASON_GRAND_PRIXS: GrandPrixMetadata[]): boolean {
+  const sgp = SEASON_GRAND_PRIXS.find((sgp) => sgp.configHash == round.configHash)
+  if(!sgp) return false
+  const startTime = sgp.startTime;
+  return Math.floor(Date.now()/1000) >= startTime;
+}
+
 // if Player not found, create dummy history
 
 export function PortalHistoryView({ match }: RouteComponentProps<{ account: string }>) {
@@ -64,9 +71,12 @@ export function PortalHistoryView({ match }: RouteComponentProps<{ account: stri
   const totalScore = useMemo(() => rounds.reduce((prev, curr) => curr.score + prev, 0), [rounds]);
   const mapComponents = useMemo(
     () =>
-      rounds.map((round: GrandPrixHistory, idx: number) => (
-        <PortalHistoryRoundCard round={round} index={idx} key={idx} />
-      )),
+      rounds
+        // Only show rounds that have started in the past.
+        .filter((round) => showPastAndCurrentRounds(round, SEASON_GRAND_PRIXS))
+        .map((round: GrandPrixHistory, idx: number) => (
+          <PortalHistoryRoundCard round={round} index={idx} key={idx} />
+        )),
     [rounds]
   );
   const grandPrixBadges = rounds.map((round) => round.badges).flat(); //mockBadges;
@@ -113,7 +123,7 @@ export function PortalHistoryView({ match }: RouteComponentProps<{ account: stri
             <Title>
               {totalScore == 0
                 ? '-'
-                : seasonHistories[current].rank + `of` + seasonHistories[current].players}
+                : seasonHistories[current].rank + ` of ` + seasonHistories[current].players}
             </Title>
           </div>
           <div className='col'>

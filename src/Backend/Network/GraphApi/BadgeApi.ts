@@ -6,9 +6,10 @@ import {
 
 // Given a season, get all badges won by all Players
 export function graphBadgeToGrandPrixBadge(
-  graphBadge: BadgeSet,
+  graphBadge: BadgeSet | undefined,
   configHash: string
 ): ConfigBadge[] {
+  if(!graphBadge) return [];
   const badges: BadgeType[] = [];
 
   if (graphBadge.startYourEngine) badges.push(BadgeType.StartYourEngine);

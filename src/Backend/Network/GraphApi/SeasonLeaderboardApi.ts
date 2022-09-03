@@ -60,7 +60,7 @@ export async function loadWallbreakers(
     return getGraphQLData(QUERY, process.env.GRAPH_URL || 'localhost:8000');
   });
   const res = await Promise.all(wallbreakerQuery);
-  if(res && res.length == 0) return [];
+  if (res && res.length == 0) return [];
   const wallBreakersRaw = res.map((x) => {
     if (x.error) {
       throw new Error(x.error);
@@ -137,7 +137,10 @@ query
   if (!rawData.data.configPlayers)
     throw new Error(`config players undefined. Make sure query is correct`);
 
-  const configPlayersFinal = await addWallbreakersAndBadges(rawData.data.configPlayers, SEASON_GRAND_PRIXS);
+  const configPlayersFinal = await addWallbreakersAndBadges(
+    rawData.data.configPlayers,
+    SEASON_GRAND_PRIXS
+  );
   return configPlayersFinal;
 }
 
@@ -222,18 +225,22 @@ export function configPlayersToLeaderboard(
 
   // Just show wallBreaker badge in client.
   let numMatches = 0;
-  configPlayers.map((cp) => {
-    numMatches += cp.gamesFinished;
-    entries.push({
-      ethAddress: address(cp.address),
-      score: calcCleanGrandPrixScore(cp),
-      twitter: twitters?.[cp.address],
-      moves: cp.moves,
-      startTime: cp.startTime,
-      endTime: cp.endTime,
-      time: cp.duration,
+  configPlayers
+    .filter((cp) => cp.score > 0)
+    .map((cp) => {
+      numMatches += cp.gamesFinished;
+      const leaderBoardEntry: LeaderboardEntry = {
+        ethAddress: address(cp.address),
+        score: calcCleanGrandPrixScore(cp),
+        twitter: twitters?.[cp.address],
+        moves: cp.moves,
+        startTime: cp.startTime,
+        endTime: cp.endTime,
+        time: cp.duration,
+        wallBreaker: cp.badges.some((cp) => cp.type == BadgeType.Wallbreaker),
+      };
+      entries.push(leaderBoardEntry);
     });
-  });
 
   return { entries, length: numMatches } as Leaderboard;
 }
@@ -259,27 +266,31 @@ async function addWallbreakersAndBadges(
   SEASON_GRAND_PRIXS: GrandPrixMetadata[]
 ): Promise<CleanConfigPlayer[]> {
   const wallBreakers = await loadWallbreakers(SEASON_GRAND_PRIXS);
-  return configPlayers
-  .filter(cp => cp.bestTime.gameOver)
-  .map((cfp) => {
-    const isWallBreaker =
-      wallBreakers.length > 0 && wallBreakers.filter((e) => e.player === cfp.address).length > 0;
-    if (isWallBreaker) cfp.badge.wallBreaker = true;
-    const cleanConfig: CleanConfigPlayer = {
-      id: cfp.id,
-      address: cfp.address,
-      duration: cfp.bestTime.duration,
-      moves: cfp.bestTime.winners[0].moves,
-      startTime: cfp.bestTime.startTime,
-      endTime: cfp.bestTime.endTime,
-      badges: graphBadgeToGrandPrixBadge(cfp.badge, cfp.configHash),
-      configHash: cfp.configHash,
-      gamesStarted: cfp.gamesStarted,
-      gamesFinished: cfp.gamesFinished,
-      score: calcGrandPrixScore(cfp), // Doesn't include badges!!
-    };
-    return cleanConfig;
-  });
+  return (
+    configPlayers
+      // .filter(cp => cp.bestTime.gameOver)
+      .map((cfp) => {
+        const isWallBreaker =
+          wallBreakers.length > 0 &&
+          wallBreakers.filter((e) => e.player === cfp.address).length > 0;
+        if (isWallBreaker && cfp.badge) cfp.badge.wallBreaker = true;
+        const duration = cfp.bestTime ? cfp.bestTime.duration : DAY_IN_SECONDS;
+        const cleanConfig: CleanConfigPlayer = {
+          id: cfp.id,
+          address: cfp.address,
+          duration,
+          moves: cfp.bestTime ? cfp.bestTime.winners[0].moves : 0,
+          startTime: cfp.bestTime ? cfp.bestTime.startTime : Math.floor(Date.now() / 1000),
+          endTime: cfp.bestTime ? cfp.bestTime.endTime : Math.floor(Date.now() / 1000),
+          badges: graphBadgeToGrandPrixBadge(cfp.badge, cfp.configHash),
+          configHash: cfp.configHash,
+          gamesStarted: cfp.gamesStarted,
+          gamesFinished: cfp.gamesFinished,
+          score: calcGrandPrixScore(duration), // Doesn't include badges!!
+        };
+        return cleanConfig;
+      })
+  );
 }
 
 // Group ConfigPlayers by address to calculate Season Score
@@ -351,8 +362,8 @@ export function calcCleanGrandPrixScore(cleanConfigPlayer: CleanConfigPlayer): n
   return DAY_IN_SECONDS - cleanConfigPlayer.duration;
 }
 
-export function calcGrandPrixScore(configPlayer: ConfigPlayer): number {
-  const timeScore = DAY_IN_SECONDS - configPlayer.bestTime.duration;
+export function calcGrandPrixScore(duration: number): number {
+  const timeScore = DAY_IN_SECONDS - duration;
   return timeScore;
 }
 
@@ -369,7 +380,7 @@ export function loadPlayerSeasonHistoryView(
   const seasonHistories: SeasonHistory[] = [];
 
   const playerExists = configPlayers.find((cp) => cp.address == player);
- 
+
   // Get Season Rank and Score.
   // Need to handle multiple seasons.
 
@@ -408,8 +419,9 @@ export function loadPlayerSeasonHistoryView(
 
     // Calculate Grand prix aggregate statistics
     grandPrixs.map((gp) => {
+      // When no players have started a game, no config players exist.
       const allGrandPrixs = groupByGrandPrix(configPlayers)[gp.configHash];
-      let rank = allGrandPrixs.length;
+      let rank = allGrandPrixs ? allGrandPrixs.length : 0;
       let score = 0;
       if (allGrandPrixs && allGrandPrixs.length > 0) {
         allGrandPrixs
@@ -422,17 +434,17 @@ export function loadPlayerSeasonHistoryView(
           });
 
         // Get grand prixs player has participated in for badges
-        const seasonPlayers = groupByPlayers(configPlayers)[player] as CleanConfigPlayer[] | undefined;
-        const playerGrandPrixs = seasonPlayers?.filter(
-          (cp) => cp.configHash == gp.configHash
-        )[0];
+        const seasonPlayers = groupByPlayers(configPlayers)[player] as
+          | CleanConfigPlayer[]
+          | undefined;
+        const playerGrandPrixs = seasonPlayers?.filter((cp) => cp.configHash == gp.configHash)[0];
 
         const grandPrixHistory: GrandPrixHistory = {
           configHash: gp.configHash,
           rank,
           score,
           players: allGrandPrixs.length,
-          badges: playerGrandPrixs ? playerGrandPrixs.badges : []
+          badges: playerGrandPrixs ? playerGrandPrixs.badges : [],
         };
 
         grandPrixHistories.push(grandPrixHistory);
@@ -450,7 +462,11 @@ export function getBadges(configBadges: BadgeType[][]): BadgeType[] {
 }
 
 // Output: object of player address => unique season badges
-export function loadUniquePlayerBadges(configPlayers: CleanConfigPlayer[], seasonId: number, SEASON_GRAND_PRIXS: GrandPrixMetadata[]) {
+export function loadUniquePlayerBadges(
+  configPlayers: CleanConfigPlayer[],
+  seasonId: number,
+  SEASON_GRAND_PRIXS: GrandPrixMetadata[]
+) {
   const seasonPlayers = loadSeasonPlayers(configPlayers, seasonId, SEASON_GRAND_PRIXS);
   const res: { [player: string]: ConfigBadge[] } = {};
   for (const [player, playerGrandPrixs] of Object.entries(seasonPlayers)) {

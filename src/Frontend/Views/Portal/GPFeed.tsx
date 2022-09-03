@@ -1,5 +1,6 @@
 import { getConfigName } from '@darkforest_eth/procedural';
-import { CleanConfigPlayer, CleanMatchEntry, ExtendedMatchEntry, Leaderboard, LeaderboardEntry } from '@darkforest_eth/types';
+import { address } from '@darkforest_eth/serde';
+import { CleanConfigPlayer, CleanMatchEntry, EthAddress, ExtendedMatchEntry, Leaderboard, LeaderboardEntry } from '@darkforest_eth/types';
 import dfstyles from '@darkforest_eth/ui/dist/styles';
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -16,6 +17,10 @@ export interface MapDetailsProps {
   configHash: string | undefined;
 }
 
+export function getPlayer(entry: CleanMatchEntry): EthAddress {
+  if(entry.players && entry.players.length > 0) return address(entry.players[0]);
+  else return entry.creator
+}
 // TODO: This currently displays the latest scores in a leaderboard (by time)
 // Ideally, it would do something similar to useLiveMatches()
 // because right now it doesn't update live.
@@ -65,7 +70,7 @@ export const GPFeed: React.FC<MapDetailsProps> = ({ configHash }) => {
                     <span>
                       🎖{' '}
                       {formatStartTime(entry.startTime)}{' '}
-                      {compPlayerToEntry(entry.player, twitters[entry.player])} {' '}
+                      {compPlayerToEntry(getPlayer(entry), twitters[getPlayer(entry)])}  {' '}
                       <Link
                         style={{ color: dfstyles.colors.dfgreenlight }}
                         to={`/play/${entry.lobbyAddress}`}
@@ -79,7 +84,7 @@ export const GPFeed: React.FC<MapDetailsProps> = ({ configHash }) => {
                     <span>
                       🚀{' '}
                       {formatStartTime(entry.startTime)}{' '}
-                      {compPlayerToEntry(entry.player, twitters[entry.player])}  {' '}
+                      {compPlayerToEntry(getPlayer(entry), twitters[getPlayer(entry)])}  {' '}
                       <Link
                         style={{ color: dfstyles.colors.dfgreenlight }}
                         to={`/play/${entry.lobbyAddress}`}

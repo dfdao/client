@@ -106,7 +106,7 @@ export const FindMatch: React.FC<FindMatchProps> = ({ game }) => {
                   <MatchComponent
                     configHash={entry.configHash}
                     key={entry.lobbyAddress}
-                    creator={entry.player}
+                    creator={entry.creator}
                     matchType='1v1'
                     totalSpots={entry.numSpawn}
                     spotsTaken={entry.players.length}

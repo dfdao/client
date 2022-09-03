@@ -68,6 +68,14 @@ export function createDummySeasonData(nEntries: number): CleanConfigPlayer[] {
           type: BadgeType.Sleepy,
           configHash: DEV_CONFIG_HASH_1,
         },
+        {
+          type: BadgeType.Tree,
+          configHash: DEV_CONFIG_HASH_1,
+        },
+        {
+          type: BadgeType.Wallbreaker,
+          configHash: DEV_CONFIG_HASH_1,
+        },
       ],
       configHash: DEV_CONFIG_HASH_1,
       gamesStarted: Math.floor(Math.random() * 100),
@@ -93,7 +101,7 @@ export function createDummyLiveMatches(nEntries: number): LiveMatch {
     const lobby = '0x' + genRanHex(40);
     const entry1: CleanMatchEntry = {
       lobbyAddress: address(lobby),
-      player: address(player),
+      creator: address(player),
       moves: Math.floor(Math.random() * 100),
       // Have start time be later if game is not over
       startTime: endTime,

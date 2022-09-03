@@ -11,6 +11,7 @@ import dfstyles from '../../Styles/dfstyles';
 import { useLiveMatches, useTwitters } from '../../Utils/AppHooks';
 import { formatDuration, formatStartTime } from '../../Utils/TimeUtils';
 import { GenericErrorBoundary } from '../GenericErrorBoundary';
+import { getPlayer } from '../Portal/GPFeed';
 import { MinimalButton } from '../Portal/PortalMainView';
 import { Table } from '../Table';
 
@@ -21,7 +22,6 @@ export interface MatchDisplay extends CleanMatchEntry {
 const errorMessage = 'Error Loading Leaderboard';
 export function LiveMatchesDisplay({ config }: { config: string }) {
   const { liveMatches, spyError } = useLiveMatches(config, 1000);
-  console.log(`liveMatches`, liveMatches);
   return <LiveMatches game={liveMatches} error={spyError} />;
 }
 
@@ -117,7 +117,7 @@ function LeaderboardTable({ rows }: { rows: MatchDisplay[] }) {
             );
           },
           (row: MatchDisplay, i) => {
-            return <Cell>{playerToEntry(row.player)}</Cell>;
+            return <Cell>{playerToEntry(getPlayer(row))}</Cell>;
           },
 
           (row: MatchDisplay, i) => {

@@ -1,10 +1,6 @@
 import { GraphConfigPlayer, Leaderboard, LiveMatch } from '@darkforest_eth/types';
 import React, { useEffect, useState } from 'react';
-import { loadArenaLeaderboard } from '../../../Backend/Network/GraphApi/GrandPrixApi';
-import {
-  loadEloLeaderboard,
-} from '../../../Backend/Network/GraphApi/EloLeaderboardApi';
-import { loadLiveMatches } from '../../../Backend/Network/GraphApi/SpyApi';
+import { loadEloLeaderboard } from '../../../Backend/Network/GraphApi/EloLeaderboardApi';
 import { Subber } from '../../Components/Text';
 import { LobbyInitializers } from '../../Panes/Lobby/Reducer';
 import { ArenaLeaderboardDisplay, EloLeaderboardDisplay } from '../Leaderboards/ArenaLeaderboard';
@@ -12,9 +8,7 @@ import { LiveMatches } from '../Leaderboards/LiveMatches';
 import { TabbedView } from '../TabbedView';
 import { ConfigDetails } from './ConfigDetails';
 import { FindMatch } from './FindMatch';
-import useSWR from 'swr';
-import { fetcher } from '../../../Backend/Network/UtilityServerAPI';
-import { useLiveMatches, useSeasonData, useSeasonPlayers, useTwitters } from '../../Utils/AppHooks';
+import { useLiveMatches, useSeasonPlayers, useTwitters } from '../../Utils/AppHooks';
 import { loadGrandPrixLeaderboard } from '../../../Backend/Network/GraphApi/SeasonLeaderboardApi';
 import { DUMMY } from '../../Utils/constants';
 
@@ -28,7 +22,6 @@ export function MapDetails({
   const [leaderboard, setLeaderboard] = useState<Leaderboard | undefined>();
   const [eloLeaderboard, setEloLeaderboard] = useState<GraphConfigPlayer[] | undefined>();
   const [leaderboardError, setLeaderboardError] = useState<Error | undefined>();
-  // const [liveMatches, setLiveMatches] = useState<LiveMatch | undefined>();
   const [liveMatchError, setLiveMatchError] = useState<Error | undefined>();
 
   const numSpawnPlanets = config?.ADMIN_PLANETS.filter((p) => p.isSpawnPlanet).length ?? 0;
@@ -36,9 +29,10 @@ export function MapDetails({
   const twitters = useTwitters();
   const allPlayers = useSeasonPlayers();
   const leaders = loadGrandPrixLeaderboard(allPlayers, configHash, twitters);
-
+  console.log(`leaders`, leaders);
+  // 5sec poll if live data
   const { liveMatches, spyError } = useLiveMatches(configHash, !DUMMY ? 5000 : undefined);
-
+  console.log(`liveMatches`, liveMatches);
   useEffect(() => {
     setLeaderboard(undefined);
     if (configHash) {
@@ -94,20 +88,15 @@ export function MapDetails({
             );
           }
           if (i === 1) {
-            if (numSpawnPlanets > 1 && !hasWhitelist) {
-            //   return <FindMatch game={liveMatches} />;
-            // } else {
-              return (
-                <>
-                  <LiveMatches game={liveMatches} error={liveMatchError} />{' '}
-                  <Subber style={{ textAlign: 'end' }}>
-                    by <a href={'https://twitter.com/bulmenisaurus'}>Bulmenisaurus</a>
-                  </Subber>
-                </>
-              );
-            }
+            return (
+              <>
+                <LiveMatches game={liveMatches} error={liveMatchError} />{' '}
+                <Subber style={{ textAlign: 'end' }}>
+                  by <a href={'https://twitter.com/bulmenisaurus'}>Bulmenisaurus</a>
+                </Subber>
+              </>
+            );
           }
-          // return <ConfigDetails config={config} />;
         }}
       />
     </div>

@@ -1,6 +1,4 @@
 import { Leaderboard, RegistryResponse } from '@darkforest_eth/types';
-import { BigNumber } from 'ethers';
-import { uniq } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import {
@@ -10,14 +8,12 @@ import {
 } from '../../../Backend/Network/GraphApi/SeasonLeaderboardApi';
 import { LoadingSpinner } from '../../Components/LoadingSpinner';
 import {
-  useAccount,
   useConfigFromHash,
   useEthConnection,
   useSeasonData,
   useSeasonPlayers,
   useTwitters,
 } from '../../Utils/AppHooks';
-import { SEASON_GRAND_PRIXS } from '../../Utils/constants';
 import { ArenaLeaderboardDisplay } from '../Leaderboards/ArenaLeaderboard';
 import { LabeledPanel } from './Components/LabeledPanel';
 import { PaddedRow } from './Components/PaddedRow';
@@ -31,7 +27,7 @@ export const PortalHomeView: React.FC<{}> = () => {
   const [leaderboard, setLeaderboard] = useState<Leaderboard | undefined>();
   const SEASON_GRAND_PRIXS = useSeasonData();
   const grandPrix = getCurrentGrandPrix(SEASON_GRAND_PRIXS);
-  if(!grandPrix) return <div>No active Grand Prix</div>
+  if(!grandPrix) return <div>No active round</div>
   const twitters = useTwitters();
   const allPlayers = useSeasonPlayers();
   const connection = useEthConnection();
@@ -77,7 +73,7 @@ export const PortalHomeView: React.FC<{}> = () => {
       </div>
       <div className='row w-100' style={{ gap: theme.spacing.xl }}>
         <div className='col w-100'>
-          <LabeledPanel label='Active Grand Prix'>
+          <LabeledPanel label='Active Round'>
             <ArenaLeaderboardDisplay leaderboard={leaderboard} error={undefined} />
           </LabeledPanel>
         </div>
@@ -86,6 +82,7 @@ export const PortalHomeView: React.FC<{}> = () => {
             <div className='col' style={{ gap: theme.spacing.md }}>
               {loadSeasonLeaderboard(allPlayers, grandPrix.seasonId, SEASON_GRAND_PRIXS)
                 .entries.sort((a, b) => b.score - a.score)
+                .filter(e => e.score > 0)
                 .map((entry, index) => (
                   <SeasonLeaderboardEntryComponent
                     key={index}

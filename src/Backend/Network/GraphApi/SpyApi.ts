@@ -2,6 +2,7 @@ import { CleanMatchEntry, ExtendedMatchEntry, LiveMatch } from '@darkforest_eth/
 import { getGraphQLData } from '../GraphApi';
 
 export const loadLiveMatches = async (configHash?: string): Promise<LiveMatch> => {
+  // Get last week of data.
   const startTime = Math.round((Date.now() - 1000 * 60 * 60 * 24 * 7) / 1000);
 
   const hash = configHash ? `configHash: "${configHash}",` : '';
@@ -52,7 +53,7 @@ function calcMoves(match: ExtendedMatchEntry) {
 export function cleanLiveMatches(liveMatches: ExtendedMatchEntry[]) {
   return liveMatches.map(lm => {
     const clean: CleanMatchEntry = {
-      player: lm.creator,
+      creator: lm.creator,
       lobbyAddress: lm.lobbyAddress,
       moves: calcMoves(lm),
       configHash: lm.configHash,
