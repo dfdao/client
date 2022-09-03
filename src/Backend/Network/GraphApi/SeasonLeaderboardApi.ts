@@ -101,7 +101,6 @@ query
     configPlayers(
       where: {
         configHash_in: [${stringHashes}],
-        bestTime_:{gameOver: true}
       }
     ) {
       id
@@ -115,6 +114,7 @@ query
         duration
         startTime
         endTime
+        gameOver
       }
       configHash
       badge {
@@ -259,7 +259,9 @@ async function addWallbreakersAndBadges(
   SEASON_GRAND_PRIXS: GrandPrixMetadata[]
 ): Promise<CleanConfigPlayer[]> {
   const wallBreakers = await loadWallbreakers(SEASON_GRAND_PRIXS);
-  return configPlayers.map((cfp) => {
+  return configPlayers
+  .filter(cp => cp.bestTime.gameOver)
+  .map((cfp) => {
     const isWallBreaker =
       wallBreakers.length > 0 && wallBreakers.filter((e) => e.player === cfp.address).length > 0;
     if (isWallBreaker) cfp.badge.wallBreaker = true;
