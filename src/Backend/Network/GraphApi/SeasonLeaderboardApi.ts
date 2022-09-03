@@ -24,6 +24,7 @@ import {
   DUMMY,
   BADGE_BONUSES,
 } from '../../../Frontend/Utils/constants';
+import { isPastOrCurrentRound } from '../../../Frontend/Views/Portal/PortalHistoryView';
 import { createDummySeasonData } from '../../../Frontend/Views/Portal/PortalUtils';
 import { AddressTwitterMap } from '../../../_types/darkforest/api/UtilityServerAPITypes';
 import { getGraphQLData } from '../GraphApi';
@@ -155,6 +156,7 @@ export function loadSeasonPlayers(
   );
   const seasonConfigPlayers = configPlayers.filter((cp) =>
     seasonConfigHashes.includes(cp.configHash.toLowerCase())
+    && isPastOrCurrentRound(cp.configHash, SEASON_GRAND_PRIXS)
   );
   const seasonPlayers = groupByPlayers(seasonConfigPlayers);
   return seasonPlayers;
@@ -304,13 +306,14 @@ export function groupByPlayers(configPlayers: CleanConfigPlayer[]): SeasonPlayer
 }
 
 // Sum player dictionary to create list of {player, score}
-export function getSeasonScore(seasonPlayers: SeasonPlayers): SeasonScore[] {
+export function getSeasonScore(seasonPlayers: SeasonPlayers, SEASON_GRAND_PRIXS: GrandPrixMetadata[]): SeasonScore[] {
   const seasonScores: SeasonScore[] = [];
   for (const [player, cleanConfigPlayer] of Object.entries(seasonPlayers)) {
     const badges: ConfigBadge[] = [];
     const seasonScore: SeasonScore = {
       player,
       score: cleanConfigPlayer
+        .filter(ccp => isPastOrCurrentRound(ccp.configHash, SEASON_GRAND_PRIXS))
         .map((result) => {
           badges.concat(result.badges);
           return calcCleanGrandPrixScore(result);
@@ -394,7 +397,8 @@ export function loadPlayerSeasonHistoryView(
     // Calculate Player's Season Aggregate Statistics
     const seasonId = parseInt(key);
     const seasonScores = getSeasonScore(
-      loadSeasonPlayers(configPlayers, seasonId, SEASON_GRAND_PRIXS)
+      loadSeasonPlayers(configPlayers, seasonId, SEASON_GRAND_PRIXS),
+      SEASON_GRAND_PRIXS
     );
     let rank = seasonScores.length;
     let score = 0;

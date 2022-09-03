@@ -1,4 +1,5 @@
 import { getConfigName } from '@darkforest_eth/procedural';
+import { address } from '@darkforest_eth/serde';
 import { BadgeType, ConfigBadge } from '@darkforest_eth/types';
 import dfstyles from '@darkforest_eth/ui/dist/styles';
 import { uniq } from 'lodash';
@@ -6,8 +7,11 @@ import React, { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { SeasonLeaderboardEntry } from '../../../../Backend/Network/GraphApi/SeasonLeaderboardApi';
+import { useSeasonData, useTwitters } from '../../../Utils/AppHooks';
 import { BADGE_BONUSES } from '../../../Utils/constants';
+import { isPastOrCurrentRound } from '../PortalHistoryView';
 import { MinimalButton } from '../PortalMainView';
+import { truncateAddress } from '../PortalUtils';
 import { theme } from '../styleUtils';
 
 const mockBages = [
@@ -24,49 +28,53 @@ export const SeasonLeaderboardEntryComponent: React.FC<{
   index: number;
 }> = ({ entry, uniqueBadges, index }) => {
   const [expanded, setExpanded] = useState<boolean>(false);
+  const SEASON_GRAND_PRIXS = useSeasonData();
+  const twitters = useTwitters();
   return (
     <div>
       <Row key={index} onClick={() => setExpanded(!expanded)} expanded={expanded}>
         <Group>
           <span>{index + 1}</span>
-          <span>{entry.address}</span>
+          <span>{twitters[entry.address] ?? truncateAddress(address(entry.address))}</span>
         </Group>
         <span>{entry.score}</span>
       </Row>
       {expanded && (
         <ExpandedGames style={{ display: 'flex', flexDirection: 'column' }}>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {entry.games.map((game, index) => (
-              <div
-                key={index}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}
-              >
-                <span>
-                  <Link
-                    style={{ color: dfstyles.colors.dfblue }}
-                    to={`/portal/map/${game.configHash}`}
-                  >
-                    {getConfigName(game.configHash)}
-                  </Link>
-                </span>
-                {uniqueBadges[entry.address]
-                  .filter((cb) => cb.configHash == game.configHash)
-                  .map((badge, i) => {
-                    return (
-                      <span style={{ color: BADGE_BONUSES[badge.type].color }} key={i}>
-                        {'[+'}
-                        {BADGE_BONUSES[badge.type].bonus}
-                        {']'}
-                      </span>
-                    );
-                  })}
-                <span>{game.score}</span>
-              </div>
-            ))}
+            {entry.games
+              .filter((game) => isPastOrCurrentRound(game.configHash, SEASON_GRAND_PRIXS))
+              .map((game, index) => (
+                <div
+                  key={index}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <span>
+                    <Link
+                      style={{ color: dfstyles.colors.dfblue }}
+                      to={`/portal/map/${game.configHash}`}
+                    >
+                      {getConfigName(game.configHash)}
+                    </Link>
+                  </span>
+                  {uniqueBadges[entry.address]
+                    .filter((cb) => cb.configHash == game.configHash)
+                    .map((badge, i) => {
+                      return (
+                        <span style={{ color: BADGE_BONUSES[badge.type].color }} key={i}>
+                          {'[+'}
+                          {BADGE_BONUSES[badge.type].bonus}
+                          {']'}
+                        </span>
+                      );
+                    })}
+                  <span>{game.score}</span>
+                </div>
+              ))}
             <div
               style={{
                 display: 'flex',

@@ -45,11 +45,11 @@ export interface GrandPrixHistoryItem {
   badges: BadgeType[];
 }
 
-function showPastAndCurrentRounds(round: GrandPrixHistory, SEASON_GRAND_PRIXS: GrandPrixMetadata[]): boolean {
-  const sgp = SEASON_GRAND_PRIXS.find((sgp) => sgp.configHash == round.configHash)
+export function isPastOrCurrentRound(configHash: string, SEASON_GRAND_PRIXS: GrandPrixMetadata[]): boolean {
+  const sgp = SEASON_GRAND_PRIXS.find((sgp) => sgp.configHash == configHash)
   if(!sgp) return false
   const startTime = sgp.startTime;
-  return Math.floor(Date.now()/1000) >= startTime;
+  return Math.floor(Date.now()/ 1000 ) >= startTime;
 }
 
 // if Player not found, create dummy history
@@ -67,13 +67,11 @@ export function PortalHistoryView({ match }: RouteComponentProps<{ account: stri
 
   const seasonHistories = loadPlayerSeasonHistoryView(account, configPlayers, SEASON_GRAND_PRIXS);
 
-  const rounds = seasonHistories[current].grandPrixs;
+  const rounds = seasonHistories[current].grandPrixs.filter(gp => isPastOrCurrentRound(gp.configHash, SEASON_GRAND_PRIXS));
   const totalScore = useMemo(() => rounds.reduce((prev, curr) => curr.score + prev, 0), [rounds]);
   const mapComponents = useMemo(
     () =>
       rounds
-        // Only show rounds that have started in the past.
-        .filter((round) => showPastAndCurrentRounds(round, SEASON_GRAND_PRIXS))
         .map((round: GrandPrixHistory, idx: number) => (
           <PortalHistoryRoundCard round={round} index={idx} key={idx} />
         )),
@@ -103,7 +101,7 @@ export function PortalHistoryView({ match }: RouteComponentProps<{ account: stri
         <div className='col'>
           <Title>Season {current + 1}</Title>
           <Subtitle>
-            {rounds.length} {rounds.length == 1 ? 'round' : 'round'} in this season so far
+            {rounds.length} {rounds.length == 1 ? 'round' : 'rounds'} in this season so far
           </Subtitle>
         </div>
       </HeaderContainer>
