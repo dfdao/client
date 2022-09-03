@@ -359,6 +359,8 @@ export function calcGrandPrixScore(configPlayer: ConfigPlayer): number {
 /**
  * Big daddy score calculation
  */
+
+// Returns empty values if player not found
 export function loadPlayerSeasonHistoryView(
   player: EthAddress,
   configPlayers: CleanConfigPlayer[],
@@ -367,8 +369,7 @@ export function loadPlayerSeasonHistoryView(
   const seasonHistories: SeasonHistory[] = [];
 
   const playerExists = configPlayers.find((cp) => cp.address == player);
-  if (!playerExists) return [];
-
+ 
   // Get Season Rank and Score.
   // Need to handle multiple seasons.
 
@@ -381,11 +382,11 @@ export function loadPlayerSeasonHistoryView(
 
     // Calculate Player's Season Aggregate Statistics
     const seasonId = parseInt(key);
-    let rank = 0;
-    let score = 0;
     const seasonScores = getSeasonScore(
       loadSeasonPlayers(configPlayers, seasonId, SEASON_GRAND_PRIXS)
     );
+    let rank = seasonScores.length;
+    let score = 0;
     seasonScores
       .sort((a, b) => b.score - a.score)
       .map((s, index) => {
@@ -408,7 +409,7 @@ export function loadPlayerSeasonHistoryView(
     // Calculate Grand prix aggregate statistics
     grandPrixs.map((gp) => {
       const allGrandPrixs = groupByGrandPrix(configPlayers)[gp.configHash];
-      let rank = 0;
+      let rank = allGrandPrixs.length;
       let score = 0;
       if (allGrandPrixs && allGrandPrixs.length > 0) {
         allGrandPrixs
@@ -419,7 +420,10 @@ export function loadPlayerSeasonHistoryView(
               score = s.score;
             }
           });
-        const playerGrandPrixs = groupByPlayers(configPlayers)[player].filter(
+
+        // Get grand prixs player has participated in for badges
+        const seasonPlayers = groupByPlayers(configPlayers)[player] as CleanConfigPlayer[] | undefined;
+        const playerGrandPrixs = seasonPlayers?.filter(
           (cp) => cp.configHash == gp.configHash
         )[0];
 
@@ -428,7 +432,7 @@ export function loadPlayerSeasonHistoryView(
           rank,
           score,
           players: allGrandPrixs.length,
-          badges: playerGrandPrixs.badges,
+          badges: playerGrandPrixs ? playerGrandPrixs.badges : []
         };
 
         grandPrixHistories.push(grandPrixHistory);

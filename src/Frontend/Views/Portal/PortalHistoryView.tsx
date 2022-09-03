@@ -10,7 +10,13 @@ import { loadPlayerSeasonHistoryView } from '../../../Backend/Network/GraphApi/S
 import { BadgeDetailsRow } from '../../Components/Badges';
 import { Icon } from '../../Components/Icons';
 import { Sub } from '../../Components/Text';
-import { useAccount, useEthConnection, useSeasonData, useSeasonPlayers, useTwitters } from '../../Utils/AppHooks';
+import {
+  useAccount,
+  useEthConnection,
+  useSeasonData,
+  useSeasonPlayers,
+  useTwitters,
+} from '../../Utils/AppHooks';
 import { SEASON_GRAND_PRIXS } from '../../Utils/constants';
 import { TiledTable } from '../TiledTable';
 import { PortalHistoryRoundCard } from './Components/PortalHistoryRoundCard';
@@ -39,6 +45,8 @@ export interface GrandPrixHistoryItem {
   badges: BadgeType[];
 }
 
+// if Player not found, create dummy history
+
 export function PortalHistoryView({ match }: RouteComponentProps<{ account: string }>) {
   const [current, setCurrent] = useState<number>(0);
   const account = match.params.account as EthAddress;
@@ -48,13 +56,11 @@ export function PortalHistoryView({ match }: RouteComponentProps<{ account: stri
   if (!account) return <div>Loading...</div>;
 
   const configPlayers = useSeasonPlayers();
-  const SEASON_GRAND_PRIXS = useSeasonData()
+  const SEASON_GRAND_PRIXS = useSeasonData();
 
   const seasonHistories = loadPlayerSeasonHistoryView(account, configPlayers, SEASON_GRAND_PRIXS);
-  if (seasonHistories.length == 0) return <Container>Player not found...</Container>;
 
   const rounds = seasonHistories[current].grandPrixs;
-  //const rounds = DummySeasons[0].grandPrixHistoryItems;
   const totalScore = useMemo(() => rounds.reduce((prev, curr) => curr.score + prev, 0), [rounds]);
   const mapComponents = useMemo(
     () =>
@@ -63,10 +69,10 @@ export function PortalHistoryView({ match }: RouteComponentProps<{ account: stri
       )),
     [rounds]
   );
-  const grandPrixBadges = rounds.map(round => round.badges).flat() //mockBadges;
+  const grandPrixBadges = rounds.map((round) => round.badges).flat(); //mockBadges;
 
   const badgeElements = useMemo(() => {
-    if (!grandPrixBadges) return;
+    if (grandPrixBadges.length == 0) return <Subtitle>Race to earn badges!</Subtitle>;
 
     const countedBadges: { count: number; badge: BadgeType }[] = [];
     grandPrixBadges.forEach((cb) => {
@@ -74,7 +80,9 @@ export function PortalHistoryView({ match }: RouteComponentProps<{ account: stri
       if (!found) return countedBadges.push({ count: 1, badge: cb.type });
       return found.count++;
     });
-    return countedBadges.map((badge,i) => <BadgeDetailsRow key={i} type={badge.badge} count={badge.count} />);
+    return countedBadges.map((badge, i) => (
+      <BadgeDetailsRow key={i} type={badge.badge} count={badge.count} />
+    ));
   }, [grandPrixBadges]);
 
   const leftDisplay = current == 0 ? 'none' : 'flex';
@@ -84,7 +92,9 @@ export function PortalHistoryView({ match }: RouteComponentProps<{ account: stri
       <HeaderContainer>
         <div className='col'>
           <Title>Season {current + 1}</Title>
-          <Subtitle>{rounds.length} rounds in this season so far</Subtitle>
+          <Subtitle>
+            {rounds.length} {rounds.length == 1 ? 'round' : 'round'} in this season so far
+          </Subtitle>
         </div>
       </HeaderContainer>
       <PlayerInfoContainer>
@@ -101,7 +111,9 @@ export function PortalHistoryView({ match }: RouteComponentProps<{ account: stri
           <div className='col'>
             <Subtitle style={{ textTransform: 'uppercase' }}>Season Rank</Subtitle>
             <Title>
-              {seasonHistories[current].rank} of {seasonHistories[current].players}
+              {totalScore == 0
+                ? '-'
+                : seasonHistories[current].rank + `of` + seasonHistories[current].players}
             </Title>
           </div>
           <div className='col'>

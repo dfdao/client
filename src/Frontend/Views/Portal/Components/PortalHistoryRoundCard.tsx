@@ -2,10 +2,11 @@ import { getConfigName } from '@darkforest_eth/procedural';
 import { GrandPrixHistory } from '@darkforest_eth/types';
 import { debounce } from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { LoadingSpinner } from '../../../Components/LoadingSpinner';
 import { Minimap } from '../../../Components/Minimap';
+import { LobbyButton } from '../../../Pages/Lobby/LobbyMapEditor';
 import { generateMinimapConfig, MinimapConfig } from '../../../Panes/Lobby/MinimapUtils';
 import { useConfigFromHash } from '../../../Utils/AppHooks';
 import { theme } from '../styleUtils';
@@ -24,8 +25,7 @@ export const PortalHistoryRoundCard: React.FC<{ round: GrandPrixHistory; index: 
   index,
 }) => {
   const [minimapConfig, setMinimapConfig] = useState<MinimapConfig | undefined>();
-  const { config } = useConfigFromHash(round.configHash);
-  const history = useHistory();
+  const { config, lobbyAddress } = useConfigFromHash(round.configHash);
 
   const onMapChange = useMemo(() => {
     return debounce((config: MinimapConfig) => round.configHash && setMinimapConfig(config), 500);
@@ -46,7 +46,7 @@ export const PortalHistoryRoundCard: React.FC<{ round: GrandPrixHistory; index: 
   }
 
   return (
-    <MapContainer onClick={() => history.push(`/portal/map/${round.configHash}`)}>
+    <MapContainer>
       <MapNameContainer>
         {!minimapConfig ? (
           <div
@@ -80,14 +80,18 @@ export const PortalHistoryRoundCard: React.FC<{ round: GrandPrixHistory; index: 
         </DetailRow>
         <DetailRow>
           <DetailLabel>Rank</DetailLabel>
-          <DetailValue>
-            {round.rank} of {round.players}
-          </DetailValue>
+          <DetailValue>{round.score == 0 ? '-' : round.rank + `of` + round.players}</DetailValue>
         </DetailRow>
         <DetailRow>
           <DetailLabel>Badges</DetailLabel>
           <DetailValue>{round.badges.length}</DetailValue>
         </DetailRow>
+        <Link style={{ minWidth: '250px' }} target='blank' to={`/play/${lobbyAddress}?create=true`}>
+          <LobbyButton primary>Play</LobbyButton>
+        </Link>
+        <Link style={{ minWidth: '250px' }} target='blank' to={`/portal/map/${round.configHash}`}>
+          <LobbyButton>Details</LobbyButton>
+        </Link>
       </MapDetailsContainer>
     </MapContainer>
   );
