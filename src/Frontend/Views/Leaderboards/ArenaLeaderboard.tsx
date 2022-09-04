@@ -134,7 +134,7 @@ function getRankStar(rank: number) {
   return <></>;
 }
 
-function goldStar() {
+export function goldStar() {
   const gold =
     'invert(73%) sepia(29%) saturate(957%) hue-rotate(354deg) brightness(100%) contrast(95%)';
   return <Star width={'20px'} height={'20px'} color={gold}></Star>;

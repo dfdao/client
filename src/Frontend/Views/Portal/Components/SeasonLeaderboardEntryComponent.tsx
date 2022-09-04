@@ -7,8 +7,10 @@ import React, { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { SeasonLeaderboardEntry } from '../../../../Backend/Network/GraphApi/SeasonLeaderboardApi';
+import { Badge } from '../../../Components/Badges';
 import { useSeasonData, useTwitters } from '../../../Utils/AppHooks';
 import { BADGE_BONUSES } from '../../../Utils/constants';
+import { goldStar } from '../../Leaderboards/ArenaLeaderboard';
 import { isPastOrCurrentRound } from '../PortalHistoryView';
 import { MinimalButton } from '../PortalMainView';
 import { truncateAddress } from '../PortalUtils';
@@ -64,14 +66,20 @@ export const SeasonLeaderboardEntryComponent: React.FC<{
                   {uniqueBadges[entry.address]
                     .filter((cb) => cb.configHash == game.configHash)
                     .map((badge, i) => {
-                      return (
-                        <span style={{ color: BADGE_BONUSES[badge.type].color }} key={i}>
-                          {'[+'}
-                          {BADGE_BONUSES[badge.type].bonus}
-                          {']'}
-                        </span>
-                      );
-                    })}
+                        if(badge.type == BadgeType.Wallbreaker) {
+                          return(goldStar())
+                        }
+                        else {
+                          return (
+                            <span style={{ color: BADGE_BONUSES[badge.type].color }} key={i}>
+                            {'[+'}
+                            {BADGE_BONUSES[badge.type].bonus}
+                            {']'}
+                          </span>
+                          )
+                        }
+                      })
+                    }
                   <span>{game.score}</span>
                 </div>
               ))}
