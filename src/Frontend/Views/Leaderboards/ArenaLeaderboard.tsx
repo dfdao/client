@@ -134,12 +134,20 @@ function getRankStar(rank: number) {
   return <></>;
 }
 
+function goldStar() {
+  const gold =
+    'invert(73%) sepia(29%) saturate(957%) hue-rotate(354deg) brightness(100%) contrast(95%)';
+  return <Star width={'20px'} height={'20px'} color={gold}></Star>;
+
+}
+
 interface Row {
   address: string;
   twitter: string | undefined;
   time: number | undefined;
   moves: number | undefined;
   score: number | undefined;
+  wallBreaker: boolean | undefined;
 }
 
 interface EloRow {
@@ -275,7 +283,7 @@ function ArenaLeaderboardTable({ rows }: { rows: Row[] }) {
         sortFunctions={sortFunctions}
         alignments={['r', 'r', 'l', 'l', 'r']}
         headers={[
-          // <Cell key='star'></Cell>,
+          <Cell key='star'></Cell>,
           <Cell key='rank'></Cell>,
           <Cell key='name'></Cell>,
           <Cell key='twitter'></Cell>,
@@ -286,7 +294,7 @@ function ArenaLeaderboardTable({ rows }: { rows: Row[] }) {
         ]}
         rows={rows}
         columns={[
-          // (row: Row, i) => getRankStar(i), //star
+          (row: Row, i) => row.wallBreaker ? goldStar() : <></>, //star
           (
             row: Row,
             i //rank
@@ -395,6 +403,7 @@ function ArenaLeaderboardBody({
       time: entry.time,
       moves: entry.moves,
       score: entry.score,
+      wallBreaker: entry?.wallBreaker
     };
   });
 
