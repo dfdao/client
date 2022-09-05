@@ -19,7 +19,7 @@ import {
 import { SeasonHistoryItem } from './PortalHistoryView';
 
 export function truncateAddress(address: EthAddress) {
-  return address.substring(0, 6) + '...' + address.substring(36, 42);
+  return address.substring(0, 4) + '...' + address.substring(38, 42);
 }
 
 export function truncateString(str: string, maxLength: number) {
@@ -41,6 +41,23 @@ export const mockBadges: BadgeType[] = [
 
 const genRanHex = (size: number) =>
   [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+
+function getHashCode(text: string) {
+  let hash = 0;
+  if (text.length === 0) return hash;
+  for (let i = 0; i < text.length; i++) {
+    const chr = text.charCodeAt(i);
+    hash = (hash << 5) - hash + chr;
+    hash |= 0;
+  }
+  return hash;
+}
+
+export const addressToColor = (address: EthAddress) => {
+  const colors = ['#FF9D9D', '#FFECA7', '#7DE4A0', '#51C3E8', '#9874FF', '#FC7DFF'];
+  const hashCode = getHashCode((address as string).toLowerCase());
+  return colors[Math.abs(hashCode % colors.length) ?? 0];
+};
 
 export function createDummySeasonData(nEntries: number): CleanConfigPlayer[] {
   let dummy: CleanConfigPlayer[] = [];
@@ -205,13 +222,15 @@ export function seasonScoreToSeasonHistoryItem(account: EthAddress, seasonScores
   return history;
 }
 
-export function getCurrentGrandPrix(seasonGrandPrixs: GrandPrixMetadata[]): GrandPrixMetadata | undefined {
-  if(seasonGrandPrixs.length == 0) return undefined;
+export function getCurrentGrandPrix(
+  seasonGrandPrixs: GrandPrixMetadata[]
+): GrandPrixMetadata | undefined {
+  if (seasonGrandPrixs.length == 0) return undefined;
 
   const now = Math.floor(Date.now() / 1000);
   const res = seasonGrandPrixs.find((gp) => now >= gp.startTime && now <= gp.endTime);
   // Return most recent grand prix if none are active
-  if(!res) return seasonGrandPrixs.sort((a,b) => b.startTime - a.startTime)[0]
+  if (!res) return seasonGrandPrixs.sort((a, b) => b.startTime - a.startTime)[0];
   return res;
 }
 
