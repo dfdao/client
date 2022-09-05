@@ -1,24 +1,16 @@
 import { CONTRACT_ADDRESS } from '@darkforest_eth/contracts';
-import { DFArenaFaucet } from '@darkforest_eth/contracts/typechain';
 import { EthConnection, ThrottledConcurrentQueue, weiToEth } from '@darkforest_eth/network';
 import { address } from '@darkforest_eth/serde';
-import {
-  CleanConfigPlayer,
-  ConfigPlayer,
-  EthAddress,
-  GrandPrixMetadata,
-} from '@darkforest_eth/types';
+import { CleanConfigPlayer, EthAddress, GrandPrixMetadata } from '@darkforest_eth/types';
 import { utils, Wallet } from 'ethers';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
-import { active } from 'sortablejs';
 import {
   Account,
   getAccounts,
   addAccount,
   setActive,
   getActive,
-  resetActive,
   logOut,
 } from '../../Backend/Network/AccountManager';
 import { getEthConnection } from '../../Backend/Network/Blockchain';
@@ -30,7 +22,6 @@ import { InitRenderState, TerminalWrapper, Wrapper } from '../Components/GameLan
 import { MythicLabelText } from '../Components/Labels/MythicLabel';
 import { TextPreview } from '../Components/TextPreview';
 import {
-  AccountProvider,
   EthConnectionProvider,
   TwitterProvider,
   SeasonDataProvider,
@@ -239,12 +230,15 @@ class EntryPageTerminal {
   private async setAccount(account: Account) {
     try {
       await this.drip(account.address);
+
+      this.terminal.println('Registration complete! Press ENTER to continue');
+      await this.terminal.getInput();
       await this.ethConnection.setAccount(account.privateKey);
       setActive(account);
       this.accountSet(account);
     } catch (e) {
-      console.log('set account aborted');
       console.log(e);
+      await new Promise((r) => setTimeout(r, 1500));
       await this.chooseAccount();
     }
   }
@@ -253,28 +247,20 @@ class EntryPageTerminal {
     try {
       const currBalance = weiToEth(await this.ethConnection.loadBalance(address));
       if (currBalance < 0.005) {
-        this.terminal.println(`Dripping XDAI to your account.`);
+        this.terminal.println(`Loading...`);
         await sendDrip(this.ethConnection, address);
         const newBalance = weiToEth(await this.ethConnection.loadBalance(address));
         if (newBalance - currBalance > 0) {
-          this.terminal.println(
-            `Dripped XDAI from faucet. Your balance has increased by ${newBalance - currBalance}.`,
-            TerminalTextStyle.Green
-          );
-          await new Promise((r) => setTimeout(r, 1500));
+          this.terminal.println(`complete`, TerminalTextStyle.Green);
+        } else {
+          throw new Error('registration failed. Try again with an account that has XDAI tokens.');
         }
       }
     } catch (e) {
-      console.log(e);
-      this.terminal.println(
-        'An error occurred in faucet. Please try again with an account that has XDAI.',
-        TerminalTextStyle.Red
-      );
+      console.log('failed', e);
+      this.terminal.println(e.message, TerminalTextStyle.Red);
       this.terminal.println('');
-
-      throw new Error(
-        'An error occurred in faucet. Please try again with an account that has XDAI.'
-      );
+      throw new Error(e);
     }
   }
 }
