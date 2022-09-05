@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { logOut } from '../../../Backend/Network/AccountManager';
 import { Badge, BadgeDetailsCol, SpacedBadges } from '../../Components/Badges';
 import { Btn } from '../../Components/Btn';
+import { Copyable } from '../../Components/Copyable';
 import { CopyableInput } from '../../Components/CopyableInput';
 import { Gnosis, Icon, IconType, Twitter } from '../../Components/Icons';
 import { TextPreview } from '../../Components/TextPreview';
@@ -36,27 +37,29 @@ function AccountModal({ setOpen }: { setOpen: (open: boolean) => void }) {
             <Icon type={IconType.X} />
           </CloseButton>
           <Avatar width='3rem' height='3rem' color={addressToColor(address)} />
-          <div style={{ fontSize: '2em' }}>
-            {/* {twitter ?? <TextPreview text={address} unFocusedWidth={'50%'} focusedWidth={'100%'} />} */}
+          <div style={{ fontSize: '1.5em' }}>
             {twitter ?? (
-              <CopyableInput
-                displayValue={truncateAddress(address)}
-                copyText={address}
-                onCopyError={() => {
-                  // do nothing
-                }}
-              />
+              <Copyable textToCopy={address} onCopyError={() => {}}>
+                <span>{truncateAddress(address)}</span>
+              </Copyable>
             )}
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Btn
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              marginTop: theme.spacing.lg,
+            }}
+          >
+            <Button
               onClick={() => {
                 window.open(`https://blockscout.com/xdai/optimism/address/${address}`, '_blank');
               }}
             >
               <Gnosis width='24px' height='24px' />
-              Account Details
-            </Btn>
+              Explorer
+            </Button>
             {twitter && (
               <Button
                 onClick={() => {
@@ -70,10 +73,10 @@ function AccountModal({ setOpen }: { setOpen: (open: boolean) => void }) {
           </div>
         </AccountContent>
         <Footer>
-          <LobbyButton onClick={logOut}>
+          <Button onClick={logOut}>
             <ExitIcon />
             Disconnect
-          </LobbyButton>
+          </Button>
         </Footer>
       </AccountDetails>
     </ModalContainer>
@@ -168,6 +171,7 @@ const AccountDetails = styled.div`
   flex-direction: column;
   padding: ${theme.spacing.lg};
   justify-content: space-between;
+  align-items: center;
   border-radius: ${theme.borderRadius};
   position: relative;
   animation: fadeIn 0.15s ease;
@@ -236,4 +240,8 @@ const Button = styled(LobbyButton)`
   border: none;
   background: ${theme.colors.bg2};
   gap: ${theme.spacing.md};
+  transition: all 0.2s ease-in-out;
+  &:hover {
+    background: ${theme.colors.bg3} !important;
+  }
 `;
