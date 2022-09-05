@@ -106,7 +106,10 @@ class EntryPageTerminal {
 
     const accounts = getAccounts();
 
-    this.terminal?.println(`Found ${accounts.length} accounts on this device. Loading balances...`);
+    this.terminal?.println(`Login or create an account.`);
+    this.terminal?.println(`To choose an option, type its symbol and press ENTER.`);
+    this.terminal?.newline();
+    this.terminal?.println(`Found ${accounts.length} accounts on this device. `);
     this.terminal?.newline();
 
     try {
@@ -120,10 +123,6 @@ class EntryPageTerminal {
       return;
     }
 
-    this.terminal?.println(`Log in to create an arena. If your account has less than 0.005 xDAI`);
-    this.terminal?.println(`it will get dripped 0.01 Optimism xDAI`);
-    this.terminal?.newline();
-
     accounts.forEach((account, i) => {
       this.terminal?.print(`(${i + 1}): `, TerminalTextStyle.Sub);
       this.terminal?.print(`${account.address} `);
@@ -135,9 +134,9 @@ class EntryPageTerminal {
     this.terminal?.newline();
 
     this.terminal?.print('(n) ', TerminalTextStyle.Sub);
-    this.terminal?.println(`Generate new burner wallet account.`);
+    this.terminal?.println(`Create new account.`);
     this.terminal?.print('(i) ', TerminalTextStyle.Sub);
-    this.terminal?.println(`Import private key.`);
+    this.terminal?.println(`Import account using private key.`);
     this.terminal?.println(``);
     this.terminal?.println(`Select an option:`, TerminalTextStyle.Text);
 
@@ -168,24 +167,15 @@ class EntryPageTerminal {
       addAccount(account.privateKey);
 
       this.terminal.println(``);
-      this.terminal.print(`Created new burner wallet with address `);
+      this.terminal.print(`Creating new account with address `);
       this.terminal.printElement(<TextPreview text={account.address} unFocusedWidth={'100px'} />);
       this.terminal.println(``);
       this.terminal.println('');
-      this.terminal.println(
-        'Note: Burner wallets are stored in local storage.',
-        TerminalTextStyle.Text
-      );
-      this.terminal.println('They are relatively insecure and you should avoid ');
-      this.terminal.println('storing substantial funds in them.');
-      this.terminal.println('');
-      this.terminal.println('Also, clearing browser local storage/cache will render your');
-      this.terminal.println('burner wallets inaccessible, unless you export your private keys.');
-      this.terminal.println('');
-
+      this.terminal.print('Note: This account is a ', TerminalTextStyle.Sub);
+      this.terminal.println('burner wallet.', TerminalTextStyle.Red);
+      this.terminal.println('It should never store substantial funds!', TerminalTextStyle.Sub);
+      this.terminal.newline();
       this.setAccount(account);
-
-      // this.accountSet(newAddr);
     } catch (e) {
       console.log(e);
       this.terminal.println('An unknown error occurred. please try again.', TerminalTextStyle.Red);
@@ -194,16 +184,14 @@ class EntryPageTerminal {
 
   private async importAccount() {
     this.terminal.println(
-      'Enter the 0x-prefixed private key of the account you wish to import',
+      'Enter the 0x-prefixed private key of the account you wish to import.',
       TerminalTextStyle.Text
     );
-    this.terminal.println(
-      "NOTE: THIS WILL STORE THE PRIVATE KEY IN YOUR BROWSER'S LOCAL STORAGE",
-      TerminalTextStyle.Text
-    );
-    this.terminal.println(
-      'Local storage is relatively insecure. We recommend only importing accounts with zero-to-no funds.'
-    );
+    this.terminal.newline();
+    this.terminal.print('Note: This account is a ', TerminalTextStyle.Sub);
+    this.terminal.println('burner wallet.', TerminalTextStyle.Red);
+    this.terminal.println('It should never store substantial funds!', TerminalTextStyle.Sub);
+
     this.terminal.newline();
     this.terminal.println('(x) to cancel', TerminalTextStyle.Text);
     this.terminal.newline();
@@ -287,13 +275,13 @@ export function EntryPage() {
     if (connection) {
       console.log(`loading registry...`);
       loadRegistry(connection)
-      .then((t) => {
-        setSeasonData(t)
-      })
-      .catch((e) => {
-        console.log(`load registry error`, e);
-        setSeasonData([])
-      })
+        .then((t) => {
+          setSeasonData(t);
+        })
+        .catch((e) => {
+          console.log(`load registry error`, e);
+          setSeasonData([]);
+        });
     }
   }, [connection]);
 
