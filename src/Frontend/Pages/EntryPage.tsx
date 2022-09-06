@@ -195,7 +195,7 @@ class EntryPageTerminal {
     this.terminal.newline();
     this.terminal.println('(x) to cancel', TerminalTextStyle.Text);
     this.terminal.newline();
-    const newSKey = (await this.terminal.getInput()) || '';
+    const newSKey = await this.terminal.getInput();
     if (newSKey === 'x') {
       this.terminal.newline();
       this.terminal.println('Cancelled import.', TerminalTextStyle.Text);
