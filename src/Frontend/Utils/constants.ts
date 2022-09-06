@@ -24,7 +24,7 @@ const LOCATION_ID_UB = bigInt(
 
 const competitiveConfig = '0xfe719a3cfccf2bcfa23f71f0af80a931eda4f4197331828d728b7505a6156930';
 
-const tutorialConfig = '0xdccc97271cde9ad566db3a1e1d3d12220b04b595134bb7039b5606fdc57d82a1';
+const tutorialConfig = '0x7fd17d7c427c703a336eb50003e87219accf2413d7643dedb2c6184e86077aad';
 
 const roundStartTimestamp = '2022-07-13T00:00:00.000Z';
 

@@ -216,7 +216,7 @@ export function GameWindowLayout({
 
           {showTutorial && <TutorialPane />}
           {showSpectatorInfo && <SpectatorInfoPane />}
-          {showArenaBriefing && <ArenaBriefingPane />}
+          {showArenaBriefing && !showTutorial && <ArenaBriefingPane />}
         </CanvasContainer>
       </MainWindow>
     </WindowWrapper>

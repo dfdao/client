@@ -33,66 +33,10 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
     setHome(coords ? `(${coords.x}, ${coords.y})` : '');
   }, [uiManager]);
 
-  if (tutorialState === TutorialState.Security) {
+  if (tutorialState === TutorialState.SpawnPlanet) {
     return (
       <div className='tutzoom'>
-        <div>
-          The game stores your <White>private key</White> and home coordinates in your browser. They
-          are your password, and <Red>should never be viewed by anyone else.</Red>
-        </div>
-        <div>
-          <Btn
-            onClick={() => {
-              setViewPrivateKey(!viewPrivateKey);
-            }}
-          >
-            {viewPrivateKey ? 'Hide' : 'View'} private key
-          </Btn>{' '}
-          <br />
-          Your private key is:{' '}
-          <TextPreview
-            text={viewPrivateKey ? sKey : 'hidden'}
-            focusedWidth={'150px'}
-            unFocusedWidth={'150px'}
-          />
-        </div>
-        <div>
-          <Btn
-            onClick={() => {
-              setViewHomeCoords(!viewHomeCoords);
-            }}
-          >
-            {viewHomeCoords ? 'Hide' : 'View'} home coords
-          </Btn>{' '}
-          <br />
-          Your home coords are:{' '}
-          <TextPreview
-            text={viewHomeCoords ? home : 'hidden'}
-            focusedWidth={'150px'}
-            unFocusedWidth={'150px'}
-          />
-        </div>
-
-        <p>We recommend you back this information up.</p>
-        <br />
-        <p>
-          If you are new to Dark Forest, play the tutorial! Otherwise, skip and jump into the
-          action.
-        </p>
-        <div style={{ gap: '5px' }}>
-          <Btn className='btn' onClick={() => tutorialManager.complete()}>
-            Exit
-          </Btn>
-          <Btn className='btn' onClick={() => tutorialManager.acceptInput(TutorialState.Security)}>
-            Play Tutorial
-          </Btn>
-        </div>
-      </div>
-    );
-  } else if (tutorialState === TutorialState.SpawnPlanet) {
-    return (
-      <div className='tutzoom'>
-        <White>Click your home planet to learn more.</White>
+        <White>Click your spawn planet to learn more.</White>
         <div style={{ gap: '5px' }}>
           <Btn className='btn' onClick={() => tutorialManager.complete()}>
             Exit
@@ -374,7 +318,7 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
 export function TutorialPane() {
   const uiManager = useUIManager();
   const tutorialManager = TutorialManager.getInstance(uiManager);
-  const [tutorialState, setTutorialState] = useState<TutorialState>(TutorialState.None);
+  const [tutorialState, setTutorialState] = useState<TutorialState>(TutorialState.SpawnPlanet);
   const [completed, setCompleted] = useBooleanSetting(uiManager, Setting.TutorialCompleted);
 
   // sync tutorial state
