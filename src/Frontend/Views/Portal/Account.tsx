@@ -1,26 +1,26 @@
-import { BadgeType } from '@darkforest_eth/types';
-import React, { useEffect, useMemo, useState } from 'react';
+import { EthAddress } from '@darkforest_eth/types';
+import { BigNumber } from 'ethers';
+import { formatEther } from 'ethers/lib/utils';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { logOut } from '../../../Backend/Network/AccountManager';
-import { Badge, BadgeDetailsCol, SpacedBadges } from '../../Components/Badges';
-import { Btn } from '../../Components/Btn';
 import { Copyable } from '../../Components/Copyable';
-import { CopyableInput } from '../../Components/CopyableInput';
 import { Gnosis, Icon, IconType, Twitter } from '../../Components/Icons';
-import { TextPreview } from '../../Components/TextPreview';
 import { LobbyButton } from '../../Pages/Lobby/LobbyMapEditor';
-import { PortalButton } from '../../Styles/dfstyles';
 
 import { useDisableScroll, useEthConnection, useTwitters } from '../../Utils/AppHooks';
-import { addressToColor, mockBadges, truncateAddress } from './PortalUtils';
+import { addressToColor, truncateAddress } from './PortalUtils';
 import { theme } from './styleUtils';
 
-function AccountModal({ setOpen }: { setOpen: (open: boolean) => void }) {
-  const connection = useEthConnection();
-  const address = connection.getAddress();
-  const twitters = useTwitters();
+interface AccountModalProps {
+  address: EthAddress | undefined;
+  twitter: string | undefined;
+  balance: string | undefined;
+  setOpen: (open: boolean) => void;
+}
+
+const AccountModal: React.FC<AccountModalProps> = ({ address, twitter, balance, setOpen }) => {
   if (!address) return <></>;
-  const twitter = twitters[address];
 
   return (
     <ModalContainer onClick={() => setOpen(false)}>
@@ -44,6 +44,7 @@ function AccountModal({ setOpen }: { setOpen: (open: boolean) => void }) {
               </Copyable>
             )}
           </div>
+          <span style={{ color: theme.colors.fgMuted2 }}>{balance ?? 0} xDAI</span>
           <div
             style={{
               display: 'flex',
@@ -81,11 +82,12 @@ function AccountModal({ setOpen }: { setOpen: (open: boolean) => void }) {
       </AccountDetails>
     </ModalContainer>
   );
-}
+};
 export function Account() {
   const [open, setOpen] = useState<boolean>(false);
   const connection = useEthConnection();
   const address = connection.getAddress();
+  const balance = connection.getMyBalance();
   const twitters = useTwitters();
   const [blockScroll, allowScroll] = useDisableScroll();
 
@@ -98,17 +100,29 @@ export function Account() {
   const twitter = twitters[address];
   const truncatedAddress = truncateAddress(address);
 
+  const formattedBalance = (+formatEther(balance ?? '0')).toFixed(2);
+
   return (
     <>
-      {open && <AccountModal setOpen={setOpen} />}
-      <AccountButton onClick={() => setOpen(true)}>
-        <Avatar
-          width={theme.spacing.lg}
-          height={theme.spacing.lg}
-          color={addressToColor(address)}
+      {open && (
+        <AccountModal
+          setOpen={setOpen}
+          address={address}
+          twitter={twitter}
+          balance={formattedBalance}
         />
-        {twitter || truncatedAddress}
-        <ChevronDown />
+      )}
+      <AccountButton onClick={() => setOpen(true)}>
+        <AccountBalance>{formattedBalance} xDAI</AccountBalance>
+        <AvatarSection>
+          <Avatar
+            width={theme.spacing.lg}
+            height={theme.spacing.lg}
+            color={addressToColor(address)}
+          />
+          {twitter || truncatedAddress}
+          <ChevronDown />
+        </AvatarSection>
       </AccountButton>
     </>
   );
@@ -171,6 +185,7 @@ const AccountContent = styled.div`
 
 const AccountDetails = styled.div`
   width: 400px;
+  font-family: ${theme.fonts.mono};
   box-sizing: content-box;
   min-height: 20%;
   background: ${theme.colors.bg1};
@@ -197,19 +212,45 @@ const AccountDetails = styled.div`
 `;
 
 const AccountButton = styled.button`
-  padding: ${theme.spacing.md};
+  outline: none;
+  font-family: ${theme.fonts.mono};
+  padding: ${theme.spacing.sm};
   position: relative;
   display: flex;
   align-items: center;
-  background: ${theme.colors.bg2};
+  background: ${theme.colors.bg1};
   border-radius: ${theme.borderRadius};
   justify-self: flex-end;
-  gap: ${theme.spacing.md};
-  color: ${theme.colors.fgPrimary};
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+  &:hover {
+    border: 1px solid ${theme.colors.bg2};
+  }
+`;
+
+const AvatarSection = styled.div`
+  border-radius: ${theme.borderRadius};
   transition: all 0.125s ease;
+  color: ${theme.colors.fgPrimary};
+  gap: ${theme.spacing.md};
+  padding: ${theme.spacing.md};
+  background: ${theme.colors.bg2};
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex: 1;
+  align-items: center;
   &:hover {
     background: ${theme.colors.bg3};
   }
+`;
+
+const AccountBalance = styled.div`
+  background: transparent;
+  margin-right: ${theme.spacing.sm};
+  padding: ${theme.spacing.md};
+  overflow: hidden;
+  color: ${theme.colors.fgPrimary};
 `;
 
 const Footer = styled.div`
