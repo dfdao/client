@@ -24,16 +24,24 @@ export function ArenaBriefingPane() {
   const isSinglePlayer = uiManager.getSpawnPlanets().length == 1;
   const victoryThreshold = uiManager.contractConstants.CLAIM_VICTORY_ENERGY_PERCENT;
   const numForVictory = uiManager.contractConstants.TARGETS_REQUIRED_FOR_VICTORY;
-  const targetLocation = uiManager.getPlayerTargetPlanets()[0].locationId;
-  const targetCoords = uiManager.getGameManager().getRevealedLocations().get(targetLocation);
+  const targetLocations = uiManager.getPlayerTargetPlanets();
+  const targetLocation = targetLocations.length > 0 ? targetLocations[0] : undefined;
+  const targetCoords = targetLocation
+    ? uiManager.getGameManager().getRevealedLocations().get(targetLocation.locationId)
+    : undefined;
   const homeLocation = uiManager.getHomeHash();
   useEffect(() => {
-    if (step == BriefingStep.Target) {
-      uiManager.centerLocationId(targetLocation);
+    if (!targetLocation) setStep(BriefingStep.Complete);
+    if (step == BriefingStep.Target && targetLocation) {
+      uiManager.centerLocationId(targetLocation.locationId);
+    } else if (step === BriefingStep.Target && !targetLocation) {
+      setStep(BriefingStep.Complete);
     } else if (step == BriefingStep.Complete) {
       if (homeLocation) uiManager.centerLocationId(homeLocation);
+      setOpen(false);
+      setBooleanSetting(config, Setting.ShowArenaBriefing, true);
     }
-  }, [step]);
+  }, [step, setStep]);
 
   if (spectatorMode || !open) {
     return null;
@@ -95,9 +103,7 @@ export function ArenaBriefingPane() {
         <Btn
           className='btn'
           onClick={() => {
-            setOpen(false);
             setStep(BriefingStep.Complete);
-            setBooleanSetting(config, Setting.ShowArenaBriefing, true);
           }}
         >
           Return to home planet
