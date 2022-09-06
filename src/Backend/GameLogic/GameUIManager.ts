@@ -794,7 +794,7 @@ class GameUIManager extends EventEmitter {
 
         if (coordsEqual(loc.coords, this.getHomeCoords())) {
           const tutorialManager = TutorialManager.getInstance(this);
-          tutorialManager.acceptInput(TutorialState.SpawnPlanet);
+          tutorialManager.acceptInput(TutorialState.Welcome);
         }
       }
     }

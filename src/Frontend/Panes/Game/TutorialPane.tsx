@@ -32,20 +32,36 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
     const coords = uiManager.getHomeCoords();
     setHome(coords ? `(${coords.x}, ${coords.y})` : '');
   }, [uiManager]);
-
-  if (tutorialState === TutorialState.SpawnPlanet) {
+  if (tutorialState === TutorialState.Welcome) {
     return (
       <div className='tutzoom'>
-        <White>Click your spawn planet to learn more.</White>
+        <White>
+          Welcome to the Dark Forest Arena tutorial, Captain! You're an intergalactic explorer who
+          commands planets in a fully on-chain universe.
+        </White>
+        <br />
+        <div>Click your spawn planet to get started.</div>
+      </div>
+    );
+  } else if (tutorialState === TutorialState.SpawnPlanet) {
+    return (
+      <div className='tutzoom'>
+        Well done! This is your first planet. Over the course of the game, you will capture more
+        throughout the universe.
+        <br />
+        The planet pane displays quick information about a planet.
+        <br />
+        <br />
+        <div>
+          Try hovering over different planet stats (located beneath the planet's Level and Rank) to
+          learn more.
+        </div>
         <div style={{ gap: '5px' }}>
-          <Btn className='btn' onClick={() => tutorialManager.complete()}>
-            Exit
-          </Btn>
           <Btn
             className='btn'
             onClick={() => tutorialManager.acceptInput(TutorialState.SpawnPlanet)}
           >
-            Skip
+            Continue
           </Btn>
         </div>
       </div>
@@ -53,34 +69,20 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
   } else if (tutorialState === TutorialState.SendFleet) {
     return (
       <div className='tutzoom'>
-        Well done! This pane displays quick information about your planet and the ability to send
-        resources. Your planet uses <White>energy</White> to capture nearby planets. You can use{' '}
-        <Gold>silver</Gold> for planet upgrades{' '}
-        <Link to='https://www.youtube.com/watch?v=eXWfaVt_i3o&list=PLn4H2Bj-iklclFZW_YpKCQaTnBVaECLDK&index=5'>
-          (Click here for more on silver)
-        </Link>
-        .
+        To expand your empire, you need to capture planets. Use some of your planet's{' '}
+        <White>Energy</White> to do so.
         <br />
         <br />
-        <White>Try sending energy to another planet.</White> You can click and drag to send energy
-        to another planet. Alternatively, click your planet, press {<White>q</White>}, and click a
-        nearby planet.
-        <div style={{ gap: '5px' }}>
-          <Btn className='btn' onClick={() => tutorialManager.complete()}>
-            Exit
-          </Btn>
-          <Btn className='btn' onClick={() => tutorialManager.acceptInput(TutorialState.SendFleet)}>
-            Skip
-          </Btn>
-        </div>
+        Here's how: Click your planet, press {<White>q</White>}, and click a nearby planet. You
+        should see some energy fly there!
       </div>
     );
   } else if (tutorialState === TutorialState.SpaceJunk) {
     return (
       <div className='tutzoom'>
         <p>
-          When you send planet you accumulate <White>Space Junk</White>. Once you hit the Space Junk
-          limit, you won't be able to move to new planets.
+          Every time you capture a planet you accumulate <White>Space Junk</White>. Once you hit the
+          Space Junk limit, you won't be able to move to new planets.
         </p>
         <p>
           To reduce your space junk, <Red>Abandon</Red> planets and keep expanding!
@@ -103,8 +105,10 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
     return (
       <div className='tutzoom'>
         <p>
-          You also control several space ships - check your home planet! You can move spaceships
-          between any two planets, even if you don't own them. Space ships can move any distance!{' '}
+          You also control{' '}
+          {uiManager.getMySpaceships().length > 1 ? 'several space ships' : 'a space ship'} - check
+          your home planet! You can move spaceships between any two planets, even if you don't own
+          them. Space ships can move any distance.
           <White>Try moving a spaceship you own to another planet now!</White>
         </p>
         <p>Tip: Before moving, click a spaceship to select it. Then execute your move.</p>
@@ -113,24 +117,6 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
             Exit
           </Btn>
           <Btn className='btn' onClick={() => tutorialManager.acceptInput(TutorialState.Spaceship)}>
-            Skip
-          </Btn>
-        </div>
-      </div>
-    );
-  } else if (tutorialState === TutorialState.Deselect) {
-    return (
-      <div className='tutzoom'>
-        Congrats, you've submitted a move to xDAI! Moves that are in the mempool are shown as dotted
-        lines. Accepted moves are shown as solid lines.
-        <br />
-        <br />
-        <White>Try deselecting a planet now. Click in empty space to deselect.</White>
-        <div style={{ gap: '5px' }}>
-          <Btn className='btn' onClick={() => tutorialManager.complete()}>
-            Exit
-          </Btn>
-          <Btn className='btn' onClick={() => tutorialManager.acceptInput(TutorialState.Deselect)}>
             Skip
           </Btn>
         </div>
@@ -191,23 +177,6 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
             className='btn'
             onClick={() => tutorialManager.acceptInput(TutorialState.MinerPause)}
           >
-            Skip
-          </Btn>
-        </div>
-      </div>
-    );
-  } else if (tutorialState === TutorialState.Terminal) {
-    return (
-      <div className='tutzoom'>
-        You can hide the terminal on the right by clicking on its left edge.
-        <br />
-        <br />
-        <White>Try hiding the terminal now.</White>
-        <div style={{ gap: '5px' }}>
-          <Btn className='btn' onClick={() => tutorialManager.complete()}>
-            Exit
-          </Btn>
-          <Btn className='btn' onClick={() => tutorialManager.acceptInput(TutorialState.Terminal)}>
             Skip
           </Btn>
         </div>
@@ -318,7 +287,7 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
 export function TutorialPane() {
   const uiManager = useUIManager();
   const tutorialManager = TutorialManager.getInstance(uiManager);
-  const [tutorialState, setTutorialState] = useState<TutorialState>(TutorialState.SpawnPlanet);
+  const [tutorialState, setTutorialState] = useState<TutorialState>(TutorialState.Welcome);
   const [completed, setCompleted] = useBooleanSetting(uiManager, Setting.TutorialCompleted);
 
   // sync tutorial state

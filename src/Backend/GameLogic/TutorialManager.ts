@@ -10,11 +10,12 @@ export const enum TutorialManagerEvent {
 
 export const enum TutorialState {
   None,
+  Welcome,
   SpawnPlanet,
   SendFleet,
+  Deselect,
   SpaceJunk,
   Spaceship,
-  Deselect,
   HowToGetScore,
   BlockedPlanet,
   DefensePlanet,
@@ -30,7 +31,7 @@ export const enum TutorialState {
 
 class TutorialManager extends EventEmitter {
   static instance: TutorialManager;
-  private tutorialState: TutorialState = TutorialState.SpawnPlanet;
+  private tutorialState: TutorialState = TutorialState.Welcome;
 
   private uiManager: GameUIManager;
 
