@@ -164,8 +164,6 @@ class EntryPageTerminal {
     };
 
     try {
-      addAccount(account.privateKey);
-
       this.terminal.println(``);
       this.terminal.print(`Creating new account with address `);
       this.terminal.printElement(<TextPreview text={account.address} unFocusedWidth={'100px'} />);
@@ -175,7 +173,7 @@ class EntryPageTerminal {
       this.terminal.println('burner wallet.', TerminalTextStyle.Red);
       this.terminal.println('It should never store substantial funds!', TerminalTextStyle.Sub);
       this.terminal.newline();
-      this.playTutorial(account);
+      this.drip(account);
     } catch (e) {
       console.log(e);
       this.terminal.println('An unknown error occurred. please try again.', TerminalTextStyle.Red);
@@ -205,12 +203,10 @@ class EntryPageTerminal {
     try {
       const newAddr = address(utils.computeAddress(newSKey));
 
-      addAccount(newSKey);
-
       this.terminal.println(`Successfully created account with address ${newAddr.toString()}`);
       this.terminal.newline();
 
-      this.playTutorial({ address: newAddr, privateKey: newSKey });
+      this.drip({ address: newAddr, privateKey: newSKey });
     } catch (e) {
       this.terminal.println('An unknown error occurred. please try again.', TerminalTextStyle.Red);
       this.terminal.println('');
@@ -232,7 +228,9 @@ class EntryPageTerminal {
 
   private async playTutorial(account: Account) {
     try {
-      await this.drip(account);
+      if (!getAccounts().find((acc) => acc.address == account.address))
+        addAccount(account.privateKey);
+
       this.terminal.println('This is a new account. Would you like to play the tutorial?');
       this.terminal?.print('(y) ', TerminalTextStyle.Sub);
       this.terminal?.println(`Yes. Take me to the tutorial.`);
