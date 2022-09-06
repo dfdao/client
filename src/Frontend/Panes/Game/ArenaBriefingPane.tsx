@@ -63,7 +63,9 @@ export function ArenaBriefingPane() {
             .
           </>
         )}
-        <div>You need {numForVictory} target planets to claim victory.</div>
+        <div>
+          You need {numForVictory} target planet{numForVictory > 1 && 's'} to claim victory.
+        </div>
       </div>
       <br />
       <div style={{ gap: '5px' }}>
@@ -85,7 +87,8 @@ export function ArenaBriefingPane() {
       </div>
       <br />
       <div>
-        ⏲️ starts {isSinglePlayer ? 'with your first move' : 'when you press ready'}. Good luck!
+        The timer ⏲️ starts {isSinglePlayer ? 'with your first move' : 'when you press ready'}. Good
+        luck!
       </div>
       <br />
       <div style={{ gap: '5px' }}>
