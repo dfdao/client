@@ -1,5 +1,5 @@
 import { BadgeType } from '@darkforest_eth/types';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { logOut } from '../../../Backend/Network/AccountManager';
 import { Badge, BadgeDetailsCol, SpacedBadges } from '../../Components/Badges';
@@ -11,7 +11,7 @@ import { TextPreview } from '../../Components/TextPreview';
 import { LobbyButton } from '../../Pages/Lobby/LobbyMapEditor';
 import { PortalButton } from '../../Styles/dfstyles';
 
-import { useEthConnection, useTwitters } from '../../Utils/AppHooks';
+import { useDisableScroll, useEthConnection, useTwitters } from '../../Utils/AppHooks';
 import { addressToColor, mockBadges, truncateAddress } from './PortalUtils';
 import { theme } from './styleUtils';
 
@@ -87,6 +87,13 @@ export function Account() {
   const connection = useEthConnection();
   const address = connection.getAddress();
   const twitters = useTwitters();
+  const [blockScroll, allowScroll] = useDisableScroll();
+
+  useEffect(() => {
+    if (open) blockScroll();
+    else allowScroll();
+  }, [open]);
+
   if (!address) return <></>;
   const twitter = twitters[address];
   const truncatedAddress = truncateAddress(address);
@@ -159,6 +166,7 @@ const AccountContent = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
+  gap: ${theme.spacing.md};
 `;
 
 const AccountDetails = styled.div`
