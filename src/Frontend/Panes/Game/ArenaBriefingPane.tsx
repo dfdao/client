@@ -13,12 +13,12 @@ const enum BriefingStep {
 }
 export function ArenaBriefingPane() {
   const uiManager = useUIManager();
-  const [open, setOpen] = useState(uiManager.gameStarted);
+  const [open, setOpen] = useState(!uiManager.gameStarted);
   const [step, setStep] = useState<BriefingStep>(BriefingStep.Welcome);
 
   const config = {
-    contractAddress: this.uiManager.getContractAddress(),
-    account: this.uiManager.getAccount(),
+    contractAddress: uiManager.getContractAddress(),
+    account: uiManager.getAccount(),
   };
   const spectatorMode = uiManager.getGameManager().getIsSpectator();
   const isSinglePlayer = uiManager.getSpawnPlanets().length == 1;
