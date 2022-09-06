@@ -5,7 +5,7 @@ import dfstyles from '@darkforest_eth/ui/dist/styles';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useLiveMatches, useTwitters } from '../../Utils/AppHooks';
-import { DAY_IN_SECONDS, DEV_CONFIG_HASH_1, DUMMY } from '../../Utils/constants';
+import { HOUR_IN_SECONDS, DEV_CONFIG_HASH_1, DUMMY } from '../../Utils/constants';
 import { formatStartTime } from '../../Utils/TimeUtils';
 import { compPlayerToEntry } from '../Leaderboards/ArenaLeaderboard';
 import { Orb } from './Components/FlashingOrb';
@@ -78,7 +78,7 @@ export const GPFeed: React.FC<MapDetailsProps> = ({ configHash }) => {
                       >
                         finished{' '}
                       </Link>
-                      in {scoreToTime(entry.duration)}{' '}({DAY_IN_SECONDS - entry.duration} points)
+                      in {scoreToTime(entry.duration)}{' '}({HOUR_IN_SECONDS - entry.duration} points)
                     </span>
                   ) : (
                     <span>
