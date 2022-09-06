@@ -69,7 +69,10 @@ class EntryPageTerminal {
   }
 
   public async checkCompatibility() {
-    console.log('checking compatibility');
+    this.terminal?.printElement(<MythicLabelText text='Welcome to Dark Forest Arena' />);
+    this.terminal?.newline();
+    this.terminal?.newline();
+
     const issues = await unsupportedFeatures();
 
     if (issues.includes(Incompatibility.MobileOrTablet)) {
@@ -98,18 +101,14 @@ class EntryPageTerminal {
       this.terminal.println('Please resolve them and refresh the page.');
       return;
     } else {
+      this.terminal?.println(`Login or create an account.`);
+      this.terminal?.println(`To choose an option, type its symbol and press ENTER.`);
       await this.chooseAccount();
     }
   }
   public async chooseAccount() {
-    this.terminal?.printElement(<MythicLabelText text='Welcome to Dark Forest Arena' />);
-    this.terminal?.newline();
-    this.terminal?.newline();
-
     const accounts = getAccounts();
 
-    this.terminal?.println(`Login or create an account.`);
-    this.terminal?.println(`To choose an option, type its symbol and press ENTER.`);
     this.terminal?.newline();
     this.terminal?.println(`Found ${accounts.length} accounts on this device. `);
     this.terminal?.newline();
@@ -145,7 +144,7 @@ class EntryPageTerminal {
 
     if (+userInput && +userInput <= accounts.length && +userInput > 0) {
       const selectedAccount = accounts[+userInput - 1];
-      this.setAccount(selectedAccount, false);
+      this.drip(selectedAccount);
     } else if (userInput === 'n') {
       this.generateAccount();
     } else if (userInput === 'i') {
@@ -221,10 +220,6 @@ class EntryPageTerminal {
 
   private async setAccount(account: Account, tutorial: boolean) {
     try {
-      await this.drip(account.address);
-
-      this.terminal.println('Registration complete! Press ENTER to continue');
-      await this.terminal.getInput();
       await this.ethConnection.setAccount(account.privateKey);
       setActive(account);
       this.accountSet(account, tutorial);
@@ -237,6 +232,7 @@ class EntryPageTerminal {
 
   private async playTutorial(account: Account) {
     try {
+      await this.drip(account);
       this.terminal.println('This is a new account. Would you like to play the tutorial?');
       this.terminal?.print('(y) ', TerminalTextStyle.Sub);
       this.terminal?.println(`Yes. Take me to the tutorial.`);
@@ -244,35 +240,38 @@ class EntryPageTerminal {
       this.terminal?.println(`No. Take me to the game.`);
       const userInput = await this.terminal?.getInput();
       if (userInput === 'y') {
-        this.accountSet(account, true);
+        this.setAccount(account, true);
       } else if (userInput === 'n') {
-        this.accountSet(account, false);
+        this.setAccount(account, false);
       } else {
         this.terminal?.println('Unrecognized input. Please try again.', TerminalTextStyle.Red);
         this.terminal?.println('');
-        await this.chooseAccount();
+        await this.playTutorial(account);
       }
     } catch (e) {}
   }
 
-  private async drip(address: EthAddress) {
+  private async drip(account: Account) {
     try {
-      const currBalance = weiToEth(await this.ethConnection.loadBalance(address));
+      const currBalance = weiToEth(await this.ethConnection.loadBalance(account.address));
       if (currBalance < 0.005) {
         this.terminal.println(`Loading...`);
-        await sendDrip(this.ethConnection, address);
-        const newBalance = weiToEth(await this.ethConnection.loadBalance(address));
+        await sendDrip(this.ethConnection, account.address);
+        const newBalance = weiToEth(await this.ethConnection.loadBalance(account.address));
         if (newBalance - currBalance > 0) {
           this.terminal.println(`complete`, TerminalTextStyle.Green);
         } else {
-          throw new Error('registration failed. Try again with an account that has XDAI tokens.');
+          throw new Error('drip failed.');
         }
       }
+      this.playTutorial(account);
     } catch (e) {
-      console.log('failed', e);
-      this.terminal.println(e.message, TerminalTextStyle.Red);
-      this.terminal.println('');
-      throw new Error(e);
+      console.log(e);
+      this.terminal?.println('Registation failed. Try again with an account that has XDAI tokens.');
+      await new Promise((r) => setTimeout(r, 2000));
+      this.terminal?.newline();
+
+      await this.chooseAccount();
     }
   }
 }
