@@ -144,7 +144,7 @@ class EntryPageTerminal {
 
     if (+userInput && +userInput <= accounts.length && +userInput > 0) {
       const selectedAccount = accounts[+userInput - 1];
-      this.drip(selectedAccount);
+      this.drip(selectedAccount, false);
     } else if (userInput === 'n') {
       this.generateAccount();
     } else if (userInput === 'i') {
@@ -249,7 +249,7 @@ class EntryPageTerminal {
     } catch (e) {}
   }
 
-  private async drip(account: Account) {
+  private async drip(account: Account, tutorialStep: boolean = true) {
     try {
       const currBalance = weiToEth(await this.ethConnection.loadBalance(account.address));
       if (currBalance < 0.005) {
@@ -262,7 +262,8 @@ class EntryPageTerminal {
           throw new Error('drip failed.');
         }
       }
-      this.playTutorial(account);
+      if (tutorialStep) await this.playTutorial(account);
+      else await this.setAccount(account, false);
     } catch (e) {
       console.log(e);
       this.terminal?.println('Registation failed. Try again with an account that has XDAI tokens.');
