@@ -1,5 +1,5 @@
 import { address } from '@darkforest_eth/serde';
-import { BadgeType, EthAddress, GrandPrixMetadata, LiveMatch } from '@darkforest_eth/types';
+  WorldCoords,
 import * as bigInt from 'big-integer';
 import { constants } from 'ethers';
 import dfstyles from '../Styles/dfstyles';
