@@ -3,7 +3,7 @@ import { EventEmitter } from 'events';
 import NotificationManager from '../../Frontend/Game/NotificationManager';
 import { setBooleanSetting } from '../../Frontend/Utils/SettingsHooks';
 import GameUIManager from './GameUIManager';
-
+import { tutorialAsteroidLocation } from '../../Frontend/Utils/constants';
 export const enum TutorialManagerEvent {
   StateChanged = 'StateChanged',
 }
@@ -12,19 +12,15 @@ export const enum TutorialState {
   None,
   Welcome,
   SpawnPlanet,
+  ZoomOut,
   SendFleet,
-  Deselect,
+  PlanetTypes,
   SpaceJunk,
   Spaceship,
   HowToGetScore,
   BlockedPlanet,
   DefensePlanet,
-  // ScoringDetails,
-  ZoomOut,
   MinerMove,
-  MinerPause,
-  Terminal,
-  // Valhalla,
   AlmostCompleted,
   Completed,
 }
@@ -60,6 +56,9 @@ class TutorialManager extends EventEmitter {
       if (targetLocation.length > 0) {
         this.uiManager.centerLocationId(targetLocation[0].locationId);
       }
+    } else if (newState === TutorialState.SendFleet) {
+      const asteroid = this.uiManager.getPlanetWithCoords(tutorialAsteroidLocation);
+      asteroid && this.uiManager.centerLocationId(asteroid.locationId);
     } else if (newState === TutorialState.BlockedPlanet) {
       const blockedLocation = this.uiManager.getPlayerBlockedPlanets();
       if (blockedLocation.length > 0) {

@@ -602,7 +602,6 @@ class GameUIManager extends EventEmitter {
   public toggleExplore() {
     if (this.isMining()) {
       this?.stopExplore();
-      TutorialManager.getInstance(this).acceptInput(TutorialState.MinerPause);
     } else {
       this?.startExplore();
     }
@@ -775,11 +774,6 @@ class GameUIManager extends EventEmitter {
 
   public setSelectedPlanet(planet: LocatablePlanet | undefined): void {
     this.previousSelectedPlanetId = this.selectedPlanetId;
-
-    if (!planet) {
-      const tutorialManager = TutorialManager.getInstance(this);
-      tutorialManager.acceptInput(TutorialState.Deselect);
-    }
 
     const uiEmitter = UIEmitter.getInstance();
     this.selectedPlanetId = planet?.locationId;

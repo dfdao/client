@@ -53,8 +53,8 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
         <br />
         <br />
         <div>
-          Try hovering over different planet stats (located beneath the planet's Level and Rank) to
-          learn more.
+          Hover over your planet's stats to learn more. (Hint: they are located beneath the planet's
+          Level and Rank)
         </div>
         <div style={{ gap: '5px' }}>
           <Btn
@@ -66,15 +66,60 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
         </div>
       </div>
     );
+  } else if (tutorialState === TutorialState.ZoomOut) {
+    return (
+      <div className='tutzoom'>
+        <p>
+          To zoom in and out, use your mouse's scroll wheel. The edge of the universe is a big thick
+          white line.
+        </p>
+        <br />
+        <p>To move around the universe, click empty space and drag your mouse.</p>
+        <br />
+        <br />
+        <p>Try not to forget where your spawn planet is!</p>
+        <div style={{ gap: '5px' }}>
+          <Btn className='btn' onClick={() => tutorialManager.acceptInput(TutorialState.ZoomOut)}>
+            Continue
+          </Btn>
+        </div>
+      </div>
+    );
   } else if (tutorialState === TutorialState.SendFleet) {
     return (
       <div className='tutzoom'>
-        To expand your empire, you need to capture planets. Use some of your planet's{' '}
-        <White>Energy</White> to do so.
+        To expand your empire, you need to capture planets. Fortunately there is a nearby Asteroid
+        Field. Use some of your planet's <White>Energy</White> to capture that Asteroid Field.
         <br />
         <br />
         Here's how: Click your planet, press {<White>q</White>}, and click a nearby planet. You
         should see some energy fly there!
+      </div>
+    );
+  } else if (tutorialState === TutorialState.PlanetTypes) {
+    return (
+      <div className='tutzoom'>
+        In the Dark Forest Universe, there are several types of planets. The two most important are{' '}
+        <White>Planets</White> and <White>Asteroid Fields</White>.
+        <br />
+        <br />
+        Asteroid fields are special because they produce <Gold>Silver</Gold>. Silver is represented
+        by the Gold number above a planet.
+        <br />
+        You use <Gold>Silver</Gold> to upgrade <White>Planets</White>. You send it just like how you
+        send Energy.
+        <br />
+        <br />
+        <White>Try sending some Silver back to your spawn planet!</White>
+        <br /> (Hint: Use the Silver slider on the planet pane to increase the Silver you send)
+        <div style={{ gap: '5px' }}>
+          <Btn
+            className='btn'
+            onClick={() => tutorialManager.acceptInput(TutorialState.PlanetTypes)}
+          >
+            Continue
+          </Btn>
+        </div>
       </div>
     );
   } else if (tutorialState === TutorialState.SpaceJunk) {
@@ -92,94 +137,29 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
         Take a look at the top of the screen to see you current and maximum{' '}
         <White>Space Junk</White>.
         <div style={{ gap: '5px' }}>
-          <Btn className='btn' onClick={() => tutorialManager.complete()}>
-            Exit
-          </Btn>
           <Btn className='btn' onClick={() => tutorialManager.acceptInput(TutorialState.SpaceJunk)}>
-            Next
+            Continue
           </Btn>
         </div>
       </div>
     );
   } else if (tutorialState === TutorialState.Spaceship) {
+    console.log('spaceship');
     return (
       <div className='tutzoom'>
         <p>
           You also control{' '}
-          {uiManager.getMySpaceships().length > 1 ? 'several space ships' : 'a space ship'} - check
-          your home planet! You can move spaceships between any two planets, even if you don't own
-          them. Space ships can move any distance.
-          <White>Try moving a spaceship you own to another planet now!</White>
+          {uiManager.getMySpaceships().length > 1 ? 'several space ships' : 'a space ship'}. Space
+          ships live on planets. Hover over them in your spawn planet pane to learn more about their
+          special abilities.
+          <br />
+          You can move spaceships between any two planets, even if you don't own them. Space ships
+          can move any distance.
+          <br />
+          <br />
+          <White>Try moving a spaceship you own to another planet.</White>
         </p>
-        <p>Tip: Before moving, click a spaceship to select it. Then execute your move.</p>
-        <div style={{ gap: '5px' }}>
-          <Btn className='btn' onClick={() => tutorialManager.complete()}>
-            Exit
-          </Btn>
-          <Btn className='btn' onClick={() => tutorialManager.acceptInput(TutorialState.Spaceship)}>
-            Skip
-          </Btn>
-        </div>
-      </div>
-    );
-  } else if (tutorialState === TutorialState.ZoomOut) {
-    return (
-      <div className='tutzoom'>
-        <p>Great! You can zoom using the mouse wheel. </p>
-        <p>Try zooming all the way out so you can find the target planet!</p>
-        <div style={{ gap: '5px' }}>
-          <Btn className='btn' onClick={() => tutorialManager.complete()}>
-            Exit
-          </Btn>
-
-          <Btn className='btn' onClick={() => tutorialManager.acceptInput(TutorialState.ZoomOut)}>
-            Next
-          </Btn>
-        </div>
-      </div>
-    );
-  } else if (tutorialState === TutorialState.MinerMove) {
-    return (
-      <div className='tutzoom'>
-        Most of the universe appears greyed out. You need to use your explorer{' '}
-        <Icon type={IconType.Target} /> to reveal those areas.
-        <br />
-        The explorer <Icon type={IconType.Target} /> indicates where you are exploring.
-        <br />
-        <White>
-          Move your explorer with the bottom-left context menu by clicking on the Move{' '}
-          <Icon type={IconType.Target} /> button
-        </White>
-        , then clicking in a grey region.
-        <div style={{ gap: '5px' }}>
-          <Btn className='btn' onClick={() => tutorialManager.complete()}>
-            Exit
-          </Btn>
-          <Btn className='btn' onClick={() => tutorialManager.acceptInput(TutorialState.MinerMove)}>
-            Skip
-          </Btn>
-        </div>
-      </div>
-    );
-  } else if (tutorialState === TutorialState.MinerPause) {
-    return (
-      <div className='tutzoom'>
-        Great! You can also pause your explorer by clicking the pause <Icon type={IconType.Pause} />{' '}
-        button.
-        <br />
-        <br />
-        <White>Try pausing your explorer now.</White>
-        <div style={{ gap: '5px' }}>
-          <Btn className='btn' onClick={() => tutorialManager.complete()}>
-            Exit
-          </Btn>
-          <Btn
-            className='btn'
-            onClick={() => tutorialManager.acceptInput(TutorialState.MinerPause)}
-          >
-            Skip
-          </Btn>
-        </div>
+        <p>(Hint:Before moving, click a spaceship to select it. Then execute your move.)</p>
       </div>
     );
   } else if (tutorialState === TutorialState.HowToGetScore) {
@@ -187,26 +167,46 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
     const victoryThreshold = uiManager.contractConstants.CLAIM_VICTORY_ENERGY_PERCENT;
     return (
       <div className='tutzoom'>
-        <White>It's a{isCompetitive ? ' Grand Prix!' : 'n Arena Battle!'}</White>
         <p>
-          Race against the clock to capture the Target Planet (it has a big 🎯 floating above it)
-          and{' '}
+          Your objective is to race across the map to capture the Target Planet (it has a big 🎯
+          floating above it) and{' '}
           <Green>
-            claim victory when it contains at least <Gold>{victoryThreshold}%</Gold> energy!
+            claim victory when it contains at least <Gold>{victoryThreshold}%</Gold> energy.
           </Green>
         </p>
-        {isCompetitive && (
-          <p>The player with the fastest time after 48hrs will win XDAI and a 🏆!</p>
-        )}
+        <br />
+        To get there, you will need to create a path of planets leading to the Target. Zoom out to
+        see how far you need to go.
         <div style={{ gap: '5px' }}>
-          <Btn className='btn' onClick={() => tutorialManager.complete()}>
-            Exit
-          </Btn>
           <Btn
             className='btn'
             onClick={() => tutorialManager.acceptInput(TutorialState.HowToGetScore)}
           >
-            Next
+            Continue
+          </Btn>
+        </div>
+      </div>
+    );
+  } else if (tutorialState === TutorialState.MinerMove) {
+    return (
+      <div className='tutzoom'>
+        The bottom left context menu contains your explorer. Use the explorer{' '}
+        <Icon type={IconType.Target} /> to reveal greyed parts of the map.
+        <br />
+        <White>
+          Move your explorer with the bottom-left context menu by clicking on the Move{' '}
+          <Icon type={IconType.Target} /> button
+        </White>
+        , then clicking in a grey region.
+        <br />
+        <br />
+        <p>
+          You can also pause your explorer by clicking the pause <Icon type={IconType.Pause} />{' '}
+          button.
+        </p>
+        <div style={{ gap: '5px' }}>
+          <Btn className='btn' onClick={() => tutorialManager.acceptInput(TutorialState.MinerMove)}>
+            Continue
           </Btn>
         </div>
       </div>
@@ -230,7 +230,7 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
             className='btn'
             onClick={() => tutorialManager.acceptInput(TutorialState.BlockedPlanet)}
           >
-            Next
+            Continue
           </Btn>
         </div>
       </div>
@@ -252,7 +252,7 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
             className='btn'
             onClick={() => tutorialManager.acceptInput(TutorialState.DefensePlanet)}
           >
-            Next
+            Continue
           </Btn>
         </div>
       </div>
@@ -260,7 +260,8 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
   } else if (tutorialState === TutorialState.AlmostCompleted) {
     return (
       <div className='tutalmost'>
-        This is the end of the tutorial. For a more in-depth strategy guide,{' '}
+        This is the end of the tutorial. Now capture the Target Planet and claim victory! For a more
+        in-depth strategy guide,{' '}
         <Link to='https://medium.com/@classicjdf/classicjs-dark-forest-101-strategy-guide-part-1-energy-1b80923fee69'>
           click here
         </Link>
@@ -270,7 +271,10 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
         </Link>
         . More information will pop up in the <White>upper-right</White> as you discover more about
         the game.
-        <br />
+        <br /> <br />
+        If you want to jump straight into a competitive game,{' '}
+        <Link to='/portal/home'>click here</Link> to head to the portal.
+        <br /> <br />
         We hope you enjoy Dark Forest!
         <div style={{ gap: '5px' }}>
           <Btn className='btn' onClick={() => tutorialManager.complete()}>

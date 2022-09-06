@@ -26,6 +26,8 @@ const competitiveConfig = '0xfe719a3cfccf2bcfa23f71f0af80a931eda4f4197331828d728
 
 const tutorialConfig = '0x7fd17d7c427c703a336eb50003e87219accf2413d7643dedb2c6184e86077aad';
 
+const tutorialAsteroidLocation: WorldCoords = { x: -189, y: -48 };
+
 const roundStartTimestamp = '2022-07-13T00:00:00.000Z';
 
 const roundEndTimestamp = '2022-07-20T00:00:00.000Z';
@@ -183,6 +185,7 @@ export {
   roundStartTimestamp,
   competitiveConfig,
   tutorialConfig,
+  tutorialAsteroidLocation,
   bronzeTime,
   silverTime,
   CONFIG_CONSTANTS,
