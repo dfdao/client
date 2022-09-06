@@ -4,7 +4,7 @@ import { address } from '@darkforest_eth/serde';
 import { CleanConfigPlayer, EthAddress, GrandPrixMetadata } from '@darkforest_eth/types';
 import { utils, Wallet } from 'ethers';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route, Redirect, useHistory } from 'react-router-dom';
 import {
   Account,
   getAccounts,
@@ -26,8 +26,10 @@ import {
   TwitterProvider,
   SeasonDataProvider,
   SeasonPlayerProvider,
+  useConfigFromHash,
 } from '../Utils/AppHooks';
 import { Incompatibility, unsupportedFeatures } from '../Utils/BrowserChecks';
+import { tutorialConfig } from '../Utils/constants';
 import { TerminalTextStyle } from '../Utils/TerminalTypes';
 import { PortalMainView } from '../Views/Portal/PortalMainView';
 import { Terminal, TerminalHandle } from '../Views/Terminal';
@@ -40,13 +42,13 @@ const defaultAddress = address(CONTRACT_ADDRESS);
 class EntryPageTerminal {
   private ethConnection: EthConnection;
   private terminal: TerminalHandle;
-  private accountSet: (account: Account) => void;
+  private accountSet: (account: Account, tutorial: boolean) => void;
   private balancesEth: number[];
 
   public constructor(
     ethConnection: EthConnection,
     terminal: TerminalHandle,
-    accountSet: (account: Account) => void
+    accountSet: (account: Account, tutorial: boolean) => void
   ) {
     this.ethConnection = ethConnection;
     this.terminal = terminal;
@@ -131,7 +133,6 @@ class EntryPageTerminal {
         this.balancesEth[i] < 0.01 ? TerminalTextStyle.Red : TerminalTextStyle.Green
       );
     });
-    this.terminal?.newline();
 
     this.terminal?.print('(n) ', TerminalTextStyle.Sub);
     this.terminal?.println(`Create new account.`);
@@ -144,7 +145,7 @@ class EntryPageTerminal {
 
     if (+userInput && +userInput <= accounts.length && +userInput > 0) {
       const selectedAccount = accounts[+userInput - 1];
-      this.setAccount(selectedAccount);
+      this.setAccount(selectedAccount, false);
     } else if (userInput === 'n') {
       this.generateAccount();
     } else if (userInput === 'i') {
@@ -175,7 +176,7 @@ class EntryPageTerminal {
       this.terminal.println('burner wallet.', TerminalTextStyle.Red);
       this.terminal.println('It should never store substantial funds!', TerminalTextStyle.Sub);
       this.terminal.newline();
-      this.setAccount(account);
+      this.playTutorial(account);
     } catch (e) {
       console.log(e);
       this.terminal.println('An unknown error occurred. please try again.', TerminalTextStyle.Red);
@@ -207,7 +208,10 @@ class EntryPageTerminal {
 
       addAccount(newSKey);
 
-      this.setAccount({ address: newAddr, privateKey: newSKey });
+      this.terminal.println(`Successfully created account with address ${newAddr.toString()}`);
+      this.terminal.newline();
+
+      this.playTutorial({ address: newAddr, privateKey: newSKey });
     } catch (e) {
       this.terminal.println('An unknown error occurred. please try again.', TerminalTextStyle.Red);
       this.terminal.println('');
@@ -215,7 +219,7 @@ class EntryPageTerminal {
     }
   }
 
-  private async setAccount(account: Account) {
+  private async setAccount(account: Account, tutorial: boolean) {
     try {
       await this.drip(account.address);
 
@@ -223,12 +227,32 @@ class EntryPageTerminal {
       await this.terminal.getInput();
       await this.ethConnection.setAccount(account.privateKey);
       setActive(account);
-      this.accountSet(account);
+      this.accountSet(account, tutorial);
     } catch (e) {
       console.log(e);
       await new Promise((r) => setTimeout(r, 1500));
       await this.chooseAccount();
     }
+  }
+
+  private async playTutorial(account: Account) {
+    try {
+      this.terminal.println('This is a new account. Would you like to play the tutorial?');
+      this.terminal?.print('(y) ', TerminalTextStyle.Sub);
+      this.terminal?.println(`Yes. Take me to the tutorial.`);
+      this.terminal?.print('(n) ', TerminalTextStyle.Sub);
+      this.terminal?.println(`No. Take me to the game.`);
+      const userInput = await this.terminal?.getInput();
+      if (userInput === 'y') {
+        this.accountSet(account, true);
+      } else if (userInput === 'n') {
+        this.accountSet(account, false);
+      } else {
+        this.terminal?.println('Unrecognized input. Please try again.', TerminalTextStyle.Red);
+        this.terminal?.println('');
+        await this.chooseAccount();
+      }
+    } catch (e) {}
   }
 
   private async drip(address: EthAddress) {
@@ -256,7 +280,7 @@ class EntryPageTerminal {
 type LoadingStatus = 'loading' | 'creating' | 'complete';
 export function EntryPage() {
   const terminal = useRef<TerminalHandle>();
-
+  const history = useHistory();
   const [loadingStatus, setLoadingStatus] = useState<LoadingStatus>('loading');
   const [controller, setController] = useState<EntryPageTerminal | undefined>();
 
@@ -265,6 +289,7 @@ export function EntryPage() {
   const [seasonPlayers, setPlayers] = useState<CleanConfigPlayer[] | undefined>();
   const [seasonData, setSeasonData] = useState<GrandPrixMetadata[] | undefined>();
 
+  const { lobbyAddress: tutorialLobbyAddress } = useConfigFromHash(tutorialConfig);
   /* get all twitters on page load */
   useEffect(() => {
     getAllTwitters().then((t) => setTwitters(t));
@@ -335,8 +360,12 @@ export function EntryPage() {
         const newController = new EntryPageTerminal(
           connection,
           terminalRef,
-          async (account: Account) => {
+          async (account: Account, tutorial: boolean) => {
+            if (tutorial) {
+              history.push(`/play/${tutorialLobbyAddress}?create=true`);
+            }
             await connection.setAccount(account.privateKey);
+
             setLoadingStatus('complete');
           }
         );
@@ -369,6 +398,7 @@ export function EntryPage() {
                 <Switch>
                   <Redirect path='/play' to={`/play/${defaultAddress}`} push={true} exact={true} />
                   <Route path='/play/:contract' component={GameLandingPage} />
+                  <Redirect path='/portal/tutorial' to={`/play/`} push={false} exact={true} />
                   <Redirect path='/portal' to={`/portal/home`} push={true} exact={true} />
                   <Route path='/portal' component={PortalMainView} />
                   <Redirect
