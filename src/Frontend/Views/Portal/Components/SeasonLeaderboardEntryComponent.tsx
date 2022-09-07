@@ -29,9 +29,14 @@ export const SeasonLeaderboardEntryComponent: React.FC<{
   uniqueBadges: { [player: string]: ConfigBadge[] };
   index: number;
 }> = ({ entry, uniqueBadges, index }) => {
+  console.log(`entry`, entry);
   const [expanded, setExpanded] = useState<boolean>(false);
   const SEASON_GRAND_PRIXS = useSeasonData();
   const twitters = useTwitters();
+  const numPastOrCurrent = SEASON_GRAND_PRIXS.filter((sgp) =>
+    isPastOrCurrentRound(sgp.configHash, SEASON_GRAND_PRIXS)
+  ).length;
+  const gamesFinished = entry.games.length
   return (
     <div key={index}>
       <Row key={index} onClick={() => setExpanded(!expanded)} expanded={expanded}>
@@ -39,7 +44,10 @@ export const SeasonLeaderboardEntryComponent: React.FC<{
           <span>{index + 1}</span>
           <span>{twitters[entry.address] ?? truncateAddress(address(entry.address))}</span>
         </Group>
-        <span>{entry.score}</span>
+        <Group>
+          <span>{entry.totalDuration}</span>
+          <span>{gamesFinished}/{numPastOrCurrent} </span>
+        </Group>
       </Row>
       {expanded && (
         <ExpandedGames style={{ display: 'flex', flexDirection: 'column' }}>
@@ -94,7 +102,7 @@ export const SeasonLeaderboardEntryComponent: React.FC<{
                         })}
                     </div>
                   </div>
-                  <span>{game.score}</span>
+                  <span>{game.duration}</span>
                 </div>
               ))}
             <div

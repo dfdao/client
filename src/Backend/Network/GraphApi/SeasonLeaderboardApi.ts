@@ -166,6 +166,7 @@ export interface SeasonLeaderboardEntry {
   address: string;
   games: CleanConfigPlayer[];
   score: number;
+  totalDuration: number;
   badges: number;
 }
 
@@ -191,17 +192,22 @@ export function loadSeasonLeaderboard(
       .map((ccp) => ccp.badges.map((badge) => badge.type).flat())
       .flat();
     const badgeScore = calcBadgeTypeScore(allBadges);
-    const { score, badges } = cleanConfigPlayers
+    const { score, badges, totalDuration } = cleanConfigPlayers
       .map((ccp) => {
-        return { score: ccp.score, badges: ccp.badges.length };
+        return { score: ccp.score, badges: ccp.badges.length, totalDuration: ccp.duration };
       })
       .reduce((a, b) => {
-        return { score: a.score + b.score, badges: a.badges + b.badges };
+        return {
+          score: a.score + b.score,
+          badges: a.badges + b.badges,
+          totalDuration: a.totalDuration + b.totalDuration,
+        };
       });
     const entry: SeasonLeaderboardEntry = {
       address: player,
       games: cleanConfigPlayers,
       score: score + badgeScore,
+      totalDuration,
       badges,
     };
     leaderboardProps.entries.push(entry);
@@ -263,11 +269,11 @@ export function loadGrandPrixLeaderboard(
 }
 
 function validGrandPrixMatch(configPlayer: ConfigPlayer, SEASON_GRAND_PRIXS: GrandPrixMetadata[]) {
-  const grandPrixs = SEASON_GRAND_PRIXS.filter(gp => gp.configHash == configPlayer.configHash);
-  if(grandPrixs.length == 0) throw new Error('Grand Prix not found');
-  if(!configPlayer.bestTime) return false;
+  const grandPrixs = SEASON_GRAND_PRIXS.filter((gp) => gp.configHash == configPlayer.configHash);
+  if (grandPrixs.length == 0) throw new Error('Grand Prix not found');
+  if (!configPlayer.bestTime) return false;
   const grandPrix = grandPrixs[0];
-  return (configPlayer.bestTime.startTime >= grandPrix.startTime)
+  return configPlayer.bestTime.startTime >= grandPrix.startTime;
 }
 
 // Add wallbreaker badge to ConfigPlayers
@@ -277,10 +283,12 @@ async function buildCleanConfigPlayer(
 ): Promise<CleanConfigPlayer[]> {
   const wallBreakers = await loadWallbreakers(SEASON_GRAND_PRIXS);
   return configPlayers
-    .filter((cp) => validGrandPrixMatch(cp,SEASON_GRAND_PRIXS))
+    .filter((cp) => validGrandPrixMatch(cp, SEASON_GRAND_PRIXS))
     .map((cfp) => {
       const isWallBreaker =
-        wallBreakers.length > 0 && wallBreakers.filter((e) => e.player === cfp.address && e.configHash === cfp.configHash).length > 0;
+        wallBreakers.length > 0 &&
+        wallBreakers.filter((e) => e.player === cfp.address && e.configHash === cfp.configHash)
+          .length > 0;
       if (isWallBreaker && cfp.badge) {
         cfp.badge.wallBreaker = true;
       }
@@ -488,10 +496,9 @@ export function loadUniquePlayerBadges(
     const uniqueBadgeSet: UniquePlayerBadges = {};
     const wallBreakers: ConfigBadge[] = [];
     allBadges.forEach((cb) => {
-      if(cb.type != BadgeType.Wallbreaker) {
+      if (cb.type != BadgeType.Wallbreaker) {
         uniqueBadgeSet[cb.type] = cb;
-      }
-      else {
+      } else {
         wallBreakers.push(cb);
       }
     });
