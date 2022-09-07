@@ -89,10 +89,10 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
     return (
       <div className='tutzoom'>
         To expand your empire, you need to capture planets. Fortunately there is a nearby Asteroid
-        Field. Use some of your planet's <White>Energy</White> to capture that Asteroid Field.
+        Field. Use some of your planet's <White>Energy</White> to move capture that Asteroid Field.
         <br />
         <br />
-        Here's how: Click your planet, press {<White>q</White>}, and click a nearby planet. You
+        Here's how: Click your planet, press {<White>q</White>}, and click the Asteroid Field. You
         should see some energy fly there!
       </div>
     );
@@ -159,7 +159,7 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
           <br />
           <White>Try moving a spaceship you own to another planet.</White>
         </p>
-        <p>(Hint:Before moving, click a spaceship to select it. Then execute your move.)</p>
+        <p>(Hint: Before moving, click a spaceship to select it. Then execute your move.)</p>
       </div>
     );
   } else if (tutorialState === TutorialState.HowToGetScore) {
