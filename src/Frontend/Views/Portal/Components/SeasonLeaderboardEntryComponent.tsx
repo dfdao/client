@@ -37,7 +37,14 @@ export const SeasonLeaderboardEntryComponent: React.FC<{
     isPastOrCurrentRound(sgp.configHash, SEASON_GRAND_PRIXS)
   ).length;
   const gamesFinished = entry.games.length;
-  const colors = ['red','orange','yellow','green','blue','purple']
+  const colors = [
+    dfstyles.colors.dfred,
+    dfstyles.colors.dforange,
+    dfstyles.colors.dfyellow,
+    dfstyles.colors.dfgreen,
+    dfstyles.colors.dfblue,
+    dfstyles.colors.dfpurple,
+  ];
   return (
     <div key={index}>
       <Row key={index} onClick={() => setExpanded(!expanded)} expanded={expanded}>
@@ -47,7 +54,9 @@ export const SeasonLeaderboardEntryComponent: React.FC<{
         </Group>
         <Group>
           <span>{entry.totalDuration}</span>
-          <span style={{color: colors[gamesFinished - 1]}}>{gamesFinished}/{numPastOrCurrent} </span>
+          <span style={{ color: colors[gamesFinished - 1] }}>
+            {gamesFinished}/{numPastOrCurrent}{' '}
+          </span>
         </Group>
       </Row>
       {expanded && (
