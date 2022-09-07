@@ -58,6 +58,7 @@ export async function loadWallbreakers(
       }
     }
     `;
+    console.log(`wb query`, QUERY);
     return getGraphQLData(QUERY, process.env.GRAPH_URL || 'localhost:8000');
   });
   const res = await Promise.all(wallbreakerQuery);
@@ -81,7 +82,7 @@ export async function loadWallbreakers(
         arenaAddress: wbr.lobbyAddress,
       } as Wallbreaker;
     });
-
+  console.log(`wallbreakers`, wallBreakers);
   return wallBreakers;
 }
 
@@ -207,6 +208,7 @@ export function loadSeasonLeaderboard(
     };
     leaderboardProps.entries.push(entry);
   }
+  console.log(`szn leaders`, leaderboardProps);
   return leaderboardProps;
 }
 
@@ -281,8 +283,10 @@ async function buildCleanConfigPlayer(
     .filter((cp) => validGrandPrixMatch(cp,SEASON_GRAND_PRIXS))
     .map((cfp) => {
       const isWallBreaker =
-        wallBreakers.length > 0 && wallBreakers.filter((e) => e.player === cfp.address).length > 0;
-      if (isWallBreaker && cfp.badge) cfp.badge.wallBreaker = true;
+        wallBreakers.length > 0 && wallBreakers.filter((e) => e.player === cfp.address && e.configHash === cfp.configHash).length > 0;
+      if (isWallBreaker && cfp.badge) {
+        cfp.badge.wallBreaker = true;
+      }
       const duration = cfp.bestTime ? cfp.bestTime.duration : HOUR_IN_SECONDS;
       const cleanConfig: CleanConfigPlayer = {
         id: cfp.id,
