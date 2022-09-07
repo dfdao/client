@@ -113,14 +113,13 @@ export function Account() {
         />
       )}
       <AccountButton onClick={() => setOpen(true)}>
-        <AccountBalance>{formattedBalance} xDAI</AccountBalance>
         <AvatarSection>
           <Avatar
             width={theme.spacing.lg}
             height={theme.spacing.lg}
             color={addressToColor(address)}
           />
-          {twitter || truncatedAddress}
+          Account
           <ChevronDown />
         </AvatarSection>
       </AccountButton>
@@ -243,14 +242,6 @@ const AvatarSection = styled.div`
   &:hover {
     background: ${theme.colors.bg3};
   }
-`;
-
-const AccountBalance = styled.div`
-  background: transparent;
-  margin-right: ${theme.spacing.sm};
-  padding: ${theme.spacing.md};
-  overflow: hidden;
-  color: ${theme.colors.fgPrimary};
 `;
 
 const Footer = styled.div`
