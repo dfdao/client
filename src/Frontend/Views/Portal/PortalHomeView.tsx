@@ -17,7 +17,10 @@ import {
 import { ArenaLeaderboardDisplay } from '../Leaderboards/ArenaLeaderboard';
 import { LabeledPanel } from './Components/LabeledPanel';
 import { PaddedRow } from './Components/PaddedRow';
-import { SeasonLeaderboardEntryComponent } from './Components/SeasonLeaderboardEntryComponent';
+import {
+  Group,
+  SeasonLeaderboardEntryComponent,
+} from './Components/SeasonLeaderboardEntryComponent';
 import { GPFeed } from './GPFeed';
 import { MapOverview } from './MapOverview';
 import { isPastOrCurrentRound } from './PortalUtils';
@@ -84,13 +87,22 @@ export const PortalHomeView: React.FC<{}> = () => {
         <div className='col w-100'>
           <LabeledPanel label='Season leaderboard'>
             <div className='col' style={{ gap: theme.spacing.md }}>
+              <SeasonLeaderboardHeader>
+                <Group>
+                  <span>Rank</span>
+                  <span>Player</span>
+                </Group>
+                <Group>
+                  <span>Finish Time</span>
+                </Group>
+              </SeasonLeaderboardHeader>
               {loadSeasonLeaderboard(allPlayers, grandPrix.seasonId, SEASON_GRAND_PRIXS)
                 .entries.filter((e) => e.score > 0)
                 .sort((a, b) => {
                   if (a.games > b.games) return -1;
                   else if (b.games > a.games) return 1;
                   else {
-                    return a.totalDuration - b.totalDuration
+                    return a.totalDuration - b.totalDuration;
                   }
                 })
                 .map((entry, index) => (
@@ -135,4 +147,13 @@ export const Label = styled.span`
   text-transform: uppercase;
   letter-spacing: 0.06em;
   padding-bottom: 1rem;
+`;
+
+const SeasonLeaderboardHeader = styled.div`
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem;
+  font-family: ${theme.fonts.mono};
 `;

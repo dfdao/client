@@ -35,7 +35,7 @@ export const SeasonLeaderboardEntryComponent: React.FC<{
     isPastOrCurrentRound(sgp.configHash, SEASON_GRAND_PRIXS)
   ).length;
   const gamesFinished = entry.games.length;
-
+  console.log(formatDuration(entry.totalDuration * 1000));
   return (
     <div key={index}>
       <Row key={index} onClick={() => setExpanded(!expanded)} expanded={expanded}>
@@ -88,14 +88,12 @@ export const SeasonLeaderboardEntryComponent: React.FC<{
                       >
                         {uniqueBadges[entry.address]
                           .filter((cb) => cb.configHash == game.configHash)
-                          .sort((a,b) => {
-                            if(a.type == BadgeType.Wallbreaker) {
+                          .sort((a, b) => {
+                            if (a.type == BadgeType.Wallbreaker) {
                               return -1;
-                            }
-                            else if(b.type == BadgeType.Wallbreaker) {
+                            } else if (b.type == BadgeType.Wallbreaker) {
                               return 1;
-                            }
-                            else {
+                            } else {
                               return 0;
                             }
                           })
@@ -169,7 +167,7 @@ const ExpandedGames = styled.div`
   font-family: ${theme.fonts.mono};
 `;
 
-const Group = styled.div`
+export const Group = styled.div`
   display: flex;
   gap: 16px;
   align-items: center;
