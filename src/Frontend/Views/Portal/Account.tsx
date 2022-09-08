@@ -9,6 +9,7 @@ import { Gnosis, Icon, IconType, Twitter } from '../../Components/Icons';
 import { LobbyButton } from '../../Pages/Lobby/LobbyMapEditor';
 
 import { useDisableScroll, useEthConnection, useTwitters } from '../../Utils/AppHooks';
+import { TwitterVerifier } from './Components/TwitterVerifier';
 import { PortalModal } from './Components/PortalModal';
 import { addressToColor, truncateAddress } from './PortalUtils';
 import { theme } from './styleUtils';
@@ -57,17 +58,8 @@ const AccountModal: React.FC<AccountModalProps> = ({ address, twitter, balance, 
             <Gnosis width='24px' height='24px' />
             Explorer
           </Button>
-          {twitter && (
-            <Button
-              onClick={() => {
-                window.open(`https://twitter.com/${twitter}`, '_blank');
-              }}
-            >
-              <Twitter width='24px' height='24px' />
-              {twitter ? 'Twitter' : 'Connect'}
-            </Button>
-          )}
         </div>
+        <TwitterVerifier twitter={twitter} />
       </AccountContent>
       <Footer>
         <Button onClick={logOut}>
@@ -83,7 +75,7 @@ export function Account() {
   const connection = useEthConnection();
   const address = connection.getAddress();
   const balance = connection.getMyBalance();
-  const twitters = useTwitters();
+  const { twitters } = useTwitters();
   const [blockScroll, allowScroll] = useDisableScroll();
 
   useEffect(() => {
