@@ -45,8 +45,8 @@ export function LiveMatches({
 
 // pass in either an address, or a twitter handle. this function will render the appropriate
 // component
-export function playerToEntry(playerAddress: string) {
-  const twitters = useTwitters();
+function playerToEntry(playerAddress: string) {
+  const { twitters } = useTwitters();
   const playerTwitter = twitters[playerAddress];
   return (
     <span
@@ -78,7 +78,7 @@ type Row = {
 };
 
 function LeaderboardTable({ rows }: { rows: MatchDisplay[] }) {
-  const twitters = useTwitters();
+  const { twitters } = useTwitters();
 
   if (rows.length == 0) return <Subber>No live games</Subber>;
 
