@@ -19,6 +19,7 @@ import { LabeledPanel } from './Components/LabeledPanel';
 import { PaddedRow } from './Components/PaddedRow';
 import {
   Group,
+  Group1,
   SeasonLeaderboardEntryComponent,
 } from './Components/SeasonLeaderboardEntryComponent';
 import { GPFeed } from './GPFeed';
@@ -92,9 +93,10 @@ export const PortalHomeView: React.FC<{}> = () => {
                   <span>Rank</span>
                   <span>Player</span>
                 </Group>
-                <Group>
-                  <span>Finish Time</span>
-                </Group>
+                <Group1>
+                  <span>Rounds</span>
+                  <span>Time</span>
+                </Group1>
               </SeasonLeaderboardHeader>
               {loadSeasonLeaderboard(allPlayers, grandPrix.seasonId, SEASON_GRAND_PRIXS)
                 .entries.filter((e) => e.score > 0)

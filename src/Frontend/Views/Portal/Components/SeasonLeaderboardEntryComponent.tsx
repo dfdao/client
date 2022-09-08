@@ -40,10 +40,13 @@ export const SeasonLeaderboardEntryComponent: React.FC<{
     <div key={index}>
       <Row key={index} onClick={() => setExpanded(!expanded)} expanded={expanded}>
         <Group>
-          <span>{index + 1}</span>
+          <span>{index + 1}.</span>
           <span>{twitters[entry.address] ?? truncateAddress(address(entry.address))}</span>
         </Group>
         <Group>
+          <span style={{ color: getRankColor(gamesFinished, numPastOrCurrent) }}>
+            {gamesFinished}/{numPastOrCurrent}{' '}
+          </span>
           <span style={{ color: getRankColor(gamesFinished, numPastOrCurrent) }}>
             {formatDuration(entry.totalDuration * 1000)}
           </span>
@@ -129,10 +132,6 @@ export const SeasonLeaderboardEntryComponent: React.FC<{
                   <MinimalButton>View player</MinimalButton>
                 </Link>
                 <span>{entry.badges} badges this season</span>
-                <div style={{ color: getRankColor(gamesFinished, numPastOrCurrent) }}>
-                  {gamesFinished}/{numPastOrCurrent}
-                  {' rounds finished'}
-                </div>
               </div>
             </div>
           </ExpandedGames>
@@ -170,5 +169,11 @@ const ExpandedGames = styled.div`
 export const Group = styled.div`
   display: flex;
   gap: 16px;
+  align-items: center;
+`;
+
+export const Group1 = styled.div`
+  display: flex;
+  gap: 32px;
   align-items: center;
 `;

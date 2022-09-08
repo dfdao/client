@@ -238,7 +238,7 @@ export function configPlayersToLeaderboard(
   configPlayers
     .filter((cp) => cp.score > 0)
     .map((cp) => {
-      numMatches += cp.gamesFinished;
+      numMatches += cp.gamesStarted;
       const leaderBoardEntry: LeaderboardEntry = {
         ethAddress: address(cp.address),
         score: calcCleanGrandPrixScore(cp),
@@ -247,6 +247,8 @@ export function configPlayersToLeaderboard(
         startTime: cp.startTime,
         endTime: cp.endTime,
         time: cp.duration,
+        gamesFinished: cp.gamesFinished,
+        gamesStarted: cp.gamesStarted,
         wallBreaker: cp.badges.some((cp) => cp.type == BadgeType.Wallbreaker),
       };
       entries.push(leaderBoardEntry);
@@ -270,7 +272,7 @@ export function loadGrandPrixLeaderboard(
   return leaderboard;
 }
 
-function validGrandPrixMatch(configPlayer: ConfigPlayer, SEASON_GRAND_PRIXS: GrandPrixMetadata[]) {
+export function validGrandPrixMatch(configPlayer: ConfigPlayer, SEASON_GRAND_PRIXS: GrandPrixMetadata[]) {
   const grandPrixs = SEASON_GRAND_PRIXS.filter((gp) => gp.configHash == configPlayer.configHash);
   if (grandPrixs.length == 0) throw new Error('Grand Prix not found');
   if (!configPlayer.bestTime) return false;
