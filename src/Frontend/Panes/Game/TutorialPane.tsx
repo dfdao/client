@@ -218,7 +218,7 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
         white rings around them).
         <br />
         <br />
-        Once you own the foundry, press <White>Prospect Planet</White>. Your foundry's planet pane
+        Once you own the foundry, press <White>Prospect Artifact</White>. Your foundry's planet pane
         should now contain a new Artifact! Hover over it to learn its effect.
       </div>
     );
