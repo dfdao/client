@@ -58,7 +58,7 @@ export async function loadWallbreakers(
       }
     }
     `;
-    console.log(`wb query`, QUERY);
+    // console.log(`wb query`, QUERY);
     return getGraphQLData(QUERY, process.env.GRAPH_URL || 'localhost:8000');
   });
   const res = await Promise.all(wallbreakerQuery);
