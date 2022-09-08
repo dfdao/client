@@ -24,6 +24,13 @@ const mockBages = [
   BadgeType.Wallbreaker,
 ];
 
+function getRankColor(gamesPlayed: number, totalGames: number): string {
+  const baseHsl = 127;
+  const gamePercentage = 1 - (gamesPlayed / totalGames);
+  const subtract = Math.floor((baseHsl * gamePercentage));
+  return `hsl(${baseHsl - subtract}, 95%, 62%)`;
+}
+
 export const SeasonLeaderboardEntryComponent: React.FC<{
   entry: SeasonLeaderboardEntry;
   uniqueBadges: { [player: string]: ConfigBadge[] };
@@ -37,14 +44,7 @@ export const SeasonLeaderboardEntryComponent: React.FC<{
     isPastOrCurrentRound(sgp.configHash, SEASON_GRAND_PRIXS)
   ).length;
   const gamesFinished = entry.games.length;
-  const colors = [
-    dfstyles.colors.dfred,
-    dfstyles.colors.dforange,
-    dfstyles.colors.dfyellow,
-    dfstyles.colors.dfgreen,
-    dfstyles.colors.dfblue,
-    dfstyles.colors.dfpurple,
-  ];
+
   return (
     <div key={index}>
       <Row key={index} onClick={() => setExpanded(!expanded)} expanded={expanded}>
@@ -53,8 +53,10 @@ export const SeasonLeaderboardEntryComponent: React.FC<{
           <span>{twitters[entry.address] ?? truncateAddress(address(entry.address))}</span>
         </Group>
         <Group>
-          <span>{entry.totalDuration}</span>
-          <span style={{ color: colors[gamesFinished - 1] }}>
+          <span style={{ color: getRankColor(gamesFinished, numPastOrCurrent) }}>
+            {entry.totalDuration}
+          </span>
+          <span style={{ color: getRankColor(gamesFinished, numPastOrCurrent) }}>
             {gamesFinished}/{numPastOrCurrent}{' '}
           </span>
         </Group>
