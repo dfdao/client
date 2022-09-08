@@ -1,5 +1,5 @@
 import { TooltipName } from '@darkforest_eth/types';
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import TutorialManager, { TutorialState } from '../../Backend/GameLogic/TutorialManager';
 import { Gold, Green, Red } from '../Components/Text';
@@ -14,6 +14,13 @@ export function TargetPlanetVictory() {
   const gameover = useGameover();
   const requiredPlanets = uiManager.contractConstants.TARGETS_REQUIRED_FOR_VICTORY;
   const requiredEnergy = uiManager.contractConstants.CLAIM_VICTORY_ENERGY_PERCENT;
+  const [claiming, setClaiming] = useState(false);
+
+  async function handleClaimVictory() {
+    setClaiming(true);
+    const tx = await gameManager.claimVictory();
+    const res = await tx.submittedPromise;
+  }
 
   if (gameover) {
     return <></>;
@@ -39,13 +46,14 @@ export function TargetPlanetVictory() {
           {canClaimVictory && (
             <LobbyButton
               primary
+              disabled={claiming}
               onClick={() => {
                 const tutorialManager = TutorialManager.getInstance(this);
                 tutorialManager.acceptInput(TutorialState.HowToGetScore);
-                gameManager.claimVictory();
+                handleClaimVictory();
               }}
             >
-              Claim Victory!
+              {claiming ? 'Claiming...' : 'Claim Victory'!}
             </LobbyButton>
           )}
         </TooltipTrigger>
