@@ -24,9 +24,11 @@ const LOCATION_ID_UB = bigInt(
 
 const competitiveConfig = '0xfe719a3cfccf2bcfa23f71f0af80a931eda4f4197331828d728b7505a6156930';
 
-const tutorialConfig = '0x7fd17d7c427c703a336eb50003e87219accf2413d7643dedb2c6184e86077aad';
+const tutorialConfig = '0xb65e27fd8b4d30a73d11e896e5331ffc494b299aaa2537685ff37d91d3e03d23';
 
-const tutorialAsteroidLocation: WorldCoords = { x: -189, y: -48 };
+const tutorialAsteroidLocation: WorldCoords = { x: -8, y: -10 };
+
+const tutorialFoundryLocation: WorldCoords = { x: 8, y: -10 };
 
 const roundStartTimestamp = '2022-07-13T00:00:00.000Z';
 
@@ -186,6 +188,7 @@ export {
   competitiveConfig,
   tutorialConfig,
   tutorialAsteroidLocation,
+  tutorialFoundryLocation,
   bronzeTime,
   silverTime,
   CONFIG_CONSTANTS,
