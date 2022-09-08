@@ -24,7 +24,7 @@ const LOCATION_ID_UB = bigInt(
 
 const competitiveConfig = '0xfe719a3cfccf2bcfa23f71f0af80a931eda4f4197331828d728b7505a6156930';
 
-const tutorialConfig = '0xb65e27fd8b4d30a73d11e896e5331ffc494b299aaa2537685ff37d91d3e03d23';
+const tutorialConfig = '0x0b1ab5e27ab1813701aad3533b0f528c832aa246aa3192c8b86dd60452cbe15b';
 
 const tutorialAsteroidLocation: WorldCoords = { x: -8, y: -10 };
 

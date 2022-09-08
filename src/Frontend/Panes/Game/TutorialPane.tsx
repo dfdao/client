@@ -54,8 +54,8 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
         <br />
         <br />
         <div>
-          Hover over your planet's stats to learn more. (Hint: they are located beneath the planet's
-          Level and Rank)
+          <White>Hover over your planet's stats to learn more.</White> (Hint: they are located
+          beneath the planet's Level and Rank)
         </div>
         <div style={{ gap: '5px' }}>
           <Btn
@@ -70,15 +70,12 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
   } else if (tutorialState === TutorialState.ZoomOut) {
     return (
       <div className='tutzoom'>
-        <p>
-          To zoom in and out, use your mouse's scroll wheel. The edge of the universe is a big thick
-          white line.
-        </p>
+        To zoom in and out, use your mouse's scroll wheel. The edge of the universe is a big thick
+        white line.
         <br />
-        <p>To move around the universe, click empty space and drag your mouse.</p>
+        <White>To move around the universe, click empty space and drag your mouse.</White>
         <br />
-        <br />
-        <p>Try not to forget where your spawn planet is!</p>
+        Try not to forget where your spawn planet is!
         <div style={{ gap: '5px' }}>
           <Btn className='btn' onClick={() => tutorialManager.acceptInput(TutorialState.ZoomOut)}>
             Continue
@@ -95,8 +92,10 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
         that Asteroid Field.
         <br />
         <br />
-        Here's how: Click your spawn planet, press {<White>q</White>}, and click the Asteroid Field.
-        You should see some energy fly there!
+        <White>
+          Here's how: Click your spawn planet, press {<Red>q</Red>}, and click the Asteroid Field.
+          You should see some energy fly there!
+        </White>
       </div>
     );
   } else if (tutorialState === TutorialState.PlanetTypes) {
@@ -137,7 +136,7 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
         button on the planet pane. Choose to upgrade either your planets Range or Speed.
         <br />
         <br />
-        When you are ready, press <White>Upgrade</White> and your planet's stats will improve.
+        <White>When you are ready, press Upgrade and your planet's stats will improve.</White>
       </div>
     );
   } else if (tutorialState === TutorialState.UpgradeComplete) {
@@ -168,8 +167,10 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
         </p>
         <br />
         <br />
-        Take a look at the top of the screen to see you current and maximum{' '}
-        <White>Space Junk</White>.
+        <White>
+          Take a look at the top of the screen to see you current and maximum{' '}
+          <White>Space Junk</White>.
+        </White>
         <div style={{ gap: '5px' }}>
           <Btn className='btn' onClick={() => tutorialManager.acceptInput(TutorialState.SpaceJunk)}>
             Continue
@@ -218,21 +219,43 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
         white rings around them).
         <br />
         <br />
-        Once you own the foundry, press <White>Prospect Artifact</White>. Your foundry's planet pane
-        should now contain a new Artifact! Hover over it to learn its effect.
+        <White>Once you own the foundry, press Prospect Artifact.</White>
       </div>
     );
   } else if (tutorialState === TutorialState.Artifact) {
     return (
       <div className='tutzoom'>
-        In order to <White>activate</White> your artifact's special powers, click{' '}
-        <White>Inventory</White> on your Foundry's planet pane. Then press <White>Activate</White>.
+        {' '}
+        Your foundry's planet pane should now contain a new Artifact! Hover over it to learn its
+        effect.
+        <br /> <br />
+        In order to <White>activate</White> your artifact's special powers,{' '}
+        <White>
+          click <White>Inventory</White> on your Foundry's planet pane. Then press{' '}
+          <White>Activate</White>.
+        </White>
         Now your planet should have a stat boost.
         <br />
         <br />
-        Press <White>Continue</White> to learn about how to win the game.
         <div style={{ gap: '5px' }}>
           <Btn className='btn' onClick={() => tutorialManager.acceptInput(TutorialState.Artifact)}>
+            Continue
+          </Btn>
+        </div>
+      </div>
+    );
+  } else if (tutorialState === TutorialState.MinerMove) {
+    return (
+      <div className='tutzoom'>
+        The bottom left context menu contains your explorer. The explorer{' '}
+        <Icon type={IconType.Target} /> is used in large maps to reveal greyed parts of the map.
+        <br />
+        <br />
+        <White>
+          Pause your explorer by clicking the pause <Icon type={IconType.Pause} /> button.
+        </White>
+        <div style={{ gap: '5px' }}>
+          <Btn className='btn' onClick={() => tutorialManager.acceptInput(TutorialState.MinerMove)}>
             Continue
           </Btn>
         </div>
@@ -252,38 +275,17 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
         <br />
         To get there, you will need to create a path of planets leading to the Target. Zoom out to
         see how far you need to go.
-        <div style={{ gap: '5px' }}>
-          <Btn
-            className='btn'
-            onClick={() => tutorialManager.acceptInput(TutorialState.HowToGetScore)}
-          >
-            Continue
-          </Btn>
-        </div>
-      </div>
-    );
-  } else if (tutorialState === TutorialState.MinerMove) {
-    return (
-      <div className='tutzoom'>
-        The bottom left context menu contains your explorer. The explorer{' '}
-        <Icon type={IconType.Target} /> is used in large maps to reveal greyed parts of the map.
         <br />
         <br />
-        <p>
-          Pause your explorer by clicking the pause <Icon type={IconType.Pause} /> button.
-        </p>
-        <div style={{ gap: '5px' }}>
-          <Btn className='btn' onClick={() => tutorialManager.acceptInput(TutorialState.MinerMove)}>
-            Continue
-          </Btn>
-        </div>
+        <White>Now go capture the target planet and claim victory!</White>
       </div>
     );
   } else if (tutorialState === TutorialState.AlmostCompleted) {
     return (
       <div className='tutalmost'>
-        This is the end of the tutorial. Now capture the Target Planet and claim victory! For a more
-        in-depth strategy guide,{' '}
+        Congratulations on completing your first round of Dark Forest Arena!
+        <br /> <br />
+        For in-depth strategy guide,{' '}
         <Link to='https://medium.com/@classicjdf/classicjs-dark-forest-101-strategy-guide-part-1-energy-1b80923fee69'>
           click here
         </Link>

@@ -22,8 +22,8 @@ export const enum TutorialState {
   MoveSpaceship,
   Foundry,
   Artifact,
-  HowToGetScore,
   MinerMove,
+  HowToGetScore,
   AlmostCompleted,
   Completed,
 }
