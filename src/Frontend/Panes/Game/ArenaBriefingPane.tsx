@@ -4,18 +4,21 @@ import { Gold, Green } from '../../Components/Text';
 import { useUIManager } from '../../Utils/AppHooks';
 import { StyledTutorialPane } from './StyledTutorialPane';
 import { setBooleanSetting } from '../../Utils/SettingsHooks';
-import { Setting } from '@darkforest_eth/types';
+import { Setting, WorldLocation } from '@darkforest_eth/types';
+import { setObjectSyncState } from '../../Utils/EmitterUtils';
 
 const enum BriefingStep {
   Welcome,
   Target,
+  AlmostComplete,
   Complete,
 }
 export function ArenaBriefingPane() {
   const uiManager = useUIManager();
   const [open, setOpen] = useState(!uiManager.gameStarted);
   const [step, setStep] = useState<BriefingStep>(BriefingStep.Welcome);
-
+  const [targetCoords, setTargetCoords] = useState<WorldLocation>();
+  const [targetIdx, setTargetIdx] = useState(0);
   const config = {
     contractAddress: uiManager.getContractAddress(),
     account: uiManager.getAccount(),
@@ -25,23 +28,25 @@ export function ArenaBriefingPane() {
   const victoryThreshold = uiManager.contractConstants.CLAIM_VICTORY_ENERGY_PERCENT;
   const numForVictory = uiManager.contractConstants.TARGETS_REQUIRED_FOR_VICTORY;
   const targetLocations = uiManager.getPlayerTargetPlanets();
-  const targetLocation = targetLocations.length > 0 ? targetLocations[0] : undefined;
-  const targetCoords = targetLocation
-    ? uiManager.getGameManager().getRevealedLocations().get(targetLocation.locationId)
-    : undefined;
-  const homeLocation = uiManager.getHomeHash();
+
   useEffect(() => {
-    if (!targetLocation) setStep(BriefingStep.Complete);
-    if (step == BriefingStep.Target && targetLocation) {
+    if (step == BriefingStep.Target) {
+      if (!targetLocations || targetLocations.length <= targetIdx)
+        return setStep(BriefingStep.AlmostComplete);
+      const targetLocation = targetLocations[targetIdx];
+
+      const coords = targetLocation
+        ? uiManager.getGameManager().getRevealedLocations().get(targetLocation.locationId)
+        : undefined;
+      setTargetCoords(coords);
       uiManager.centerLocationId(targetLocation.locationId);
-    } else if (step === BriefingStep.Target && !targetLocation) {
-      setStep(BriefingStep.Complete);
-    } else if (step == BriefingStep.Complete) {
+    } else if (step == BriefingStep.AlmostComplete) {
+      const homeLocation = uiManager.getHomeHash();
       if (homeLocation) uiManager.centerLocationId(homeLocation);
       setOpen(false);
       setBooleanSetting(config, Setting.ShowArenaBriefing, true);
     }
-  }, [step, setStep]);
+  }, [step, setStep, targetIdx]);
 
   if (spectatorMode || !open) {
     return null;
@@ -53,24 +58,15 @@ export function ArenaBriefingPane() {
       <br />
       <br />
       <div>
-        {isSinglePlayer ? (
-          <>
-            Race against the clock to capture the Target Planet (it has a big 🎯 floating above it)
-            and{' '}
-            <Green>
-              claim victory when it contains at least <Gold>{victoryThreshold}%</Gold> energy!
-            </Green>
-          </>
-        ) : (
-          <>
-            Battle your opponent to capture the Target Planet (it has a big 🎯 floating above it)
-            and{' '}
-            <Green>
-              claim victory when it contains at least <Gold>{victoryThreshold}%</Gold> energy!
-            </Green>
-            .
-          </>
-        )}
+        <>
+          Race against the clock to capture {numForVictory > 1 ? `${numForVictory}` : 'a'} Target
+          Planet
+          {targetLocations?.length > 1 && 's'} and{' '}
+          <Green>
+            claim victory when {targetLocations?.length > 1 ? 'each' : 'it'} contains at least{' '}
+            <Gold>{victoryThreshold}%</Gold> energy!
+          </Green>
+        </>
         <div>
           You need {numForVictory} target planet{numForVictory > 1 && 's'} to claim victory.
         </div>
@@ -88,12 +84,42 @@ export function ArenaBriefingPane() {
   );
 
   const targetContent = (
-    <div className='tutZoom'>
-      <div>
-        This is your objective: the 🎯 Target Planet.{' '}
-        {targetCoords && `It is located at (${targetCoords.coords.x}, ${targetCoords.coords.y}).`}
-      </div>
-      <br />
+    <div className='tutzoom'>
+      {targetCoords ? (
+        <>
+          <div>
+            This is {targetLocations?.length > 1 ? 'one of your objectives' : 'your objective'}: a
+            🎯 Target Planet.{' '}
+            {targetCoords &&
+              `It is located at (${targetCoords.coords.x}, ${targetCoords.coords.y}).`}
+          </div>
+          <br />
+          <div>
+            The timer ⏲️ starts {isSinglePlayer ? 'with your first move' : 'when you press ready'}.
+            Good luck!
+          </div>
+          <br />
+          <div style={{ gap: '5px' }}>
+            <Btn
+              className='btn'
+              onClick={() => {
+                setTargetIdx(targetIdx + 1);
+              }}
+            >
+              {targetLocations && targetIdx >= targetLocations.length - 1
+                ? 'Return to home planet'
+                : 'See next target planet'}
+            </Btn>
+          </div>
+        </>
+      ) : (
+        <></>
+      )}
+    </div>
+  );
+
+  const completeContent = (
+    <div className='tutzoom'>
       <div>
         The timer ⏲️ starts {isSinglePlayer ? 'with your first move' : 'when you press ready'}. Good
         luck!
@@ -106,19 +132,17 @@ export function ArenaBriefingPane() {
             setStep(BriefingStep.Complete);
           }}
         >
-          Return to home planet
+          Exit
         </Btn>
       </div>
     </div>
   );
 
-  const completeContent = <></>;
-
   return (
     <StyledTutorialPane>
       {step == BriefingStep.Welcome && welcomeContent}
       {step == BriefingStep.Target && targetContent}
-      {step == BriefingStep.Complete && completeContent}
+      {step == BriefingStep.AlmostComplete && completeContent}
     </StyledTutorialPane>
   );
 }
