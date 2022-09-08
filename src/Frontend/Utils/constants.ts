@@ -154,6 +154,7 @@ BADGE_BONUSES[BadgeType.Wallbreaker] = {
   color: dfstyles.colors.dfgold,
 };
 
+const HOUR_IN_SECONDS = 60 * 60 * 2;
 const DAY_IN_SECONDS = 24 * 60 * 60;
 const EGP = true;
 const DUMMY = false;
@@ -204,6 +205,7 @@ export {
   DUMMY,
   DEV_CONFIG_HASH_1,
   DEV_CONFIG_HASH_2,
+  HOUR_IN_SECONDS,
   DAY_IN_SECONDS,
 };
 
