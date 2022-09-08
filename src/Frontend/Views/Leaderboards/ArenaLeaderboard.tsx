@@ -240,7 +240,7 @@ function TotalPlayers({
     return (
       <tbody style={{ fontSize: '1.25em' }}>
         <tr>
-          <td>Total matches</td>
+          <td>Total races</td>
           <td>{leaderboard.length}</td>
         </tr>
       </tbody>
@@ -386,7 +386,7 @@ function ArenaLeaderboardBody({
       return -1;
     }
 
-    return b.score - a.score;
+    return a.score - b.score;
   });
 
   const arenaRows: Row[] = leaderboard.entries.map((entry) => {
