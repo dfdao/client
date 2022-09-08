@@ -24,8 +24,10 @@ import {
   DUMMY,
   BADGE_BONUSES,
 } from '../../../Frontend/Utils/constants';
-import { isPastOrCurrentRound } from '../../../Frontend/Views/Portal/PortalHistoryView';
-import { createDummySeasonData } from '../../../Frontend/Views/Portal/PortalUtils';
+import {
+  createDummySeasonData,
+  isPastOrCurrentRound,
+} from '../../../Frontend/Views/Portal/PortalUtils';
 import { AddressTwitterMap } from '../../../_types/darkforest/api/UtilityServerAPITypes';
 import { getGraphQLData } from '../GraphApi';
 import { getAllTwitters } from '../UtilityServerAPI';
@@ -207,7 +209,7 @@ export function loadSeasonLeaderboard(
       address: player,
       games: cleanConfigPlayers,
       score: score + badgeScore,
-      totalDuration,
+      totalDuration: totalDuration - badgeScore,
       badges,
     };
     leaderboardProps.entries.push(entry);
@@ -326,19 +328,20 @@ export function getSeasonScore(
   SEASON_GRAND_PRIXS: GrandPrixMetadata[]
 ): SeasonScore[] {
   const seasonScores: SeasonScore[] = [];
-  for (const [player, cleanConfigPlayer] of Object.entries(seasonPlayers)) {
-    const badges: ConfigBadge[] = [];
+  for (const [player, cleanConfigPlayers] of Object.entries(seasonPlayers)) {
+    const badges: ConfigBadge[][] = [];
     const seasonScore: SeasonScore = {
       player,
-      score: cleanConfigPlayer
+      score: cleanConfigPlayers
         .filter((ccp) => isPastOrCurrentRound(ccp.configHash, SEASON_GRAND_PRIXS))
         .map((result) => {
-          badges.concat(result.badges);
+          badges.push(result.badges);
           return calcCleanGrandPrixScore(result);
         })
         .reduce((prev, curr) => prev + curr),
+      grandPrixsFinished: cleanConfigPlayers.length
     };
-    seasonScore.score += calcBadgeTypeScore(badges.map((b) => b.type));
+    seasonScore.score -= calcBadgeTypeScore(badges.flat().map((b) => b.type));
     seasonScores.push(seasonScore);
   }
   return seasonScores;
@@ -380,12 +383,12 @@ export function calcBadgeTypeScore(badges: BadgeType[]): number {
 
 // Doesn't include badges. Badges just add season points.
 export function calcCleanGrandPrixScore(cleanConfigPlayer: CleanConfigPlayer): number {
-  return HOUR_IN_SECONDS - cleanConfigPlayer.duration;
+  // return HOUR_IN_SECONDS - cleanConfigPlayer.duration;
+  return cleanConfigPlayer.duration;
 }
 
 export function calcGrandPrixScore(duration: number): number {
-  const timeScore = HOUR_IN_SECONDS - duration;
-  return timeScore;
+  return duration;
 }
 
 /**
@@ -399,8 +402,6 @@ export function loadPlayerSeasonHistoryView(
   SEASON_GRAND_PRIXS: GrandPrixMetadata[]
 ): SeasonHistory[] {
   const seasonHistories: SeasonHistory[] = [];
-
-  const playerExists = configPlayers.find((cp) => cp.address == player);
 
   // Get Season Rank and Score.
   // Need to handle multiple seasons.
@@ -421,7 +422,13 @@ export function loadPlayerSeasonHistoryView(
     let rank = seasonScores.length;
     let score = 0;
     seasonScores
-      .sort((a, b) => b.score - a.score)
+      .sort((a, b) => {
+        if (a.grandPrixsFinished > b.grandPrixsFinished) return -1;
+        else if (b.grandPrixsFinished > a.grandPrixsFinished) return 1;
+        else {
+          return a.score - b.score;
+        }
+      })
       .map((s, index) => {
         if (s.player == player) {
           rank = index + 1;
@@ -447,7 +454,7 @@ export function loadPlayerSeasonHistoryView(
       let score = 0;
       if (allGrandPrixs && allGrandPrixs.length > 0) {
         allGrandPrixs
-          .sort((a, b) => b.score - a.score)
+          .sort((a, b) => a.score - b.score)
           .map((s, index) => {
             if (s.address == player) {
               rank = index + 1;

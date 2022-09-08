@@ -11,18 +11,9 @@ import { Badge } from '../../../Components/Badges';
 import { useSeasonData, useTwitters } from '../../../Utils/AppHooks';
 import { BADGE_BONUSES } from '../../../Utils/constants';
 import { goldStar } from '../../Leaderboards/ArenaLeaderboard';
-import { isPastOrCurrentRound } from '../PortalHistoryView';
 import { MinimalButton } from '../PortalMainView';
-import { truncateAddress } from '../PortalUtils';
+import { isPastOrCurrentRound, truncateAddress } from '../PortalUtils';
 import { theme } from '../styleUtils';
-
-const mockBages = [
-  BadgeType.StartYourEngine,
-  BadgeType.Nice,
-  BadgeType.Sleepy,
-  BadgeType.Tree,
-  BadgeType.Wallbreaker,
-];
 
 function getRankColor(gamesPlayed: number, totalGames: number): string {
   const baseHsl = 127;
@@ -36,7 +27,6 @@ export const SeasonLeaderboardEntryComponent: React.FC<{
   uniqueBadges: { [player: string]: ConfigBadge[] };
   index: number;
 }> = ({ entry, uniqueBadges, index }) => {
-  console.log(`entry`, entry);
   const [expanded, setExpanded] = useState<boolean>(false);
   const SEASON_GRAND_PRIXS = useSeasonData();
   const twitters = useTwitters();
@@ -105,7 +95,7 @@ export const SeasonLeaderboardEntryComponent: React.FC<{
                           } else {
                             return (
                               <span style={{ color: BADGE_BONUSES[badge.type].color }} key={i}>
-                                {'[+'}
+                                {'[-'}
                                 {BADGE_BONUSES[badge.type].bonus}
                                 {']'}
                               </span>

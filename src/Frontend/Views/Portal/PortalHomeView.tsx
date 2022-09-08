@@ -20,7 +20,7 @@ import { PaddedRow } from './Components/PaddedRow';
 import { SeasonLeaderboardEntryComponent } from './Components/SeasonLeaderboardEntryComponent';
 import { GPFeed } from './GPFeed';
 import { MapOverview } from './MapOverview';
-import { isPastOrCurrentRound } from './PortalHistoryView';
+import { isPastOrCurrentRound } from './PortalUtils';
 import { getCurrentGrandPrix } from './PortalUtils';
 import { theme } from './styleUtils';
 
