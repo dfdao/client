@@ -522,7 +522,7 @@ class GameUIManager extends EventEmitter {
 
         // make it so you leave one force behind
         if (this.isSendingShip(mouseDownPlanet.locationId)) {
-          tutorialManager.acceptInput(TutorialState.Spaceship);
+          tutorialManager.acceptInput(TutorialState.MoveSpaceship);
           forces = 0;
         } else if (forces >= from.energy) {
           forces = from.energy - 1;

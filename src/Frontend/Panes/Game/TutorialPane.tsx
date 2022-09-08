@@ -10,6 +10,7 @@ import { Icon, IconType } from '../../Components/Icons';
 import { Bronze, Gold, Green, Red, Silver, White } from '../../Components/Text';
 import { TextPreview } from '../../Components/TextPreview';
 import { useUIManager } from '../../Utils/AppHooks';
+import { tutorialFoundryLocation } from '../../Utils/constants';
 import { useBooleanSetting } from '../../Utils/SettingsHooks';
 import { StyledTutorialPane } from './StyledTutorialPane';
 
@@ -88,12 +89,14 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
   } else if (tutorialState === TutorialState.SendFleet) {
     return (
       <div className='tutzoom'>
-        To expand your empire, you need to capture planets. Fortunately there is a nearby Asteroid
-        Field. Use some of your planet's <White>Energy</White> to move capture that Asteroid Field.
+        To expand your empire, you need to capture planets. Planets you own have a{' '}
+        <White>White ring</White> around them. Uncaptured planets have a <Red>Red</Red> ring. There
+        is a nearby Asteroid Field! Use some of your planet's <White>Energy</White> to move capture
+        that Asteroid Field.
         <br />
         <br />
-        Here's how: Click your planet, press {<White>q</White>}, and click the Asteroid Field. You
-        should see some energy fly there!
+        Here's how: Click your spawn planet, press {<White>q</White>}, and click the Asteroid Field.
+        You should see some energy fly there!
       </div>
     );
   } else if (tutorialState === TutorialState.PlanetTypes) {
@@ -116,6 +119,37 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
           <Btn
             className='btn'
             onClick={() => tutorialManager.acceptInput(TutorialState.PlanetTypes)}
+          >
+            Continue
+          </Btn>
+        </div>
+      </div>
+    );
+  } else if (tutorialState === TutorialState.Upgrade) {
+    return (
+      <div className='tutzoom'>
+        You can use <Gold>Silver</Gold> to upgrade <White>Planets</White>.
+        <br />
+        <br />
+        To upgrade your spawn planet, select the spawn planet and click the <White>
+          Upgrade
+        </White>{' '}
+        button on the planet pane. Choose to upgrade either your planets Range or Speed.
+        <br />
+        <br />
+        When you are ready, press <White>Upgrade</White> and your planet's stats will improve.
+      </div>
+    );
+  } else if (tutorialState === TutorialState.UpgradeComplete) {
+    return (
+      <div className='tutzoom'>
+        You know your planet is upgraded when it has a ring around it. Great job!
+        <br />
+        <br />
+        <div style={{ gap: '5px' }}>
+          <Btn
+            className='btn'
+            onClick={() => tutorialManager.acceptInput(TutorialState.UpgradeComplete)}
           >
             Continue
           </Btn>
@@ -147,23 +181,64 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
     console.log('spaceship');
     return (
       <div className='tutzoom'>
-        <p>
-          You also control{' '}
-          {uiManager.getMySpaceships().length > 1 ? 'several space ships' : 'a space ship'}. Space
-          ships live on planets. Hover over them in your spawn planet pane to learn more about their
-          special abilities.
-          <br />
-          You can move spaceships between any two planets, even if you don't own them. Space ships
-          can move any distance.
-          <br />
-          <br />
-          <White>Try moving a spaceship you own to another planet.</White>
-        </p>
+        Your spawn planet controls an arsenal of spaceships. You can move spaceships between any two
+        planets, even if you don't own them. Space ships can move any distance.
+        <br />
+        <br />
+        <White>
+          Hover over them in your spawn planet pane to learn more about their special abilities.
+        </White>
+        <div style={{ gap: '5px' }}>
+          <Btn className='btn' onClick={() => tutorialManager.acceptInput(TutorialState.Spaceship)}>
+            Continue
+          </Btn>
+        </div>
+      </div>
+    );
+  } else if (tutorialState === TutorialState.MoveSpaceship) {
+    return (
+      <div className='tutzoom'>
+        <White>
+          Try moving your Gear spaceship (the red one) to the Foundry Planet located at (
+          {tutorialFoundryLocation.x}, {tutorialFoundryLocation.y}).
+        </White>
         <p>(Hint: Before moving, click a spaceship to select it. Then execute your move.)</p>
       </div>
     );
+  } else if (tutorialState === TutorialState.Foundry) {
+    return (
+      <div className='tutzoom'>
+        Another type of planet is the Foundry. Foundries hold special items called{' '}
+        <White>Artifacts</White>. When activated, <White>Artifacts</White> give your planet special
+        abilities.
+        <br />
+        Let's extract the artifact from this foundry. <br />
+        <br />
+        First, capture the foundry by sending energy from your spawn planet. (Planets you own have
+        white rings around them).
+        <br />
+        <br />
+        Once you own the foundry, press <White>Prospect Planet</White>. Your foundry's planet pane
+        should now contain a new Artifact! Hover over it to learn its effect.
+      </div>
+    );
+  } else if (tutorialState === TutorialState.Artifact) {
+    return (
+      <div className='tutzoom'>
+        In order to <White>activate</White> your artifact's special powers, click{' '}
+        <White>Inventory</White> on your Foundry's planet pane. Then press <White>Activate</White>.
+        Now your planet should have a stat boost.
+        <br />
+        <br />
+        Press <White>Continue</White> to learn about how to win the game.
+        <div style={{ gap: '5px' }}>
+          <Btn className='btn' onClick={() => tutorialManager.acceptInput(TutorialState.Artifact)}>
+            Continue
+          </Btn>
+        </div>
+      </div>
+    );
   } else if (tutorialState === TutorialState.HowToGetScore) {
-    const isCompetitive = uiManager.isCompetitive();
     const victoryThreshold = uiManager.contractConstants.CLAIM_VICTORY_ENERGY_PERCENT;
     return (
       <div className='tutzoom'>
@@ -190,68 +265,15 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
   } else if (tutorialState === TutorialState.MinerMove) {
     return (
       <div className='tutzoom'>
-        The bottom left context menu contains your explorer. Use the explorer{' '}
-        <Icon type={IconType.Target} /> to reveal greyed parts of the map.
-        <br />
-        <White>
-          Move your explorer with the bottom-left context menu by clicking on the Move{' '}
-          <Icon type={IconType.Target} /> button
-        </White>
-        , then clicking in a grey region.
+        The bottom left context menu contains your explorer. The explorer{' '}
+        <Icon type={IconType.Target} /> is used in large maps to reveal greyed parts of the map.
         <br />
         <br />
         <p>
-          You can also pause your explorer by clicking the pause <Icon type={IconType.Pause} />{' '}
-          button.
+          Pause your explorer by clicking the pause <Icon type={IconType.Pause} /> button.
         </p>
         <div style={{ gap: '5px' }}>
           <Btn className='btn' onClick={() => tutorialManager.acceptInput(TutorialState.MinerMove)}>
-            Continue
-          </Btn>
-        </div>
-      </div>
-    );
-  } else if (tutorialState === TutorialState.BlockedPlanet) {
-    return (
-      <div className='tutzoom'>
-        <p>
-          This game includes blocked planets. You can't move to this planet! However, your opponents
-          may be able to.
-        </p>
-        <p>
-          Hover over the blocked icon on the planet card to see which players can move to that
-          planet.
-        </p>
-        <div style={{ gap: '5px' }}>
-          <Btn className='btn' onClick={() => tutorialManager.complete()}>
-            Exit
-          </Btn>
-          <Btn
-            className='btn'
-            onClick={() => tutorialManager.acceptInput(TutorialState.BlockedPlanet)}
-          >
-            Continue
-          </Btn>
-        </div>
-      </div>
-    );
-  } else if (tutorialState === TutorialState.DefensePlanet) {
-    return (
-      <div className='tutzoom'>
-        <p>This is your home planet. A home planet is a target planet that you cannot move to!</p>
-        <p>
-          You will need to defend this planet from potential attacks, because if someone else
-          captures it, they could win. Hover over the blocked icon on the planet card to see which
-          players can move there.
-        </p>
-        <div style={{ gap: '5px' }}>
-          <Btn className='btn' onClick={() => tutorialManager.complete()}>
-            Exit
-          </Btn>
-          <Btn
-            className='btn'
-            onClick={() => tutorialManager.acceptInput(TutorialState.DefensePlanet)}
-          >
             Continue
           </Btn>
         </div>

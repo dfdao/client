@@ -3,7 +3,7 @@ import { EventEmitter } from 'events';
 import NotificationManager from '../../Frontend/Game/NotificationManager';
 import { setBooleanSetting } from '../../Frontend/Utils/SettingsHooks';
 import GameUIManager from './GameUIManager';
-import { tutorialAsteroidLocation } from '../../Frontend/Utils/constants';
+import { tutorialAsteroidLocation, tutorialFoundryLocation } from '../../Frontend/Utils/constants';
 export const enum TutorialManagerEvent {
   StateChanged = 'StateChanged',
 }
@@ -15,11 +15,14 @@ export const enum TutorialState {
   ZoomOut,
   SendFleet,
   PlanetTypes,
+  Upgrade,
+  UpgradeComplete,
   SpaceJunk,
   Spaceship,
+  MoveSpaceship,
+  Foundry,
+  Artifact,
   HowToGetScore,
-  BlockedPlanet,
-  DefensePlanet,
   MinerMove,
   AlmostCompleted,
   Completed,
@@ -59,16 +62,9 @@ class TutorialManager extends EventEmitter {
     } else if (newState === TutorialState.SendFleet) {
       const asteroid = this.uiManager.getPlanetWithCoords(tutorialAsteroidLocation);
       asteroid && this.uiManager.centerLocationId(asteroid.locationId);
-    } else if (newState === TutorialState.BlockedPlanet) {
-      const blockedLocation = this.uiManager.getPlayerBlockedPlanets();
-      if (blockedLocation.length > 0) {
-        this.uiManager.centerLocationId(blockedLocation[0].locationId);
-      }
-    } else if (newState === TutorialState.DefensePlanet) {
-      const defenseLocation = this.uiManager.getPlayerDefensePlanets();
-      if (defenseLocation.length > 0) {
-        this.uiManager.centerLocationId(defenseLocation[0].locationId);
-      }
+    } else if (newState === TutorialState.MoveSpaceship) {
+      const foundry = this.uiManager.getPlanetWithCoords(tutorialFoundryLocation);
+      foundry && this.uiManager.centerLocationId(foundry.locationId);
     } else if (newState === TutorialState.ZoomOut) {
       const homeLocation = this.uiManager.getHomeHash();
       if (homeLocation) this.uiManager.centerLocationId(homeLocation);
@@ -91,17 +87,6 @@ class TutorialManager extends EventEmitter {
       state === TutorialState.HowToGetScore
     )
       return true;
-    if (
-      this.uiManager.getPlayerBlockedPlanets().length == 0 &&
-      state === TutorialState.BlockedPlanet
-    )
-      return true;
-    if (
-      this.uiManager.getPlayerDefensePlanets().length == 0 &&
-      state === TutorialState.DefensePlanet
-    )
-      return true;
-
     return false;
   }
 
