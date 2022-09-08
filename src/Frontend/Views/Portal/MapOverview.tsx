@@ -116,7 +116,7 @@ export const MapOverview: React.FC<{
           </div>
           <Title>{mapName ?? 'Grand Prix Round'}</Title>
           <MapActions>
-            <Link target='blank' to={`/play/${lobbyAddress}?create=true`}>
+            <Link target='_blank' to={`/play/${lobbyAddress}?create=true`}>
               <LobbyButton primary>
                 Play round
               </LobbyButton>
@@ -126,8 +126,8 @@ export const MapOverview: React.FC<{
                 {status == 'ended'
                   ? 'Round over!'
                   : status == 'not started'
-                  ? `Official round starts in ${formatDuration(countdown)} `
-                  : `Official round ends in ${formatDuration(countdown)} `}
+                  ? `Active round starts in ${formatDuration(countdown)} `
+                  : `Active round ends in ${formatDuration(countdown)} `}
               </RoundCountdown>
             ) : (
               <div style={{ height: '21px', width: '240px' }}>
