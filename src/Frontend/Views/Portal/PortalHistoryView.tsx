@@ -24,6 +24,7 @@ import {
   useTwitters,
 } from '../../Utils/AppHooks';
 import { SEASON_GRAND_PRIXS } from '../../Utils/constants';
+import { formatDuration } from '../../Utils/TimeUtils';
 import { TiledTable } from '../TiledTable';
 import { PortalHistoryRoundCard } from './Components/PortalHistoryRoundCard';
 import { Label } from './PortalHomeView';
@@ -122,7 +123,7 @@ export function PortalHistoryView({ match }: RouteComponentProps<{ account: stri
             </div>
             <div className='col'>
               <Subtitle style={{ textTransform: 'uppercase' }}>Season Score</Subtitle>
-              <Title>{seasonScore}</Title>
+              <Title>{formatDuration(seasonScore * 1000)}</Title>
             </div>
           </div>
         </div>

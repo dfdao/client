@@ -88,6 +88,17 @@ export const SeasonLeaderboardEntryComponent: React.FC<{
                       >
                         {uniqueBadges[entry.address]
                           .filter((cb) => cb.configHash == game.configHash)
+                          .sort((a,b) => {
+                            if(a.type == BadgeType.Wallbreaker) {
+                              return -1;
+                            }
+                            else if(b.type == BadgeType.Wallbreaker) {
+                              return 1;
+                            }
+                            else {
+                              return 0;
+                            }
+                          })
                           .map((badge, i) => {
                             if (badge.type == BadgeType.Wallbreaker) {
                               return goldStar(i);
