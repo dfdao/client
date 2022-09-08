@@ -100,12 +100,13 @@ export function GameWindowLayout({
   }, []);
 
   const [waitingRoomVisible, setWaitingRoomVisible] = useState(
-    !uiManager.gameStarted && uiManager.contractConstants.MANUAL_SPAWN
+    !uiManager.gameStarted &&
+      uiManager.contractConstants.MANUAL_SPAWN &&
+      uiManager.getSpawnPlanets().length !== 1
   );
 
   const isTutorialWorld = uiManager.contractConstants.CONFIG_HASH === tutorialConfig;
-  const [showTutorialSetting] = useBooleanSetting(uiManager, Setting.ShowTutorial);
-  const showTutorial = isTutorialWorld || showTutorialSetting;
+  const showTutorial = isTutorialWorld;
   const [showSpectatorInfo] = useBooleanSetting(uiManager, Setting.ShowSpectatorInfo);
   const [showArenaBriefing] = useBooleanSetting(uiManager, Setting.ShowArenaBriefing);
   const selected = useSelectedPlanet(uiManager).value;
@@ -223,7 +224,7 @@ export function GameWindowLayout({
 
           {showTutorial && <TutorialPane />}
           {showSpectatorInfo && <SpectatorInfoPane />}
-          {showArenaBriefing && <ArenaBriefingPane />}
+          {showArenaBriefing && !showTutorial && <ArenaBriefingPane />}
         </CanvasContainer>
       </MainWindow>
     </WindowWrapper>

@@ -35,6 +35,7 @@ export const PortalHomeView: React.FC<{}> = () => {
   const numPastOrCurrent = SEASON_GRAND_PRIXS.filter((sgp) =>
     isPastOrCurrentRound(sgp.configHash, SEASON_GRAND_PRIXS)
   ).length;
+
   if (!grandPrix) return <div>No active round</div>;
   const twitters = useTwitters();
   const allPlayers = useSeasonPlayers();
@@ -75,8 +76,9 @@ export const PortalHomeView: React.FC<{}> = () => {
           <MapOverview round={grandPrix} config={config} lobbyAddress={lobbyAddress} />
         </div>
         <div className='col w-100'>
-          <Label>Recent Activity</Label>
-          <GPFeed configHash={grandPrix.configHash} />
+          <LabeledPanel label='Recent Activity'>
+            <GPFeed configHash={grandPrix.configHash} />
+          </LabeledPanel>
         </div>
       </div>
       <div className='row w-100' style={{ gap: theme.spacing.xl }}>
