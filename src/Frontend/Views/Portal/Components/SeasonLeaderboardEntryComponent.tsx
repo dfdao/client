@@ -10,6 +10,7 @@ import { SeasonLeaderboardEntry } from '../../../../Backend/Network/GraphApi/Sea
 import { Badge } from '../../../Components/Badges';
 import { useSeasonData, useTwitters } from '../../../Utils/AppHooks';
 import { BADGE_BONUSES } from '../../../Utils/constants';
+import { formatDuration } from '../../../Utils/TimeUtils';
 import { goldStar } from '../../Leaderboards/ArenaLeaderboard';
 import { MinimalButton } from '../PortalMainView';
 import { isPastOrCurrentRound, truncateAddress } from '../PortalUtils';
@@ -17,8 +18,8 @@ import { theme } from '../styleUtils';
 
 function getRankColor(gamesPlayed: number, totalGames: number): string {
   const baseHsl = 127;
-  const gamePercentage = 1 - (gamesPlayed / totalGames);
-  const subtract = Math.floor((baseHsl * gamePercentage));
+  const gamePercentage = 1 - gamesPlayed / totalGames;
+  const subtract = Math.floor(baseHsl * gamePercentage);
   return `hsl(${baseHsl - subtract}, 95%, 62%)`;
 }
 
@@ -44,86 +45,89 @@ export const SeasonLeaderboardEntryComponent: React.FC<{
         </Group>
         <Group>
           <span style={{ color: getRankColor(gamesFinished, numPastOrCurrent) }}>
-            {entry.totalDuration}
-          </span>
-          <span style={{ color: getRankColor(gamesFinished, numPastOrCurrent) }}>
-            {gamesFinished}/{numPastOrCurrent}{' '}
+            {formatDuration(entry.totalDuration * 1000)}
           </span>
         </Group>
       </Row>
       {expanded && (
-        <ExpandedGames style={{ display: 'flex', flexDirection: 'column' }}>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {entry.games
-              .filter((game) => isPastOrCurrentRound(game.configHash, SEASON_GRAND_PRIXS))
-              .map((game, index) => (
-                <div
-                  key={index}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                  }}
-                >
+        <>
+          <ExpandedGames style={{ display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              {entry.games
+                .filter((game) => isPastOrCurrentRound(game.configHash, SEASON_GRAND_PRIXS))
+                .map((game, index) => (
                   <div
+                    key={index}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      gap: theme.spacing.lg,
+                      justifyContent: 'space-between',
                     }}
                   >
-                    <span>
-                      <Link
-                        style={{ color: dfstyles.colors.dfblue }}
-                        to={`/portal/map/${game.configHash}`}
-                      >
-                        {getConfigName(game.configHash)}
-                      </Link>
-                    </span>
                     <div
                       style={{
                         display: 'flex',
                         alignItems: 'center',
-                        gap: theme.spacing.md,
+                        gap: theme.spacing.lg,
                       }}
                     >
-                      {uniqueBadges[entry.address]
-                        .filter((cb) => cb.configHash == game.configHash)
-                        .map((badge, i) => {
-                          if (badge.type == BadgeType.Wallbreaker) {
-                            return goldStar(i);
-                          } else {
-                            return (
-                              <span style={{ color: BADGE_BONUSES[badge.type].color }} key={i}>
-                                {'[-'}
-                                {BADGE_BONUSES[badge.type].bonus}
-                                {']'}
-                              </span>
-                            );
-                          }
-                        })}
+                      <span>
+                        <Link
+                          style={{ color: dfstyles.colors.dfblue }}
+                          to={`/portal/map/${game.configHash}`}
+                        >
+                          {getConfigName(game.configHash)}
+                        </Link>
+                      </span>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: theme.spacing.md,
+                        }}
+                      >
+                        {uniqueBadges[entry.address]
+                          .filter((cb) => cb.configHash == game.configHash)
+                          .map((badge, i) => {
+                            if (badge.type == BadgeType.Wallbreaker) {
+                              return goldStar(i);
+                            } else {
+                              return (
+                                <span style={{ color: BADGE_BONUSES[badge.type].color }} key={i}>
+                                  {'[-'}
+                                  {BADGE_BONUSES[badge.type].bonus}
+                                  {']'}
+                                </span>
+                              );
+                            }
+                          })}
+                      </div>
                     </div>
+                    <span>{formatDuration(game.duration * 1000)}</span>
                   </div>
-                  <span>{game.duration}</span>
+                ))}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginTop: '8px',
+                  padding: '8px',
+                  borderTop: `1px solid ${dfstyles.colors.borderDarker}`,
+                }}
+              >
+                <Link to={`/portal/history/${entry.address}`}>
+                  <MinimalButton>View player</MinimalButton>
+                </Link>
+                <span>{entry.badges} badges this season</span>
+                <div style={{ color: getRankColor(gamesFinished, numPastOrCurrent) }}>
+                  {gamesFinished}/{numPastOrCurrent}
+                  {' rounds finished'}
                 </div>
-              ))}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginTop: '8px',
-                padding: '8px',
-                borderTop: `1px solid ${dfstyles.colors.borderDarker}`,
-              }}
-            >
-              <Link to={`/portal/history/${entry.address}`}>
-                <MinimalButton>View player</MinimalButton>
-              </Link>
-              <span>{entry.badges} badges this season</span>
+              </div>
             </div>
-          </div>
-        </ExpandedGames>
+          </ExpandedGames>
+        </>
       )}
     </div>
   );
