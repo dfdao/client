@@ -58,7 +58,6 @@ export async function loadWallbreakers(
       }
     }
     `;
-    // console.log(`wb query`, QUERY);
     return getGraphQLData(QUERY, process.env.GRAPH_URL || 'localhost:8000');
   });
   const res = await Promise.all(wallbreakerQuery);
@@ -82,7 +81,6 @@ export async function loadWallbreakers(
         arenaAddress: wbr.lobbyAddress,
       } as Wallbreaker;
     });
-  console.log(`wallbreakers`, wallBreakers);
   return wallBreakers;
 }
 
@@ -208,7 +206,6 @@ export function loadSeasonLeaderboard(
     };
     leaderboardProps.entries.push(entry);
   }
-  console.log(`szn leaders`, leaderboardProps);
   return leaderboardProps;
 }
 
@@ -266,11 +263,11 @@ export function loadGrandPrixLeaderboard(
 }
 
 function validGrandPrixMatch(configPlayer: ConfigPlayer, SEASON_GRAND_PRIXS: GrandPrixMetadata[]) {
-  const grandPrixs = SEASON_GRAND_PRIXS.filter(gp => gp.configHash == configPlayer.configHash);
-  if(grandPrixs.length == 0) throw new Error('Grand Prix not found');
-  if(!configPlayer.bestTime) return false;
+  const grandPrixs = SEASON_GRAND_PRIXS.filter((gp) => gp.configHash == configPlayer.configHash);
+  if (grandPrixs.length == 0) throw new Error('Grand Prix not found');
+  if (!configPlayer.bestTime) return false;
   const grandPrix = grandPrixs[0];
-  return (configPlayer.bestTime.startTime >= grandPrix.startTime)
+  return configPlayer.bestTime.startTime >= grandPrix.startTime;
 }
 
 // Add wallbreaker badge to ConfigPlayers
@@ -280,10 +277,12 @@ async function buildCleanConfigPlayer(
 ): Promise<CleanConfigPlayer[]> {
   const wallBreakers = await loadWallbreakers(SEASON_GRAND_PRIXS);
   return configPlayers
-    .filter((cp) => validGrandPrixMatch(cp,SEASON_GRAND_PRIXS))
+    .filter((cp) => validGrandPrixMatch(cp, SEASON_GRAND_PRIXS))
     .map((cfp) => {
       const isWallBreaker =
-        wallBreakers.length > 0 && wallBreakers.filter((e) => e.player === cfp.address && e.configHash === cfp.configHash).length > 0;
+        wallBreakers.length > 0 &&
+        wallBreakers.filter((e) => e.player === cfp.address && e.configHash === cfp.configHash)
+          .length > 0;
       if (isWallBreaker && cfp.badge) {
         cfp.badge.wallBreaker = true;
       }
@@ -491,10 +490,9 @@ export function loadUniquePlayerBadges(
     const uniqueBadgeSet: UniquePlayerBadges = {};
     const wallBreakers: ConfigBadge[] = [];
     allBadges.forEach((cb) => {
-      if(cb.type != BadgeType.Wallbreaker) {
+      if (cb.type != BadgeType.Wallbreaker) {
         uniqueBadgeSet[cb.type] = cb;
-      }
-      else {
+      } else {
         wallBreakers.push(cb);
       }
     });
