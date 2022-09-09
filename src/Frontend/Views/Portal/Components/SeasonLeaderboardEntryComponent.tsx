@@ -16,9 +16,9 @@ import { isPastOrCurrentRound, truncateAddress } from '../PortalUtils';
 import { theme } from '../styleUtils';
 
 function splitPascalCase(word: string) {
-	var wordRe = /($[a-z])|[A-Z][^A-Z]+/g;
-  //@ts-expect-error 
-	return word.match(wordRe).join(" ");
+  var wordRe = /($[a-z])|[A-Z][^A-Z]+/g;
+  //@ts-expect-error
+  return word.match(wordRe).join(' ');
 }
 
 function getRankColor(gamesPlayed: number, totalGames: number): string {
@@ -77,6 +77,7 @@ export const SeasonLeaderboardEntryComponent: React.FC<{
                         display: 'flex',
                         alignItems: 'center',
                         gap: theme.spacing.lg,
+                        width: '100%',
                       }}
                     >
                       <span>
@@ -92,6 +93,7 @@ export const SeasonLeaderboardEntryComponent: React.FC<{
                           display: 'flex',
                           alignItems: 'center',
                           gap: theme.spacing.md,
+                          flex: '1',
                         }}
                       >
                         {uniqueBadges[entry.address]
@@ -111,7 +113,6 @@ export const SeasonLeaderboardEntryComponent: React.FC<{
                                 <PortalTooltipTrigger
                                   name={TooltipName.Empty}
                                   extraContent={`Wallbreaker`}
-                                  style={{ width: '100%' }}
                                 >
                                   {goldStar(i)}
                                 </PortalTooltipTrigger>
@@ -121,9 +122,14 @@ export const SeasonLeaderboardEntryComponent: React.FC<{
                                 <PortalTooltipTrigger
                                   name={TooltipName.Empty}
                                   extraContent={`-${BADGE_BONUSES[badge.type].bonus} seconds!`}
-                                  style={{ width: '100%' }}
                                 >
-                                  <span style={{ color: BADGE_BONUSES[badge.type].color }} key={i}>
+                                  <span
+                                    style={{
+                                      color: BADGE_BONUSES[badge.type].color,
+                                      fontSize: '0.6rem',
+                                    }}
+                                    key={i}
+                                  >
                                     {`[${splitPascalCase(badge.type.toString())}]`}
                                   </span>
                                 </PortalTooltipTrigger>
