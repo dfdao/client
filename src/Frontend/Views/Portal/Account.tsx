@@ -64,7 +64,7 @@ const AccountModal: React.FC<AccountModalProps> = ({ address, twitter, balance, 
       <Footer>
         <Button onClick={logOut}>
           <ExitIcon />
-          Disconnect
+          Log out
         </Button>
       </Footer>
     </PortalModal>
