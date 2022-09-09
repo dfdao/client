@@ -1,6 +1,6 @@
 import { getConfigName } from '@darkforest_eth/procedural';
 import { address } from '@darkforest_eth/serde';
-import { BadgeType, ConfigBadge } from '@darkforest_eth/types';
+import { BadgeType, ConfigBadge, TooltipName } from '@darkforest_eth/types';
 import dfstyles from '@darkforest_eth/ui/dist/styles';
 import { uniq } from 'lodash';
 import React, { useState } from 'react';
@@ -8,6 +8,7 @@ import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { SeasonLeaderboardEntry } from '../../../../Backend/Network/GraphApi/SeasonLeaderboardApi';
 import { Badge } from '../../../Components/Badges';
+import { PortalTooltipTrigger } from '../../../Panes/Tooltip';
 import { useSeasonData, useTwitters } from '../../../Utils/AppHooks';
 import { BADGE_BONUSES } from '../../../Utils/constants';
 import { formatDuration } from '../../../Utils/TimeUtils';
@@ -102,14 +103,26 @@ export const SeasonLeaderboardEntryComponent: React.FC<{
                           })
                           .map((badge, i) => {
                             if (badge.type == BadgeType.Wallbreaker) {
-                              return goldStar(i);
+                              return (
+                                <PortalTooltipTrigger
+                                  name={TooltipName.Empty}
+                                  extraContent={`Wallbreaker`}
+                                  style={{ width: '100%' }}
+                                >
+                                  {goldStar(i)}
+                                </PortalTooltipTrigger>
+                              );
                             } else {
                               return (
-                                <span style={{ color: BADGE_BONUSES[badge.type].color }} key={i}>
-                                  {'[-'}
-                                  {BADGE_BONUSES[badge.type].bonus}
-                                  {']'}
-                                </span>
+                                <PortalTooltipTrigger
+                                  name={TooltipName.Empty}
+                                  extraContent={`+${BADGE_BONUSES[badge.type].bonus} score boost`}
+                                  style={{ width: '100%' }}
+                                >
+                                  <span style={{ color: BADGE_BONUSES[badge.type].color }} key={i}>
+                                    {`[${badge.type.toString()}]`}
+                                  </span>
+                                </PortalTooltipTrigger>
                               );
                             }
                           })}
