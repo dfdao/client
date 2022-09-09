@@ -286,7 +286,7 @@ async function buildCleanConfigPlayer(
 ): Promise<CleanConfigPlayer[]> {
   const wallBreakers = await loadWallbreakers(SEASON_GRAND_PRIXS);
   return configPlayers
-    .filter((cp) => validGrandPrixMatch(cp,SEASON_GRAND_PRIXS))
+    .filter((cp) => validGrandPrixMatch(cp,SEASON_GRAND_PRIXS) && cp.gamesFinished > 0)
     .map((cfp) => {
       const isWallBreaker =
         wallBreakers.length > 0 &&
