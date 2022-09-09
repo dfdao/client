@@ -35,7 +35,6 @@ export const SeasonLeaderboardEntryComponent: React.FC<{
     isPastOrCurrentRound(sgp.configHash, SEASON_GRAND_PRIXS)
   ).length;
   const gamesFinished = entry.games.length;
-  console.log(formatDuration(entry.totalDuration * 1000));
   return (
     <div key={index}>
       <Row key={index} onClick={() => setExpanded(!expanded)} expanded={expanded}>
