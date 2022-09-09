@@ -77,7 +77,14 @@ export const PortalHomeView: React.FC<{}> = () => {
         </div>
         <div className='col w-100'>
           <LabeledPanel label='Recent Activity'>
+          <div
+              style={{
+                overflowY: 'auto',
+                maxHeight: '500px',
+              }}
+            >
             <GPFeed configHash={grandPrix.configHash} />
+          </div>
           </LabeledPanel>
         </div>
       </div>
