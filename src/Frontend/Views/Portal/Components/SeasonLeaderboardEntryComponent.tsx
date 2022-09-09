@@ -2,12 +2,10 @@ import { getConfigName } from '@darkforest_eth/procedural';
 import { address } from '@darkforest_eth/serde';
 import { BadgeType, ConfigBadge, TooltipName } from '@darkforest_eth/types';
 import dfstyles from '@darkforest_eth/ui/dist/styles';
-import { uniq } from 'lodash';
 import React, { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { SeasonLeaderboardEntry } from '../../../../Backend/Network/GraphApi/SeasonLeaderboardApi';
-import { Badge } from '../../../Components/Badges';
 import { PortalTooltipTrigger } from '../../../Panes/Tooltip';
 import { useSeasonData, useTwitters } from '../../../Utils/AppHooks';
 import { BADGE_BONUSES } from '../../../Utils/constants';
@@ -16,6 +14,12 @@ import { goldStar } from '../../Leaderboards/ArenaLeaderboard';
 import { MinimalButton } from '../PortalMainView';
 import { isPastOrCurrentRound, truncateAddress } from '../PortalUtils';
 import { theme } from '../styleUtils';
+
+function splitPascalCase(word: string) {
+	var wordRe = /($[a-z])|[A-Z][^A-Z]+/g;
+  //@ts-expect-error 
+	return word.match(wordRe).join(" ");
+}
 
 function getRankColor(gamesPlayed: number, totalGames: number): string {
   const baseHsl = 127;
@@ -116,11 +120,11 @@ export const SeasonLeaderboardEntryComponent: React.FC<{
                               return (
                                 <PortalTooltipTrigger
                                   name={TooltipName.Empty}
-                                  extraContent={`+${BADGE_BONUSES[badge.type].bonus} score boost`}
+                                  extraContent={`-${BADGE_BONUSES[badge.type].bonus} seconds!`}
                                   style={{ width: '100%' }}
                                 >
                                   <span style={{ color: BADGE_BONUSES[badge.type].color }} key={i}>
-                                    {`[${badge.type.toString()}]`}
+                                    {`[${splitPascalCase(badge.type.toString())}]`}
                                   </span>
                                 </PortalTooltipTrigger>
                               );
