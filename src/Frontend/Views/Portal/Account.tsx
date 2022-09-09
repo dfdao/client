@@ -48,16 +48,17 @@ const AccountModal: React.FC<AccountModalProps> = ({ address, twitter, balance, 
             alignItems: 'center',
             gap: '8px',
             marginTop: theme.spacing.lg,
+            width: '100%',
           }}
         >
-          <Button
+          <SmallButton
             onClick={() => {
               window.open(`https://blockscout.com/xdai/optimism/address/${address}`, '_blank');
             }}
           >
             <Gnosis width='24px' height='24px' />
             Explorer
-          </Button>
+          </SmallButton>
         </div>
         <TwitterVerifier twitter={twitter} />
       </AccountContent>
@@ -217,4 +218,8 @@ const Button = styled(LobbyButton)`
   &:hover {
     background: ${theme.colors.bg3} !important;
   }
+`;
+
+const SmallButton = styled(Button)`
+  padding: ${theme.spacing.md};
 `;

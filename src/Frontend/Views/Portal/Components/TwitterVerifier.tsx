@@ -127,6 +127,7 @@ const Container = styled.div`
 const Button = styled.button`
   display: flex;
   align-items: center;
+  width: 100%;
   justify-content: center;
   background: ${theme.colors.bg2};
   border-radius: ${theme.borderRadius};
@@ -155,6 +156,7 @@ const Row = styled.div`
   display: flex;
   gap: ${theme.spacing.md};
   align-items: center;
+  width: 100%;
 `;
 
 const Banner = styled.div`
