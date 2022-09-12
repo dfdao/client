@@ -199,6 +199,6 @@ export const Group = styled.div`
 
 export const Group1 = styled.div`
   display: flex;
-  gap: 32px;
+  gap: 42px;
   align-items: center;
 `;

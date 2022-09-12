@@ -190,6 +190,10 @@ const FIRST_GRAND_PRIX: GrandPrixMetadata = {
 const FIRST_CONFIG_HASH_GP1 = '0xcc06ae3f725ee78b9d8e7f50ce2536c360f8f982e0392a2eb4e2ed7dda4a70b3'
 const SECOND_CONFIG_HASH_GP1 = '0x2c786bdae64f8ff8f42e8cddf6f4dd49d044cba20fdf7da65a9790b475b73b9c'
 const FIRST_CONFIG_FINAL_VALID_START = 1662926490
+const NERONZZ_WEEK_1 = {
+  address: "0x8dc13e92246b9e9a494173f28b07262b30cc545c",
+  time: 118
+}
 
 export {
   MIN_CHUNK_SIZE,
@@ -205,6 +209,7 @@ export {
   bronzeTime,
   silverTime,
   CONFIG_CONSTANTS,
+  NERONZZ_WEEK_1,
   goldTime,
   SEASON_GRAND_PRIXS,
   WALLBREAKER_BONUS,

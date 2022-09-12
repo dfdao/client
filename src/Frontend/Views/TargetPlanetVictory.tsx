@@ -25,6 +25,7 @@ export function TargetPlanetVictory() {
     try {
       const tx = await gameManager.claimVictory();
       const res = await tx.confirmedPromise;
+      // Manual emit just to be sure
       uiManager.getGameManager().getContractAPI().emit(ContractsAPIEvent.PlayerUpdate, player);
       uiManager.getGameManager().getContractAPI().emit(ContractsAPIEvent.Gameover);
     }

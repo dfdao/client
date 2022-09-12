@@ -27,6 +27,7 @@ import {
   SECOND_CONFIG_HASH_GP1,
   FIRST_CONFIG_HASH_GP1,
   FIRST_CONFIG_FINAL_VALID_START,
+  NERONZZ_WEEK_1,
 } from '../../../Frontend/Utils/constants';
 import {
   createDummySeasonData,
@@ -40,17 +41,12 @@ export async function loadWallbreakers(
   SEASON_GRAND_PRIXS: GrandPrixMetadata[]
 ): Promise<Wallbreaker[]> {
   const wallbreakerQuery = SEASON_GRAND_PRIXS.map((grandPrix) => {
-    // Manual logic to account for wrong map.
-    const configHashString =
-      grandPrix.configHash == SECOND_CONFIG_HASH_GP1
-        ? [`"${SECOND_CONFIG_HASH_GP1}"`, `"${FIRST_CONFIG_HASH_GP1}"`]
-        : `"${grandPrix.configHash}"`;
     const QUERY = `
     query
     {
       arenas(
         where: {
-          configHash_in: [${configHashString}], 
+          configHash: "${grandPrix.configHash}"
           duration_not:null,
           startTime_gte: ${grandPrix.startTime}
           endTime_lte: ${grandPrix.endTime}
@@ -76,7 +72,17 @@ export async function loadWallbreakers(
     if (x.error) {
       throw new Error(x.error);
     } else {
-      return x.data.arenas[0] as WallbreakerArena;
+      const fastestRun: WallbreakerArena = x.data.arenas[0];
+      const configHash = fastestRun.configHash;
+      // Manual logic to account for wrong map.
+      if(configHash == SECOND_CONFIG_HASH_GP1 && fastestRun.duration > NERONZZ_WEEK_1.time) {
+        fastestRun.winners[0] = {address: NERONZZ_WEEK_1.address};
+        fastestRun.duration = NERONZZ_WEEK_1.time;
+        return fastestRun
+      }
+      else {
+        return fastestRun
+      }
     }
   });
 
