@@ -179,6 +179,18 @@ const SEASON_GRAND_PRIXS: GrandPrixMetadata[] = [
   },
 ];
 
+const FIRST_GRAND_PRIX: GrandPrixMetadata = {
+  seasonId: 1,
+  configHash: '0xcc06ae3f725ee78b9d8e7f50ce2536c360f8f982e0392a2eb4e2ed7dda4a70b3',
+  startTime: 1662768000,
+  endTime: 1663372800,
+  parentAddress: address(constants.AddressZero),
+};
+
+const FIRST_CONFIG_HASH_GP1 = '0xcc06ae3f725ee78b9d8e7f50ce2536c360f8f982e0392a2eb4e2ed7dda4a70b3'
+const SECOND_CONFIG_HASH_GP1 = '0x2c786bdae64f8ff8f42e8cddf6f4dd49d044cba20fdf7da65a9790b475b73b9c'
+const FIRST_CONFIG_FINAL_VALID_START = 1662926490
+
 export {
   MIN_CHUNK_SIZE,
   MAX_CHUNK_SIZE,
@@ -197,6 +209,9 @@ export {
   SEASON_GRAND_PRIXS,
   WALLBREAKER_BONUS,
   START_ENGINE_BONUS,
+  FIRST_CONFIG_FINAL_VALID_START,
+  FIRST_CONFIG_HASH_GP1,
+  SECOND_CONFIG_HASH_GP1,
   SLEEPY_BONUS,
   TREE_BONUS,
   NICE_BONUS,
@@ -206,6 +221,7 @@ export {
   DEV_CONFIG_HASH_1,
   DEV_CONFIG_HASH_2,
   HOUR_IN_SECONDS,
+  FIRST_GRAND_PRIX,
   DAY_IN_SECONDS,
 };
 
