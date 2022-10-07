@@ -3300,7 +3300,13 @@ class GameManager extends EventEmitter {
   getMaxMoveDist(planetId: LocationId, sendingPercent: number, abandoning: boolean): number {
     const planet = this.getPlanetWithId(planetId);
     if (!planet) throw new Error('origin planet unknown');
-    return getRange(planet, sendingPercent, this.getRangeBuff(abandoning), this.startTime);
+    return getRange(
+      planet,
+      this.contractConstants.RANGE_DOUBLING_SECS,
+      sendingPercent,
+      this.getRangeBuff(abandoning),
+      this.startTime
+    );
   }
 
   /**
@@ -3347,7 +3353,13 @@ class GameManager extends EventEmitter {
     // at https://github.com/darkforest-eth/client/issues/15
     // Improved by using `planetMap` by [@phated](https://github.com/phated)
     const result = [];
-    const range = getRange(planet, sendingPercent, this.getRangeBuff(abandoning), this.startTime);
+    const range = getRange(
+      planet,
+      this.contractConstants.RANGE_DOUBLING_SECS,
+      sendingPercent,
+      this.getRangeBuff(abandoning),
+      this.startTime
+    );
     for (const p of this.getPlanetMap().values()) {
       if (isLocatable(p)) {
         if (this.getDistCoords(planet.location.coords, p.location.coords) < range) {
@@ -3373,7 +3385,10 @@ class GameManager extends EventEmitter {
     if (!from) throw new Error('origin planet unknown');
     const dist = this.getDist(fromId, toId);
 
-    const timeBuff = this.startTime ? (Date.now() / 1000 - this.startTime) / 360 + 1 : 1;
+    const timeBuff =
+      this.startTime && this.contractConstants.RANGE_DOUBLING_SECS > 0
+        ? (Date.now() / 1000 - this.startTime) / this.contractConstants.RANGE_DOUBLING_SECS + 1
+        : 1;
     const timeBuffedRange = from.range * timeBuff;
     const range = timeBuffedRange * this.getRangeBuff(abandoning);
     const rangeSteps = dist / range;
@@ -3413,7 +3428,10 @@ class GameManager extends EventEmitter {
       }
     }
 
-    const timeBuff = this.startTime ? (Date.now() / 1000 - this.startTime) / 360 + 1 : 1;
+    const timeBuff =
+      this.startTime && this.contractConstants.RANGE_DOUBLING_SECS > 0
+        ? (Date.now() / 1000 - this.startTime) / this.contractConstants.RANGE_DOUBLING_SECS + 1
+        : 1;
     const timeBuffedRange = from.range * timeBuff;
 
     const scale = (1 / 2) ** (dist / timeBuffedRange);

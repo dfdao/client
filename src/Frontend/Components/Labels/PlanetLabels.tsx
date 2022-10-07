@@ -103,13 +103,18 @@ export const DefenseText = ({ planet }: { planet: Planet | undefined }) => (
   <StatText planet={planet} getStat={getDefense} />
 );
 
-export const RangeText = ({ planet, buff }: { planet: Planet; buff?: number }) => (
-  <StatText
-    planet={planet}
-    getStat={() => getRange(planet, 100, undefined, useUIManager().getStartTime() || 0)}
-    buff={buff}
-  />
-);
+export const RangeText = ({ planet, buff }: { planet: Planet; buff?: number }) => {
+  const ui = useUIManager();
+  return (
+    <StatText
+      planet={planet}
+      getStat={() =>
+        getRange(planet, ui.getRangeDoublingSeconds(), 100, undefined, ui.getStartTime())
+      }
+      buff={buff}
+    />
+  );
+};
 
 const getJunk = (p: Planet) => p.spaceJunk;
 export const JunkText = ({ planet }: { planet: Planet | undefined }) => (
