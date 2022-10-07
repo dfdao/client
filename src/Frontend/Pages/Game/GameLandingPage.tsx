@@ -689,7 +689,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
 
           await terminal.current?.getInput();
           return true;
-        }, team)
+        })
         .catch((error: Error) => {
           terminal.current?.println(
             `[ERROR] ${error.toString().slice(0, 10000)}`,
