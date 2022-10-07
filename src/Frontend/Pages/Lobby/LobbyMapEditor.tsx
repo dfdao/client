@@ -112,6 +112,7 @@ export const LobbyMapEditor: React.FC<{
             canAddPlanets={config.ADMIN_CAN_ADD_PLANETS.displayValue ?? false}
             spawnPlanetsEnabled={config.MANUAL_SPAWN.displayValue ?? false}
             targetPlanetsEnabled={config.TARGET_PLANETS.displayValue ?? false}
+            teamsEnabled={config.TEAMS_ENABLED.displayValue ?? false}
             blockEnabled={
               (config.BLOCK_CAPTURE.displayValue ?? false) ||
               (config.BLOCK_MOVES.displayValue ?? false)

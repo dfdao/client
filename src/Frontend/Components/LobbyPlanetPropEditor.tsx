@@ -16,6 +16,7 @@ export interface PlanetPropEditorProps {
   canAddPlanets: boolean;
   targetPlanetsEnabled: boolean;
   spawnPlanetsEnabled: boolean;
+  teamsEnabled: boolean;
   blockEnabled: boolean;
   stagedPlanets: LobbyPlanet[];
   root: string;
@@ -30,7 +31,8 @@ export type planetInputType =
   | 'planetType'
   | 'isSpawnPlanet'
   | 'isTargetPlanet'
-  | 'blockedPlanetLocs';
+  | 'blockedPlanetLocs'
+  | 'team';
 
 interface TitleInfo {
   title: string;
@@ -66,6 +68,7 @@ export const PlanetPropEditor: React.FC<PlanetPropEditorProps> = ({
   canAddPlanets,
   targetPlanetsEnabled,
   spawnPlanetsEnabled,
+  teamsEnabled,
   blockEnabled,
   stagedPlanets,
   excludePlanetTypes,
@@ -224,6 +227,10 @@ export const PlanetPropEditor: React.FC<PlanetPropEditorProps> = ({
           : (content = (
               <Hoverable onClick={() => history.push(`${root}/settings/game`)}>Enable</Hoverable>
             ));
+      }
+    } else if (value == 'team') {
+      {
+        content = teamsEnabled ? 'teams enabled' : 'teams disabled';
       }
     } else {
       content = (

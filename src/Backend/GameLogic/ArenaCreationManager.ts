@@ -278,7 +278,7 @@ export class ArenaCreationManager {
     this.whitelistedAddresses.push(address);
   }
 
-  public lobbyPlanetToInitPlanet(planet: LobbyPlanet, initializers: LobbyInitializers) {
+  public lobbyPlanetToInitPlanet(planet: LobbyPlanet, initializers: LobbyInitializers): InitPlanet {
     const locationFunc = initializers.DISABLE_ZK_CHECKS
       ? fakeHash(initializers.PLANET_RARITY)
       : mimcHash(initializers.PLANETHASH_KEY);
@@ -308,6 +308,7 @@ export class ArenaCreationManager {
       isTargetPlanet: planet.isTargetPlanet,
       isSpawnPlanet: planet.isSpawnPlanet,
       blockedPlanetIds: planet.blockedPlanetLocs.map((p) => locationFunc(p.x, p.y).toString()),
+      team: planet.team || 0,
     };
   }
 

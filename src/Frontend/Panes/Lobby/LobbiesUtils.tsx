@@ -18,6 +18,7 @@ export declare type LobbyPlanet = {
   isTargetPlanet: boolean;
   isSpawnPlanet: boolean;
   blockedPlanetLocs: WorldCoords[];
+  team: number;
 };
 
 export declare type InitPlanet = {
@@ -31,7 +32,8 @@ export declare type InitPlanet = {
   isTargetPlanet: boolean;
   isSpawnPlanet: boolean;
   blockedPlanetIds: string[];
-}
+  team: number;
+};
 
 export interface LobbiesPaneProps {
   config: LobbyConfigState;
@@ -327,6 +329,7 @@ export const DEFAULT_PLANET: LobbyPlanet = {
   isTargetPlanet: false,
   isSpawnPlanet: false,
   blockedPlanetLocs: [],
+  team: 1,
 };
 
 export const PLANET_TYPE_NAMES = ['Planet', 'Asteroid Field', 'Foundry', 'Spacetime Rip', 'Quasar'];
