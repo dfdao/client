@@ -1,5 +1,5 @@
 import { ArtifactFileColor, artifactFileName, isSpaceShip } from '@darkforest_eth/gamelogic';
-import { Artifact } from '@darkforest_eth/types';
+import { Artifact, ArtifactType } from '@darkforest_eth/types';
 import React from 'react';
 import styled, { css } from 'styled-components';
 import dfstyles from '../Styles/dfstyles';
@@ -24,13 +24,14 @@ export function ArtifactImage({
   bgColor?: ArtifactFileColor;
 }) {
   const url = getArtifactUrl(thumb || false, artifact, bgColor || ArtifactFileColor.BLUE);
-  const image = isSpaceShip(artifact.artifactType) ? (
-    <img width={size} height={size} src={url} />
-  ) : (
-    <video width={size} height={size} loop autoPlay key={artifact.id}>
-      <source src={url} type={'video/webm'} />
-    </video>
-  );
+  const image =
+    isSpaceShip(artifact.artifactType) || artifact.artifactType === ArtifactType.AntiMatterCube ? (
+      <img width={size} height={size} src={url} />
+    ) : (
+      <video width={size} height={size} loop autoPlay key={artifact.id}>
+        <source src={url} type={'video/webm'} />
+      </video>
+    );
 
   return (
     <Container width={size} height={size}>

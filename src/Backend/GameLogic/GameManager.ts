@@ -3409,8 +3409,18 @@ class GameManager extends EventEmitter {
         }
       }
     }
+    // calculate 
+    let cubeRangeBoost = 1;
+    if(from && fromId) {
+      const artifacts = this.getArtifactsWithIds(from.heldArtifactIds);  
+      if(artifacts.find(a => a?.artifactType === ArtifactType.AntiMatterCube)) {
+        cubeRangeBoost = 0.5
+      }
 
-    const range = from.range * this.getRangeBuff(abandoning);
+    }
+    
+    const range = from.range * this.getRangeBuff(abandoning) * cubeRangeBoost;
+    
     const scale = (1 / 2) ** (dist / range);
     let ret = scale * sentEnergy - 0.05 * from.energyCap;
     if (ret < 0) ret = 0;
