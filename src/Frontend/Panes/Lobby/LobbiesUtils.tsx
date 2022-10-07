@@ -17,8 +17,8 @@ export declare type LobbyPlanet = {
   planetType: number;
   isTargetPlanet: boolean;
   isSpawnPlanet: boolean;
-  blockedPlanetLocs: WorldCoords[];
   team: number;
+  blockedPlanetLocs: WorldCoords[];
 };
 
 export declare type InitPlanet = {
@@ -31,8 +31,8 @@ export declare type InitPlanet = {
   perlin: number;
   isTargetPlanet: boolean;
   isSpawnPlanet: boolean;
-  blockedPlanetIds: string[];
   team: number;
+  blockedPlanetIds: string[];
 };
 
 export interface LobbiesPaneProps {

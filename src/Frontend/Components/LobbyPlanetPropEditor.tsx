@@ -10,15 +10,11 @@ import stringify from 'json-stable-stringify';
 import dfstyles from '../Styles/dfstyles';
 import { PortalTooltipTrigger, TooltipTrigger } from '../Panes/Tooltip';
 import { Sub, White } from './Text';
+import { LobbyConfigState } from '../Panes/Lobby/Reducer';
 
 export interface PlanetPropEditorProps {
   selectedPlanet: LobbyPlanet;
-  canAddPlanets: boolean;
-  targetPlanetsEnabled: boolean;
-  spawnPlanetsEnabled: boolean;
-  teamsEnabled: boolean;
-  blockEnabled: boolean;
-  stagedPlanets: LobbyPlanet[];
+  config: LobbyConfigState;
   root: string;
   excludePlanetTypes?: planetInputType[];
   onChange: (planet: LobbyPlanet) => void;
@@ -43,39 +39,81 @@ const displayProperties: TitleInfo[] = [
   { title: 'y', description: <span>The position of the planet on the y-axis</span> },
   {
     title: 'Level',
-    description:
-    <span>Larger planets have more energy and can send resources farther. But they take more energy to capture.</span>,
+    description: (
+      <span>
+        Larger planets have more energy and can send resources farther. But they take more energy to
+        capture.
+      </span>
+    ),
   },
   {
     title: 'Type',
     description: (
-      <div style ={{display: 'flex', flexDirection: 'column'}}>
-        <Sub><White>Planets</White> are the most basic type of celestial body.</Sub>
-        <Sub><White>Asteroid Fields</White> have half the defense of a planet, but produce silver.</Sub>
-        <Sub><White>Foundries</White> contain artifacts that can be discovered by players.</Sub>
-        <Sub><White>Spacetime Rips</White> withdraw and deposit artifacts and points.</Sub>
-        <Sub><White>Quasars</White> have no energy regen but store lots of energy and silver.</Sub>
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <Sub>
+          <White>Planets</White> are the most basic type of celestial body.
+        </Sub>
+        <Sub>
+          <White>Asteroid Fields</White> have half the defense of a planet, but produce silver.
+        </Sub>
+        <Sub>
+          <White>Foundries</White> contain artifacts that can be discovered by players.
+        </Sub>
+        <Sub>
+          <White>Spacetime Rips</White> withdraw and deposit artifacts and points.
+        </Sub>
+        <Sub>
+          <White>Quasars</White> have no energy regen but store lots of energy and silver.
+        </Sub>
       </div>
     ),
   },
-  { title: 'Target?', description: <span>If target planets are active, you must capture and fill a target planet with energy to win.</span> },
-  { title: 'Spawn?', description: <span>If spawn planets are active, players can only spawn on admin-created Spawn planets.</span> },
-  { title: 'Blocked Spawns', description: <span>The player who initializes on a blocked spawn planet cannot move to this planet.</span> },
+  {
+    title: 'Target?',
+    description: (
+      <span>
+        If target planets are active, you must capture and fill a target planet with energy to win.
+      </span>
+    ),
+  },
+  {
+    title: 'Spawn?',
+    description: (
+      <span>
+        If spawn planets are active, players can only spawn on admin-created Spawn planets.
+      </span>
+    ),
+  },
+
+  {
+    title: 'Blocked Spawns',
+    description: (
+      <span>The player who initializes on a blocked spawn planet cannot move to this planet.</span>
+    ),
+  },
+  {
+    title: 'Team',
+    description: <span>Whoever spawns on this planet joins the planet's team.</span>,
+  },
 ];
 
 export const PlanetPropEditor: React.FC<PlanetPropEditorProps> = ({
   selectedPlanet,
-  canAddPlanets,
-  targetPlanetsEnabled,
-  spawnPlanetsEnabled,
-  teamsEnabled,
-  blockEnabled,
-  stagedPlanets,
+  config,
   excludePlanetTypes,
   root,
   onChange,
 }) => {
   const history = useHistory();
+  const canAddPlanets = config.ADMIN_CAN_ADD_PLANETS.displayValue ?? false;
+  const spawnPlanetsEnabled = config.MANUAL_SPAWN.displayValue ?? false;
+  const targetPlanetsEnabled = config.TARGET_PLANETS.displayValue ?? false;
+  const teamsEnabled = config.TEAMS_ENABLED.displayValue ?? false;
+  const blockEnabled =
+    (config.BLOCK_CAPTURE.displayValue ?? false) || (config.BLOCK_MOVES.displayValue ?? false);
+
+  const stagedPlanets = config.ADMIN_PLANETS.currentValue ?? [];
+  const numTeams = config.NUM_TEAMS.displayValue;
 
   function planetInput(value: planetInputType, index: number) {
     let content = null;
@@ -149,6 +187,27 @@ export const PlanetPropEditor: React.FC<PlanetPropEditorProps> = ({
           : (content = (
               <Hoverable onClick={() => history.push(`${root}/settings/spawn`)}>Enable</Hoverable>
             ));
+      }
+    } else if (value == 'team') {
+      {
+        content = teamsEnabled ? (
+          selectedPlanet.isSpawnPlanet ? (
+            <SelectFrom
+              wide={false}
+              style={{ padding: '5px' }}
+              values={[...Array(numTeams).keys()].map((i) => (i + 1).toString())}
+              labels={[...Array(numTeams).keys()].map((i) => (i + 1).toString())}
+              value={selectedPlanet.team.toString()}
+              setValue={(value) => onChange({ ...selectedPlanet, team: parseInt(value) })}
+            />
+          ) : (
+            <Hoverable onClick={() => onChange({ ...selectedPlanet, isSpawnPlanet: true })}>
+              Make spawn planet
+            </Hoverable>
+          )
+        ) : (
+          <Hoverable onClick={() => history.push(`${root}/settings/teams`)}>Enable</Hoverable>
+        );
       }
     } else if (value == 'blockedPlanetLocs') {
       const options = stagedPlanets.reduce(
@@ -228,10 +287,6 @@ export const PlanetPropEditor: React.FC<PlanetPropEditorProps> = ({
               <Hoverable onClick={() => history.push(`${root}/settings/game`)}>Enable</Hoverable>
             ));
       }
-    } else if (value == 'team') {
-      {
-        content = teamsEnabled ? 'teams enabled' : 'teams disabled';
-      }
     } else {
       content = (
         <Checkbox
@@ -248,25 +303,22 @@ export const PlanetPropEditor: React.FC<PlanetPropEditorProps> = ({
         key={`input-row-${index}`}
         style={value == 'blockedPlanetLocs' && blockEnabled ? { flexDirection: 'column' } : {}}
       >
-        {
-          displayProperties[index] ?
-            <PortalTooltipTrigger
+        {displayProperties[index] ? (
+          <PortalTooltipTrigger
             name={TooltipName.Empty}
             extraContent={displayProperties[index].description}
             style={{ width: '100%' }}
           >
             <LabeledInput>{displayProperties[index].title}</LabeledInput>
           </PortalTooltipTrigger>
-          :
-          null
-        }
+        ) : null}
         {content}
       </InputRow>
     );
   }
 
   if (!canAddPlanets) return <></>;
-
+  console.log(Object.keys(selectedPlanet));
   return (
     <>
       {Object.keys(selectedPlanet).map(
