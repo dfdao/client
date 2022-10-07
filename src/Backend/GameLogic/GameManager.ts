@@ -3300,7 +3300,7 @@ class GameManager extends EventEmitter {
   getMaxMoveDist(planetId: LocationId, sendingPercent: number, abandoning: boolean): number {
     const planet = this.getPlanetWithId(planetId);
     if (!planet) throw new Error('origin planet unknown');
-    return getRange(planet, sendingPercent, this.getRangeBuff(abandoning));
+    return getRange(planet, sendingPercent, this.getRangeBuff(abandoning), this.startTime);
   }
 
   /**
@@ -3347,7 +3347,7 @@ class GameManager extends EventEmitter {
     // at https://github.com/darkforest-eth/client/issues/15
     // Improved by using `planetMap` by [@phated](https://github.com/phated)
     const result = [];
-    const range = getRange(planet, sendingPercent, this.getRangeBuff(abandoning));
+    const range = getRange(planet, sendingPercent, this.getRangeBuff(abandoning), this.startTime);
     for (const p of this.getPlanetMap().values()) {
       if (isLocatable(p)) {
         if (this.getDistCoords(planet.location.coords, p.location.coords) < range) {
@@ -3372,7 +3372,10 @@ class GameManager extends EventEmitter {
     const from = this.getPlanetWithId(fromId);
     if (!from) throw new Error('origin planet unknown');
     const dist = this.getDist(fromId, toId);
-    const range = from.range * this.getRangeBuff(abandoning);
+
+    const timeBuff = this.startTime ? (Date.now() / 1000 - this.startTime) / 360 + 1 : 1;
+    const timeBuffedRange = from.range * timeBuff;
+    const range = timeBuffedRange * this.getRangeBuff(abandoning);
     const rangeSteps = dist / range;
 
     const arrivingProp = arrivingEnergy / from.energyCap + 0.05;
@@ -3410,8 +3413,10 @@ class GameManager extends EventEmitter {
       }
     }
 
-    const range = from.range * this.getRangeBuff(abandoning);
-    const scale = (1 / 2) ** (dist / range);
+    const timeBuff = this.startTime ? (Date.now() / 1000 - this.startTime) / 360 + 1 : 1;
+    const timeBuffedRange = from.range * timeBuff;
+
+    const scale = (1 / 2) ** (dist / timeBuffedRange);
     let ret = scale * sentEnergy - 0.05 * from.energyCap;
     if (ret < 0) ret = 0;
 
