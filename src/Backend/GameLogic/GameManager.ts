@@ -3390,7 +3390,8 @@ class GameManager extends EventEmitter {
     toId: LocationId | undefined,
     distance: number | undefined,
     sentEnergy: number,
-    abandoning: boolean
+    abandoning: boolean,
+    sendingCube: boolean = false
   ) {
     const from = this.getPlanetWithId(fromId);
     const to = this.getPlanetWithId(toId);
@@ -3409,18 +3410,11 @@ class GameManager extends EventEmitter {
         }
       }
     }
-    // calculate 
-    let cubeRangeBoost = 1;
-    if(from && fromId) {
-      const artifacts = this.getArtifactsWithIds(from.heldArtifactIds);  
-      if(artifacts.find(a => a?.artifactType === ArtifactType.AntiMatterCube)) {
-        cubeRangeBoost = 0.5
-      }
-
-    }
-    
+    // calculate
+    let cubeRangeBoost = sendingCube? 0.5 : 1;
+  
     const range = from.range * this.getRangeBuff(abandoning) * cubeRangeBoost;
-    
+
     const scale = (1 / 2) ** (dist / range);
     let ret = scale * sentEnergy - 0.05 * from.energyCap;
     if (ret < 0) ret = 0;
