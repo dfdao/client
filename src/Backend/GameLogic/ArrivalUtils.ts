@@ -195,8 +195,8 @@ export const arrive = (
     // moving between my own planets
     toPlanet.energy += energyArriving;
   }
-
-  if (toPlanet.planetType === PlanetType.SILVER_BANK || toPlanet.pausers !== 0) {
+  const isCube = arrivingArtifact?.artifactType === ArtifactType.AntiMatterCube;
+  if (toPlanet.planetType === PlanetType.SILVER_BANK || toPlanet.pausers !== 0 || isCube) {
     if (toPlanet.energy > toPlanet.energyCap) {
       toPlanet.energy = toPlanet.energyCap;
     }
