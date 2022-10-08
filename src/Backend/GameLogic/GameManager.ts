@@ -2076,15 +2076,15 @@ class GameManager extends EventEmitter {
 
       let planet: LocatablePlanet;
       if (this.contractConstants.MANUAL_SPAWN) {
-        this.terminal.current?.println(``);
-        this.terminal.current?.println(`Choose a team:`);
-        this.terminal.current?.println(``);
+        const spawnPlanets = this.getSpawnPlanets() as LocatablePlanet[];
         let teamSelected = false;
         let teamSelection = 0;
 
-        const spawnPlanets = this.getSpawnPlanets() as LocatablePlanet[];
-
         if (this.contractConstants.TEAMS_ENABLED) {
+          this.terminal.current?.println(``);
+          this.terminal.current?.println(`Choose a team:`);
+          this.terminal.current?.println(``);
+
           do {
             for (let i = 0; i < this.contractConstants.NUM_TEAMS; i++) {
               const numAvailableSpawns = spawnPlanets.filter(
@@ -2148,6 +2148,10 @@ class GameManager extends EventEmitter {
         if (potentialHomePlanets.length == 1) {
           planet = potentialHomePlanets[0];
         } else {
+          this.terminal.current?.println('');
+          this.terminal.current?.println(`Choose a spawn planet:`, TerminalTextStyle.White);
+          this.terminal.current?.println('');
+
           do {
             for (let i = 0; i < potentialHomePlanets.length; i++) {
               const x = potentialHomePlanets[i].location.coords.x;
@@ -2161,8 +2165,6 @@ class GameManager extends EventEmitter {
               );
             }
 
-            this.terminal.current?.println('');
-            this.terminal.current?.println(`Choose a spawn planet:`, TerminalTextStyle.White);
             selection = +((await this.terminal.current?.getInput()) || '');
             if (isNaN(selection) || selection > potentialHomePlanets.length) {
               this.terminal.current?.println('Unrecognized input. Please try again.');
