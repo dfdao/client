@@ -5,9 +5,13 @@ import styled, { css } from 'styled-components';
 import dfstyles from '../Styles/dfstyles';
 
 export const ARTIFACT_URL = 'https://d2wspbczt15cqu.cloudfront.net/v0.6.0-artifacts/';
-// const ARTIFACT_URL = '/public/img/artifacts/videos/';
+const LOCAL_URL = '/public/sprites/';
 
 function getArtifactUrl(thumb: boolean, artifact: Artifact, color: ArtifactFileColor): string {
+  if (artifact.artifactType == ArtifactType.AntiMatterCube) {
+    return LOCAL_URL + 'antimatter-cube.png';
+  }
+
   const fileName = artifactFileName(true, thumb, artifact, color);
   return ARTIFACT_URL + fileName;
 }
