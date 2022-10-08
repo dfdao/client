@@ -73,6 +73,7 @@ import {
   Transaction,
   TxIntent,
   UnconfirmedActivateArtifact,
+  UnconfirmedBulkWithdrawSilver,
   UnconfirmedBuyHat,
   UnconfirmedCapturePlanet,
   UnconfirmedClaimVictory,
@@ -2743,6 +2744,43 @@ class GameManager extends EventEmitter {
 
       // Always await the submitTransaction so we can catch rejections
       const tx = await this.contractsAPI.submitTransaction(txIntent);
+
+      return tx;
+    } catch (e) {
+      this.getNotificationsManager().txInitError('withdrawSilver', e.message);
+      throw e;
+    }
+  }
+
+  public async bulkWithdrawSilver(
+    numPlanets: number = 20,
+    bypassChecks = false
+  ): Promise<Transaction<UnconfirmedBulkWithdrawSilver>> {
+    const myRichestPlanets: Planet[] = this.getMyPlanets()
+      .filter((planet) => planet.owner == this.account && !planet.destroyed && planet.silver > 0)
+      .sort((a, b) => b.silver - a.silver)
+      .slice(0, numPlanets);
+
+    try {
+      if (!bypassChecks) {
+        if (!this.account) throw new Error('no account');
+        if (this.checkGameHasEnded()) {
+          throw new Error('game has ended');
+        }
+      }
+
+      if (myRichestPlanets.length === 0) throw new Error('no asteriods found to withdraw');
+
+      const ids = myRichestPlanets.map((p) => `0x${p.locationId}`);
+      const txIntent: UnconfirmedBulkWithdrawSilver = {
+        methodName: 'bulkWithdrawSilver',
+        contract: this.contractsAPI.contract,
+        args: Promise.resolve([[...ids]]),
+        locationIds: myRichestPlanets.map((p) => p.locationId),
+      };
+
+      // Always await the submitTransaction so we can catch rejections
+      const tx = await this.contractsAPI.submitTransaction(txIntent, { gasLimit: 15000000 });
 
       return tx;
     } catch (e) {

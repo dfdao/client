@@ -26,7 +26,7 @@ import { Btn } from '../../Components/Btn';
 const TopBarContainer = styled.div`
   z-index: ${DFZIndex.MenuBar};
   padding: 0 2px;
-  width: 530px;
+  width: 700px;
   gap: 5px;
 `;
 
@@ -165,13 +165,15 @@ function BoardPlacement({ account }: { account: EthAddress | undefined }) {
     }
 
     content = (
-      <div style={{ gap: '8px' }}>
+      <div style={{ display: 'flex', gap: '8px' }}>
         <Sub>
           <TooltipTrigger name={TooltipName.Score}>
             Silver: <Text>{formattedScore}</Text>
           </TooltipTrigger>
         </Sub>
-        <Btn size='small'>Extract all</Btn>
+        <Btn size='small' onClick={() => uiManager.bulkWithdrawSilver()}>
+          Extract all
+        </Btn>
       </div>
     );
   }
@@ -235,33 +237,14 @@ export function TopBar({ twitterVerifyHook }: { twitterVerifyHook: Hook<boolean>
           name={TooltipName.Empty}
           extraContent={<Text>This is the map configuration. Click to copy the hash.</Text>}
         >
-          <Button
-            onClick={() => {
-              navigator.clipboard.writeText(uiManager.contractConstants.CONFIG_HASH).then(
-                () => {
-                  console.log('Async: Copying to clipboard was successful!');
-                },
-                (err) => {
-                  console.error('Async: Could not copy text: ', err);
-                }
-              );
-            }}
-          >
-            {getConfigName(uiManager.contractConstants.CONFIG_HASH)}
-          </Button>
+          <BoardPlacement account={account} />
         </TooltipTrigger>
       </AlignCenterHorizontally>{' '}
       <AlignCenterHorizontally
         style={{ justifyContent: 'space-evenly', width: '100%', marginTop: '7px' }}
       >
         {uiManager.getSpaceJunkEnabled() && <SpaceJunk account={account} />}
-        {uiManager.contractConstants.TARGET_PLANETS ? (
-          <>
-            <Timer account={account} />
-          </>
-        ) : (
-          <BoardPlacement account={account} />
-        )}
+        <Timer account={account} />
       </AlignCenterHorizontally>
       <TargetPlanetVictory />
       <Gameover />

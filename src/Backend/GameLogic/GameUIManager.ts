@@ -412,6 +412,10 @@ class GameUIManager extends EventEmitter {
     this.gameManager.withdrawSilver(locationId);
   }
 
+  public bulkWithdrawSilver() {
+    this.gameManager.bulkWithdrawSilver();
+  }
+
   public startWormholeFrom(planet: LocatablePlanet): Promise<LocatablePlanet | undefined> {
     this.isChoosingTargetPlanet = true;
     this.mouseDownOverCoords = planet.location.coords;
