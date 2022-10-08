@@ -1,5 +1,9 @@
 import { formatNumber, isSpaceShip } from '@darkforest_eth/gamelogic';
-import { isUnconfirmedMoveTx, isUnconfirmedReleaseTx } from '@darkforest_eth/serde';
+import {
+  isUnconfirmedMoveTx,
+  isUnconfirmedReleaseTx,
+  isUnconfirmedWithdrawSilverTx,
+} from '@darkforest_eth/serde';
 import { Artifact, artifactNameFromArtifact, Planet, TooltipName } from '@darkforest_eth/types';
 import React, { useCallback } from 'react';
 import styled from 'styled-components';
@@ -17,13 +21,13 @@ import dfstyles from '../../Styles/dfstyles';
 import { useAddress, usePlanetInactiveArtifacts, useUIManager } from '../../Utils/AppHooks';
 import { useEmitterValue } from '../../Utils/EmitterHooks';
 import { useOnUp } from '../../Utils/KeyEmitters';
-import { TOGGLE_ABANDON, TOGGLE_SEND } from '../../Utils/ShortcutConstants';
+import { TOGGLE_ABANDON, TOGGLE_SEND, TOGGLE_WITHDRAW } from '../../Utils/ShortcutConstants';
 import { SelectArtifactRow } from './ArtifactRow';
 
 const StyledSendResources = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
 `;
 
 const StyledShowPercent = styled.div`
@@ -32,7 +36,7 @@ const StyledShowPercent = styled.div`
   & > span:first-child {
     width: 3em;
     text-align: right;
-    margin-right: 1em;
+    margin-right: 0.5em;
   }
 
   & > span:last-child {
@@ -52,8 +56,7 @@ const StyledShowPercent = styled.div`
 function ShowPercent({ value, setValue }: { value: number; setValue: (x: number) => void }) {
   return (
     <StyledShowPercent>
-      <span>{value}%</span>
-      <span>
+      <span style={{ width: '100%' }}>
         <span onClick={() => setValue(value - 1)}>
           <LongDash />
         </span>
@@ -67,6 +70,7 @@ const ResourceRowDetails = styled.div`
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  justify-content: space-between;
 `;
 
 function ResourceBar({
@@ -93,27 +97,71 @@ function ResourceBar({
 
   return (
     <>
-      <Row>
-        <ResourceRowDetails>
-          <Icon type={isSilver ? IconType.Silver : IconType.Energy} />
-          {getResource(value)}
-          <Subber>{isSilver ? 'silver' : 'energy'}</Subber>
-        </ResourceRowDetails>
-        <ShowPercent value={value} setValue={setValue} />
-      </Row>
-      <Slider
-        variant='filled'
-        labelVisibility='none'
-        min={0}
-        max={100}
-        value={value}
-        step={1}
-        disabled={disabled}
-        onChange={(e: Event & React.ChangeEvent<HTMLInputElement>) => {
-          setValue(parseInt(e.target.value, 10));
-        }}
-      />
+      {isSilver ? (
+        <Row>
+          <Btn size='stretch'>Extract {getResource(value)} silver</Btn>
+        </Row>
+      ) : (
+        <div style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
+          <ResourceRowDetails>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+              <Icon type={isSilver ? IconType.Silver : IconType.Energy} />
+              {getResource(value)}
+              <Subber>
+                {' '}
+                ({value}%) {isSilver ? 'silver' : 'energy'}
+              </Subber>
+            </div>
+            <ShowPercent value={value} setValue={setValue} />
+          </ResourceRowDetails>
+
+          <Slider
+            variant='filled'
+            labelVisibility='none'
+            min={0}
+            max={100}
+            value={value}
+            step={1}
+            disabled={disabled}
+            onChange={(e: Event & React.ChangeEvent<HTMLInputElement>) => {
+              setValue(parseInt(e.target.value, 10));
+            }}
+          />
+        </div>
+      )}
     </>
+  );
+}
+
+function ExtractButton({
+  planet,
+  extracting,
+  disabled,
+}: {
+  planet?: Planet;
+  extracting: boolean;
+  disabled?: boolean;
+}) {
+  const uiManager = useUIManager();
+
+  if (!planet) return null;
+
+  const silver = planet.silver;
+
+  return (
+    <MaybeShortcutButton
+      size='stretch'
+      active={extracting}
+      onClick={() => uiManager.withdrawSilver(planet.locationId)}
+      shortcutKey={TOGGLE_WITHDRAW}
+      shortcutText={TOGGLE_WITHDRAW}
+      disabled={planet.isHomePlanet || disabled}
+    >
+      {/* <TooltipTrigger name={TooltipName.Abandon}> */}
+      {extracting ? 'Extracting' : `Extract all (${Math.floor(silver)}) silver`}
+
+      {/* </TooltipTrigger> */}
+    </MaybeShortcutButton>
   );
 }
 
@@ -210,6 +258,7 @@ export function SendResources({
   const isSendingShip = uiManager.isSendingShip(locationId);
 
   const isAbandoning = useEmitterValue(uiManager.isAbandoning$, false);
+  const isExtracting = false;
   const isSendingForces = useEmitterValue(uiManager.isSending$, false);
   const energySending = uiManager.getForcesSending(locationId);
   const silverSending = uiManager.getSilverSending(locationId);
@@ -221,14 +270,6 @@ export function SendResources({
     (energyPercent) => {
       if (!locationId) return;
       uiManager.setForcesSending(locationId, energyPercent);
-    },
-    [uiManager, locationId]
-  );
-
-  const updateSilverSending = useCallback(
-    (silverPercent) => {
-      if (!locationId) return;
-      uiManager.setSilverSending(locationId, silverPercent);
     },
     [uiManager, locationId]
   );
@@ -246,16 +287,11 @@ export function SendResources({
   // that key is
   const energyShortcuts = '1234567890'.split('');
 
-  // same as above, except for silver
-  const silverShortcuts = '!@#$%^&*()'.split('');
-
   // for each of the above keys, we set up a listener that is triggered whenever that key is
   // pressed, and sets the corresponding resource sending amount
   for (let i = 0; i < energyShortcuts.length; i++) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useOnUp(energyShortcuts[i], () => updateEnergySending((i + 1) * 10), [updateEnergySending]);
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useOnUp(silverShortcuts[i], () => updateSilverSending((i + 1) * 10), [updateSilverSending]);
   }
 
   useOnUp(
@@ -271,20 +307,6 @@ export function SendResources({
       updateEnergySending(uiManager.getForcesSending(locationId) + 10);
     },
     [uiManager, locationId, updateEnergySending]
-  );
-  useOnUp(
-    '_',
-    () => {
-      updateSilverSending(uiManager.getSilverSending(locationId) - 10);
-    },
-    [uiManager, locationId, updateSilverSending]
-  );
-  useOnUp(
-    '+',
-    () => {
-      updateSilverSending(uiManager.getSilverSending(locationId) + 10);
-    },
-    [uiManager, locationId, updateSilverSending]
   );
 
   const artifacts = usePlanetInactiveArtifacts(p, uiManager);
@@ -329,6 +351,19 @@ export function SendResources({
     );
   }
 
+  let extractRow;
+  if (p.value && p.value.transactions?.hasTransaction(isUnconfirmedWithdrawSilverTx)) {
+    extractRow = (
+      <Btn size='stretch' disabled>
+        <LoadingSpinner initialText='Extracting...' />
+      </Btn>
+    );
+  } else if (p.value && !p.value.destroyed) {
+    extractRow = (
+      <ExtractButton planet={p.value} extracting={isExtracting} disabled={isExtracting} />
+    );
+  }
+
   return (
     <StyledSendResources>
       {owned && !p.value?.destroyed && (
@@ -339,15 +374,6 @@ export function SendResources({
             setValue={updateEnergySending}
             disabled={disableSliders}
           />
-          {p.value && p.value.silver > 0 && (
-            <ResourceBar
-              selected={p.value}
-              value={silverSending}
-              setValue={updateSilverSending}
-              disabled={disableSliders}
-              isSilver
-            />
-          )}
         </>
       )}
       {p.value && artifacts.length > 0 && (
@@ -356,9 +382,9 @@ export function SendResources({
           onArtifactChange={updateArtifactSending}
           selectedArtifact={artifactSending}
         />
-      )}
+      )}{' '}
       {spaceshipsYouOwn.length > 0 || owned ? sendRow : null}
-
+      {p.value && p.value.silver > 0 && extractRow}
       {uiManager.getSpaceJunkEnabled() && owned ? abandonRow : null}
     </StyledSendResources>
   );

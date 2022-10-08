@@ -315,7 +315,7 @@ class GameUIManager extends EventEmitter {
     }
   }
 
-  public joinGame(beforeRetry: (e: Error) => Promise<boolean>, team : number): Promise<void> {
+  public joinGame(beforeRetry: (e: Error) => Promise<boolean>, team: number): Promise<void> {
     return this.gameManager.joinGame(beforeRetry, team);
   }
 
@@ -402,18 +402,14 @@ class GameUIManager extends EventEmitter {
     this.gameManager.deactivateArtifact(locationId, artifactId);
   }
 
-  public withdrawSilver(locationId: LocationId, amount: number) {
+  public withdrawSilver(locationId: LocationId) {
     const dontShowWarningStorageKey = `${this.getAccount()?.toLowerCase()}-withdrawnWarningAcked`;
 
     if (localStorage.getItem(dontShowWarningStorageKey) !== 'true') {
       localStorage.setItem(dontShowWarningStorageKey, 'true');
-      const confirmationText =
-        `Are you sure you want withdraw this silver? Once you withdraw it, you ` +
-        `cannot deposit it again. Your withdrawn silver amount will be added to your score. You'll only see this warning once!`;
-      if (!confirm(confirmationText)) return;
     }
 
-    this.gameManager.withdrawSilver(locationId, amount);
+    this.gameManager.withdrawSilver(locationId);
   }
 
   public startWormholeFrom(planet: LocatablePlanet): Promise<LocatablePlanet | undefined> {
@@ -567,7 +563,7 @@ class GameUIManager extends EventEmitter {
             silver,
             artifact?.id,
             abandoning
-          )
+          );
           tutorialManager.acceptInput(TutorialState.SendFleet);
         }
 
@@ -703,7 +699,7 @@ class GameUIManager extends EventEmitter {
     return this.gameManager.getTeamsEnabled();
   }
 
-  public checkVictoryCondition() : boolean {
+  public checkVictoryCondition(): boolean {
     return this.gameManager.checkVictoryCondition();
   }
 
@@ -711,11 +707,11 @@ class GameUIManager extends EventEmitter {
     return this.gameManager.isRoundOver();
   }
 
-  public getTargetsHeld(address?: EthAddress) : Planet[] {
+  public getTargetsHeld(address?: EthAddress): Planet[] {
     return this.gameManager.getTargetsHeld(address);
   }
 
-  public getTargetsRequired() : number {
+  public getTargetsRequired(): number {
     return this.gameManager.targetsRequired;
   }
 
@@ -1110,7 +1106,7 @@ class GameUIManager extends EventEmitter {
           a.artifactType == ArtifactType.ShipGear ||
           a.artifactType == ArtifactType.ShipTitan
       );
-      return ships;
+    return ships;
   }
 
   public getPlanetWithId(planetId: LocationId | undefined): Planet | undefined {
@@ -1351,35 +1347,35 @@ class GameUIManager extends EventEmitter {
     return this.gameManager.getSpawnPlanets();
   }
 
-  public getPlayerTargetPlanets(account? : EthAddress): Planet[] {
+  public getPlayerTargetPlanets(account?: EthAddress): Planet[] {
     return this.gameManager.getPlayerTargetPlanets(account);
   }
 
-  public isTargetHeld(planet: Planet) : boolean {
+  public isTargetHeld(planet: Planet): boolean {
     return this.gameManager.isTargetHeld(planet);
   }
 
-  public blockMovesEnabled() :boolean {
+  public blockMovesEnabled(): boolean {
     return this.gameManager.blockMoves();
   }
 
-  public playerMoveBlocked(player: EthAddress, planet: LocationId) : boolean {
+  public playerMoveBlocked(player: EthAddress, planet: LocationId): boolean {
     return this.gameManager.playerMoveBlocked(player, planet);
   }
 
-  public getAllTargetPlanets() : Planet[] {
+  public getAllTargetPlanets(): Planet[] {
     return this.gameManager.getAllTargetPlanets();
   }
 
-  public playerCaptureBlocked(player: EthAddress, planet: LocationId) : boolean {
+  public playerCaptureBlocked(player: EthAddress, planet: LocationId): boolean {
     return this.gameManager.playerCaptureBlocked(player, planet);
   }
 
-  public getPlayerBlockedPlanets(account?: EthAddress) : Planet[] {
+  public getPlayerBlockedPlanets(account?: EthAddress): Planet[] {
     return this.gameManager.getPlayerBlockedPlanets(account);
   }
 
-  public getPlayerDefensePlanets(account?: EthAddress) : Planet[] {
+  public getPlayerDefensePlanets(account?: EthAddress): Planet[] {
     return this.gameManager.getPlayerDefensePlanets(account);
   }
 
@@ -1483,7 +1479,7 @@ class GameUIManager extends EventEmitter {
     return Renderer.instance;
   }
 
-  public isCompetitive() : boolean {
+  public isCompetitive(): boolean {
     return this.gameManager.isCompetitive();
   }
 
@@ -1511,7 +1507,7 @@ class GameUIManager extends EventEmitter {
     return this.gameManager.getGameover$();
   }
 
-  getPlayerMoves(addr : EthAddress) {
+  getPlayerMoves(addr: EthAddress) {
     return this.gameManager.getPlayerMoves(addr);
   }
 

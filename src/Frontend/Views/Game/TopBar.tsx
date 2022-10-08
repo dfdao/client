@@ -21,6 +21,7 @@ import { Play } from './Play';
 import { TargetPlanetVictory } from '../TargetPlanetVictory';
 import { getConfigName } from '@darkforest_eth/procedural';
 import Button from '../../Components/Button';
+import { Btn } from '../../Components/Btn';
 
 const TopBarContainer = styled.div`
   z-index: ${DFZIndex.MenuBar};
@@ -164,11 +165,14 @@ function BoardPlacement({ account }: { account: EthAddress | undefined }) {
     }
 
     content = (
-      <Sub>
-        <TooltipTrigger name={TooltipName.Score}>
-          score: <Text>{formattedScore}</Text>
-        </TooltipTrigger>
-      </Sub>
+      <div style={{ gap: '8px' }}>
+        <Sub>
+          <TooltipTrigger name={TooltipName.Score}>
+            Silver: <Text>{formattedScore}</Text>
+          </TooltipTrigger>
+        </Sub>
+        <Btn size='small'>Extract all</Btn>
+      </div>
     );
   }
 
