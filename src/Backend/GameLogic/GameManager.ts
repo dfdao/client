@@ -23,6 +23,7 @@ import {
 } from '@darkforest_eth/network';
 import { getPlanetName } from '@darkforest_eth/procedural';
 import {
+  address,
   artifactIdToDecStr,
   isUnconfirmedActivateArtifactTx,
   isUnconfirmedBuyHatTx,
@@ -2068,7 +2069,7 @@ class GameManager extends EventEmitter {
   /**
    * Attempts to join the game. Should not be called once you've already joined.
    */
-  public async joinGame(beforeRetry: (e: Error) => Promise<boolean>, team: number): Promise<void> {
+  public async joinGame(beforeRetry: (e: Error) => Promise<boolean>): Promise<void> {
     try {
       if (this.checkGameHasEnded()) {
         throw new Error('game has ended');
@@ -2076,14 +2077,51 @@ class GameManager extends EventEmitter {
 
       let planet: LocatablePlanet;
       if (this.contractConstants.MANUAL_SPAWN) {
-        this.terminal.current?.println(``);
-        this.terminal.current?.println(`Retrieving available manual planets`);
-        this.terminal.current?.println(``);
+        const spawnPlanets = this.getSpawnPlanets() as LocatablePlanet[];
+        let teamSelected = false;
+        let teamSelection = 0;
 
-        const spawnPlanets = await this.contractsAPI.getSpawnPlanetIds(0);
+        if (this.contractConstants.TEAMS_ENABLED) {
+          this.terminal.current?.println(``);
+          this.terminal.current?.println(`Choose a team:`);
+          this.terminal.current?.println(``);
+
+          do {
+            for (let i = 0; i < this.contractConstants.NUM_TEAMS; i++) {
+              const numAvailableSpawns = spawnPlanets.filter(
+                (planet) => planet.team == i + 1 && planet.owner == EMPTY_ADDRESS
+              ).length;
+              this.terminal.current?.print(`(${i + 1}): `, TerminalTextStyle.Sub);
+              this.terminal.current?.print(`Team ${i + 1}`);
+              this.terminal.current?.print(
+                `${numAvailableSpawns == 0 ? ' (No spawn planets available)' : ''}`,
+                TerminalTextStyle.Red
+              );
+              this.terminal.current?.println('');
+            }
+
+            this.terminal.current?.println('');
+            this.terminal.current?.println(`Choose a team:`, TerminalTextStyle.White);
+            teamSelection = +((await this.terminal.current?.getInput()) || '');
+            const numAvailableSpawns = spawnPlanets.filter(
+              (planet) => planet.team == teamSelection && planet.owner == EMPTY_ADDRESS
+            ).length;
+
+            if (
+              isNaN(teamSelection) ||
+              teamSelection > this.contractConstants.NUM_TEAMS ||
+              numAvailableSpawns == 0
+            ) {
+              this.terminal.current?.println('Unrecognized input. Please try again.');
+              this.terminal.current?.println('');
+            } else {
+              teamSelected = true;
+            }
+          } while (!teamSelected);
+        }
+
         // console.log(`all manually created spawn planets: ${spawnPlanets}`);
-        const potentialHomeIds = spawnPlanets.filter((planetId) => {
-          const planet = this.getGameObjects().getPlanetWithId(planetId);
+        const potentialHomePlanets = spawnPlanets.filter((planet) => {
           if (!planet) {
             // console.log('not a planet');
             return false;
@@ -2096,15 +2134,14 @@ class GameManager extends EventEmitter {
             // console.log('planet not locatable');
             return false;
           }
+          if (this.contractConstants.TEAMS_ENABLED && planet.team !== teamSelection) return false;
           return true;
         });
 
-        if (potentialHomeIds.length == 0) {
+        if (potentialHomePlanets.length == 0) {
           throw new Error('no spawn locations available');
         }
-        const potentialHomePlanets = potentialHomeIds.map((planetId) => {
-          return this.getGameObjects().getPlanetWithId(planetId) as LocatablePlanet;
-        });
+
         let selected = false;
         let selection;
 
@@ -2112,6 +2149,10 @@ class GameManager extends EventEmitter {
         if (potentialHomePlanets.length == 1) {
           planet = potentialHomePlanets[0];
         } else {
+          this.terminal.current?.println('');
+          this.terminal.current?.println(`Choose a spawn planet:`, TerminalTextStyle.White);
+          this.terminal.current?.println('');
+
           do {
             for (let i = 0; i < potentialHomePlanets.length; i++) {
               const x = potentialHomePlanets[i].location.coords.x;
@@ -2125,8 +2166,6 @@ class GameManager extends EventEmitter {
               );
             }
 
-            this.terminal.current?.println('');
-            this.terminal.current?.println(`Choose a spawn planet:`, TerminalTextStyle.White);
             selection = +((await this.terminal.current?.getInput()) || '');
             if (isNaN(selection) || selection > potentialHomePlanets.length) {
               this.terminal.current?.println('Unrecognized input. Please try again.');
@@ -2162,7 +2201,7 @@ class GameManager extends EventEmitter {
           TerminalTextStyle.Sub
         );
         this.terminal.current?.newline();
-        return [...args, team];
+        return [...args];
       };
 
       const txIntent: UnconfirmedInit = {
@@ -3417,7 +3456,8 @@ class GameManager extends EventEmitter {
     toId: LocationId | undefined,
     distance: number | undefined,
     sentEnergy: number,
-    abandoning: boolean
+    abandoning: boolean,
+    sendingCube: boolean = false
   ) {
     const from = this.getPlanetWithId(fromId);
     const to = this.getPlanetWithId(toId);
@@ -3436,8 +3476,11 @@ class GameManager extends EventEmitter {
         }
       }
     }
+    // calculate
+    let cubeRangeBoost = sendingCube? 0.5 : 1;
+  
+    const range = from.range * this.getRangeBuff(abandoning) * cubeRangeBoost;
 
-    const range = from.range * this.getRangeBuff(abandoning);
     const scale = (1 / 2) ** (dist / range);
     let ret = scale * sentEnergy - 0.05 * from.energyCap;
     if (ret < 0) ret = 0;

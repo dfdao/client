@@ -78,7 +78,7 @@ export async function populate(
   const configHash = newCreationManager.getArenaConfigHash();
   console.log('Config hash:', configHash);
 
-  const initTx = await contract.initializePlayer(...args, 0);
+  const initTx = await contract.initializePlayer(...args);
   const initRct = await initTx.wait();
   console.log(`initialized player`);
 

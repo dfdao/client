@@ -6,7 +6,7 @@ import { LobbyAction, LobbyConfigState } from '../Panes/Lobby/Reducer';
 import { PlanetPropEditor } from './LobbyPlanetPropEditor';
 
 export interface LobbyPlanetInspectorProps {
-  selectedPlanet?: LobbyPlanet ;
+  selectedPlanet?: LobbyPlanet;
   selectedIndex?: number;
   config: LobbyConfigState;
   updateConfig: React.Dispatch<LobbyAction>;
@@ -52,11 +52,7 @@ export const LobbyCreationPlanetInspector: React.FC<LobbyPlanetInspectorProps> =
         <span style={{ maxWidth: '320px' }}>{PLANET_DESCRIPTION[mutablePlanet.planetType]}</span>
         <PlanetPropEditor
           selectedPlanet={mutablePlanet}
-          canAddPlanets={config.ADMIN_CAN_ADD_PLANETS.displayValue ?? false}
-          spawnPlanetsEnabled={config.MANUAL_SPAWN.displayValue ?? false}
-          targetPlanetsEnabled={config.TARGET_PLANETS.displayValue ?? false}
-          blockEnabled = {(config.BLOCK_CAPTURE.displayValue ?? false) || (config.BLOCK_MOVES.displayValue ?? false)}
-          stagedPlanets = {config.ADMIN_PLANETS.currentValue ?? []}
+          config={config}
           root={root}
           onChange={(planet) => setMutablePlanet(planet)}
         />

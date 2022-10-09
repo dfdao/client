@@ -17,6 +17,7 @@ export declare type LobbyPlanet = {
   planetType: number;
   isTargetPlanet: boolean;
   isSpawnPlanet: boolean;
+  team: number;
   blockedPlanetLocs: WorldCoords[];
 };
 
@@ -30,8 +31,9 @@ export declare type InitPlanet = {
   perlin: number;
   isTargetPlanet: boolean;
   isSpawnPlanet: boolean;
+  team: number;
   blockedPlanetIds: string[];
-}
+};
 
 export interface LobbiesPaneProps {
   config: LobbyConfigState;
@@ -327,6 +329,7 @@ export const DEFAULT_PLANET: LobbyPlanet = {
   isTargetPlanet: false,
   isSpawnPlanet: false,
   blockedPlanetLocs: [],
+  team: 1,
 };
 
 export const PLANET_TYPE_NAMES = ['Planet', 'Asteroid Field', 'Foundry', 'Spacetime Rip', 'Quasar'];

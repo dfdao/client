@@ -183,6 +183,7 @@ export function convertGraphConfig(arena: GraphArena): {
               y: i.y,
             } as WorldCoords;
           }),
+          team: planet.team,
         } as LobbyPlanet;
       }),
       INIT_PLANETS: [],
