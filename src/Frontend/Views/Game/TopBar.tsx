@@ -22,6 +22,7 @@ import { TargetPlanetVictory } from '../TargetPlanetVictory';
 import { getConfigName } from '@darkforest_eth/procedural';
 import Button from '../../Components/Button';
 import { Btn } from '../../Components/Btn';
+import { formatNumber } from '@darkforest_eth/gamelogic';
 
 const TopBarContainer = styled.div`
   z-index: ${DFZIndex.MenuBar};
@@ -161,20 +162,18 @@ function BoardPlacement({ account }: { account: EthAddress | undefined }) {
   } else {
     let formattedScore = 'n/a';
     if (player.value.score !== undefined && player.value.score !== null) {
-      formattedScore = player.value.score.toLocaleString();
+      formattedScore = formatNumber(player.value.score);
     }
 
     content = (
-      <div style={{ display: 'flex', gap: '8px' }}>
-        <Sub>
-          <TooltipTrigger name={TooltipName.Score}>
-            Silver: <Text>{formattedScore}</Text>
-          </TooltipTrigger>
-        </Sub>
-        <Btn size='small' onClick={() => uiManager.bulkWithdrawSilver()}>
-          Extract all
-        </Btn>
-      </div>
+      <TooltipTrigger name={TooltipName.Score}>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          Silver: <Text>{formattedScore}</Text>
+          <Btn size='small' onClick={() => uiManager.bulkWithdrawSilver()}>
+            Extract all
+          </Btn>
+        </div>
+      </TooltipTrigger>
     );
   }
 
@@ -233,12 +232,8 @@ export function TopBar({ twitterVerifyHook }: { twitterVerifyHook: Hook<boolean>
             </TooltipTrigger>
           </>
         )}
-        <TooltipTrigger
-          name={TooltipName.Empty}
-          extraContent={<Text>This is the map configuration. Click to copy the hash.</Text>}
-        >
-          <BoardPlacement account={account} />
-        </TooltipTrigger>
+
+        <BoardPlacement account={account} />
       </AlignCenterHorizontally>{' '}
       <AlignCenterHorizontally
         style={{ justifyContent: 'space-evenly', width: '100%', marginTop: '7px' }}
