@@ -389,7 +389,7 @@ const devOnePlayerRace: LobbyInitializers = {
   TEAMS_ENABLED: false,
   NUM_TEAMS: 2,
   RANKED: false,
-  RANGE_DOUBLING_SECS: 0,
+  RANGE_DOUBLING_SECS: 300,
 };
 
 const fourPlayerBattle: LobbyInitializers = {

@@ -3385,12 +3385,19 @@ class GameManager extends EventEmitter {
     if (!from) throw new Error('origin planet unknown');
     const dist = this.getDist(fromId, toId);
 
-    const timeBuff =
-      this.startTime && this.contractConstants.RANGE_DOUBLING_SECS > 0
-        ? (Date.now() / 1000 - this.startTime) / this.contractConstants.RANGE_DOUBLING_SECS + 1
-        : 1;
-    const timeBuffedRange = from.range * timeBuff;
-    const range = timeBuffedRange * this.getRangeBuff(abandoning);
+
+    let newRange = from.range;
+
+    if (
+      this.startTime !== undefined &&
+      this.startTime !== 0 &&
+      this.contractConstants.RANGE_DOUBLING_SECS > 0
+    ) {
+      newRange +=
+        (from.range * (Date.now() / 1000 - this.startTime)) /
+        this.contractConstants.RANGE_DOUBLING_SECS;
+    }
+    const range = newRange * this.getRangeBuff(abandoning);
     const rangeSteps = dist / range;
 
     const arrivingProp = arrivingEnergy / from.energyCap + 0.05;
