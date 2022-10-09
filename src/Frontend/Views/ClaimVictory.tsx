@@ -9,13 +9,13 @@ import { LobbyButton } from '../Pages/Lobby/LobbyMapEditor';
 import { TooltipTrigger } from '../Panes/Tooltip';
 import { useGameover, useUIManager } from '../Utils/AppHooks';
 
-export function TargetPlanetVictory() {
+export function ClaimVictory() {
   const uiManager = useUIManager();
   const gameManager = uiManager.getGameManager();
   const canClaimVictory = uiManager.checkVictoryCondition();
   const gameover = useGameover();
-  const player = uiManager.getAccount()
-  if(!player) return <></>;
+  const player = uiManager.getAccount();
+  if (!player) return <></>;
   const requiredPlanets = uiManager.contractConstants.TARGETS_REQUIRED_FOR_VICTORY;
   const requiredEnergy = uiManager.contractConstants.CLAIM_VICTORY_ENERGY_PERCENT;
   const [claiming, setClaiming] = useState(false);
@@ -28,8 +28,7 @@ export function TargetPlanetVictory() {
       // Manual emit just to be sure
       uiManager.getGameManager().getContractAPI().emit(ContractsAPIEvent.PlayerUpdate, player);
       uiManager.getGameManager().getContractAPI().emit(ContractsAPIEvent.Gameover);
-    }
-    catch(error) {
+    } catch (error) {
       setClaiming(false);
     }
   }
@@ -43,18 +42,13 @@ export function TargetPlanetVictory() {
         <TooltipTrigger
           extraContent={
             <>
-              In this game, you need to capture <Red>{requiredPlanets}</Red> target planet
-              {requiredPlanets !== 1 && 's'} and fill each with{' '}
-              <Green>{requiredEnergy}% energy</Green>. Then you can claim victory and win the game!
+              In this game, you need to extract the Antimatter Cube from one of the peripheral
+              Spacetime Rips to win.
             </>
           }
           name={TooltipName.Empty}
           style={{ gap: '5px' }}
         >
-          <span style={{ marginInline: '5px' }}>
-            Targets: {gameManager.getTargetsHeld().length}/{requiredPlanets}
-          </span>
-
           {canClaimVictory && (
             <LobbyButton
               primary
