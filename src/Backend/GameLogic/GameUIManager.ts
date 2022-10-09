@@ -315,8 +315,8 @@ class GameUIManager extends EventEmitter {
     }
   }
 
-  public joinGame(beforeRetry: (e: Error) => Promise<boolean>, team : number): Promise<void> {
-    return this.gameManager.joinGame(beforeRetry, team);
+  public joinGame(beforeRetry: (e: Error) => Promise<boolean>): Promise<void> {
+    return this.gameManager.joinGame(beforeRetry);
   }
 
   public addAccount(coords: WorldCoords): Promise<boolean> {
