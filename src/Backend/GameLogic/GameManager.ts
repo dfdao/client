@@ -3435,13 +3435,20 @@ class GameManager extends EventEmitter {
       }
     }
 
-    const timeBuff =
-      this.startTime && this.contractConstants.RANGE_DOUBLING_SECS > 0
-        ? (Date.now() / 1000 - this.startTime) / this.contractConstants.RANGE_DOUBLING_SECS + 1
-        : 1;
-    const timeBuffedRange = from.range * timeBuff;
+    let newRange = from.range;
 
-    const scale = (1 / 2) ** (dist / timeBuffedRange);
+    if (
+      this.startTime !== undefined &&
+      this.startTime !== 0 &&
+      this.contractConstants.RANGE_DOUBLING_SECS > 0
+    ) {
+      newRange +=
+        (from.range * (Date.now() / 1000 - this.startTime)) /
+        this.contractConstants.RANGE_DOUBLING_SECS;
+    }
+    const range = newRange * this.getRangeBuff(abandoning);
+
+    const scale = (1 / 2) ** (dist / newRange);
     let ret = scale * sentEnergy - 0.05 * from.energyCap;
     if (ret < 0) ret = 0;
 
