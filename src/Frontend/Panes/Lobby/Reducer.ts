@@ -169,7 +169,7 @@ export type LobbyConfigAction =
     }
   | {
       type: 'RANGE_DOUBLING_SECS';
-      value: Initializers['RANGE_DOUBLING_SECS'];
+      value: Initializers['RANGE_DOUBLING_SECS'] | undefined;
     };
 
 // TODO(#2328): WHITELIST_ENABLED should just be on Initializers
