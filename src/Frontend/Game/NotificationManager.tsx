@@ -309,8 +309,8 @@ class NotificationManager extends EventEmitter {
     this.notify(
       NotificationType.FoundTradingPost,
       <span>
-        You found a spacetime rip! Now you can move artifacts in and out of the universe. Click to
-        view <PlanetNameLink planet={planet} />.
+        You found a spacetime rip! Use this spacetime rip to extract the Antimatter Cube and win.
+        Click to view <PlanetNameLink planet={planet} />.
       </span>
     );
   }
@@ -447,8 +447,8 @@ class NotificationManager extends EventEmitter {
     this.notify(
       NotificationType.PlanetAttacked,
       <span>
-        Someone just invaded a target planet: <PlanetNameLink planet={planet} />.{' '}
-        Don't let them win!
+        Someone just invaded a target planet: <PlanetNameLink planet={planet} />. Don't let them
+        win!
       </span>
     );
   }
