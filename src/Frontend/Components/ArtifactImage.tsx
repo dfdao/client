@@ -8,7 +8,7 @@ export const ARTIFACT_URL = 'https://d2wspbczt15cqu.cloudfront.net/v0.6.0-artifa
 const LOCAL_URL = '/public/sprites/';
 
 function getArtifactUrl(thumb: boolean, artifact: Artifact, color: ArtifactFileColor): string {
-  if (artifact.artifactType == ArtifactType.AntiMatterCube) {
+  if (artifact.artifactType == ArtifactType.AntimatterCube) {
     return LOCAL_URL + 'antimatter-cube.png';
   }
 
@@ -29,7 +29,7 @@ export function ArtifactImage({
 }) {
   const url = getArtifactUrl(thumb || false, artifact, bgColor || ArtifactFileColor.BLUE);
   const image =
-    isSpaceShip(artifact.artifactType) || artifact.artifactType === ArtifactType.AntiMatterCube ? (
+    isSpaceShip(artifact.artifactType) || artifact.artifactType === ArtifactType.AntimatterCube ? (
       <img width={size} height={size} src={url} />
     ) : (
       <video width={size} height={size} loop autoPlay key={artifact.id}>
