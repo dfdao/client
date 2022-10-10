@@ -489,7 +489,8 @@ export class ContractsAPI extends EventEmitter {
       TEAMS_ENABLED,
       NUM_TEAMS,
       RANKED,
-      START_PAUSED
+      START_PAUSED,
+      RANGE_DOUBLING_SECS,
     } = await this.makeCall(this.contract.getArenaConstants);
 
     const TOKEN_MINT_END_TIMESTAMP = (
@@ -637,10 +638,11 @@ export class ContractsAPI extends EventEmitter {
       TARGETS_REQUIRED_FOR_VICTORY: TARGETS_REQUIRED_FOR_VICTORY.toNumber(),
       TEAMS_ENABLED,
       NUM_TEAMS: NUM_TEAMS.toNumber(),
-      RANKED
+      RANKED,
+      RANGE_DOUBLING_SECS: RANGE_DOUBLING_SECS.toNumber(),
     };
 
-    return constants; 
+    return constants;
   }
 
   public async getPlayers(

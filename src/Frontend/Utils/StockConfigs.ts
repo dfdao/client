@@ -96,6 +96,7 @@ const tutorial: LobbyInitializers = {
   PLANETHASH_KEY: 69,
   RANDOM_ARTIFACTS: false,
   RANKED: false,
+  RANGE_DOUBLING_SECS: 0,
   SILVER_SCORE_VALUE: 10,
   SPACE_JUNK_ENABLED: false,
   SPACE_JUNK_LIMIT: 1000,
@@ -267,6 +268,7 @@ const vanilla: LobbyInitializers = {
   TEAMS_ENABLED: false,
   NUM_TEAMS: 2,
   RANKED: false,
+  RANGE_DOUBLING_SECS: 0,
 };
 
 const devOnePlayerRace: LobbyInitializers = {
@@ -392,6 +394,7 @@ const devOnePlayerRace: LobbyInitializers = {
   TEAMS_ENABLED: false,
   NUM_TEAMS: 2,
   RANKED: false,
+  RANGE_DOUBLING_SECS: 300,
 };
 
 const fourPlayerBattle: LobbyInitializers = {
@@ -557,6 +560,7 @@ const fourPlayerBattle: LobbyInitializers = {
   TEAMS_ENABLED: false,
   NUM_TEAMS: 2,
   RANKED: false,
+  RANGE_DOUBLING_SECS: 0,
 };
 
 const sprint: LobbyInitializers = {
@@ -722,6 +726,7 @@ const sprint: LobbyInitializers = {
   TEAMS_ENABLED: false,
   NUM_TEAMS: 2,
   RANKED: true,
+  RANGE_DOUBLING_SECS: 0,
 };
 
 const grandPrix: LobbyInitializers = {
@@ -927,6 +932,7 @@ const grandPrix: LobbyInitializers = {
   TEAMS_ENABLED: false,
   NUM_TEAMS: 2,
   RANKED: false,
+  RANGE_DOUBLING_SECS: 0,
 };
 
 const grandPrixWeek4: LobbyInitializers = {
@@ -1122,6 +1128,7 @@ const grandPrixWeek4: LobbyInitializers = {
   TEAMS_ENABLED: false,
   NUM_TEAMS: 2,
   RANKED: false,
+  RANGE_DOUBLING_SECS: 0,
 };
 // const competitive: LobbyInitializers = grandPrixWeek4;
 
@@ -1538,6 +1545,7 @@ const EloMap: LobbyInitializers = {
   NUM_TEAMS: 2,
   RANKED: true,
   INIT_PLANETS: [],
+  RANGE_DOUBLING_SECS: 0,
 };
 
 const grandPrixWeek5: LobbyInitializers = {
@@ -1723,6 +1731,7 @@ const grandPrixWeek5: LobbyInitializers = {
   TEAMS_ENABLED: false,
   NUM_TEAMS: 2,
   RANKED: true,
+  RANGE_DOUBLING_SECS: 0,
 };
 
 const competitive: LobbyInitializers = grandPrixWeek5;

@@ -350,6 +350,7 @@ export interface ContractConstants {
   NUM_TEAMS: number;
   RANKED: boolean;
   START_PAUSED: boolean;
+  RANGE_DOUBLING_SECS: number;
 }
 
 export type ClientMockchainData =

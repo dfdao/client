@@ -58,7 +58,7 @@ export function GameSettingsPane({ config, onUpdate }: LobbiesPaneProps) {
 
   return (
     <>
-      {/* <Row>
+      <Row>
         <Checkbox
           label='Start game paused?'
           checked={config.START_PAUSED.displayValue}
@@ -69,7 +69,7 @@ export function GameSettingsPane({ config, onUpdate }: LobbiesPaneProps) {
       </Row>
       <Row>
         <Warning>{config.START_PAUSED.warning}</Warning>
-      </Row> */}
+      </Row>
       <PortalTooltipTrigger
         name={TooltipName.Empty}
         extraContent={
@@ -171,6 +171,27 @@ export function GameSettingsPane({ config, onUpdate }: LobbiesPaneProps) {
       </Row>
       <Row>
         <Warning>{config.SILVER_SCORE_VALUE.warning}</Warning>
+      </Row>
+      <Row>
+        <PortalTooltipTrigger
+          name={TooltipName.Empty}
+          extraContent={
+            'Increases planet range by 100 percent every x seconds'
+          }
+          style={{ width: '100%' }}
+        >
+          {/* It is a little weird that this is in Game Settings, but I'd rather keep other scoring grouped */}
+          <span>Range doubling time</span>
+          <NumberInput
+            value={config.RANGE_DOUBLING_SECS.displayValue}
+            onChange={(e: Event & React.ChangeEvent<DarkForestNumberInput>) => {
+              onUpdate({ type: 'RANGE_DOUBLING_SECS', value: e.target.value });
+            }}
+          />
+               <Row>
+        <Warning>{config.RANGE_DOUBLING_SECS.warning}</Warning>
+      </Row>
+        </PortalTooltipTrigger>
       </Row>
     </>
   );

@@ -1,5 +1,5 @@
 import { EMPTY_ADDRESS } from '@darkforest_eth/constants';
-import { formatNumber } from '@darkforest_eth/gamelogic';
+import { formatNumber, getRange } from '@darkforest_eth/gamelogic';
 import { getPlayerColor } from '@darkforest_eth/procedural';
 import { Planet, PlanetType, PlanetTypeNames } from '@darkforest_eth/types';
 import React from 'react';
@@ -103,10 +103,18 @@ export const DefenseText = ({ planet }: { planet: Planet | undefined }) => (
   <StatText planet={planet} getStat={getDefense} />
 );
 
-const getRange = (p: Planet) => p.range;
-export const RangeText = ({ planet, buff }: { planet: Planet | undefined; buff?: number }) => (
-  <StatText planet={planet} getStat={getRange} buff={buff} />
-);
+export const RangeText = ({ planet, buff }: { planet: Planet; buff?: number }) => {
+  const ui = useUIManager();
+  return (
+    <StatText
+      planet={planet}
+      getStat={() =>
+        getRange(planet, ui.getRangeDoublingSeconds(), 100, undefined, ui.getStartTime())
+      }
+      buff={buff}
+    />
+  );
+};
 
 const getJunk = (p: Planet) => p.spaceJunk;
 export const JunkText = ({ planet }: { planet: Planet | undefined }) => (
