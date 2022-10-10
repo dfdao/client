@@ -69,9 +69,9 @@ function PlanetContextPaneContent({
   }
 
   let withdrawRow = null;
-  if (!p?.destroyed && owned && p?.planetType === PlanetType.TRADING_POST) {
-    withdrawRow = <WithdrawSilver wrapper={planet} />;
-  }
+  // if (!p?.destroyed && owned && p?.planetType === PlanetType.TRADING_POST) {
+  //   withdrawRow = <WithdrawSilver wrapper={planet} />;
+  // }
 
   let notifRow = null;
   if (!p?.destroyed && notifs.length > 0) {
