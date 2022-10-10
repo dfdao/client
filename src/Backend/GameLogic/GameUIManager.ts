@@ -315,8 +315,8 @@ class GameUIManager extends EventEmitter {
     }
   }
 
-  public joinGame(beforeRetry: (e: Error) => Promise<boolean>, team: number): Promise<void> {
-    return this.gameManager.joinGame(beforeRetry, team);
+  public joinGame(beforeRetry: (e: Error) => Promise<boolean>): Promise<void> {
+    return this.gameManager.joinGame(beforeRetry);
   }
 
   public addAccount(coords: WorldCoords): Promise<boolean> {
@@ -402,18 +402,18 @@ class GameUIManager extends EventEmitter {
     this.gameManager.deactivateArtifact(locationId, artifactId);
   }
 
-  public withdrawSilver(locationId: LocationId, amount: number) {
+  public withdrawSilver(locationId: LocationId) {
     const dontShowWarningStorageKey = `${this.getAccount()?.toLowerCase()}-withdrawnWarningAcked`;
 
     if (localStorage.getItem(dontShowWarningStorageKey) !== 'true') {
       localStorage.setItem(dontShowWarningStorageKey, 'true');
-      const confirmationText =
-        `Are you sure you want withdraw this silver? Once you withdraw it, you ` +
-        `cannot deposit it again. Your withdrawn silver amount will be added to your score. You'll only see this warning once!`;
-      if (!confirm(confirmationText)) return;
     }
 
-    this.gameManager.withdrawSilver(locationId, amount);
+    this.gameManager.withdrawSilver(locationId);
+  }
+
+  public bulkWithdrawSilver() {
+    this.gameManager.bulkWithdrawSilver();
   }
 
   public startWormholeFrom(planet: LocatablePlanet): Promise<LocatablePlanet | undefined> {
@@ -446,7 +446,18 @@ class GameUIManager extends EventEmitter {
     dist: number | undefined,
     energy: number
   ) {
-    return this.gameManager.getEnergyArrivingForMove(from, to, dist, energy, this.abandoning);
+    this.artifactSending;
+    const sendingCube: boolean = !!(
+      this.artifactSending[from]?.artifactType == ArtifactType.AntiMatterCube
+    );
+    return this.gameManager.getEnergyArrivingForMove(
+      from,
+      to,
+      dist,
+      energy,
+      this.abandoning,
+      sendingCube
+    );
   }
 
   getIsChoosingTargetPlanet() {

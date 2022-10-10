@@ -1432,7 +1432,8 @@ export class GameObjects {
 
       isTargetPlanet,
       isSpawnPlanet,
-      blockedPlanetIds: []
+      blockedPlanetIds: [],
+      team: 0,
     };
   }
 
