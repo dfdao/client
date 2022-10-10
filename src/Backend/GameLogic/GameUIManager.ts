@@ -1518,6 +1518,14 @@ class GameUIManager extends EventEmitter {
     return this.gameManager.getGameStarted$();
   }
 
+  getStartTime(): number | undefined {
+    return this.gameManager.getStartTime();
+  }
+
+  getRangeDoublingSeconds(): number {
+    return this.contractConstants.RANGE_DOUBLING_SECS;
+  }
+
   getGameover(): boolean {
     return this.gameManager.getGameover();
   }

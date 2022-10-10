@@ -166,6 +166,10 @@ export type LobbyConfigAction =
   | {
       type: 'NUM_TEAMS';
       value: Initializers['NUM_TEAMS'] | undefined;
+    }
+  | {
+      type: 'RANGE_DOUBLING_SECS';
+      value: Initializers['RANGE_DOUBLING_SECS'] | undefined;
     };
 
 // TODO(#2328): WHITELIST_ENABLED should just be on Initializers
@@ -437,6 +441,11 @@ export function lobbyConfigReducer(state: LobbyConfigState, action: LobbyAction)
       update = ofBoolean(action, state);
       break;
     }
+    case 'RANGE_DOUBLING_SECS': {
+      update = ofPositiveInteger(action, state);
+      break;
+    }
+
     case 'RESET': {
       // Hard reset all values that were available in the JSON
       return {
@@ -1012,6 +1021,17 @@ export function lobbyConfigInit(startingConfig: LobbyInitializers) {
       case 'RANKED': {
         // Default this to false if we don't have it
         const defaultValue = startingConfig[key] || false;
+        state[key] = {
+          currentValue: defaultValue,
+          displayValue: defaultValue,
+          defaultValue,
+          warning: undefined,
+        };
+        break;
+      }
+      case 'RANGE_DOUBLING_SECS': {
+        // Default this to false if we don't have it
+        const defaultValue = startingConfig[key];
         state[key] = {
           currentValue: defaultValue,
           displayValue: defaultValue,

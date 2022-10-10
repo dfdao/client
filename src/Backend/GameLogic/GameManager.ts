@@ -3362,7 +3362,13 @@ class GameManager extends EventEmitter {
   getMaxMoveDist(planetId: LocationId, sendingPercent: number, abandoning: boolean): number {
     const planet = this.getPlanetWithId(planetId);
     if (!planet) throw new Error('origin planet unknown');
-    return getRange(planet, sendingPercent, this.getRangeBuff(abandoning));
+    return getRange(
+      planet,
+      this.contractConstants.RANGE_DOUBLING_SECS,
+      sendingPercent,
+      this.getRangeBuff(abandoning),
+      this.startTime
+    );
   }
 
   /**
@@ -3409,7 +3415,13 @@ class GameManager extends EventEmitter {
     // at https://github.com/darkforest-eth/client/issues/15
     // Improved by using `planetMap` by [@phated](https://github.com/phated)
     const result = [];
-    const range = getRange(planet, sendingPercent, this.getRangeBuff(abandoning));
+    const range = getRange(
+      planet,
+      this.contractConstants.RANGE_DOUBLING_SECS,
+      sendingPercent,
+      this.getRangeBuff(abandoning),
+      this.startTime
+    );
     for (const p of this.getPlanetMap().values()) {
       if (isLocatable(p)) {
         if (this.getDistCoords(planet.location.coords, p.location.coords) < range) {
@@ -3434,7 +3446,19 @@ class GameManager extends EventEmitter {
     const from = this.getPlanetWithId(fromId);
     if (!from) throw new Error('origin planet unknown');
     const dist = this.getDist(fromId, toId);
-    const range = from.range * this.getRangeBuff(abandoning);
+
+    let newRange = from.range;
+
+    if (
+      this.startTime !== undefined &&
+      this.startTime !== 0 &&
+      this.contractConstants.RANGE_DOUBLING_SECS > 0
+    ) {
+      newRange +=
+        (from.range * (Date.now() / 1000 - this.startTime)) /
+        this.contractConstants.RANGE_DOUBLING_SECS;
+    }
+    const range = newRange * this.getRangeBuff(abandoning);
     const rangeSteps = dist / range;
 
     const arrivingProp = arrivingEnergy / from.energyCap + 0.05;
@@ -3475,7 +3499,18 @@ class GameManager extends EventEmitter {
     // calculate
     let cubeRangeBoost = sendingCube ? 0.5 : 1;
 
-    const range = from.range * this.getRangeBuff(abandoning) * cubeRangeBoost;
+    let newRange = from.range;
+
+    if (
+      this.startTime !== undefined &&
+      this.startTime !== 0 &&
+      this.contractConstants.RANGE_DOUBLING_SECS > 0
+    ) {
+      newRange +=
+        (from.range * (Date.now() / 1000 - this.startTime)) /
+        this.contractConstants.RANGE_DOUBLING_SECS;
+    }
+    const range = newRange * this.getRangeBuff(abandoning) * cubeRangeBoost;
 
     const scale = (1 / 2) ** (dist / range);
     let ret = scale * sentEnergy - 0.05 * from.energyCap;

@@ -73,13 +73,13 @@ export function UpgradeDetailsPane({
   initialPlanetId: LocationId | undefined;
 }) {
   const uiManager = useUIManager();
+  const player = uiManager.getPlayer();
   const planetId = useEmitterValue(uiManager.selectedPlanetId$, initialPlanetId);
   const planet = usePlanet(uiManager, planetId).value;
-  const account = useAddress(uiManager);
   const planetAtMaxRank = isFullRank(planet);
 
-  if (planet && account) {
-    if (planet.owner !== account) {
+  if (planet && player) {
+    if (planet.owner !== player.address) {
     } else if (planet.planetType !== PlanetType.PLANET || planet.silverCap === 0) {
       return (
         <CenterBackgroundSubtext width='100%' height='75px'>
@@ -100,7 +100,7 @@ export function UpgradeDetailsPane({
 
             const totalLevel = planet.upgradeState.reduce((a, b) => a + b);
             const silverNeeded = Math.floor((totalLevel + 1) * 0.2 * planet.silverCap);
-            const enoughSilver = planet.silver >= silverNeeded;
+            const enoughSilver = player.score >= silverNeeded;
             const isPendingUpgrade = planet.transactions?.hasTransaction(isUnconfirmedUpgradeTx);
             const canUpgrade =
               enoughSilver && !planetAtMaxRank && !branchAtMaxRank && !isPendingUpgrade;
@@ -125,11 +125,9 @@ export function UpgradeDetailsPane({
                 </SectionPreview>
                 <SectionBuy>
                   <div>
-                    <Sub>Silver Available</Sub>: <span>{planet.silver}</span>
+                    <Sub>Silver Available</Sub>: <span>{player.score}</span>
                   </div>
-                  <div>
-                    <Sub>Silver Cost:</Sub> <SilverRequired planet={planet} />
-                  </div>
+                  <SilverRequired planet={planet} />
                   <div>
                     <Spacer height={8} />
                     {isPendingUpgrade ? (

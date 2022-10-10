@@ -384,7 +384,7 @@ export function SendResources({
         />
       )}{' '}
       {spaceshipsYouOwn.length > 0 || owned ? sendRow : null}
-      {owned && p.value && p.value.destroyed && p.value.silver > 0 && extractRow}
+      {owned && p.value && !p.value.destroyed && p.value.silver > 0 && extractRow}
       {uiManager.getSpaceJunkEnabled() && owned ? abandonRow : null}
     </StyledSendResources>
   );
