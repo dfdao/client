@@ -1446,6 +1446,12 @@ class GameManager extends EventEmitter {
     return [...ownedByMe, ...onPlanetsOwnedByMe];
   }
 
+  getArtifactsOwnedByMe(): Artifact[] {
+    if (!this.account) return [];
+    const ownedByMe = this.entityStore.getArtifactsOwnedBy(this.account);
+    return ownedByMe;
+  }
+
   /**
    * Gets the planet that is located at the given coordinates. Returns undefined if not a valid
    * location or if no planet exists at location. If the planet needs to be updated (because
@@ -2024,18 +2030,8 @@ class GameManager extends EventEmitter {
   }
 
   public checkVictoryCondition(): boolean {
-    const targetPlanets = this.getPlayerTargetPlanets();
-
-    let captured: number = 0;
-
-    const constants = this.getContractConstants();
-    for (const planet of targetPlanets) {
-      if (!this.isTargetHeld(planet)) continue;
-
-      captured++;
-      if (captured >= this.targetsRequired) return true;
-    }
-    return false;
+    const artifacts = this.getArtifactsOwnedByMe();
+    return !!artifacts.find((artifact) => artifact.artifactType == ArtifactType.AntiMatterCube);
   }
 
   public async claimVictory() {

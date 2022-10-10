@@ -18,7 +18,7 @@ import { Paused } from './Paused';
 import { Gameover } from './Gameover';
 import { Timer } from '../Timer';
 import { Play } from './Play';
-import { TargetPlanetVictory } from '../TargetPlanetVictory';
+import { ClaimVictory } from '../ClaimVictory';
 import { getConfigName } from '@darkforest_eth/procedural';
 import Button from '../../Components/Button';
 import { Btn } from '../../Components/Btn';
@@ -241,7 +241,7 @@ export function TopBar({ twitterVerifyHook }: { twitterVerifyHook: Hook<boolean>
         {uiManager.getSpaceJunkEnabled() && <SpaceJunk account={account} />}
         <Timer account={account} />
       </AlignCenterHorizontally>
-      <TargetPlanetVictory />
+      <ClaimVictory />
       <Gameover />
       <Paused />
       {/* <Play /> */}

@@ -1105,6 +1105,10 @@ class GameUIManager extends EventEmitter {
     return this.gameManager.getMyArtifacts();
   }
 
+  public getArtifactsOwnedByMe(): Artifact[] {
+    return this.gameManager.getArtifactsOwnedByMe();
+  }
+
   public getMyArtifactsNotOnPlanet(): Artifact[] {
     return this.getMyArtifacts().filter((a) => !a.onPlanetId);
   }
