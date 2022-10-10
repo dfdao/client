@@ -25,6 +25,13 @@ export default function LandingPage() {
               Galactic Protection Division
             </span>
           </div>
+          <div>
+            <MutedButton
+              onClick={() => history.push('/play/0x105a0d87451c4f0f00bc4afc84d75960e03487a6')}
+            >
+              Mission View
+            </MutedButton>
+          </div>
         </Nav>
         <Content>
           <Split>
@@ -46,7 +53,11 @@ export default function LandingPage() {
               </a>
               .
             </LongText>
-            <Button onClick={() => history.push('/portal')}>Accept mission</Button>
+            <Button
+              onClick={() => history.push('/play/0x105a0d87451c4f0f00bc4afc84d75960e03487a6')}
+            >
+              Accept mission
+            </Button>
           </Split>
           <Split>
             <img src='/img/landing-cube.png' />
@@ -91,6 +102,15 @@ const Button = styled.button`
   transition: background 0.2s ease-in-out;
   &:hover {
     background: #b13131;
+  }
+`;
+
+const MutedButton = styled(Button)`
+  background: #d9d9d9;
+  color: #000;
+  transition: background 0.2s ease-in-out;
+  &:hover {
+    background: #a6a6a6;
   }
 `;
 
