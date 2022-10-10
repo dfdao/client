@@ -4,8 +4,15 @@ import { Gold, Green } from '../../Components/Text';
 import { useUIManager } from '../../Utils/AppHooks';
 import { StyledTutorialPane } from './StyledTutorialPane';
 import { setBooleanSetting } from '../../Utils/SettingsHooks';
-import { Setting, WorldLocation } from '@darkforest_eth/types';
+import {
+  Artifact,
+  ArtifactRarity,
+  ArtifactType,
+  Setting,
+  WorldLocation,
+} from '@darkforest_eth/types';
 import { setObjectSyncState } from '../../Utils/EmitterUtils';
+import { ArtifactThumb } from '../../Views/Game/ArtifactRow';
 
 const enum BriefingStep {
   Welcome,
@@ -29,120 +36,55 @@ export function ArenaBriefingPane() {
   const numForVictory = uiManager.contractConstants.TARGETS_REQUIRED_FOR_VICTORY;
   const targetLocations = uiManager.getPlayerTargetPlanets();
 
-  useEffect(() => {
-    if (step == BriefingStep.Target) {
-      if (!targetLocations || targetLocations.length <= targetIdx)
-        return setStep(BriefingStep.AlmostComplete);
-      const targetLocation = targetLocations[targetIdx];
-
-      const coords = targetLocation
-        ? uiManager.getGameManager().getRevealedLocations().get(targetLocation.locationId)
-        : undefined;
-      setTargetCoords(coords);
-      uiManager.centerLocationId(targetLocation.locationId);
-    } else if (step == BriefingStep.AlmostComplete) {
-      const homeLocation = uiManager.getHomeHash();
-      if (homeLocation) uiManager.centerLocationId(homeLocation);
-      setOpen(false);
-      setBooleanSetting(config, Setting.ShowArenaBriefing, true);
-    }
-  }, [step, setStep, targetIdx]);
-
   if (spectatorMode || !open) {
     return null;
   }
 
   const welcomeContent = (
     <div className='tutzoom'>
-      Welcome to Dark Forest Arena!
+      gm, dfdao Galactic Protection Division Agent. Thank you for accepting this mission.
       <br />
       <br />
       <div>
-        <>
-          Race against the clock to capture {numForVictory > 1 ? `${numForVictory}` : 'a'} Target
-          Planet
-          {targetLocations?.length > 1 && 's'} and{' '}
-          <Green>
-            claim victory when {targetLocations?.length > 1 ? 'each' : 'it'} contains at least{' '}
-            <Gold>{victoryThreshold}%</Gold> energy!
-          </Green>
-        </>
-        <div>
-          You need {numForVictory} target planet{numForVictory > 1 && 's'} to claim victory.
+        You have been tasked with locating the Antimatter Cube within this universe and extracting
+        it through a Spacetime Rip. This Cube is vital to protecting our universe from the
+        Trisolarans.
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            margin: '20px',
+          }}
+        >
+          <ArtifactThumb
+            artifact={
+              {
+                artifactType: ArtifactType.AntimatterCube,
+                rarity: ArtifactRarity.Common,
+              } as Artifact
+            }
+            selectedArtifact={undefined}
+            onArtifactChange={() => {}}
+          />
         </div>
+        <div>
+          Our recon reports the Antimatter Cube may have powerful weakening effects on the planet it
+          is on.
+        </div>
+        <div>
+          Whatever you do, DO NOT let an enemy agent extract the Cube! We must protect the citizens
+          of our universe at all costs.
+        </div>
+        <div>Good luck!</div>
       </div>
       <br />
       <div style={{ gap: '5px' }}>
         <Btn className='btn' onClick={() => setOpen(false)}>
           Close
         </Btn>
-        <Btn className='btn' onClick={() => setStep(BriefingStep.Target)}>
-          View Target Planet
-        </Btn>
       </div>
     </div>
   );
 
-  const targetContent = (
-    <div className='tutzoom'>
-      {targetCoords ? (
-        <>
-          <div>
-            This is {targetLocations?.length > 1 ? 'one of your objectives' : 'your objective'}: a
-            🎯 Target Planet.{' '}
-            {targetCoords &&
-              `It is located at (${targetCoords.coords.x}, ${targetCoords.coords.y}).`}
-          </div>
-          <br />
-          <div>
-            The timer ⏲️ starts {isSinglePlayer ? 'with your first move' : 'when you press ready'}.
-            Good luck!
-          </div>
-          <br />
-          <div style={{ gap: '5px' }}>
-            <Btn
-              className='btn'
-              onClick={() => {
-                setTargetIdx(targetIdx + 1);
-              }}
-            >
-              {targetLocations && targetIdx >= targetLocations.length - 1
-                ? 'Return to home planet'
-                : 'See next target planet'}
-            </Btn>
-          </div>
-        </>
-      ) : (
-        <></>
-      )}
-    </div>
-  );
-
-  const completeContent = (
-    <div className='tutzoom'>
-      <div>
-        The timer ⏲️ starts {isSinglePlayer ? 'with your first move' : 'when you press ready'}. Good
-        luck!
-      </div>
-      <br />
-      <div style={{ gap: '5px' }}>
-        <Btn
-          className='btn'
-          onClick={() => {
-            setStep(BriefingStep.Complete);
-          }}
-        >
-          Exit
-        </Btn>
-      </div>
-    </div>
-  );
-
-  return (
-    <StyledTutorialPane>
-      {step == BriefingStep.Welcome && welcomeContent}
-      {step == BriefingStep.Target && targetContent}
-      {step == BriefingStep.AlmostComplete && completeContent}
-    </StyledTutorialPane>
-  );
+  return <StyledTutorialPane>{step == BriefingStep.Welcome && welcomeContent}</StyledTutorialPane>;
 }

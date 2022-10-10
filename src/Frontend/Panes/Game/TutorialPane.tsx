@@ -36,10 +36,7 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
   if (tutorialState === TutorialState.Welcome) {
     return (
       <div className='tutzoom'>
-        <White>
-          Welcome to the Dark Forest Arena tutorial, Captain! You're an intergalactic explorer who
-          commands planets in a fully on-chain universe.
-        </White>
+        <White>Welcome to the Dark Forest tutorial, Agent!</White>
         <br />
         <div>Click your spawn planet to get started.</div>
       </div>
@@ -108,12 +105,11 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
         Asteroid fields are special because they produce <Gold>Silver</Gold>. Silver is represented
         by the Gold number above a planet.
         <br />
-        You use <Gold>Silver</Gold> to upgrade <White>Planets</White>. You send it just like how you
-        send Energy.
+        You use <Gold>Silver</Gold> to upgrade <White>Planets</White>. To use this planet's silver,
+        you need to extract it to your inventory.
         <br />
         <br />
-        <White>Try sending some Silver back to your spawn planet!</White>
-        <br /> (Hint: Use the Silver slider on the planet pane to increase the Silver you send)
+        <White>Try extracting the silver from this planet!</White>
         <div style={{ gap: '5px' }}>
           <Btn
             className='btn'
@@ -266,18 +262,10 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
     return (
       <div className='tutzoom'>
         <p>
-          Your objective is to race across the map to capture the Target Planet (it has a big 🎯
-          floating above it) and{' '}
-          <Green>
-            claim victory when it contains at least <Gold>{victoryThreshold}%</Gold> energy.
-          </Green>
+          Your objective is to get the Antimatter Cube and extract it from the universe through a
+          Spacetime Rip.
+          <Green>Claim victory when you have accomplished this!</Green>
         </p>
-        <br />
-        To get there, you will need to create a path of planets leading to the Target. Zoom out to
-        see how far you need to go.
-        <br />
-        <br />
-        <White>Now go capture the target planet and claim victory!</White>
       </div>
     );
   } else if (tutorialState === TutorialState.AlmostCompleted) {

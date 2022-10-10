@@ -92,7 +92,7 @@ function PlanetContextPaneContent({
 
       <VerticalSplit>
         <>
-          {upgradeRow}
+          {planet.value?.planetType == PlanetType.PLANET && upgradeRow}
           {/* <OpenBroadcastPaneButton modal={modal} planetId={p?.locationId} /> */}
           <OpenPlanetInfoButton modal={modal} planetId={p?.locationId} />
         </>
