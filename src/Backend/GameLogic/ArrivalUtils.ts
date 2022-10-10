@@ -195,7 +195,7 @@ export const arrive = (
     // moving between my own planets
     toPlanet.energy += energyArriving;
   }
-  const isCube = arrivingArtifact?.artifactType === ArtifactType.AntiMatterCube;
+  const isCube = arrivingArtifact?.artifactType === ArtifactType.AntimatterCube;
   if (toPlanet.planetType === PlanetType.SILVER_BANK || toPlanet.pausers !== 0 || isCube) {
     if (toPlanet.energy > toPlanet.energyCap) {
       toPlanet.energy = toPlanet.energyCap;
@@ -221,7 +221,7 @@ export const arrive = (
       toPlanet.silverGrowth *= 2;
     } else if (
       arrivingArtifact.artifactType === ArtifactType.ShipTitan ||
-      arrivingArtifact.artifactType === ArtifactType.AntiMatterCube
+      arrivingArtifact.artifactType === ArtifactType.AntimatterCube
     ) {
       toPlanet.pausers++;
     }

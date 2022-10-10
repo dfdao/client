@@ -448,7 +448,7 @@ class GameUIManager extends EventEmitter {
   ) {
     this.artifactSending;
     const sendingCube: boolean = !!(
-      this.artifactSending[from]?.artifactType == ArtifactType.AntiMatterCube
+      this.artifactSending[from]?.artifactType == ArtifactType.AntimatterCube
     );
     return this.gameManager.getEnergyArrivingForMove(
       from,
