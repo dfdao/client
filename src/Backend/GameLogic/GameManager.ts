@@ -3514,7 +3514,7 @@ class GameManager extends EventEmitter {
         (from.range * (Date.now() / 1000 - this.startTime)) /
         this.contractConstants.RANGE_DOUBLING_SECS;
     }
-    const range = newRange * this.getRangeBuff(abandoning);
+    const range = newRange * this.getRangeBuff(abandoning) * cubeRangeBoost;
 
     const scale = (1 / 2) ** (dist / range);
     let ret = scale * sentEnergy - 0.05 * from.energyCap;
