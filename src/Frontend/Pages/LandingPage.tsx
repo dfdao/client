@@ -42,7 +42,7 @@ export default function LandingPage() {
               The Animatter Cube is an extremely unstable multiversal object that rapidly depletes
               energy from the planet it is found on. Previous manifestations of the Antimatter Cube
               have historically been perceived as extremely valuable to intergalactic empires for
-              its use as an interdimensional communication device for defending against Trisolarin
+              its use as an interdimensional communication device for defending against Trisolaran
               invasions.
             </LongText>
             <SmallHeader>CONTAINMENT PROCEDURE</SmallHeader>

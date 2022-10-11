@@ -22,6 +22,8 @@ const LOCATION_ID_UB = bigInt(
   '21888242871839275222246405745257275088548364400416034343698204186575808495617'
 );
 
+const devconMatch = '0x105a0d87451c4f0f00bc4afc84d75960e03487a6';
+
 const competitiveConfig = '0xfe719a3cfccf2bcfa23f71f0af80a931eda4f4197331828d728b7505a6156930';
 
 const tutorialConfig = '0x0b1ab5e27ab1813701aad3533b0f528c832aa246aa3192c8b86dd60452cbe15b';
@@ -208,6 +210,7 @@ export {
   tutorialFoundryLocation,
   bronzeTime,
   silverTime,
+  devconMatch,
   CONFIG_CONSTANTS,
   NERONZZ_WEEK_1,
   goldTime,
