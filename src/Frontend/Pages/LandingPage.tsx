@@ -6,6 +6,7 @@ import styled, { createGlobalStyle, CSSObject } from 'styled-components';
 import { EmSpacer, Link, Spacer } from '../Components/CoreUI';
 import { Icon } from '../Components/Icons';
 import dfstyles from '../Styles/dfstyles';
+import { devconMatch } from '../Utils/constants';
 
 export const enum LandingPageZIndex {
   Background = 0,
@@ -39,11 +40,10 @@ export default function LandingPage() {
             <BigHeader>ANTIMATTER CUBE</BigHeader>
             <SmallHeader>DESCRIPTION</SmallHeader>
             <LongText>
-              The Animatter Cube is an extremely unstable multiversal object that rapidly depletes
+              The Antimatter Cube is an extremely unstable multiversal object that rapidly depletes
               energy from the planet it is found on. Previous manifestations of the Antimatter Cube
               have historically been perceived as extremely valuable to intergalactic empires for
-              its use as an interdimensional communication device for defending against Trisolaran
-              invasions.
+              its use defending against Trisolaran invasions.
             </LongText>
             <SmallHeader>CONTAINMENT PROCEDURE</SmallHeader>
             <LongText style={{ marginBottom: '1rem' }}>
@@ -55,7 +55,7 @@ export default function LandingPage() {
               .
             </LongText>
             <Button
-              onClick={() => history.push('/play/0x105a0d87451c4f0f00bc4afc84d75960e03487a6')}
+              onClick={() => history.push(`/play/${devconMatch}`)}
             >
               Accept mission
             </Button>
