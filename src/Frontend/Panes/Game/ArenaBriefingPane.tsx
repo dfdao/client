@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Btn } from '../../Components/Btn';
-import { Gold, Green } from '../../Components/Text';
+import { Gold, Green, Sub } from '../../Components/Text';
 import { useUIManager } from '../../Utils/AppHooks';
 import { StyledTutorialPane } from './StyledTutorialPane';
 import { setBooleanSetting } from '../../Utils/SettingsHooks';
@@ -31,15 +31,29 @@ export function ArenaBriefingPane() {
     account: uiManager.getAccount(),
   };
   const spectatorMode = uiManager.getGameManager().getIsSpectator();
-  const isSinglePlayer = uiManager.getSpawnPlanets().length == 1;
-  const victoryThreshold = uiManager.contractConstants.CLAIM_VICTORY_ENERGY_PERCENT;
-  const numForVictory = uiManager.contractConstants.TARGETS_REQUIRED_FOR_VICTORY;
-  const targetLocations = uiManager.getPlayerTargetPlanets();
 
-  if (spectatorMode || !open) {
-    return null;
-  }
+  useEffect(() => {
+    if (step == BriefingStep.Target) {
+      const antimatterCubes: Artifact[] = [...uiManager.getArtifactMap()]
+        .filter(([, artifact]) => artifact.artifactType == ArtifactType.AntimatterCube)
+        .map((p) => p[1]);
 
+      const location = antimatterCubes.length > 0 ? antimatterCubes[0].onPlanetId : undefined;
+      const coords = location
+        ? uiManager.getGameManager().getRevealedLocations().get(location)
+        : undefined;
+      if (!coords || !location) return setStep(BriefingStep.AlmostComplete);
+
+      setTargetCoords(coords);
+      uiManager.centerLocationId(location);
+    } else if (step == BriefingStep.AlmostComplete) {
+      const homeLocation = uiManager.getHomeHash();
+      if (homeLocation) uiManager.centerLocationId(homeLocation);
+    } else if (step == BriefingStep.Complete) {
+      setOpen(false);
+      setBooleanSetting(config, Setting.ShowArenaBriefing, true);
+    }
+  }, [step, setStep, targetIdx]);
   const welcomeContent = (
     <div className='tutzoom'>
       gm, dfdao Galactic Protection Division Agent. Thank you for accepting this mission.
@@ -47,8 +61,9 @@ export function ArenaBriefingPane() {
       <br />
       <div>
         You have been tasked with locating the Antimatter Cube within this universe and extracting
-        it through a Spacetime Rip. This Cube is vital to protecting our universe from the
-        Trisolarans.
+        it through a Spacetime Rips. This Cube is vital to protecting our universe from the
+        Trisolarans.{' '}
+        <Sub>(Note: the only Spacetime Rips are located next to player spawn points!)</Sub>
         <div
           style={{
             display: 'flex',
@@ -82,9 +97,63 @@ export function ArenaBriefingPane() {
         <Btn className='btn' onClick={() => setOpen(false)}>
           Close
         </Btn>
+        <Btn className='btn' onClick={() => setStep(BriefingStep.Target)}>
+          View Antimatter Cube
+        </Btn>
       </div>
     </div>
   );
 
-  return <StyledTutorialPane>{step == BriefingStep.Welcome && welcomeContent}</StyledTutorialPane>;
+  const targetContent = (
+    <div className='tutzoom'>
+      {targetCoords ? (
+        <>
+          <div>
+            This is your objective: the Antimatter Cube.
+            {targetCoords &&
+              `It is located at (${targetCoords.coords.x}, ${targetCoords.coords.y}).`}
+          </div>
+          <br />
+          Extract it at a Spacetime Rip (preferably the one next to your spawn point) to win.
+          <br />
+          <div style={{ gap: '5px' }}>
+            <Btn className='btn' onClick={() => setStep(BriefingStep.AlmostComplete)}>
+              Continue
+            </Btn>
+          </div>
+        </>
+      ) : (
+        <></>
+      )}
+    </div>
+  );
+
+  const completeContent = (
+    <div className='tutzoom'>
+      <div>Here is your spawn planet. Good luck!</div>
+      <br />
+      <div style={{ gap: '5px' }}>
+        <Btn
+          className='btn'
+          onClick={() => {
+            setStep(BriefingStep.Complete);
+          }}
+        >
+          Exit
+        </Btn>
+      </div>
+    </div>
+  );
+
+  if (spectatorMode || !open) {
+    return null;
+  }
+
+  return (
+    <StyledTutorialPane>
+      {step == BriefingStep.Welcome && welcomeContent}
+      {step == BriefingStep.Target && targetContent}
+      {step == BriefingStep.AlmostComplete && completeContent}
+    </StyledTutorialPane>
+  );
 }

@@ -2031,7 +2031,7 @@ class GameManager extends EventEmitter {
 
   public checkVictoryCondition(): boolean {
     const artifacts = this.getArtifactsOwnedByMe();
-    return !!artifacts.find((artifact) => artifact.artifactType == ArtifactType.AntiMatterCube);
+    return !!artifacts.find((artifact) => artifact.artifactType == ArtifactType.AntimatterCube);
   }
 
   public async claimVictory() {
