@@ -1066,8 +1066,8 @@ export class GameObjects {
   private emitArrivalNotifications({ previous, current, arrival }: PlanetDiff) {
     const notifManager = NotificationManager.getInstance();
     if (
-      !GameObjects.planetCanUpgrade(previous) &&
-      GameObjects.planetCanUpgrade(current) &&
+      !this.planetCanUpgrade(previous) &&
+      this.planetCanUpgrade(current) &&
       current.owner === this.address
     ) {
       notifManager.planetCanUpgrade(current);
@@ -1230,16 +1230,18 @@ export class GameObjects {
     return (totalLevel + 1) * 0.2 * planet.silverCap;
   }
 
-  public static planetCanUpgrade(planet: Planet): boolean {
+  public planetCanUpgrade(planet: Planet): boolean {
     const totalRank = planet.upgradeState.reduce((a, b) => a + b);
     if (planet.spaceType === SpaceType.NEBULA && totalRank >= 3) return false;
     if (planet.spaceType === SpaceType.SPACE && totalRank >= 4) return false;
     if (planet.spaceType === SpaceType.DEEP_SPACE && totalRank >= 5) return false;
     if (planet.spaceType === SpaceType.DEAD_SPACE && totalRank >= 5) return false;
+    const player = this.gameManager.getPlayer();
+    if (!player) return false;
     return (
       planet.planetLevel !== 0 &&
       planet.planetType === PlanetType.PLANET &&
-      planet.silver >= this.getSilverNeeded(planet)
+      player.score >= GameObjects.getSilverNeeded(planet)
     );
   }
 
@@ -1432,7 +1434,8 @@ export class GameObjects {
 
       isTargetPlanet,
       isSpawnPlanet,
-      blockedPlanetIds: []
+      blockedPlanetIds: [],
+      team: 0,
     };
   }
 

@@ -18,14 +18,16 @@ import { Paused } from './Paused';
 import { Gameover } from './Gameover';
 import { Timer } from '../Timer';
 import { Play } from './Play';
-import { TargetPlanetVictory } from '../TargetPlanetVictory';
+import { ClaimVictory } from '../ClaimVictory';
 import { getConfigName } from '@darkforest_eth/procedural';
 import Button from '../../Components/Button';
+import { Btn } from '../../Components/Btn';
+import { formatNumber } from '@darkforest_eth/gamelogic';
 
 const TopBarContainer = styled.div`
   z-index: ${DFZIndex.MenuBar};
   padding: 0 2px;
-  width: 530px;
+  width: 700px;
   gap: 5px;
 `;
 
@@ -160,15 +162,18 @@ function BoardPlacement({ account }: { account: EthAddress | undefined }) {
   } else {
     let formattedScore = 'n/a';
     if (player.value.score !== undefined && player.value.score !== null) {
-      formattedScore = player.value.score.toLocaleString();
+      formattedScore = formatNumber(player.value.score);
     }
 
     content = (
-      <Sub>
-        <TooltipTrigger name={TooltipName.Score}>
-          score: <Text>{formattedScore}</Text>
-        </TooltipTrigger>
-      </Sub>
+      <TooltipTrigger name={TooltipName.Score}>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          Silver: <Text>{formattedScore}</Text>
+          <Btn size='small' onClick={() => uiManager.bulkWithdrawSilver()}>
+            Extract all
+          </Btn>
+        </div>
+      </TooltipTrigger>
     );
   }
 
@@ -227,39 +232,16 @@ export function TopBar({ twitterVerifyHook }: { twitterVerifyHook: Hook<boolean>
             </TooltipTrigger>
           </>
         )}
-        <TooltipTrigger
-          name={TooltipName.Empty}
-          extraContent={<Text>This is the map configuration. Click to copy the hash.</Text>}
-        >
-          <Button
-            onClick={() => {
-              navigator.clipboard.writeText(uiManager.contractConstants.CONFIG_HASH).then(
-                () => {
-                  console.log('Async: Copying to clipboard was successful!');
-                },
-                (err) => {
-                  console.error('Async: Could not copy text: ', err);
-                }
-              );
-            }}
-          >
-            {getConfigName(uiManager.contractConstants.CONFIG_HASH)}
-          </Button>
-        </TooltipTrigger>
+
+        <BoardPlacement account={account} />
       </AlignCenterHorizontally>{' '}
       <AlignCenterHorizontally
         style={{ justifyContent: 'space-evenly', width: '100%', marginTop: '7px' }}
       >
         {uiManager.getSpaceJunkEnabled() && <SpaceJunk account={account} />}
-        {uiManager.contractConstants.TARGET_PLANETS ? (
-          <>
-            <Timer account={account} />
-          </>
-        ) : (
-          <BoardPlacement account={account} />
-        )}
+        <Timer account={account} />
       </AlignCenterHorizontally>
-      <TargetPlanetVictory />
+      <ClaimVictory />
       <Gameover />
       <Paused />
       {/* <Play /> */}

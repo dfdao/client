@@ -39,6 +39,12 @@ const panes: ReadonlyArray<PaneConfig> = [
     Pane: (props: LobbiesPaneProps) => <GameSettingsPane {...props} />,
   },
   {
+    title: 'Teams',
+    shortcut: `+`,
+    path: '/teams',
+    Pane: (props: LobbiesPaneProps) => <TeamsPane {...props} />,
+  },
+  {
     title: 'World size',
     shortcut: `2`,
     path: '/world',

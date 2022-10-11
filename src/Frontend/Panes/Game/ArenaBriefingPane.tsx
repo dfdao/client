@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { Btn } from '../../Components/Btn';
-import { Gold, Green } from '../../Components/Text';
+import { Gold, Green, Sub } from '../../Components/Text';
 import { useUIManager } from '../../Utils/AppHooks';
 import { StyledTutorialPane } from './StyledTutorialPane';
 import { setBooleanSetting } from '../../Utils/SettingsHooks';
-import { Setting, WorldLocation } from '@darkforest_eth/types';
+import {
+  Artifact,
+  ArtifactRarity,
+  ArtifactType,
+  Setting,
+  WorldLocation,
+} from '@darkforest_eth/types';
 import { setObjectSyncState } from '../../Utils/EmitterUtils';
+import { ArtifactThumb } from '../../Views/Game/ArtifactRow';
 
 const enum BriefingStep {
   Welcome,
@@ -24,52 +31,66 @@ export function ArenaBriefingPane() {
     account: uiManager.getAccount(),
   };
   const spectatorMode = uiManager.getGameManager().getIsSpectator();
-  const isSinglePlayer = uiManager.getSpawnPlanets().length == 1;
-  const victoryThreshold = uiManager.contractConstants.CLAIM_VICTORY_ENERGY_PERCENT;
-  const numForVictory = uiManager.contractConstants.TARGETS_REQUIRED_FOR_VICTORY;
-  const targetLocations = uiManager.getPlayerTargetPlanets();
 
   useEffect(() => {
     if (step == BriefingStep.Target) {
-      if (!targetLocations || targetLocations.length <= targetIdx)
-        return setStep(BriefingStep.AlmostComplete);
-      const targetLocation = targetLocations[targetIdx];
+      const antimatterCubes: Artifact[] = [...uiManager.getArtifactMap()]
+        .filter(([, artifact]) => artifact.artifactType == ArtifactType.AntimatterCube)
+        .map((p) => p[1]);
 
-      const coords = targetLocation
-        ? uiManager.getGameManager().getRevealedLocations().get(targetLocation.locationId)
+      const location = antimatterCubes.length > 0 ? antimatterCubes[0].onPlanetId : undefined;
+      const coords = location
+        ? uiManager.getGameManager().getRevealedLocations().get(location)
         : undefined;
+      if (!coords || !location) return setStep(BriefingStep.AlmostComplete);
+
       setTargetCoords(coords);
-      uiManager.centerLocationId(targetLocation.locationId);
+      uiManager.centerLocationId(location);
     } else if (step == BriefingStep.AlmostComplete) {
       const homeLocation = uiManager.getHomeHash();
       if (homeLocation) uiManager.centerLocationId(homeLocation);
+    } else if (step == BriefingStep.Complete) {
       setOpen(false);
       setBooleanSetting(config, Setting.ShowArenaBriefing, true);
     }
   }, [step, setStep, targetIdx]);
-
-  if (spectatorMode || !open) {
-    return null;
-  }
-
   const welcomeContent = (
     <div className='tutzoom'>
-      Welcome to Dark Forest Arena!
+      gm, dfdao Galactic Protection Division Agent. Thank you for accepting this mission.
       <br />
       <br />
       <div>
-        <>
-          Race against the clock to capture {numForVictory > 1 ? `${numForVictory}` : 'a'} Target
-          Planet
-          {targetLocations?.length > 1 && 's'} and{' '}
-          <Green>
-            claim victory when {targetLocations?.length > 1 ? 'each' : 'it'} contains at least{' '}
-            <Gold>{victoryThreshold}%</Gold> energy!
-          </Green>
-        </>
-        <div>
-          You need {numForVictory} target planet{numForVictory > 1 && 's'} to claim victory.
+        You have been tasked with locating the Antimatter Cube within this universe and extracting
+        it through a Spacetime Rips. This Cube is vital to protecting our universe from the
+        Trisolarans.{' '}
+        <Sub>(Note: the only Spacetime Rips are located next to player spawn points!)</Sub>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            margin: '20px',
+          }}
+        >
+          <ArtifactThumb
+            artifact={
+              {
+                artifactType: ArtifactType.AntimatterCube,
+                rarity: ArtifactRarity.Common,
+              } as Artifact
+            }
+            selectedArtifact={undefined}
+            onArtifactChange={() => {}}
+          />
         </div>
+        <div>
+          Our recon reports the Antimatter Cube may have powerful weakening effects on the planet it
+          is on.
+        </div>
+        <div>
+          Whatever you do, DO NOT let an enemy agent extract the Cube! We must protect the citizens
+          of our universe at all costs.
+        </div>
+        <div>Good luck!</div>
       </div>
       <br />
       <div style={{ gap: '5px' }}>
@@ -77,7 +98,7 @@ export function ArenaBriefingPane() {
           Close
         </Btn>
         <Btn className='btn' onClick={() => setStep(BriefingStep.Target)}>
-          View Target Planet
+          View Antimatter Cube
         </Btn>
       </div>
     </div>
@@ -88,27 +109,16 @@ export function ArenaBriefingPane() {
       {targetCoords ? (
         <>
           <div>
-            This is {targetLocations?.length > 1 ? 'one of your objectives' : 'your objective'}: a
-            🎯 Target Planet.{' '}
+            This is your objective: the Antimatter Cube.
             {targetCoords &&
               `It is located at (${targetCoords.coords.x}, ${targetCoords.coords.y}).`}
           </div>
           <br />
-          <div>
-            The timer ⏲️ starts {isSinglePlayer ? 'with your first move' : 'when you press ready'}.
-            Good luck!
-          </div>
+          Extract it at a Spacetime Rip (preferably the one next to your spawn point) to win.
           <br />
           <div style={{ gap: '5px' }}>
-            <Btn
-              className='btn'
-              onClick={() => {
-                setTargetIdx(targetIdx + 1);
-              }}
-            >
-              {targetLocations && targetIdx >= targetLocations.length - 1
-                ? 'Return to home planet'
-                : 'See next target planet'}
+            <Btn className='btn' onClick={() => setStep(BriefingStep.AlmostComplete)}>
+              Continue
             </Btn>
           </div>
         </>
@@ -120,10 +130,7 @@ export function ArenaBriefingPane() {
 
   const completeContent = (
     <div className='tutzoom'>
-      <div>
-        The timer ⏲️ starts {isSinglePlayer ? 'with your first move' : 'when you press ready'}. Good
-        luck!
-      </div>
+      <div>Here is your spawn planet. Good luck!</div>
       <br />
       <div style={{ gap: '5px' }}>
         <Btn
@@ -137,6 +144,10 @@ export function ArenaBriefingPane() {
       </div>
     </div>
   );
+
+  if (spectatorMode || !open) {
+    return null;
+  }
 
   return (
     <StyledTutorialPane>

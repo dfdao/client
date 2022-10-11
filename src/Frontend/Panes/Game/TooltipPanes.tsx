@@ -2,7 +2,7 @@ import { PlanetType, TooltipName } from '@darkforest_eth/types';
 import React from 'react';
 import { getPlanetRank, isFullRank } from '../../../Backend/Utils/Utils';
 import { ScoreLabel, SilverLabel } from '../../Components/Labels/KeywordLabels';
-import { Green, Red, Text, White } from '../../Components/Text';
+import { Green, Red, Silver, Text, White } from '../../Components/Text';
 import { useAddress, useSelectedPlanet, useUIManager } from '../../Utils/AppHooks';
 
 export function NetworkHealthPane() {
@@ -20,8 +20,7 @@ export function NetworkHealthPane() {
 export function WithdrawSilverButton() {
   return (
     <>
-      This is a <Text>Spacetime Rip</Text> where you can withdraw <SilverLabel /> for <ScoreLabel />
-      !
+      You can withdraw <SilverLabel /> here! !
     </>
   );
 }
@@ -86,8 +85,8 @@ export function RankTooltipPane() {
 export function ScoreTooltipPane() {
   return (
     <>
-      You earn <ScoreLabel /> by finding artifacts and withdrawing silver. Check out the{' '}
-      <White>Help Pane</White> for more info on scoring.
+      Gain silver by capturing asteroid fields and extracting their reserves. Use{' '}
+      <Silver>Silver</Silver> to upgrade your planets and buy new artifacts and spaceships.
     </>
   );
 }
@@ -131,7 +130,7 @@ export function SilverTooltipPane() {
   return (
     <>
       <White>Silver:</White> the universe's monetary resource. It allows you to buy upgrades. Only
-      <White> Asteroid Fields</White> produce silver or so we've been told...
+      <White> Asteroid Fields</White> produce silver (or so we've been told...)
     </>
   );
 }
@@ -139,8 +138,8 @@ export function SilverTooltipPane() {
 export function EnergyTooltipPane() {
   return (
     <>
-      <White>Energy:</White> allows you to make moves. Energy grows following an{' '}
-      <White>s-curve</White>, and grows fastest at <White>50% capacity</White>.
+      <White>Energy:</White> allows you to make moves. Energy generates slowly when the planet is
+      empty and generates fastest at <White>50% capacity</White>.
     </>
   );
 }

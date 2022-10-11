@@ -23,6 +23,7 @@ import {
 } from '@darkforest_eth/network';
 import { getPlanetName } from '@darkforest_eth/procedural';
 import {
+  address,
   artifactIdToDecStr,
   isUnconfirmedActivateArtifactTx,
   isUnconfirmedBuyHatTx,
@@ -73,6 +74,7 @@ import {
   Transaction,
   TxIntent,
   UnconfirmedActivateArtifact,
+  UnconfirmedBulkWithdrawSilver,
   UnconfirmedBuyHat,
   UnconfirmedCapturePlanet,
   UnconfirmedClaimVictory,
@@ -1444,6 +1446,12 @@ class GameManager extends EventEmitter {
     return [...ownedByMe, ...onPlanetsOwnedByMe];
   }
 
+  getArtifactsOwnedByMe(): Artifact[] {
+    if (!this.account) return [];
+    const ownedByMe = this.entityStore.getArtifactsOwnedBy(this.account);
+    return ownedByMe;
+  }
+
   /**
    * Gets the planet that is located at the given coordinates. Returns undefined if not a valid
    * location or if no planet exists at location. If the planet needs to be updated (because
@@ -2022,18 +2030,8 @@ class GameManager extends EventEmitter {
   }
 
   public checkVictoryCondition(): boolean {
-    const targetPlanets = this.getPlayerTargetPlanets();
-
-    let captured: number = 0;
-
-    const constants = this.getContractConstants();
-    for (const planet of targetPlanets) {
-      if (!this.isTargetHeld(planet)) continue;
-
-      captured++;
-      if (captured >= this.targetsRequired) return true;
-    }
-    return false;
+    const artifacts = this.getArtifactsOwnedByMe();
+    return !!artifacts.find((artifact) => artifact.artifactType == ArtifactType.AntimatterCube);
   }
 
   public async claimVictory() {
@@ -2067,7 +2065,7 @@ class GameManager extends EventEmitter {
   /**
    * Attempts to join the game. Should not be called once you've already joined.
    */
-  public async joinGame(beforeRetry: (e: Error) => Promise<boolean>, team: number): Promise<void> {
+  public async joinGame(beforeRetry: (e: Error) => Promise<boolean>): Promise<void> {
     try {
       if (this.checkGameHasEnded()) {
         throw new Error('game has ended');
@@ -2075,14 +2073,51 @@ class GameManager extends EventEmitter {
 
       let planet: LocatablePlanet;
       if (this.contractConstants.MANUAL_SPAWN) {
-        this.terminal.current?.println(``);
-        this.terminal.current?.println(`Retrieving available manual planets`);
-        this.terminal.current?.println(``);
+        const spawnPlanets = this.getSpawnPlanets() as LocatablePlanet[];
+        let teamSelected = false;
+        let teamSelection = 0;
 
-        const spawnPlanets = await this.contractsAPI.getSpawnPlanetIds(0);
+        if (this.contractConstants.TEAMS_ENABLED) {
+          this.terminal.current?.println(``);
+          this.terminal.current?.println(`Choose a team:`);
+          this.terminal.current?.println(``);
+
+          do {
+            for (let i = 0; i < this.contractConstants.NUM_TEAMS; i++) {
+              const numAvailableSpawns = spawnPlanets.filter(
+                (planet) => planet.team == i + 1 && planet.owner == EMPTY_ADDRESS
+              ).length;
+              this.terminal.current?.print(`(${i + 1}): `, TerminalTextStyle.Sub);
+              this.terminal.current?.print(`Team ${i + 1}`);
+              this.terminal.current?.print(
+                `${numAvailableSpawns == 0 ? ' (No spawn planets available)' : ''}`,
+                TerminalTextStyle.Red
+              );
+              this.terminal.current?.println('');
+            }
+
+            this.terminal.current?.println('');
+            this.terminal.current?.println(`Choose a team:`, TerminalTextStyle.White);
+            teamSelection = +((await this.terminal.current?.getInput()) || '');
+            const numAvailableSpawns = spawnPlanets.filter(
+              (planet) => planet.team == teamSelection && planet.owner == EMPTY_ADDRESS
+            ).length;
+
+            if (
+              isNaN(teamSelection) ||
+              teamSelection > this.contractConstants.NUM_TEAMS ||
+              numAvailableSpawns == 0
+            ) {
+              this.terminal.current?.println('Unrecognized input. Please try again.');
+              this.terminal.current?.println('');
+            } else {
+              teamSelected = true;
+            }
+          } while (!teamSelected);
+        }
+
         // console.log(`all manually created spawn planets: ${spawnPlanets}`);
-        const potentialHomeIds = spawnPlanets.filter((planetId) => {
-          const planet = this.getGameObjects().getPlanetWithId(planetId);
+        const potentialHomePlanets = spawnPlanets.filter((planet) => {
           if (!planet) {
             // console.log('not a planet');
             return false;
@@ -2095,15 +2130,14 @@ class GameManager extends EventEmitter {
             // console.log('planet not locatable');
             return false;
           }
+          if (this.contractConstants.TEAMS_ENABLED && planet.team !== teamSelection) return false;
           return true;
         });
 
-        if (potentialHomeIds.length == 0) {
+        if (potentialHomePlanets.length == 0) {
           throw new Error('no spawn locations available');
         }
-        const potentialHomePlanets = potentialHomeIds.map((planetId) => {
-          return this.getGameObjects().getPlanetWithId(planetId) as LocatablePlanet;
-        });
+
         let selected = false;
         let selection;
 
@@ -2111,6 +2145,10 @@ class GameManager extends EventEmitter {
         if (potentialHomePlanets.length == 1) {
           planet = potentialHomePlanets[0];
         } else {
+          this.terminal.current?.println('');
+          this.terminal.current?.println(`Choose a spawn planet:`, TerminalTextStyle.White);
+          this.terminal.current?.println('');
+
           do {
             for (let i = 0; i < potentialHomePlanets.length; i++) {
               const x = potentialHomePlanets[i].location.coords.x;
@@ -2124,8 +2162,6 @@ class GameManager extends EventEmitter {
               );
             }
 
-            this.terminal.current?.println('');
-            this.terminal.current?.println(`Choose a spawn planet:`, TerminalTextStyle.White);
             selection = +((await this.terminal.current?.getInput()) || '');
             if (isNaN(selection) || selection > potentialHomePlanets.length) {
               this.terminal.current?.println('Unrecognized input. Please try again.');
@@ -2161,7 +2197,7 @@ class GameManager extends EventEmitter {
           TerminalTextStyle.Sub
         );
         this.terminal.current?.newline();
-        return [...args, team];
+        return [...args];
       };
 
       const txIntent: UnconfirmedInit = {
@@ -2709,7 +2745,6 @@ class GameManager extends EventEmitter {
 
   public async withdrawSilver(
     locationId: LocationId,
-    amount: number,
     bypassChecks = false
   ): Promise<Transaction<UnconfirmedWithdrawSilver>> {
     try {
@@ -2722,20 +2757,11 @@ class GameManager extends EventEmitter {
         if (!planet) {
           throw new Error('tried to withdraw silver from an unknown planet');
         }
-        if (planet.planetType !== PlanetType.TRADING_POST) {
-          throw new Error('can only withdraw silver from spacetime rips');
-        }
         if (planet.owner !== this.account) {
           throw new Error('can only withdraw silver from a planet you own');
         }
         if (planet.transactions?.hasTransaction(isUnconfirmedWithdrawSilverTx)) {
           throw new Error('a withdraw silver action is already in progress for this planet');
-        }
-        if (amount > planet.silver) {
-          throw new Error('not enough silver to withdraw!');
-        }
-        if (amount === 0) {
-          throw new Error('must withdraw more than 0 silver!');
         }
         if (planet.destroyed) {
           throw new Error("can't withdraw silver from a destroyed planet");
@@ -2747,13 +2773,49 @@ class GameManager extends EventEmitter {
       const txIntent: UnconfirmedWithdrawSilver = {
         methodName: 'withdrawSilver',
         contract: this.contractsAPI.contract,
-        args: Promise.resolve([locationIdToDecStr(locationId), amount * CONTRACT_PRECISION]),
+        args: Promise.resolve([locationIdToDecStr(locationId)]),
         locationId,
-        amount,
       };
 
       // Always await the submitTransaction so we can catch rejections
       const tx = await this.contractsAPI.submitTransaction(txIntent);
+
+      return tx;
+    } catch (e) {
+      this.getNotificationsManager().txInitError('withdrawSilver', e.message);
+      throw e;
+    }
+  }
+
+  public async bulkWithdrawSilver(
+    numPlanets: number = 20,
+    bypassChecks = false
+  ): Promise<Transaction<UnconfirmedBulkWithdrawSilver>> {
+    const myRichestPlanets: Planet[] = this.getMyPlanets()
+      .filter((planet) => planet.owner == this.account && !planet.destroyed && planet.silver > 0)
+      .sort((a, b) => b.silver - a.silver)
+      .slice(0, numPlanets);
+
+    try {
+      if (!bypassChecks) {
+        if (!this.account) throw new Error('no account');
+        if (this.checkGameHasEnded()) {
+          throw new Error('game has ended');
+        }
+      }
+
+      if (myRichestPlanets.length === 0) throw new Error('no asteriods found to withdraw');
+
+      const ids = myRichestPlanets.map((p) => `0x${p.locationId}`);
+      const txIntent: UnconfirmedBulkWithdrawSilver = {
+        methodName: 'bulkWithdrawSilver',
+        contract: this.contractsAPI.contract,
+        args: Promise.resolve([[...ids]]),
+        locationIds: myRichestPlanets.map((p) => p.locationId),
+      };
+
+      // Always await the submitTransaction so we can catch rejections
+      const tx = await this.contractsAPI.submitTransaction(txIntent, { gasLimit: 15000000 });
 
       return tx;
     } catch (e) {
@@ -3300,7 +3362,13 @@ class GameManager extends EventEmitter {
   getMaxMoveDist(planetId: LocationId, sendingPercent: number, abandoning: boolean): number {
     const planet = this.getPlanetWithId(planetId);
     if (!planet) throw new Error('origin planet unknown');
-    return getRange(planet, sendingPercent, this.getRangeBuff(abandoning));
+    return getRange(
+      planet,
+      this.contractConstants.RANGE_DOUBLING_SECS,
+      sendingPercent,
+      this.getRangeBuff(abandoning),
+      this.startTime
+    );
   }
 
   /**
@@ -3347,7 +3415,13 @@ class GameManager extends EventEmitter {
     // at https://github.com/darkforest-eth/client/issues/15
     // Improved by using `planetMap` by [@phated](https://github.com/phated)
     const result = [];
-    const range = getRange(planet, sendingPercent, this.getRangeBuff(abandoning));
+    const range = getRange(
+      planet,
+      this.contractConstants.RANGE_DOUBLING_SECS,
+      sendingPercent,
+      this.getRangeBuff(abandoning),
+      this.startTime
+    );
     for (const p of this.getPlanetMap().values()) {
       if (isLocatable(p)) {
         if (this.getDistCoords(planet.location.coords, p.location.coords) < range) {
@@ -3372,7 +3446,19 @@ class GameManager extends EventEmitter {
     const from = this.getPlanetWithId(fromId);
     if (!from) throw new Error('origin planet unknown');
     const dist = this.getDist(fromId, toId);
-    const range = from.range * this.getRangeBuff(abandoning);
+
+    let newRange = from.range;
+
+    if (
+      this.startTime !== undefined &&
+      this.startTime !== 0 &&
+      this.contractConstants.RANGE_DOUBLING_SECS > 0
+    ) {
+      newRange +=
+        (from.range * (Date.now() / 1000 - this.startTime)) /
+        this.contractConstants.RANGE_DOUBLING_SECS;
+    }
+    const range = newRange * this.getRangeBuff(abandoning);
     const rangeSteps = dist / range;
 
     const arrivingProp = arrivingEnergy / from.energyCap + 0.05;
@@ -3411,9 +3497,20 @@ class GameManager extends EventEmitter {
       }
     }
     // calculate
-    let cubeRangeBoost = sendingCube? 0.5 : 1;
-  
-    const range = from.range * this.getRangeBuff(abandoning) * cubeRangeBoost;
+    let cubeRangeBoost = sendingCube ? 0.5 : 1;
+
+    let newRange = from.range;
+
+    if (
+      this.startTime !== undefined &&
+      this.startTime !== 0 &&
+      this.contractConstants.RANGE_DOUBLING_SECS > 0
+    ) {
+      newRange +=
+        (from.range * (Date.now() / 1000 - this.startTime)) /
+        this.contractConstants.RANGE_DOUBLING_SECS;
+    }
+    const range = newRange * this.getRangeBuff(abandoning) * cubeRangeBoost;
 
     const scale = (1 / 2) ** (dist / range);
     let ret = scale * sentEnergy - 0.05 * from.energyCap;

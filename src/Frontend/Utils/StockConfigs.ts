@@ -96,6 +96,7 @@ const tutorial: LobbyInitializers = {
   PLANETHASH_KEY: 69,
   RANDOM_ARTIFACTS: false,
   RANKED: false,
+  RANGE_DOUBLING_SECS: 0,
   SILVER_SCORE_VALUE: 10,
   SPACE_JUNK_ENABLED: false,
   SPACE_JUNK_LIMIT: 1000,
@@ -121,6 +122,7 @@ const tutorial: LobbyInitializers = {
       isTargetPlanet: true,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: 0,
@@ -130,6 +132,7 @@ const tutorial: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: true,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: 8,
@@ -139,6 +142,7 @@ const tutorial: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: -8,
@@ -148,6 +152,7 @@ const tutorial: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
   ],
 };
@@ -263,6 +268,7 @@ const vanilla: LobbyInitializers = {
   TEAMS_ENABLED: false,
   NUM_TEAMS: 2,
   RANKED: false,
+  RANGE_DOUBLING_SECS: 0,
 };
 
 const devOnePlayerRace: LobbyInitializers = {
@@ -277,7 +283,7 @@ const devOnePlayerRace: LobbyInitializers = {
   PERLIN_MIRROR_X: false,
   PERLIN_MIRROR_Y: false,
   MAX_NATURAL_PLANET_LEVEL: 3,
-  TIME_FACTOR_HUNDREDTHS: 1000,
+  TIME_FACTOR_HUNDREDTHS: 2000,
   PERLIN_THRESHOLD_1: 11,
   PERLIN_THRESHOLD_2: 15,
   PERLIN_THRESHOLD_3: 19,
@@ -292,8 +298,8 @@ const devOnePlayerRace: LobbyInitializers = {
   PLANET_TYPE_WEIGHTS: [
     [
       [1, 0, 0, 0, 0],
-      [13, 2, 0, 1, 0],
-      [13, 2, 0, 1, 0],
+      [13, 2, 0, 0, 0],
+      [13, 2, 0, 0, 0],
       [13, 2, 0, 0, 1],
       [13, 2, 0, 0, 1],
       [13, 2, 0, 0, 1],
@@ -305,8 +311,8 @@ const devOnePlayerRace: LobbyInitializers = {
     [
       [1, 0, 0, 0, 0],
       [13, 2, 1, 0, 0],
-      [12, 2, 1, 1, 0],
-      [11, 2, 1, 1, 1],
+      [12, 2, 1, 0, 0],
+      [11, 2, 1, 0, 1],
       [12, 2, 1, 0, 1],
       [12, 2, 1, 0, 1],
       [12, 2, 1, 0, 1],
@@ -317,26 +323,26 @@ const devOnePlayerRace: LobbyInitializers = {
     [
       [1, 0, 0, 0, 0],
       [10, 4, 2, 0, 0],
-      [10, 4, 1, 1, 0],
-      [8, 4, 1, 2, 1],
-      [8, 4, 1, 2, 1],
-      [8, 4, 1, 2, 1],
-      [8, 4, 1, 2, 1],
-      [8, 4, 1, 2, 1],
-      [8, 4, 1, 2, 1],
-      [8, 4, 1, 2, 1],
+      [10, 4, 1, 0, 0],
+      [8, 4, 1, 0, 1],
+      [8, 4, 1, 0, 1],
+      [8, 4, 1, 0, 1],
+      [8, 4, 1, 0, 1],
+      [8, 4, 1, 0, 1],
+      [8, 4, 1, 0, 1],
+      [8, 4, 1, 0, 1],
     ],
     [
       [1, 0, 0, 0, 0],
       [11, 4, 1, 0, 0],
       [11, 4, 1, 0, 0],
-      [7, 4, 2, 2, 1],
-      [7, 4, 2, 2, 1],
-      [7, 4, 2, 2, 1],
-      [7, 4, 2, 2, 1],
-      [7, 4, 2, 2, 1],
-      [7, 4, 2, 2, 1],
-      [7, 4, 2, 2, 1],
+      [7, 4, 2, 0, 1],
+      [7, 4, 2, 0, 1],
+      [7, 4, 2, 0, 1],
+      [7, 4, 2, 0, 1],
+      [7, 4, 2, 0, 1],
+      [7, 4, 2, 0, 1],
+      [7, 4, 2, 0, 1],
     ],
   ],
   ARTIFACT_POINT_VALUES: [0, 100000, 200000, 500000, 20000000, 50000000],
@@ -375,6 +381,7 @@ const devOnePlayerRace: LobbyInitializers = {
       isSpawnPlanet: true,
       isTargetPlanet: true,
       blockedPlanetLocs: [],
+      team: 1,
     },
   ],
   TOKEN_MINT_END_TIMESTAMP: 1717258179,
@@ -387,37 +394,39 @@ const devOnePlayerRace: LobbyInitializers = {
   TEAMS_ENABLED: false,
   NUM_TEAMS: 2,
   RANKED: false,
+  RANGE_DOUBLING_SECS: 300,
 };
 
 const fourPlayerBattle: LobbyInitializers = {
   ADMIN_CAN_ADD_PLANETS: true,
   WORLD_RADIUS_LOCKED: true,
-  WORLD_RADIUS_MIN: 7000,
-  DISABLE_ZK_CHECKS: false,
-  PLANETHASH_KEY: 2401,
-  SPACETYPE_KEY: 2402,
-  BIOMEBASE_KEY: 2403,
-  PERLIN_LENGTH_SCALE: 2048,
-  PERLIN_MIRROR_X: true,
-  PERLIN_MIRROR_Y: true,
-  MAX_NATURAL_PLANET_LEVEL: 9,
-  TIME_FACTOR_HUNDREDTHS: 1500,
-  PERLIN_THRESHOLD_1: 13,
-  PERLIN_THRESHOLD_2: 14,
-  PERLIN_THRESHOLD_3: 17,
+  WORLD_RADIUS_MIN: 3000,
+  DISABLE_ZK_CHECKS: true,
+  PLANETHASH_KEY: 69,
+  SPACETYPE_KEY: 69,
+  BIOMEBASE_KEY: 69,
+  PERLIN_LENGTH_SCALE: 512,
+  PERLIN_MIRROR_X: false,
+  PERLIN_MIRROR_Y: false,
+  MAX_NATURAL_PLANET_LEVEL: 3,
+  TIME_FACTOR_HUNDREDTHS: 1800,
+  PERLIN_THRESHOLD_1: 11,
+  PERLIN_THRESHOLD_2: 15,
+  PERLIN_THRESHOLD_3: 19,
+  INIT_PLANETS: [],
   INIT_PERLIN_MIN: 0,
   INIT_PERLIN_MAX: 32,
   BIOME_THRESHOLD_1: 14,
   BIOME_THRESHOLD_2: 17,
   SILVER_SCORE_VALUE: 10,
-  PLANET_LEVEL_THRESHOLDS: [1048563, 1048562, 1048561, 262128, 65520, 16368, 4080, 1008, 240, 48],
-  PLANET_RARITY: 9000,
-  PLANET_TRANSFER_ENABLED: true,
+  PLANET_LEVEL_THRESHOLDS: [4194293, 4194292, 1048561, 262128, 65520, 16368, 4080, 1008, 240, 48],
+  PLANET_RARITY: 3500,
+  PLANET_TRANSFER_ENABLED: false,
   PLANET_TYPE_WEIGHTS: [
     [
       [1, 0, 0, 0, 0],
-      [13, 2, 0, 1, 0],
-      [13, 2, 0, 1, 0],
+      [13, 2, 0, 0, 0],
+      [13, 2, 0, 0, 0],
       [13, 2, 0, 0, 1],
       [13, 2, 0, 0, 1],
       [13, 2, 0, 0, 1],
@@ -429,8 +438,8 @@ const fourPlayerBattle: LobbyInitializers = {
     [
       [1, 0, 0, 0, 0],
       [13, 2, 1, 0, 0],
-      [12, 2, 1, 1, 0],
-      [11, 2, 1, 1, 1],
+      [12, 2, 1, 0, 0],
+      [11, 2, 1, 0, 1],
       [12, 2, 1, 0, 1],
       [12, 2, 1, 0, 1],
       [12, 2, 1, 0, 1],
@@ -441,35 +450,35 @@ const fourPlayerBattle: LobbyInitializers = {
     [
       [1, 0, 0, 0, 0],
       [10, 4, 2, 0, 0],
-      [10, 4, 1, 1, 0],
-      [8, 4, 1, 2, 1],
-      [8, 4, 1, 2, 1],
-      [8, 4, 1, 2, 1],
-      [8, 4, 1, 2, 1],
-      [8, 4, 1, 2, 1],
-      [8, 4, 1, 2, 1],
-      [8, 4, 1, 2, 1],
+      [10, 4, 1, 0, 0],
+      [8, 4, 1, 0, 1],
+      [8, 4, 1, 0, 1],
+      [8, 4, 1, 0, 1],
+      [8, 4, 1, 0, 1],
+      [8, 4, 1, 0, 1],
+      [8, 4, 1, 0, 1],
+      [8, 4, 1, 0, 1],
     ],
     [
       [1, 0, 0, 0, 0],
       [11, 4, 1, 0, 0],
       [11, 4, 1, 0, 0],
-      [7, 4, 2, 2, 1],
-      [7, 4, 2, 2, 1],
-      [7, 4, 2, 2, 1],
-      [7, 4, 2, 2, 1],
-      [7, 4, 2, 2, 1],
-      [7, 4, 2, 2, 1],
-      [7, 4, 2, 2, 1],
+      [7, 4, 2, 0, 1],
+      [7, 4, 2, 0, 1],
+      [7, 4, 2, 0, 1],
+      [7, 4, 2, 0, 1],
+      [7, 4, 2, 0, 1],
+      [7, 4, 2, 0, 1],
+      [7, 4, 2, 0, 1],
     ],
   ],
   ARTIFACT_POINT_VALUES: [0, 100000, 200000, 500000, 20000000, 50000000],
-  SPACE_JUNK_ENABLED: true,
+  SPACE_JUNK_ENABLED: false,
   SPACE_JUNK_LIMIT: 1000,
   PLANET_LEVEL_JUNK: [20, 25, 30, 35, 40, 45, 50, 55, 60, 65],
   ABANDON_SPEED_CHANGE_PERCENT: 150,
   ABANDON_RANGE_CHANGE_PERCENT: 150,
-  PHOTOID_ACTIVATION_DELAY: 60,
+  PHOTOID_ACTIVATION_DELAY: 300,
   SPAWN_RIM_AREA: 0,
   LOCATION_REVEAL_COOLDOWN: 10800,
   CAPTURE_ZONES_ENABLED: false,
@@ -482,73 +491,26 @@ const fourPlayerBattle: LobbyInitializers = {
   CAPTURE_ZONE_HOLD_BLOCKS_REQUIRED: 2048,
   CAPTURE_ZONES_PER_5000_WORLD_RADIUS: 3,
   MANUAL_SPAWN: true,
-  TARGET_PLANETS: true,
-  CLAIM_VICTORY_ENERGY_PERCENT: 50,
-  MODIFIERS: [100, 100, 100, 100, 100, 100, 100, 100],
-  SPACESHIPS: [true, true, false, true, false],
-  WHITELIST_ENABLED: false,
-  START_PAUSED: false,
+  TARGET_PLANETS: false,
+  CLAIM_VICTORY_ENERGY_PERCENT: 100,
+  MODIFIERS: [100, 100, 100, 100, 75, 100, 100, 100],
+  SPACESHIPS: [true, true, true, true, false],
   RANDOM_ARTIFACTS: true,
-  ADMIN_PLANETS: [
-    {
-      x: -5500,
-      y: 0,
-      level: 3,
-      planetType: 0,
-      isTargetPlanet: false,
-      isSpawnPlanet: true,
-      blockedPlanetLocs: [],
-    },
-    {
-      x: 5500,
-      y: 0,
-      level: 3,
-      planetType: 0,
-      isTargetPlanet: true,
-      isSpawnPlanet: true,
-      blockedPlanetLocs: [],
-    },
-    {
-      x: 0,
-      y: 5500,
-      level: 3,
-      planetType: 0,
-      isTargetPlanet: false,
-      isSpawnPlanet: true,
-      blockedPlanetLocs: [],
-    },
-    {
-      x: 0,
-      y: -5500,
-      level: 3,
-      planetType: 0,
-      isTargetPlanet: false,
-      isSpawnPlanet: true,
-      blockedPlanetLocs: [],
-    },
-    {
-      x: 0,
-      y: 0,
-      level: 4,
-      planetType: 4,
-      isTargetPlanet: true,
-      isSpawnPlanet: false,
-      blockedPlanetLocs: [],
-    },
-  ],
-  TOKEN_MINT_END_TIMESTAMP: 1717258179, // SECONDS!,
   NO_ADMIN: false,
-  INIT_PLANETS: [],
+  WHITELIST_ENABLED: false,
+  START_PAUSED: true,
+  ADMIN_PLANETS: [],
+  TOKEN_MINT_END_TIMESTAMP: 1717258179,
   WHITELIST: [],
-  CONFIRM_START: true,
-  TARGETS_REQUIRED_FOR_VICTORY: 2,
+  CONFIRM_START: false,
+  TARGETS_REQUIRED_FOR_VICTORY: 1,
   BLOCK_CAPTURE: false,
   BLOCK_MOVES: false,
-  TEAMS_ENABLED: false,
+  TEAMS_ENABLED: true,
   NUM_TEAMS: 2,
   RANKED: false,
+  RANGE_DOUBLING_SECS: 1800,
 };
-
 const sprint: LobbyInitializers = {
   ADMIN_CAN_ADD_PLANETS: true,
   WORLD_RADIUS_LOCKED: true,
@@ -576,8 +538,8 @@ const sprint: LobbyInitializers = {
   PLANET_TYPE_WEIGHTS: [
     [
       [1, 0, 0, 0, 0],
-      [13, 2, 0, 1, 0],
-      [13, 2, 0, 1, 0],
+      [13, 2, 0, 0, 0],
+      [13, 2, 0, 0, 0],
       [13, 2, 0, 0, 1],
       [13, 2, 0, 0, 1],
       [13, 2, 0, 0, 1],
@@ -589,8 +551,8 @@ const sprint: LobbyInitializers = {
     [
       [1, 0, 0, 0, 0],
       [13, 2, 1, 0, 0],
-      [12, 2, 1, 1, 0],
-      [11, 2, 1, 1, 1],
+      [12, 2, 1, 0, 0],
+      [11, 2, 1, 0, 1],
       [12, 2, 1, 0, 1],
       [12, 2, 1, 0, 1],
       [12, 2, 1, 0, 1],
@@ -601,28 +563,29 @@ const sprint: LobbyInitializers = {
     [
       [1, 0, 0, 0, 0],
       [10, 4, 2, 0, 0],
-      [10, 4, 1, 1, 0],
-      [8, 4, 1, 2, 1],
-      [8, 4, 1, 2, 1],
-      [8, 4, 1, 2, 1],
-      [8, 4, 1, 2, 1],
-      [8, 4, 1, 2, 1],
-      [8, 4, 1, 2, 1],
-      [8, 4, 1, 2, 1],
+      [10, 4, 1, 0, 0],
+      [8, 4, 1, 0, 1],
+      [8, 4, 1, 0, 1],
+      [8, 4, 1, 0, 1],
+      [8, 4, 1, 0, 1],
+      [8, 4, 1, 0, 1],
+      [8, 4, 1, 0, 1],
+      [8, 4, 1, 0, 1],
     ],
     [
       [1, 0, 0, 0, 0],
       [11, 4, 1, 0, 0],
       [11, 4, 1, 0, 0],
-      [7, 4, 2, 2, 1],
-      [7, 4, 2, 2, 1],
-      [7, 4, 2, 2, 1],
-      [7, 4, 2, 2, 1],
-      [7, 4, 2, 2, 1],
-      [7, 4, 2, 2, 1],
-      [7, 4, 2, 2, 1],
+      [7, 4, 2, 0, 1],
+      [7, 4, 2, 0, 1],
+      [7, 4, 2, 0, 1],
+      [7, 4, 2, 0, 1],
+      [7, 4, 2, 0, 1],
+      [7, 4, 2, 0, 1],
+      [7, 4, 2, 0, 1],
     ],
   ],
+
   ARTIFACT_POINT_VALUES: [0, 100000, 200000, 500000, 20000000, 50000000],
   SPACE_JUNK_ENABLED: false,
   SPACE_JUNK_LIMIT: 1000,
@@ -658,6 +621,7 @@ const sprint: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: true,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: 4000,
@@ -667,6 +631,7 @@ const sprint: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: true,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: -4000,
@@ -681,6 +646,7 @@ const sprint: LobbyInitializers = {
           y: -4000,
         },
       ],
+      team: 1,
     },
     {
       x: 4000,
@@ -695,6 +661,7 @@ const sprint: LobbyInitializers = {
           y: 4000,
         },
       ],
+      team: 1,
     },
   ],
   TOKEN_MINT_END_TIMESTAMP: 1717258179, // SECONDS!,
@@ -708,6 +675,7 @@ const sprint: LobbyInitializers = {
   TEAMS_ENABLED: false,
   NUM_TEAMS: 2,
   RANKED: true,
+  RANGE_DOUBLING_SECS: 0,
 };
 
 const grandPrix: LobbyInitializers = {
@@ -820,6 +788,7 @@ const grandPrix: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: true,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: 3500,
@@ -829,6 +798,7 @@ const grandPrix: LobbyInitializers = {
       isTargetPlanet: true,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: 400,
@@ -838,6 +808,7 @@ const grandPrix: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: -2800,
@@ -847,6 +818,7 @@ const grandPrix: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: 2000,
@@ -856,6 +828,7 @@ const grandPrix: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: 0,
@@ -865,6 +838,7 @@ const grandPrix: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: 3000,
@@ -874,6 +848,7 @@ const grandPrix: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: -2300,
@@ -883,6 +858,7 @@ const grandPrix: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: 5000,
@@ -892,6 +868,7 @@ const grandPrix: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
   ],
   TOKEN_MINT_END_TIMESTAMP: 1682435240778,
@@ -904,6 +881,7 @@ const grandPrix: LobbyInitializers = {
   TEAMS_ENABLED: false,
   NUM_TEAMS: 2,
   RANKED: false,
+  RANGE_DOUBLING_SECS: 0,
 };
 
 const grandPrixWeek4: LobbyInitializers = {
@@ -1016,6 +994,7 @@ const grandPrixWeek4: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: 3044,
@@ -1025,6 +1004,7 @@ const grandPrixWeek4: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: 0,
@@ -1034,6 +1014,7 @@ const grandPrixWeek4: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: true,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: 3000,
@@ -1043,6 +1024,7 @@ const grandPrixWeek4: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: -2931,
@@ -1052,6 +1034,7 @@ const grandPrixWeek4: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: -3139,
@@ -1061,6 +1044,7 @@ const grandPrixWeek4: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: 0,
@@ -1070,6 +1054,7 @@ const grandPrixWeek4: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: 0,
@@ -1079,6 +1064,7 @@ const grandPrixWeek4: LobbyInitializers = {
       isTargetPlanet: true,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
   ],
   TOKEN_MINT_END_TIMESTAMP: 1682435240778,
@@ -1091,6 +1077,7 @@ const grandPrixWeek4: LobbyInitializers = {
   TEAMS_ENABLED: false,
   NUM_TEAMS: 2,
   RANKED: false,
+  RANGE_DOUBLING_SECS: 0,
 };
 // const competitive: LobbyInitializers = grandPrixWeek4;
 
@@ -1204,6 +1191,7 @@ const EloMap: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: 3000,
@@ -1213,6 +1201,7 @@ const EloMap: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: 0,
@@ -1222,6 +1211,7 @@ const EloMap: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: 0,
@@ -1231,6 +1221,7 @@ const EloMap: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: 4500,
@@ -1240,6 +1231,7 @@ const EloMap: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: -4500,
@@ -1249,6 +1241,7 @@ const EloMap: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: -4250,
@@ -1258,6 +1251,7 @@ const EloMap: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: -4250,
@@ -1267,6 +1261,7 @@ const EloMap: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: 4250,
@@ -1276,6 +1271,7 @@ const EloMap: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: 4250,
@@ -1285,6 +1281,7 @@ const EloMap: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: 1500,
@@ -1294,6 +1291,7 @@ const EloMap: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: -1500,
@@ -1303,6 +1301,7 @@ const EloMap: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: -1500,
@@ -1312,6 +1311,7 @@ const EloMap: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: 1500,
@@ -1321,6 +1321,7 @@ const EloMap: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: 161,
@@ -1330,6 +1331,7 @@ const EloMap: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: 61,
@@ -1339,6 +1341,7 @@ const EloMap: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: -61,
@@ -1348,6 +1351,7 @@ const EloMap: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: -161,
@@ -1357,6 +1361,7 @@ const EloMap: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: -200,
@@ -1366,6 +1371,7 @@ const EloMap: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: -161,
@@ -1375,6 +1381,7 @@ const EloMap: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: -61,
@@ -1384,6 +1391,7 @@ const EloMap: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: 61,
@@ -1393,6 +1401,7 @@ const EloMap: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: 161,
@@ -1402,6 +1411,7 @@ const EloMap: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: 200,
@@ -1411,6 +1421,7 @@ const EloMap: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: 0,
@@ -1420,6 +1431,7 @@ const EloMap: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: 1500,
@@ -1434,6 +1446,7 @@ const EloMap: LobbyInitializers = {
           y: 0,
         },
       ],
+      team: 1,
     },
     {
       x: -1500,
@@ -1448,6 +1461,7 @@ const EloMap: LobbyInitializers = {
           y: 0,
         },
       ],
+      team: 1,
     },
     {
       x: -4000,
@@ -1457,6 +1471,7 @@ const EloMap: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: true,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: 4000,
@@ -1466,6 +1481,7 @@ const EloMap: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: true,
       blockedPlanetLocs: [],
+      team: 1,
     },
   ],
   TOKEN_MINT_END_TIMESTAMP: 1717258179,
@@ -1478,6 +1494,7 @@ const EloMap: LobbyInitializers = {
   NUM_TEAMS: 2,
   RANKED: true,
   INIT_PLANETS: [],
+  RANGE_DOUBLING_SECS: 0,
 };
 
 const grandPrixWeek5: LobbyInitializers = {
@@ -1591,6 +1608,7 @@ const grandPrixWeek5: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: true,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: -1050,
@@ -1600,6 +1618,7 @@ const grandPrixWeek5: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: -1050,
@@ -1609,6 +1628,7 @@ const grandPrixWeek5: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: 475,
@@ -1618,6 +1638,7 @@ const grandPrixWeek5: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: 475,
@@ -1627,6 +1648,7 @@ const grandPrixWeek5: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: -2000,
@@ -1636,6 +1658,7 @@ const grandPrixWeek5: LobbyInitializers = {
       isTargetPlanet: false,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
     {
       x: 4500,
@@ -1645,6 +1668,7 @@ const grandPrixWeek5: LobbyInitializers = {
       isTargetPlanet: true,
       isSpawnPlanet: false,
       blockedPlanetLocs: [],
+      team: 1,
     },
   ],
   TOKEN_MINT_END_TIMESTAMP: 1682435240778,
@@ -1656,6 +1680,7 @@ const grandPrixWeek5: LobbyInitializers = {
   TEAMS_ENABLED: false,
   NUM_TEAMS: 2,
   RANKED: true,
+  RANGE_DOUBLING_SECS: 0,
 };
 
 const competitive: LobbyInitializers = grandPrixWeek5;

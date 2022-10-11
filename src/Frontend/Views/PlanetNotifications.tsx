@@ -29,7 +29,7 @@ export function getNotifsForPlanet(
   if (!planet) return notifs;
 
   if (planet?.owner === account && account !== undefined) {
-    if (GameObjects.planetCanUpgrade(planet)) notifs.push(PlanetNotifType.PlanetCanUpgrade);
+    // if (GameObjects.planetCanUpgrade(planet)) notifs.push(PlanetNotifType.PlanetCanUpgrade);
     if (process.env.DF_WEBSERVER_URL) notifs.push(PlanetNotifType.CanAddEmoji);
   }
 

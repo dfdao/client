@@ -238,19 +238,20 @@ export function ArtifactDetailsBody({
         )}
       </div>
 
-      {hasStatBoost(artifact.artifactType) && (
-        <ArtifactDetailsHeader>
-          <StatsContainer>
-            {_.range(0, 5).map((val) => (
-              <UpgradeStatInfo
-                upgrades={[artifact.upgrade, artifact.timeDelayedUpgrade]}
-                stat={val}
-                key={val}
-              />
-            ))}
-          </StatsContainer>
-        </ArtifactDetailsHeader>
-      )}
+      {hasStatBoost(artifact.artifactType) &&
+        artifact.artifactType !== ArtifactType.AntimatterCube && (
+          <ArtifactDetailsHeader>
+            <StatsContainer>
+              {_.range(0, 5).map((val) => (
+                <UpgradeStatInfo
+                  upgrades={[artifact.upgrade, artifact.timeDelayedUpgrade]}
+                  stat={val}
+                  key={val}
+                />
+              ))}
+            </StatsContainer>
+          </ArtifactDetailsHeader>
+        )}
 
       {isSpaceShip(artifact.artifactType) && (
         <ArtifactDescription collapsable={false} artifact={artifact} />
@@ -367,6 +368,15 @@ function ArtifactDescription({
   const genericSpaceshipDescription = <>Can move between planets without sending energy.</>;
 
   switch (artifact.artifactType) {
+    case ArtifactType.AntimatterCube:
+      content = (
+        <Text>
+          Extract this cube through a spacetime rip to win the round and prevent the Trisolaran
+          invasion. Be warned, however -- it halves your planet's range and pauses its energy!
+          regeneration.
+        </Text>
+      );
+      break;
     case ArtifactType.BlackDomain:
       content = (
         <Text>

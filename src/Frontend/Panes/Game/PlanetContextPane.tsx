@@ -69,9 +69,9 @@ function PlanetContextPaneContent({
   }
 
   let withdrawRow = null;
-  if (!p?.destroyed && owned && p?.planetType === PlanetType.TRADING_POST) {
-    withdrawRow = <WithdrawSilver wrapper={planet} />;
-  }
+  // if (!p?.destroyed && owned && p?.planetType === PlanetType.TRADING_POST) {
+  //   withdrawRow = <WithdrawSilver wrapper={planet} />;
+  // }
 
   let notifRow = null;
   if (!p?.destroyed && notifs.length > 0) {
@@ -92,7 +92,7 @@ function PlanetContextPaneContent({
 
       <VerticalSplit>
         <>
-          {upgradeRow}
+          {planet.value?.planetType == PlanetType.PLANET && upgradeRow}
           {/* <OpenBroadcastPaneButton modal={modal} planetId={p?.locationId} /> */}
           <OpenPlanetInfoButton modal={modal} planetId={p?.locationId} />
         </>
